@@ -45,15 +45,9 @@ export const VideoHero = () => {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        <h1 className="text-7xl md:text-9xl font-serif text-white luxury-glow mb-4">
-          ZAVIRA
-        </h1>
-        <p className="text-xl md:text-2xl text-white/90 tracking-[0.3em] font-light">
-          SALON & SPA
-        </p>
-        <p className="mt-6 text-sm md:text-base text-white/70 max-w-2xl">
+      {/* Minimal content - logo is separate component now */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 pt-64">
+        <p className="text-sm md:text-base text-white/70 max-w-2xl">
           Experience luxury beauty treatments in an atmosphere of elegance and sophistication
         </p>
       </div>

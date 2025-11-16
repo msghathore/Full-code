@@ -1,9 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CustomCursor } from '@/components/CustomCursor';
 import { Navigation } from '@/components/Navigation';
 import { VideoHero } from '@/components/VideoHero';
+import { HeroLogo } from '@/components/HeroLogo';
+import { ReviewsCarousel } from '@/components/ReviewsCarousel';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { Footer } from '@/components/Footer';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
   const servicesRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const cards = servicesRef.current?.querySelectorAll('.service-card');
@@ -65,10 +69,15 @@ const Index = () => {
     },
   ];
 
+  if (isLoading) {
+    return <LoadingScreen onComplete={() => setIsLoading(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-black">
       <CustomCursor />
       <Navigation />
+      <HeroLogo />
       <VideoHero />
       
       {/* Services Preview Section */}
@@ -90,21 +99,32 @@ const Index = () => {
                 to="/services"
                 className="service-card group cursor-hover"
               >
-                <div className="relative overflow-hidden rounded-lg frosted-glass border border-white/10 hover:border-white/30 transition-all duration-500">
-                  <div className="aspect-[4/3] overflow-hidden">
+                <div className="relative overflow-hidden rounded-3xl frosted-glass border border-white/10 hover:border-white/30 transition-all duration-500">
+                  <div className="aspect-[4/3] overflow-hidden relative">
                     <img
                       src={service.image}
                       alt={service.name}
-                      className="w-full h-full object-cover image-hover-glow transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                      style={{
+                        filter: 'brightness(0.8)',
+                      }}
                     />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-2xl font-serif luxury-glow mb-2">
-                      {service.name}
-                    </h3>
-                    <p className="text-muted-foreground text-sm tracking-wide">
-                      {service.description}
-                    </p>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{
+                        boxShadow: 'inset 0 0 30px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.4)',
+                        border: '2px solid rgba(255,255,255,0.5)',
+                        borderRadius: '1.5rem'
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <h3 className="text-3xl font-serif luxury-glow mb-2">
+                        {service.name}
+                      </h3>
+                      <p className="text-white/90 text-sm tracking-wide">
+                        {service.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -121,6 +141,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <ReviewsCarousel />
 
       <Footer />
     </div>
