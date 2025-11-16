@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { Link } from 'react-router-dom';
 import { AnimatedMenu } from './AnimatedMenu';
 
 export const Navigation = () => {
@@ -20,25 +21,15 @@ export const Navigation = () => {
   useEffect(() => {
     if (!logoRef.current) return;
 
-    const timeline = gsap.timeline({ repeat: -1, repeatDelay: 2 });
-    
-    timeline
-      .to(logoRef.current, {
-        textContent: 'ZAVIRA',
-        duration: 0.5,
-        ease: 'power2.inOut'
-      })
-      .to(logoRef.current, {
-        duration: 2
-      })
-      .to(logoRef.current, {
-        textContent: 'ZAVIRA SALON & SPA',
-        duration: 0.5,
-        ease: 'power2.inOut'
-      })
-      .to(logoRef.current, {
-        duration: 2
-      });
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 100;
+      if (logoRef.current) {
+        logoRef.current.textContent = scrolled ? 'ZAVIRA' : 'ZAVIRA SALON & SPA';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleMenu = () => {
@@ -80,12 +71,14 @@ export const Navigation = () => {
           </button>
 
           {/* Logo */}
-          <div
-            ref={logoRef}
-            className="text-2xl font-serif tracking-widest text-white luxury-glow text-center"
-          >
-            ZAVIRA SALON & SPA
-          </div>
+          <Link to="/" className="cursor-hover">
+            <div
+              ref={logoRef}
+              className="text-2xl font-serif tracking-widest text-white luxury-glow text-center transition-all duration-500"
+            >
+              ZAVIRA SALON & SPA
+            </div>
+          </Link>
 
           {/* Right side - Login */}
           <a

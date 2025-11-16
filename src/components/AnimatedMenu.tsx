@@ -12,7 +12,6 @@ const menuItems = [
   { name: 'BOOKING', href: '/booking', image: '/images/booking-menu.jpg' },
   { name: 'SHOP', href: '/shop', image: '/images/shop-menu.jpg' },
   { name: 'ABOUT', href: '/about', image: '/images/about-menu.jpg' },
-  { name: 'BLOG', href: '/blog', image: '/images/blog-menu.jpg' },
   { name: 'CONTACT', href: '/contact', image: '/images/contact-menu.jpg' },
 ];
 
@@ -89,8 +88,13 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       {/* Left Panel - Menu Items */}
       <div
         ref={leftPanelRef}
-        className="absolute left-0 top-0 h-full w-1/2 frosted-glass border-r border-white/10"
-        style={{ transform: 'translateX(-100%)' }}
+        className="absolute left-0 top-0 h-full w-2/5 border-r border-white/10"
+        style={{ 
+          transform: 'translateX(-100%)',
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)'
+        }}
       >
         <div className="flex flex-col justify-center h-full px-16 space-y-8">
           {menuItems.map((item, index) => (
