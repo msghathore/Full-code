@@ -70,11 +70,11 @@ export const Navigation = () => {
             <span className="hamburger-line w-8 h-0.5 bg-white block transition-all group-hover:luxury-glow" />
           </button>
 
-          {/* Logo */}
+          {/* Logo - Bigger and more prominent */}
           <Link to="/" className="cursor-hover">
             <div
               ref={logoRef}
-              className="text-2xl font-serif tracking-widest text-white luxury-glow text-center transition-all duration-500"
+              className="text-3xl md:text-4xl font-serif tracking-widest text-white luxury-glow text-center transition-all duration-500"
             >
               ZAVIRA SALON & SPA
             </div>
