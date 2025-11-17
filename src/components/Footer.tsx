@@ -1,25 +1,18 @@
 export const Footer = () => {
-  const footerSections = [
-    {
-      title: 'SERVICES',
-      links: ['Hair', 'Nails', 'Skin', 'Massage', 'Tattoo', 'Piercing']
-    },
-    {
-      title: 'COMPANY',
-      links: ['About Us', 'Careers', 'Blog', 'Press']
-    },
-    {
-      title: 'SUPPORT',
-      links: ['Contact', 'FAQs', 'Privacy', 'Terms']
-    },
-    {
-      title: 'FOLLOW US',
-      links: ['Instagram', 'Facebook', 'Twitter', 'YouTube']
-    }
-  ];
-
-  return (
-    <footer className="relative bg-black border-t border-white/10 py-16">
+  const footerSections = [{
+    title: 'SERVICES',
+    links: ['Hair', 'Nails', 'Skin', 'Massage', 'Tattoo', 'Piercing']
+  }, {
+    title: 'COMPANY',
+    links: ['About Us', 'Careers', 'Blog', 'Press']
+  }, {
+    title: 'SUPPORT',
+    links: ['Contact', 'FAQs', 'Privacy', 'Terms']
+  }, {
+    title: 'FOLLOW US',
+    links: ['Instagram', 'Facebook', 'Twitter', 'YouTube']
+  }];
+  return <footer className="relative bg-black border-t border-white/10 py-16">
       <div className="container mx-auto px-8">
         {/* Logo */}
         <div className="text-center mb-12">
@@ -33,42 +26,22 @@ export const Footer = () => {
 
         {/* Links Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          {footerSections.map((section) => (
-            <div key={section.title}>
+          {footerSections.map(section => <div key={section.title}>
               <h3 className="text-sm font-semibold tracking-wider mb-4 text-white">
                 {section.title}
               </h3>
               <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="text-sm text-muted-foreground hover:text-white hover:luxury-glow transition-all cursor-hover"
-                    >
+                {section.links.map(link => <li key={link}>
+                    <a href="#" className="text-sm text-muted-foreground hover:text-white hover:luxury-glow transition-all cursor-hover">
                       {link}
                     </a>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
-            </div>
-          ))}
+            </div>)}
         </div>
 
         {/* Social Icons */}
-        <div className="flex justify-center space-x-6 mb-8">
-          {['YouTube', 'Facebook', 'Instagram', 'LinkedIn', 'Twitter'].map((social) => (
-            <a
-              key={social}
-              href="#"
-              className="text-muted-foreground hover:text-white hover:luxury-glow transition-all cursor-hover"
-              aria-label={social}
-            >
-              <div className="w-6 h-6 flex items-center justify-center">
-                {social[0]}
-              </div>
-            </a>
-          ))}
-        </div>
+        
 
         {/* Bottom */}
         <div className="border-t border-white/10 pt-8">
@@ -82,6 +55,5 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
