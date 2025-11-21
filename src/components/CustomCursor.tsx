@@ -1,10 +1,38 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 
+// Enhanced mobile detection function
+const isMobileDevice = () => {
+  // Check for common mobile user agents
+  const userAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Check for touch support
+  const hasTouch = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                   ('ontouchstart' in window) ||
+                   (navigator as any).msMaxTouchPoints > 0;
+  
+  // Check screen width
+  const isSmallScreen = window.innerWidth <= 768;
+  
+  // Check for fine pointer (desktop mice) vs coarse pointer (touch devices)
+  const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  
+  // Check for hover capability (desktop) vs no hover (mobile)
+  const hasNoHover = window.matchMedia('(hover: none)').matches;
+  
+  // Return true if it's likely a mobile/touch device
+  return userAgent || (hasTouch && (isSmallScreen || hasCoarsePointer)) || (isSmallScreen && hasNoHover);
+};
+
 export const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorGlowRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  
+  // Don't render on mobile devices
+  if (isMobileDevice()) {
+    return null;
+  }
   
   useEffect(() => {
     const cursor = cursorRef.current;
@@ -15,15 +43,15 @@ export const CustomCursor = () => {
       gsap.to(cursor, {
         x: e.clientX,
         y: e.clientY,
-        duration: 0.1,
-        ease: 'power2.out'
+        duration: 0.03,
+        ease: 'power1.out'
       });
-      
+
       gsap.to(cursorGlow, {
         x: e.clientX,
         y: e.clientY,
-        duration: 0.3,
-        ease: 'power2.out'
+        duration: 0.08,
+        ease: 'power1.out'
       });
     };
 
@@ -34,17 +62,18 @@ export const CustomCursor = () => {
         target.tagName === 'A' ||
         target.closest('button') ||
         target.closest('a') ||
-        target.classList.contains('cursor-hover')
+        target.classList.contains('cursor-hover') ||
+        target.closest('[data-cursor-hover]')
       ) {
         setIsHovering(true);
         gsap.to(cursor, {
           scale: 0.5,
-          duration: 0.3,
+          duration: 0.25,
           ease: 'power2.out'
         });
         gsap.to(cursorGlow, {
           scale: 1.5,
-          duration: 0.3,
+          duration: 0.25,
           ease: 'power2.out'
         });
       }
@@ -57,23 +86,28 @@ export const CustomCursor = () => {
         target.tagName === 'A' ||
         target.closest('button') ||
         target.closest('a') ||
-        target.classList.contains('cursor-hover')
+        target.classList.contains('cursor-hover') ||
+        target.closest('[data-cursor-hover]')
       ) {
         setIsHovering(false);
         gsap.to(cursor, {
           scale: 1,
-          duration: 0.3,
+          duration: 0.25,
           ease: 'power2.out'
         });
         gsap.to(cursorGlow, {
           scale: 1,
-          duration: 0.3,
+          duration: 0.25,
           ease: 'power2.out'
         });
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
+    // Add performance optimization
+    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+    gsap.set(cursorGlow, { xPercent: -50, yPercent: -50 });
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
     document.addEventListener('mouseenter', onMouseEnter, true);
     document.addEventListener('mouseleave', onMouseLeave, true);
 

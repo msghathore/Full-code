@@ -20,13 +20,20 @@ export type Database = {
           appointment_time: string
           created_at: string | null
           deposit_amount: number | null
+          description: string | null
+          email: string | null
+          full_name: string | null
           id: string
+          location: string | null
           notes: string | null
           payment_intent_id: string | null
           payment_status: string | null
+          phone: string | null
           service_id: string | null
+          staff_id: string | null
           status: string | null
           total_amount: number | null
+          type: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -35,13 +42,20 @@ export type Database = {
           appointment_time: string
           created_at?: string | null
           deposit_amount?: number | null
+          description?: string | null
+          email?: string | null
+          full_name?: string | null
           id?: string
+          location?: string | null
           notes?: string | null
           payment_intent_id?: string | null
           payment_status?: string | null
+          phone?: string | null
           service_id?: string | null
+          staff_id?: string | null
           status?: string | null
           total_amount?: number | null
+          type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -50,13 +64,20 @@ export type Database = {
           appointment_time?: string
           created_at?: string | null
           deposit_amount?: number | null
+          description?: string | null
+          email?: string | null
+          full_name?: string | null
           id?: string
+          location?: string | null
           notes?: string | null
           payment_intent_id?: string | null
           payment_status?: string | null
+          phone?: string | null
           service_id?: string | null
+          staff_id?: string | null
           status?: string | null
           total_amount?: number | null
+          type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -66,6 +87,13 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
             referencedColumns: ["id"]
           },
         ]
@@ -370,10 +398,10 @@ export type Database = {
           price: number
         }
         Insert: {
-          category: string
+          category?: string
           created_at?: string | null
           description?: string | null
-          duration_minutes: number
+          duration_minutes?: number
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -392,6 +420,115 @@ export type Database = {
           price?: number
         }
         Relationships: []
+      }
+      staff: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          specialty: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          specialty?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          specialty?: string | null
+        }
+        Relationships: []
+      }
+      staff_availability: {
+        Row: {
+          created_at: string | null
+          date: string
+          end_time: string
+          id: string
+          is_available: boolean | null
+          staff_id: string
+          start_time: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          end_time: string
+          id?: string
+          is_available?: boolean | null
+          staff_id: string
+          start_time: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          end_time?: string
+          id?: string
+          is_available?: boolean | null
+          staff_id?: string
+          start_time?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_availability_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waitlists: {
+        Row: {
+          created_at: string | null
+          customer_name: string
+          customer_phone: string
+          date: string
+          id: string
+          notes: string | null
+          staff_id: string
+          start_time: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_name: string
+          customer_phone: string
+          date: string
+          id?: string
+          notes?: string | null
+          staff_id: string
+          start_time: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_name?: string
+          customer_phone?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          staff_id?: string
+          start_time?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlists_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

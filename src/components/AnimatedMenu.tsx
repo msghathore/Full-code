@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 interface AnimatedMenuProps {
   isOpen: boolean;
@@ -8,11 +9,88 @@ interface AnimatedMenuProps {
 }
 
 const menuItems = [
-  { name: 'SERVICES', href: '/services', image: '/images/services-menu.jpg' },
-  { name: 'BOOKING', href: '/booking', image: '/images/booking-menu.jpg' },
-  { name: 'SHOP', href: '/shop', image: '/images/shop-menu.jpg' },
-  { name: 'ABOUT', href: '/about', image: '/images/about-menu.jpg' },
-  { name: 'CONTACT', href: '/contact', image: '/images/contact-menu.jpg' },
+  {
+    name: 'SERVICES',
+    href: '/services',
+    image: '/images/services-menu.jpg',
+    subItems: [
+      { name: 'Hair Services', href: '/services#hair', image: '/images/hair-service.jpg' },
+      { name: 'Nail Care', href: '/services#nails', image: '/images/nails-service.jpg' },
+      { name: 'Facial Treatments', href: '/services#facial', image: '/images/skin-service.jpg' },
+      { name: 'Massage Therapy', href: '/services#massage', image: '/images/massage-service.jpg' },
+      { name: 'Tattoo Art', href: '/services#tattoo', image: '/images/tattoo-service.jpg' },
+      { name: 'Piercing', href: '/services#piercing', image: '/images/piercing-service.jpg' },
+      { name: 'Skin Care', href: '/services#skincare', image: '/images/skin-service.jpg' },
+      { name: 'Beauty Consultation', href: '/services#consultation', image: '/images/skin-service.jpg' }
+    ]
+  },
+  {
+    name: 'BOOKING',
+    href: '/booking',
+    image: '/images/booking-menu.jpg',
+    subItems: [
+      { name: 'Schedule Appointment', href: '/booking#schedule', image: '/images/booking-menu.jpg' },
+      { name: 'View Availability', href: '/booking#availability', image: '/images/booking-menu.jpg' },
+      { name: 'Cancel/Reschedule', href: '/booking#manage', image: '/images/booking-menu.jpg' },
+      { name: 'Service Packages', href: '/booking#packages', image: '/images/booking-menu.jpg' }
+    ]
+  },
+  {
+    name: 'SHOP',
+    href: '/shop',
+    image: '/images/shop-menu.jpg',
+    subItems: [
+      { name: 'Hair Products', href: '/shop#hair-products', image: '/images/product-1.jpg' },
+      { name: 'Skincare', href: '/shop#skincare', image: '/images/product-2.jpg' },
+      { name: 'Nail Polish', href: '/shop#nail-polish', image: '/images/product-3.jpg' },
+      { name: 'Beauty Tools', href: '/shop#tools', image: '/images/product-4.jpg' },
+      { name: 'Gift Cards', href: '/shop#gift-cards', image: '/images/product-5.jpg' }
+    ]
+  },
+  {
+    name: 'BLOG',
+    href: '/blog',
+    image: '/images/blog-1.jpg',
+    subItems: [
+      { name: 'Beauty Tips', href: '/blog#tips', image: '/images/blog-1.jpg' },
+      { name: 'Style Guides', href: '/blog#guides', image: '/images/blog-2.jpg' },
+      { name: 'Product Reviews', href: '/blog#reviews', image: '/images/blog-3.jpg' },
+      { name: 'Behind the Scenes', href: '/blog#behind-scenes', image: '/images/blog-1.jpg' }
+    ]
+  },
+  {
+    name: 'COMMUNITY',
+    href: '/community',
+    image: '/images/client-1.jpg',
+    subItems: [
+      { name: 'Customer Gallery', href: '/community#gallery', image: '/images/client-1.jpg' },
+      { name: 'Testimonials', href: '/community#testimonials', image: '/images/client-2.jpg' },
+      { name: 'Events', href: '/community#events', image: '/images/client-3.jpg' },
+      { name: 'Forum', href: '/community#forum', image: '/images/client-4.jpg' }
+    ]
+  },
+  {
+    name: 'ABOUT',
+    href: '/about',
+    image: '/images/about-menu.jpg',
+    subItems: [
+      { name: 'Our Story', href: '/about#story', image: '/images/about-menu.jpg' },
+      { name: 'Team', href: '/about#team', image: '/images/about-menu.jpg' },
+      { name: 'Values', href: '/about#values', image: '/images/about-menu.jpg' },
+      { name: 'Careers', href: '/about#careers', image: '/images/about-menu.jpg' }
+    ]
+  },
+  {
+    name: 'CONTACT',
+    href: '/contact',
+    image: '/images/contact-menu.jpg',
+    subItems: [
+      { name: 'Location & Hours', href: '/contact#location', image: '/images/contact-menu.jpg' },
+      { name: 'Get Directions', href: '/contact#directions', image: '/images/contact-menu.jpg' },
+      { name: 'Call Us', href: '/contact#phone', image: '/images/contact-menu.jpg' },
+      { name: 'FAQ', href: '/contact#faq', image: '/images/contact-menu.jpg' }
+    ]
+  }
 ];
 
 export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
@@ -26,24 +104,23 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
 
     const leftPanel = leftPanelRef.current;
     const rightPanel = rightPanelRef.current;
-    const menuTexts = leftPanel.querySelectorAll('.menu-item-text');
+    const menuTexts = leftPanel.querySelectorAll('h2');
 
     if (isOpen) {
-      gsap.to(menuRef.current, {
-        opacity: 1,
-        duration: 0,
-        pointerEvents: 'all'
-      });
+      // Set menu visible
+      gsap.set(menuRef.current, { opacity: 1, pointerEvents: 'all' });
 
-      gsap.fromTo(leftPanel, 
+      // Slide in left panel
+      gsap.fromTo(leftPanel,
         { x: '-100%' },
-        { 
-          x: '0%', 
-          duration: 0.8, 
+        {
+          x: '0%',
+          duration: 0.8,
           ease: 'power3.out'
         }
       );
 
+      // Animate menu texts
       gsap.fromTo(menuTexts,
         { x: -50, opacity: 0 },
         {
@@ -56,6 +133,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
         }
       );
 
+      // Fade in right panel
       gsap.fromTo(rightPanel,
         { opacity: 0 },
         {
@@ -66,9 +144,25 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
         }
       );
     } else {
-      gsap.to([leftPanel, rightPanel], {
+      // Slide out left panel
+      gsap.to(leftPanel, {
+        x: '-100%',
+        duration: 0.5,
+        ease: 'power3.in'
+      });
+
+      // Fade out right panel
+      gsap.to(rightPanel, {
         opacity: 0,
         duration: 0.3,
+        ease: 'power2.in'
+      });
+
+      // Hide menu after animations complete
+      gsap.to(menuRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        delay: 0.2,
         ease: 'power2.in',
         onComplete: () => {
           gsap.set(menuRef.current, { pointerEvents: 'none' });
@@ -77,62 +171,174 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  // Handle mouse leave from the entire menu area
+  const handleMenuMouseLeave = () => {
+    setTimeout(() => {
+      setHoveredItem(null);
+    }, 100);
+  };
 
   return (
     <div
       ref={menuRef}
-      className="fixed inset-0 z-[999] opacity-0 pointer-events-none"
-      style={{ pointerEvents: isOpen ? 'all' : 'none' }}
+      className="menu-overlay fixed w-full h-screen z-[1001] opacity-0 pointer-events-none"
+      style={{
+        pointerEvents: isOpen ? 'all' : 'none'
+      }}
+      onMouseLeave={handleMenuMouseLeave}
     >
       {/* Left Panel - Menu Items */}
       <div
         ref={leftPanelRef}
-        className="absolute left-0 top-0 h-full w-2/5 border-r border-white/10"
-        style={{ 
+        className="absolute left-0 top-0 h-full w-full md:w-1/3 border-r border-white/10 animate-fade-in relative"
+        style={{
           transform: 'translateX(-100%)',
-          background: 'rgba(0, 0, 0, 0.85)',
+          background: 'rgba(0, 0, 0, 0.1)',
           backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)'
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.2)'
         }}
       >
-        <div className="flex flex-col justify-center h-full px-16 space-y-8">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 md:top-8 md:right-8 text-white hover:text-gray-300 transition-colors cursor-pointer z-10 p-2 md:p-2"
+          aria-label="Close menu"
+        >
+          <X size={20} className="md:w-6 md:h-6" />
+        </button>
+        <div
+          className="flex flex-col justify-center h-full px-4 py-20 md:px-16 md:py-0 space-y-3 md:space-y-8"
+          onMouseEnter={() => setHoveredItem(null)}
+        >
           {menuItems.map((item, index) => (
-            <Link
+            <div
               key={item.name}
-              to={item.href}
               className="menu-item-text group"
               onMouseEnter={() => setHoveredItem(item.name)}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={onClose}
+              onClick={() => setHoveredItem(hoveredItem === item.name ? null : item.name)}
             >
-              <h2 className="text-5xl font-serif text-white hover:luxury-glow transition-all duration-500 cursor-hover">
-                {item.name}
-                <span className="inline-block ml-4 text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  →
-                </span>
-              </h2>
-            </Link>
+              <Link
+                to={item.href}
+                className="block py-2 md:py-0"
+                onClick={onClose}
+              >
+                <h2 className="text-lg sm:text-xl md:text-5xl font-serif text-white hover:luxury-glow transition-all duration-500 cursor-hover leading-tight">
+                  {item.name}
+                </h2>
+              </Link>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Right Panel - Image Preview */}
+      {/* Right Panel - Service Cards */}
       <div
         ref={rightPanelRef}
-        className="absolute right-0 top-0 h-full w-1/2 bg-black/80 flex items-center justify-center overflow-hidden"
+        className="absolute right-0 top-0 h-full w-full md:w-2/3 overflow-hidden hidden md:block"
+        style={{
+          background: 'rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderLeft: '1px solid rgba(255, 255, 255, 0.2)'
+        }}
+        onMouseEnter={() => {
+          // Keep the hover state active when mouse enters right panel
+          // Don't clear hoveredItem here
+        }}
+        onMouseLeave={handleMenuMouseLeave}
       >
         {hoveredItem && (
-          <div className="relative w-full h-full">
-            <img
-              src={menuItems.find(item => item.name === hoveredItem)?.image}
-              alt={hoveredItem}
-              className="w-full h-full object-cover opacity-70 image-hover-glow"
-              style={{
-                animation: 'fadeIn 0.5s ease-out'
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="flex flex-col h-full p-4 md:p-8">
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
+                {menuItems.find(item => item.name === hoveredItem)?.subItems.map((subItem, index) => (
+                  <div
+                    key={subItem.name}
+                    className="card-item transform translate-y-4 opacity-0"
+                    style={{
+                      animationDelay: `${index * 0.1}s`,
+                      animation: 'slideInFromBottom 0.6s ease-out forwards'
+                    }}
+                  >
+                    <Link
+                      to={subItem.href}
+                      onClick={onClose}
+                      className="block w-full h-28 sm:h-32 md:h-44 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-xl md:rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 group cursor-pointer overflow-hidden"
+                      style={{
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 0 0 0 rgba(255, 255, 255, 0)',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      <div className="relative w-full h-16 sm:h-20 md:h-28 overflow-hidden rounded-t-xl md:rounded-t-2xl">
+                        <img
+                          src={subItem.image}
+                          alt={subItem.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      </div>
+                      <div className="p-2 md:p-3 text-center">
+                        <h3 className="text-white text-xs sm:text-sm md:text-sm font-medium group-hover:text-white transition-colors duration-300 leading-tight">
+                          {subItem.name}
+                        </h3>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Submenu Panel */}
+      <div
+        className="absolute left-0 top-0 h-full w-full md:hidden bg-black/80 backdrop-blur-xl border-r border-white/10"
+        style={{
+          transform: 'translateX(100%)',
+          transition: 'transform 0.3s ease'
+        }}
+      >
+        {hoveredItem && (
+          <div className="flex flex-col h-full p-4 pt-16">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-serif text-white luxury-glow">{hoveredItem}</h3>
+              <button
+                onClick={() => setHoveredItem(null)}
+                className="text-white hover:text-gray-300 p-2 rounded-full hover:bg-white/10 transition-colors"
+                aria-label="Back to main menu"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-3">
+                {menuItems.find(item => item.name === hoveredItem)?.subItems.map((subItem, index) => (
+                  <Link
+                    key={subItem.name}
+                    to={subItem.href}
+                    onClick={onClose}
+                    className="flex items-center space-x-3 p-3 sm:p-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg group min-h-[60px]"
+                  >
+                    <img
+                      src={subItem.image}
+                      alt={subItem.name}
+                      className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md sm:rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-white font-medium group-hover:text-white transition-colors duration-300 text-sm sm:text-base leading-tight truncate">
+                        {subItem.name}
+                      </h4>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -62,6 +62,18 @@ export const HeroLogo = () => {
     });
   }, []);
   return <Link to="/" className="cursor-hover">
-      
+      <div ref={logoRef} className="text-center transition-all duration-500">
+        {/* Large Hero Logo - 4x Bigger */}
+        <div ref={mainTextRef} className="text-8xl sm:text-9xl md:text-[12rem] lg:text-[15rem] font-serif font-light text-white logo-main luxury-glow animate-glow-pulse">
+          <span className="text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer tracking-wider">
+            ZAVIRA
+          </span>
+        </div>
+        
+        {/* Subtitle - Fades out on scroll */}
+        <div ref={subTextRef} className="text-sm sm:text-lg md:text-xl font-light text-white/80 mt-2 tracking-widest">
+          SALON AND SPA
+        </div>
+      </div>
     </Link>;
 };

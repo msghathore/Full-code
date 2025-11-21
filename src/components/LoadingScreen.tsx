@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
-import { gsap } from 'gsap';
 
 export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setTimeout(onComplete, 500);
-      }
-    });
-
     // Simulate loading
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
+          setTimeout(onComplete, 0);
           return 100;
         }
         return prev + Math.random() * 15;
@@ -26,7 +20,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
       <div className="text-center">
         <div
           className="text-7xl md:text-9xl font-serif text-white mb-8 luxury-glow"

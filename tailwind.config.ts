@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -60,11 +61,22 @@ export default {
         luxury: {
           glow: "hsl(var(--luxury-glow))",
           text: "hsl(var(--luxury-text))",
+        },
+        trust: {
+          blue: "hsl(var(--trust-blue))",
+        },
+        elegant: {
+          purple: "hsl(var(--elegant-purple))",
+        },
+        premium: {
+          gray: "hsl(var(--premium-gray))",
+          gold: "hsl(var(--luxury-gold))",
         }
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'serif'],
         sans: ['Montserrat', 'sans-serif'],
+        script: ['Playfair Display', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -95,5 +107,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

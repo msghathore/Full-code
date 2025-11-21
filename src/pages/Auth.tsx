@@ -1,140 +1,196 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CustomCursor } from '@/components/CustomCursor';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { SignIn, SignUp, useUser } from '@clerk/clerk-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const location = useLocation();
+  const isSignUpPath = location.pathname === '/auth/sign-up';
+  const [activeTab, setActiveTab] = useState(isSignUpPath ? 'sign-up' : 'sign-in');
+  const [birthday, setBirthday] = useState('');
+  const [country, setCountry] = useState('USA');
+  const [city, setCity] = useState('');
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [showProfileCompletion, setShowProfileCompletion] = useState(false);
+  const [isOAuthCallback, setIsOAuthCallback] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUser();
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    if (value === 'sign-in') {
+      navigate('/auth');
+    } else {
+      navigate('/auth/sign-up');
+    }
+  };
 
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully logged in.",
-        });
-        navigate('/');
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-            },
-            emailRedirectTo: `${window.location.origin}/`,
-          },
-        });
-        if (error) throw error;
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
+  // List of major cities in USA and Canada
+  const citiesByCountry = {
+    'USA': [
+      'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix',
+      'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+      'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'San Francisco',
+      'Charlotte', 'Indianapolis', 'Seattle', 'Denver', 'Washington',
+      'Boston', 'Nashville', 'Detroit', 'Portland', 'Las Vegas',
+      'Memphis', 'Louisville', 'Baltimore', 'Milwaukee', 'Albuquerque'
+    ],
+    'Canada': [
+      'Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton',
+      'Ottawa', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener',
+      'London', 'St. Catharines', 'Halifax', 'Oshawa', 'Victoria',
+      'Windsor', 'Saskatoon', 'Regina', 'St. John\'s', 'Kelowna',
+      'Barrie', 'Sherbrooke', 'Guelph', 'Abbotsford', 'Trois-Rivières',
+      'Kingston', 'Moncton', 'White Rock', 'Nanaimo', 'Brantford'
+    ]
+  };
+
+  // Update cities list when country changes
+  React.useEffect(() => {
+    setCity(''); // Reset city when country changes
+    setCityDropdownOpen(false); // Close dropdown when country changes
+  }, [country]);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cityDropdownOpen && !(event.target as Element).closest('.city-dropdown')) {
+        setCityDropdownOpen(false);
       }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [cityDropdownOpen]);
+
+  // Check if this is an OAuth callback or email signup callback
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    
+    // Set loading state initially
+    if (params.get('provider') || params.get('callback') === 'true') {
+      setIsLoading(true);
+    }
+    
+    // Handle both OAuth and email signup callbacks
+    if (user && (params.get('provider') || params.get('callback') === 'true')) {
+      setIsOAuthCallback(true);
+      
+      // Check if profile completion is needed
+      if (!user.unsafeMetadata?.birthday || !user.unsafeMetadata?.country || !user.unsafeMetadata?.city) {
+        setShowProfileCompletion(true);
+        setIsLoading(false);
+      } else {
+        // If profile is already complete, redirect to dashboard
+        setIsLoading(false);
+        navigate('/dashboard');
+      }
+    }
+  }, [user, location.search, navigate]);
+
+  // Handle saving custom user data
+  const handleSaveCustomData = async () => {
+    setIsLoading(true);
+    try {
+      // Use Clerk's update method with custom fields in metadata
+      await user?.update({
+        unsafeMetadata: {
+          birthday,
+          country,
+          city
+        }
       });
-    } finally {
-      setLoading(false);
+      console.log('User attributes saved successfully');
+      // Redirect to the dashboard after successful update
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error saving user attributes:', error);
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-black">
-      <CustomCursor />
       <Navigation />
       
-      <div className="pt-32 pb-24 px-4 md:px-8">
-        <div className="container mx-auto max-w-md">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif luxury-glow mb-4">
-              {isLogin ? 'LOGIN' : 'SIGN UP'}
-            </h1>
-            <p className="text-muted-foreground text-base md:text-lg tracking-wider">
-              {isLogin ? 'Access your account' : 'Create your account'}
-            </p>
-          </div>
-
-          <div className="frosted-glass border border-white/10 rounded-lg p-6 md:p-8">
-            <form onSubmit={handleAuth} className="space-y-6">
-              {!isLogin && (
-                <div>
-                  <label className="text-sm text-white/70 mb-2 block tracking-wider">FULL NAME</label>
-                  <Input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Your name"
-                    className="bg-black/50 border-white/20 text-white placeholder:text-white/30"
-                    required
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="text-sm text-white/70 mb-2 block tracking-wider">EMAIL</label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="bg-black/50 border-white/20 text-white placeholder:text-white/30"
-                  required
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-24 space-y-12">
+        <h1 className="text-white text-4xl font-serif text-center luxury-glow">
+          Zavira Authentication
+        </h1>
+        
+        <div className="w-full max-w-md">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid grid-cols-2 w-full mb-8 bg-transparent">
+              <TabsTrigger
+                value="sign-in"
+                className="bg-transparent text-white border-b border-white/20 data-[state=active]:border-white text-lg"
+              >
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger
+                value="sign-up"
+                className="bg-transparent text-white border-b border-white/20 data-[state=active]:border-white text-lg"
+              >
+                Sign Up
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="sign-in">
+              <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg">
+                <SignIn
+                  routing="path"
+                  path="/auth"
+                  signUpUrl="/auth/sign-up"
+                  appearance={{
+                    elements: {
+                      formButtonPrimary: 'w-full bg-black text-white hover:bg-gray-800 rounded-md py-3 text-lg font-medium',
+                      formField: 'mb-6',
+                      formFieldLabel: 'text-black text-lg font-medium mb-2',
+                      formFieldInput: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:ring-gray-500 text-lg py-3',
+                      footer: 'hidden',
+                      card: 'bg-white shadow-none p-0',
+                      header: 'hidden',
+                      socialButtonsBlockButton: 'w-full bg-transparent border border-gray-300 text-black hover:bg-gray-100 rounded-md py-3',
+                      socialButtonsBlockButtonText: 'text-black font-medium text-lg',
+                      socialButtonsBlockButtonIcon: 'text-black',
+                      socialButtonsBlockButtonIconContainer: 'text-black'
+                    }
+                  }}
                 />
               </div>
-
-              <div>
-                <label className="text-sm text-white/70 mb-2 block tracking-wider">PASSWORD</label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-black/50 border-white/20 text-white placeholder:text-white/30"
-                  required
-                  minLength={6}
+            </TabsContent>
+            
+            <TabsContent value="sign-up">
+              <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg space-y-8">
+                <SignUp
+                  routing="path"
+                  path="/auth/sign-up"
+                  signInUrl="/auth"
+                  redirectUrl="/profile-completion"
+                  appearance={{
+                    elements: {
+                      formButtonPrimary: 'w-full bg-black text-white hover:bg-gray-800 rounded-md py-3 text-lg font-medium',
+                      formField: 'mb-6',
+                      formFieldLabel: 'text-black text-lg font-medium mb-2',
+                      formFieldInput: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:ring-gray-500 text-lg py-3',
+                      footer: 'hidden',
+                      card: 'bg-white shadow-none p-0',
+                      header: 'hidden',
+                      socialButtonsBlockButton: 'w-full bg-transparent border border-gray-300 text-black hover:bg-gray-100 rounded-md py-3',
+                      socialButtonsBlockButtonText: 'text-black font-medium text-lg',
+                      socialButtonsBlockButtonIcon: 'text-black',
+                      socialButtonsBlockButtonIconContainer: 'text-black'
+                    }
+                  }}
                 />
               </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-white text-black hover:bg-white/90 font-serif text-lg tracking-wider py-6"
-              >
-                {loading ? 'LOADING...' : isLogin ? 'LOGIN' : 'SIGN UP'}
-              </Button>
-
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="w-full text-center text-white/70 hover:text-white transition-colors text-sm tracking-wider"
-              >
-                {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Login'}
-              </button>
-            </form>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 

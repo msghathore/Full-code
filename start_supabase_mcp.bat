@@ -1,0 +1,10 @@
+@echo off
+echo Setting environment variables...
+setx SUPABASE_URL "https://stppkvkcjsyusxwtbaej.supabase.co"
+setx SUPABASE_ANON_KEY "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cHBrdmtjanN5dXN4d3RiYWVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjk4MTUsImV4cCI6MjA3ODgwNTgxNX0.sH9es8xu2tZlkhQrfaPcaYTAC8t6CjrI7LL9BKfT-v0"
+setx SUPABASE_SERVICE_ROLE_KEY "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cHBrdmtjanN5dXN4d3RiYWVqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzIyOTgxNSwiZXhwIjoyMDc4ODA1ODE1fQ.aJkalSFfhhYse4YwSLR6Dzl58Dpycs8QHEKCFmAZ4vw"
+
+echo Starting Supabase MCP server...
+node ../../../AppData/Roaming/Roo-Code/MCP/supabase-zavira/src/index.ts
+
+pause

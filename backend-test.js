@@ -1,0 +1,604 @@
+/**
+ * Staff Scheduling System Backend Test Suite
+ * Tests all API endpoints and functionality
+ */
+
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+// Test configuration
+const testConfig = {
+  baseUrl: `${SUPABASE_URL}/functions/v1`,
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+  }
+};
+
+// Test data
+const testStaff = {
+  username: 'testuser',
+  password: 'testpassword',
+  first_name: 'Test',
+  last_name: 'User',
+  role: 'admin',
+  access_level: 'admin'
+};
+
+const testCustomer = {
+  first_name: 'Test',
+  last_name: 'Customer',
+  email: 'testcustomer@example.com',
+  phone: '+1234567890'
+};
+
+const testService = {
+  name: 'Test Service',
+  description: 'A test service',
+  duration: 60,
+  price: 100,
+  color: 'blue'
+};
+
+const testAppointment = {
+  total_amount: 100,
+  notes: 'Test appointment',
+  status: 'confirmed'
+};
+
+/**
+ * Helper function to make API requests
+ */
+async function apiRequest(endpoint: string, method: string = 'GET', data: any = null, params: Record<string, string> | null = null) {
+  let url = `${testConfig.baseUrl}/${endpoint}`;
+  
+  // Add query parameters if provided
+  if (params) {
+    const queryParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      queryParams.append(key, value);
+    });
+    url += `?${queryParams.toString()}`;
+  }
+  
+  const options: RequestInit = {
+    method,
+    headers: testConfig.headers
+  };
+
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+
+  try {
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    
+    return {
+      status: response.status,
+      data: responseData,
+      success: response.ok
+    };
+  } catch (error: any) {
+    console.error('API request error:', error);
+    return {
+      status: 500,
+      data: { error: error.message },
+      success: false
+    };
+  }
+}
+
+/**
+ * Authentication Tests
+ */
+async function testAuthentication(): Promise<boolean> {
+  console.log('Testing Authentication...');
+  
+  // Test staff login
+  const loginResult = await apiRequest('staff-auth', 'POST', {
+    username: testStaff.username,
+    password: testStaff.password
+  });
+  
+  console.log('Staff Login:', loginResult);
+  
+  if (loginResult.success && loginResult.data.access_token) {
+    // Update test config with auth token
+    testConfig.headers['Authorization'] = `Bearer ${loginResult.data.access_token}`;
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Staff Management Tests
+ */
+async function testStaffManagement(): Promise<boolean> {
+  console.log('Testing Staff Management...');
+  
+  // Test create staff
+  const createResult = await apiRequest('staff-management', 'POST', testStaff);
+  console.log('Create Staff:', createResult);
+  
+  if (!createResult.success) {
+    return false;
+  }
+  
+  const staffId = createResult.data.id;
+  
+  // Test get staff
+  const getResult = await apiRequest('staff-management', 'GET');
+  console.log('Get Staff:', getResult);
+  
+  if (!getResult.success) {
+    return false;
+  }
+  
+  // Test update staff
+  const updateResult = await apiRequest('staff-management', 'PUT', {
+    id: staffId,
+    first_name: 'Updated',
+    last_name: 'Staff'
+  });
+  console.log('Update Staff:', updateResult);
+  
+  if (!updateResult.success) {
+    return false;
+  }
+  
+  // Test delete staff
+  const deleteResult = await apiRequest('staff-management', 'DELETE', {
+    id: staffId
+  });
+  console.log('Delete Staff:', deleteResult);
+  
+  return deleteResult.success;
+}
+
+/**
+ * Customer Management Tests
+ */
+async function testCustomerManagement(): Promise<boolean> {
+  console.log('Testing Customer Management...');
+  
+  // Test create customer
+  const createResult = await apiRequest('customer-management', 'POST', testCustomer);
+  console.log('Create Customer:', createResult);
+  
+  if (!createResult.success) {
+    return false;
+  }
+  
+  const customerId = createResult.data.id;
+  
+  // Test get customers
+  const getResult = await apiRequest('customer-management', 'GET');
+  console.log('Get Customers:', getResult);
+  
+  if (!getResult.success) {
+    return false;
+  }
+  
+  // Test update customer
+  const updateResult = await apiRequest('customer-management', 'PUT', {
+    id: customerId,
+    phone: '+9876543210'
+  });
+  console.log('Update Customer:', updateResult);
+  
+  if (!updateResult.success) {
+    return false;
+  }
+  
+  // Test delete customer
+  const deleteResult = await apiRequest('customer-management', 'DELETE', {
+    id: customerId
+  });
+  console.log('Delete Customer:', deleteResult);
+  
+  return deleteResult.success;
+}
+
+/**
+ * Service Management Tests
+ */
+async function testServiceManagement(): Promise<boolean> {
+  console.log('Testing Service Management...');
+  
+  // Test create service
+  const createResult = await apiRequest('service-management', 'POST', testService);
+  console.log('Create Service:', createResult);
+  
+  if (!createResult.success) {
+    return false;
+  }
+  
+  const serviceId = createResult.data.id;
+  
+  // Test get services
+  const getResult = await apiRequest('service-management', 'GET');
+  console.log('Get Services:', getResult);
+  
+  if (!getResult.success) {
+    return false;
+  }
+  
+  // Test update service
+  const updateResult = await apiRequest('service-management', 'PUT', {
+    id: serviceId,
+    price: 120
+  });
+  console.log('Update Service:', updateResult);
+  
+  if (!updateResult.success) {
+    return false;
+  }
+  
+  // Test delete service
+  const deleteResult = await apiRequest('service-management', 'DELETE', {
+    id: serviceId
+  });
+  console.log('Delete Service:', deleteResult);
+  
+  return deleteResult.success;
+}
+
+/**
+ * Appointment Management Tests
+ */
+async function testAppointmentManagement(): Promise<boolean> {
+  console.log('Testing Appointment Management...');
+  
+  // First, create test data
+  const [staffResult, customerResult, serviceResult] = await Promise.all([
+    apiRequest('staff-management', 'POST', testStaff),
+    apiRequest('customer-management', 'POST', testCustomer),
+    apiRequest('service-management', 'POST', testService)
+  ]);
+  
+  if (!staffResult.success || !customerResult.success || !serviceResult.success) {
+    console.log('Failed to create test data for appointments');
+    return false;
+  }
+  
+  const staffId = staffResult.data.id;
+  const customerId = customerResult.data.id;
+  const serviceId = serviceResult.data.id;
+  
+  // Set today as appointment date
+  const today = new Date().toISOString().split('T')[0];
+  const appointmentTime = '10:00:00';
+  
+  // Test create appointment
+  const createResult = await apiRequest('appointment-management', 'POST', {
+    ...testAppointment,
+    customer_id: customerId,
+    staff_id: staffId,
+    service_id: serviceId,
+    appointment_date: today,
+    appointment_time: appointmentTime
+  });
+  console.log('Create Appointment:', createResult);
+  
+  if (!createResult.success) {
+    // Clean up test data
+    await Promise.all([
+      apiRequest('staff-management', 'DELETE', { id: staffId }),
+      apiRequest('customer-management', 'DELETE', { id: customerId }),
+      apiRequest('service-management', 'DELETE', { id: serviceId })
+    ]);
+    return false;
+  }
+  
+  const appointmentId = createResult.data;
+  
+  // Test get appointments
+  const getResult = await apiRequest('appointment-management', 'GET', null, { date: today });
+  console.log('Get Appointments:', getResult);
+  
+  if (!getResult.success) {
+    // Clean up test data
+    await Promise.all([
+      apiRequest('staff-management', 'DELETE', { id: staffId }),
+      apiRequest('customer-management', 'DELETE', { id: customerId }),
+      apiRequest('service-management', 'DELETE', { id: serviceId }),
+      apiRequest('appointment-management', 'DELETE', { id: appointmentId })
+    ]);
+    return false;
+  }
+  
+  // Test update appointment
+  const updateResult = await apiRequest('appointment-management', 'PUT', {
+    id: appointmentId,
+    status: 'in-progress'
+  });
+  console.log('Update Appointment:', updateResult);
+  
+  if (!updateResult.success) {
+    // Clean up test data
+    await Promise.all([
+      apiRequest('staff-management', 'DELETE', { id: staffId }),
+      apiRequest('customer-management', 'DELETE', { id: customerId }),
+      apiRequest('service-management', 'DELETE', { id: serviceId }),
+      apiRequest('appointment-management', 'DELETE', { id: appointmentId })
+    ]);
+    return false;
+  }
+  
+  // Test delete appointment
+  const deleteResult = await apiRequest('appointment-management', 'DELETE', {
+    id: appointmentId
+  });
+  console.log('Delete Appointment:', deleteResult);
+  
+  // Clean up test data
+  await Promise.all([
+    apiRequest('staff-management', 'DELETE', { id: staffId }),
+    apiRequest('customer-management', 'DELETE', { id: customerId }),
+    apiRequest('service-management', 'DELETE', { id: serviceId })
+  ]);
+  
+  return deleteResult.success;
+}
+
+/**
+ * Payment Processing Tests
+ */
+async function testPaymentProcessing(): Promise<boolean> {
+  console.log('Testing Payment Processing...');
+  
+  // First, create test data
+  const [staffResult, customerResult, serviceResult, appointmentResult] = await Promise.all([
+    apiRequest('staff-management', 'POST', testStaff),
+    apiRequest('customer-management', 'POST', testCustomer),
+    apiRequest('service-management', 'POST', testService),
+    // Create a minimal appointment for payment testing
+    apiRequest('appointment-management', 'POST', {
+      ...testAppointment,
+      customer_id: 'temp-customer-id',
+      staff_id: 'temp-staff-id',
+      service_id: 'temp-service-id',
+      appointment_date: new Date().toISOString().split('T')[0],
+      appointment_time: '10:00:00'
+    })
+  ]);
+  
+  if (!staffResult.success || !customerResult.success || !serviceResult.success || !appointmentResult.success) {
+    console.log('Failed to create test data for payments');
+    return false;
+  }
+  
+  const staffId = staffResult.data.id;
+  const customerId = customerResult.data.id;
+  const serviceId = serviceResult.data.id;
+  const appointmentId = appointmentResult.data;
+  
+  // Test create payment intent
+  const paymentResult = await apiRequest('payment-processing', 'POST', {
+    appointmentId,
+    amount: 100,
+    customerId
+  });
+  console.log('Create Payment:', paymentResult);
+  
+  // Clean up test data
+  await Promise.all([
+    apiRequest('staff-management', 'DELETE', { id: staffId }),
+    apiRequest('customer-management', 'DELETE', { id: customerId }),
+    apiRequest('service-management', 'DELETE', { id: serviceId }),
+    apiRequest('appointment-management', 'DELETE', { id: appointmentId })
+  ]);
+  
+  return paymentResult.success && paymentResult.data.clientSecret;
+}
+
+/**
+ * Email Notifications Tests
+ */
+async function testEmailNotifications(): Promise<boolean> {
+  console.log('Testing Email Notifications...');
+  
+  // Create a test appointment for notification
+  const [staffResult, customerResult, serviceResult, appointmentResult] = await Promise.all([
+    apiRequest('staff-management', 'POST', testStaff),
+    apiRequest('customer-management', 'POST', testCustomer),
+    apiRequest('service-management', 'POST', testService),
+    apiRequest('appointment-management', 'POST', {
+      ...testAppointment,
+      customer_id: 'temp-customer-id',
+      staff_id: 'temp-staff-id',
+      service_id: 'temp-service-id',
+      appointment_date: new Date().toISOString().split('T')[0],
+      appointment_time: '10:00:00'
+    })
+  ]);
+  
+  if (!staffResult.success || !customerResult.success || !serviceResult.success || !appointmentResult.success) {
+    console.log('Failed to create test data for notifications');
+    return false;
+  }
+  
+  const staffId = staffResult.data.id;
+  const customerId = customerResult.data.id;
+  const serviceId = serviceResult.data.id;
+  const appointmentId = appointmentResult.data;
+  
+  // Update the appointment with real IDs
+  await apiRequest('appointment-management', 'PUT', {
+    id: appointmentId,
+    customer_id: customerId,
+    staff_id: staffId,
+    service_id: serviceId
+  });
+  
+  // Test send confirmation email
+  const confirmationResult = await apiRequest('email-notifications', 'POST', {
+    appointmentId,
+    type: 'confirmation'
+  });
+  console.log('Send Confirmation Email:', confirmationResult);
+  
+  // Test send reminder email
+  const reminderResult = await apiRequest('email-notifications', 'POST', {
+    appointmentId,
+    type: 'reminder'
+  });
+  console.log('Send Reminder Email:', reminderResult);
+  
+  // Test send payment receipt
+  const paymentResult = await apiRequest('email-notifications', 'POST', {
+    appointmentId,
+    type: 'payment'
+  });
+  console.log('Send Payment Receipt:', paymentResult);
+  
+  // Test send cancellation
+  const cancellationResult = await apiRequest('email-notifications', 'POST', {
+    appointmentId,
+    type: 'cancellation'
+  });
+  console.log('Send Cancellation Email:', cancellationResult);
+  
+  // Clean up test data
+  await Promise.all([
+    apiRequest('staff-management', 'DELETE', { id: staffId }),
+    apiRequest('customer-management', 'DELETE', { id: customerId }),
+    apiRequest('service-management', 'DELETE', { id: serviceId }),
+    apiRequest('appointment-management', 'DELETE', { id: appointmentId })
+  ]);
+  
+  return confirmationResult.success && reminderResult.success && paymentResult.success && cancellationResult.success;
+}
+
+/**
+ * Inventory Management Tests
+ */
+async function testInventoryManagement(): Promise<boolean> {
+  console.log('Testing Inventory Management...');
+  
+  const testInventoryItem = {
+    name: 'Test Product',
+    category: 'Test Category',
+    current_stock: 10,
+    min_stock_level: 5,
+    max_stock_level: 20,
+    unit_cost: 10,
+    supplier: 'Test Supplier'
+  };
+  
+  // Test create inventory item
+  const createResult = await apiRequest('inventory-management', 'POST', testInventoryItem);
+  console.log('Create Inventory Item:', createResult);
+  
+  if (!createResult.success) {
+    return false;
+  }
+  
+  const inventoryId = createResult.data.id;
+  
+  // Test get inventory items
+  const getResult = await apiRequest('inventory-management', 'GET');
+  console.log('Get Inventory Items:', getResult);
+  
+  if (!getResult.success) {
+    return false;
+  }
+  
+  // Test update inventory item
+  const updateResult = await apiRequest('inventory-management', 'PUT', {
+    id: inventoryId,
+    current_stock: 3
+  });
+  console.log('Update Inventory Item:', updateResult);
+  
+  if (!updateResult.success) {
+    return false;
+  }
+  
+  // Test delete inventory item
+  const deleteResult = await apiRequest('inventory-management', 'DELETE', {
+    id: inventoryId
+  });
+  console.log('Delete Inventory Item:', deleteResult);
+  
+  return deleteResult.success;
+}
+
+/**
+ * Admin Settings Tests
+ */
+async function testAdminSettings(): Promise<boolean> {
+  console.log('Testing Admin Settings...');
+  
+  // Test get admin settings
+  const getResult = await apiRequest('admin-settings', 'GET');
+  console.log('Get Admin Settings:', getResult);
+  
+  if (!getResult.success) {
+    return false;
+  }
+  
+  // Test update admin settings
+  const updateResult = await apiRequest('admin-settings', 'PUT', {
+    settingCategory: 'businessHours',
+    monday: { open: '08:00', close: '17:00' }
+  });
+  console.log('Update Admin Settings:', updateResult);
+  
+  return updateResult.success;
+}
+
+/**
+ * Main test runner
+ */
+async function runTests(): Promise<void> {
+  console.log('Starting Staff Scheduling System Backend Tests...\n');
+  
+  // Authenticate first
+  const authSuccess = await testAuthentication();
+  if (!authSuccess) {
+    console.log('Authentication failed. Aborting tests.');
+    return;
+  }
+  
+  console.log('\n');
+  
+  // Run all tests
+  const tests = [
+    { name: 'Staff Management', fn: testStaffManagement },
+    { name: 'Customer Management', fn: testCustomerManagement },
+    { name: 'Service Management', fn: testServiceManagement },
+    { name: 'Appointment Management', fn: testAppointmentManagement },
+    { name: 'Payment Processing', fn: testPaymentProcessing },
+    { name: 'Email Notifications', fn: testEmailNotifications },
+    { name: 'Inventory Management', fn: testInventoryManagement },
+    { name: 'Admin Settings', fn: testAdminSettings }
+  ];
+  
+  const results: { name: string; success: boolean }[] = [];
+  
+  for (const test of tests) {
+    try {
+      const result = await test.fn();
+      results.push({ name: test.name, success: result });
+    } catch (error) {
+      console.error(`Error in ${test.name}:`, error);
+      results.push({ name: test.name, success: false });
+    }
+    console.log('\n');
+  }
+  
+  // Print summary
+  console.log('Test Summary:');
+  results.forEach(result => {
+    console.log(`${result.name}: ${result.success ? 'PASSED' : 'FAILED'}`);
+  });
+  
+  const allPassed = results.every(result => result.success);
+  console.log(`\nOverall: ${allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED'}`);
+}
+
+// Run tests
+runTests();

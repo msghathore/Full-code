@@ -1,6 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { CustomCursor } from '@/components/CustomCursor';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 
@@ -13,7 +12,6 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      <CustomCursor />
       <Navigation />
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center">
