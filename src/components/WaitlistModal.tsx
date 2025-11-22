@@ -74,11 +74,18 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
       if (onSuccess) {
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding to waitlist:', error);
+      const errorMessage = error.message || "Failed to add customer to waitlist. Please try again.";
+      
+      // Check if the error object contains a more specific message from the service layer
+      if (error.originalError) {
+        console.error('Original Service Error:', error.originalError);
+      }
+
       toast({
         title: "Error",
-        description: "Failed to add customer to waitlist. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

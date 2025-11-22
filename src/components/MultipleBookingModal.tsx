@@ -10,6 +10,7 @@ import { format, addDays, addWeeks, addMonths, parseISO } from 'date-fns';
 import { CalendarDays, Clock, User, Phone, Mail, Repeat, Calendar } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { createMultipleAppointments, checkMultipleAvailability } from '@/services/slotActionServices';
+import { serviceApi, Service } from '@/services/api';
 
 interface MultipleBookingModalProps {
   isOpen: boolean;
@@ -50,12 +51,34 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
       type: 'weekly' as RecurrencePattern['type'],
       interval: 1,
       occurrences: 4,
-      daysOfWeek: [] as number[]
+      daysOfWeek: [] as number[],
+      endDate: undefined as Date | undefined, // Add endDate here
     }
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availability, setAvailability] = useState<{ timeSlot: string; available: boolean }[]>([]);
   const [showRecurrence, setShowRecurrence] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
+
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      const { data, error } = await serviceApi.getAll();
+      if (error) {
+        toast({
+          title: "Error fetching services",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setServices(data || []);
+        console.log('[DEBUG] Fetched services:', data);
+      }
+    };
+
+    if (isOpen) {
+      fetchServices();
+    }
+  }, [isOpen]);
 
   // Calculate recurrence dates
   const calculateRecurrenceDates = (): Date[] => {
@@ -137,14 +160,31 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
     setIsSubmitting(true);
     
     try {
+      // Find the selected service
+      const selectedService = services.find(s => s.id === formData.service);
+      if (!selectedService) {
+        toast({
+          title: "Service Not Found",
+          description: "The selected service could not be found. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // In a real application, you would create or retrieve the customer here.
+      // For now, we'll use a placeholder or a simple creation logic.
+      // For this fix, we'll assume a customer ID is available or created.
+      const customerId = 'placeholder-customer-id'; // Replace with actual customer creation/retrieval logic
+
       const dates = calculateRecurrenceDates();
       const appointments = dates.map(date => ({
         staffId,
-        customerId: 'temp-customer-id', // In real app, create or get customer first
-        serviceId: 'temp-service-id', // Map service name to ID
+        customerId: customerId,
+        serviceId: selectedService.id,
         date: format(date, 'yyyy-MM-dd'),
         time: selectedTime,
-        amount: 75, // Default amount - map from service
+        amount: selectedService.price,
         notes: formData.notes.trim() || undefined
       }));
 
@@ -318,14 +358,12 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                   <SelectValue placeholder="Choose a service" className="text-sm" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200">
-                  <SelectItem value="hair-cut" className="text-black">Hair Cut & Style - $65</SelectItem>
-                  <SelectItem value="manicure" className="text-black">Manicure - $40</SelectItem>
-                  <SelectItem value="pedicure" className="text-black">Pedicure - $55</SelectItem>
-                  <SelectItem value="facial" className="text-black">Facial Treatment - $120</SelectItem>
-                  <SelectItem value="massage" className="text-black">Massage - $85</SelectItem>
-                  <SelectItem value="hair-color" className="text-black">Hair Color - $150</SelectItem>
-                  <SelectItem value="highlights" className="text-black">Highlights - $180</SelectItem>
-                  <SelectItem value="waxing" className="text-black">Waxing - $60</SelectItem>
+                  {console.log('[DEBUG] Services for SelectContent:', services)}
+                  {services.map(service => (
+                    <SelectItem key={service.id} value={service.id} className="text-black">
+                      {service.name} - ${service.price}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

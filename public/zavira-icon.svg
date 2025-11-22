@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Glow filter for light mode -->
+    <filter id="glow-light" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur2"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur3"/>
+      <feMerge> 
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Glow filter for dark mode -->
+    <filter id="glow-dark" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur3"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur4"/>
+      <feMerge> 
+        <feMergeNode in="blur4"/>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Metallic gradient for light mode -->
+    <linearGradient id="metal-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a4a4a"/>
+      <stop offset="30%" style="stop-color:#333333"/>
+      <stop offset="70%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#4a4a4a"/>
+    </linearGradient>
+    
+    <!-- Metallic gradient for dark mode -->
+    <linearGradient id="metal-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="30%" style="stop-color:#f8f8f8"/>
+      <stop offset="70%" style="stop-color:#e8e8e8"/>
+      <stop offset="100%" style="stop-color:#ffffff"/>
+    </linearGradient>
+  </defs>
+  
+  <style>
+    .zavira-z {
+      stroke-width: 8;
+      fill: url(#metal-light);
+      stroke: #333333;
+      filter: url(#glow-light);
+      transition: all 0.3s ease;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .zavira-z {
+        fill: url(#metal-dark);
+        stroke: #ffffff;
+        filter: url(#glow-dark);
+      }
+    }
+  </style>
+  
+  <!-- Main Z letter with clean, geometric design -->
+  <path class="zavira-z" d="M 8 12 L 56 12 L 8 52 L 56 52 L 8 12" 
+        fill="none" 
+        stroke-linecap="square" 
+        stroke-linejoin="miter"/>
+</svg>

@@ -4,6 +4,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { v5 as uuidv5 } from 'uuid';
+
+// A fixed namespace UUID for deterministic UUID generation from staff IDs
+const MY_NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
+
+const generateUuidFromStaffId = (staffId: string): string => {
+  return uuidv5(staffId, MY_NAMESPACE);
+};
 
 export interface WaitlistEntry {
   id: string;
@@ -49,26 +57,35 @@ export const addToWaitlist = async (
   customerPhone: string,
   notes?: string
 ): Promise<{ data?: string; error?: any }> => {
+  let uuidStaffId: string; // Declare uuidStaffId here
   try {
-    // FIXED: First try the RPC function, fall back to direct table insertion
-    console.log('[DEBUG] Calling add_to_waitlist RPC with:', { staffId, date, startTime, customerName, customerPhone, notes });
-    const { data, error } = await (supabase as any).rpc('add_to_waitlist', {
-      p_staff_id: staffId,
-      p_date: date,
-      p_start_time: startTime,
-      p_customer_name: customerName,
-      p_customer_phone: customerPhone,
-      p_notes: notes
-    });
-    console.log('[DEBUG] add_to_waitlist RPC result:', { data, error });
+    uuidStaffId = generateUuidFromStaffId(staffId); // Assign here
+    // Attempt RPC function first
+    try {
+      console.log('[DEBUG] Calling add_to_waitlist RPC with:', { staffId: uuidStaffId, date, startTime, customerName, customerPhone, notes });
+      const { data, error } = await (supabase as any).rpc('add_to_waitlist', {
+        p_staff_id: uuidStaffId,
+        p_date: date,
+        p_start_time: startTime,
+        p_customer_name: customerName,
+        p_customer_phone: customerPhone,
+        p_notes: notes
+      });
+      console.log('[DEBUG] add_to_waitlist RPC result:', { data, error });
 
-    if (error) {
-      // If RPC doesn't exist, try direct table insertion
-      console.log('[DEBUG] RPC function not found, trying direct table insertion');
+      if (error) {
+        // If RPC returns an error, log it and proceed to direct insertion fallback
+        console.warn('[DEBUG] RPC function returned an error, falling back to direct table insertion:', error);
+        throw error; // Throw to enter the catch block and trigger fallback
+      }
+      return { data, error: null };
+    } catch (rpcError) {
+      // If RPC function fails (e.g., not found, or returns an error), try direct table insertion
+      console.log('[DEBUG] RPC function failed or not found, trying direct table insertion');
       const { data: directData, error: directError } = await supabase
         .from('waitlists')
         .insert([{
-          staff_id: staffId,
+          staff_id: uuidStaffId,
           date: date,
           start_time: startTime,
           customer_name: customerName,
@@ -84,9 +101,7 @@ export const addToWaitlist = async (
 
       return { data: directData?.id, error: null };
     }
-
-    return { data, error: null };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error adding to waitlist:', error);
     
     // Enhanced error message for user
@@ -219,49 +234,55 @@ export const createPersonalTask = async (
   durationMinutes: number = 60
 ): Promise<{ data?: string; error?: any }> => {
   try {
-    // FIXED: Try RPC first, fallback to direct insertion
+    // FIXED: Use the proper personal_tasks table and RPC function
     try {
       console.log('[DEBUG] Calling create_personal_task RPC with:', { staffId, appointmentDate, appointmentTime, description, durationMinutes });
+      
       const { data, error } = await (supabase as any).rpc('create_personal_task', {
-        p_staff_id: staffId,
-        p_appointment_date: appointmentDate,
-        p_appointment_time: appointmentTime,
-        p_description: description,
-        p_duration_minutes: durationMinutes
+        staffId,
+        appointmentDate,
+        appointmentTime,
+        description,
+        durationMinutes
       });
       console.log('[DEBUG] create_personal_task RPC result:', { data, error });
 
       if (error) throw error;
-      return { data, error: null };
+      return { data: data?.toString(), error: null };
     } catch (rpcError) {
-      console.log('[DEBUG] RPC function not found, trying direct insertion');
+      console.log('[DEBUG] RPC function not found, trying direct insertion into personal_tasks table');
       
-      // Direct insertion fallback
-      const { data: directData, error: directError } = await supabase
-        .from('appointments')
+      // Direct insertion fallback - insert directly into personal_tasks table
+      const { data: directData, error: directError } = await (supabase as any)
+        .from('personal_tasks')
         .insert([{
           staff_id: staffId,
           appointment_date: appointmentDate,
           appointment_time: appointmentTime,
-          total_amount: 0,
-          type: 'INTERNAL',
+          duration_minutes: durationMinutes,
           description: description,
-          status: 'confirmed'
+          status: 'scheduled'
         }])
         .select('id')
         .single();
 
       if (directError) {
+        // If table doesn't exist, provide clear guidance
+        if (directError.message.includes('relation "public.personal_tasks" does not exist')) {
+          throw new Error('Database not set up. Please run the complete_personal_task_fix.sql script in Supabase SQL Editor.');
+        }
         throw new Error(`Database error: ${directError.message}`);
       }
 
-      return { data: directData?.id, error: null };
+      return { data: directData?.id?.toString(), error: null };
     }
   } catch (error) {
     console.error('Error creating personal task:', error);
     let errorMessage = 'Failed to create personal task';
-    if (error.message.includes('relation "public.appointments" does not exist')) {
-      errorMessage = 'Database not set up. Please run the slot action schema migration.';
+    if (error.message.includes('relation "public.personal_tasks" does not exist')) {
+      errorMessage = 'Database not set up. Please run the complete_personal_task_fix.sql script in Supabase SQL Editor.';
+    } else if (error.message.includes('staff_id')) {
+      errorMessage = 'Database schema needs refresh. Please run complete_personal_task_fix.sql in Supabase SQL Editor.';
     }
     return { data: null, error: { message: errorMessage, originalError: error } };
   }
@@ -273,24 +294,90 @@ export const getPersonalTasks = async (
   date?: string
 ): Promise<{ data?: PersonalTask[]; error?: any }> => {
   try {
-    let query = supabase
-      .from('appointments')
-      .select('*')
-      .eq('staff_id', staffId)
-      .eq('type', 'INTERNAL');
+    // FIXED: Try RPC first for getting personal tasks
+    try {
+      if (date) {
+        const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_personal_tasks', {
+          staffId,
+          appointmentDate: date
+        });
+        
+        if (rpcError) throw rpcError;
+        
+        // Transform RPC data to match PersonalTask interface
+        const transformedData = (rpcData || []).map((task: any) => ({
+          id: task.id.toString(),
+          staff_id: task.staff_id,
+          appointment_date: task.appointment_date,
+          appointment_time: task.appointment_time,
+          description: task.description,
+          status: task.status,
+          type: 'INTERNAL',
+          created_at: task.created_at
+        }));
+        
+        return { data: transformedData, error: null };
+      } else {
+        // If no date specified, get all personal tasks for staff
+        const { data: allTasksData, error: allTasksError } = await (supabase as any)
+          .from('personal_tasks')
+          .select('*')
+          .eq('staff_id', staffId)
+          .order('appointment_date', { ascending: true });
+          
+        if (allTasksError) throw allTasksError;
+        
+        const transformedData = (allTasksData || []).map((task: any) => ({
+          id: task.id.toString(),
+          staff_id: task.staff_id,
+          appointment_date: task.appointment_date,
+          appointment_time: task.appointment_time,
+          description: task.description,
+          status: task.status,
+          type: 'INTERNAL',
+          created_at: task.created_at
+        }));
+        
+        return { data: transformedData, error: null };
+      }
+    } catch (rpcError) {
+      console.log('[DEBUG] RPC function not found, trying direct query');
+      
+      // Direct query fallback
+      let query = (supabase as any)
+        .from('personal_tasks')
+        .select('*')
+        .eq('staff_id', staffId);
 
-    if (date) {
-      query = query.eq('appointment_date', date);
+      if (date) {
+        query = query.eq('appointment_date', date);
+      }
+
+      const { data, error } = await query.order('appointment_time', { ascending: true });
+
+      if (error) throw error;
+
+      // Transform data to match PersonalTask interface
+      const transformedData = (data || []).map((task: any) => ({
+        id: task.id.toString(),
+        staff_id: task.staff_id,
+        appointment_date: task.appointment_date,
+        appointment_time: task.appointment_time,
+        description: task.description,
+        status: task.status,
+        type: 'INTERNAL',
+        created_at: task.created_at
+      }));
+
+      return { data: transformedData, error: null };
     }
-
-    const { data, error } = await query.order('appointment_time', { ascending: true });
-
-    if (error) throw error;
-
-    return { data: data || [], error: null };
   } catch (error) {
     console.error('Error fetching personal tasks:', error);
-    return { data: null, error };
+    let errorMessage = 'Failed to fetch personal tasks';
+    if (error.message.includes('relation "public.personal_tasks" does not exist')) {
+      errorMessage = 'Database not set up. Please run the complete_personal_task_fix.sql script in Supabase SQL Editor.';
+    }
+    return { data: null, error: { message: errorMessage, originalError: error } };
   }
 };
 
@@ -727,14 +814,13 @@ export const getSlotIndicators = async (
           .eq('date', date)
           .eq('start_time', timeSlot);
 
-        // Check personal tasks
-        const { data: personalTaskData } = await supabase
-          .from('appointments')
+        // Check personal tasks - FIXED: Use personal_tasks table
+        const { data: personalTaskData } = await (supabase as any)
+          .from('personal_tasks')
           .select('id')
           .eq('staff_id', staffId)
           .eq('appointment_date', date)
-          .eq('appointment_time', timeSlot)
-          .eq('type', 'INTERNAL');
+          .eq('appointment_time', timeSlot);
 
         return {
           timeSlot,

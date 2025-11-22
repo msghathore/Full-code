@@ -30,6 +30,7 @@ const Services = lazy(() => import("./pages/Services"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Shop = lazy(() => import("./pages/Shop"));
 const ShopCheckout = lazy(() => import("./pages/ShopCheckout"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const About = lazy(() => import("./pages/About"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -56,6 +57,8 @@ const CustomersManagement = lazy(() => import("./pages/CustomersManagement"));
 const ServicesManagement = lazy(() => import("./pages/ServicesManagement"));
 // Staff Scheduling System
 const StaffSchedulingSystem = lazy(() => import("./pages/StaffSchedulingSystem"));
+// Vagaro-Style Schedule Page
+const VagaroSchedulePage = lazy(() => import("./pages/VagaroSchedulePage"));
 
 const queryClient = new QueryClient();
 
@@ -73,9 +76,10 @@ const App = () => {
   // Track popup state for navbar hiding
   const [showSecretDeals, setShowSecretDeals] = useState(false);
   
-  // Check if current route is staff-related
+  // Check if current route is staff-related or POS terminal
   const isStaffRoute = window.location.pathname.startsWith('/staff') ||
-                      window.location.pathname.startsWith('/staff-dashboard');
+                      window.location.pathname.startsWith('/staff-dashboard') ||
+                      window.location.pathname === '/checkout';
 
   return (
     <HelmetProvider>
@@ -110,6 +114,8 @@ const App = () => {
                     <Route path="/booking" element={<Booking />} />
                     <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
                     <Route path="/shop/checkout" element={<PageTransition><ShopCheckout /></PageTransition>} />
+                    <Route path="/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
+                    <Route path="/pos/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
                     <Route path="/about" element={<PageTransition><About /></PageTransition>} />
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/blog/:id" element={<PageTransition><BlogPost /></PageTransition>} />
@@ -132,6 +138,8 @@ const App = () => {
                     <Route path="/feedback" element={<PageTransition><CustomerFeedback /></PageTransition>} />
                     <Route path="/revenue" element={<PageTransition><RevenueTracking /></PageTransition>} />
                     <Route path="/scheduling" element={<PageTransition><StaffScheduling /></PageTransition>} />
+                    {/* Vagaro-Style Schedule Page */}
+                    <Route path="/schedule" element={<PageTransition><VagaroSchedulePage /></PageTransition>} />
                     {/* Admin Routes */}
                     <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/admin/services" element={<ProtectedRoute><ServicesManagement /></ProtectedRoute>} />

@@ -76,93 +76,143 @@ All colors MUST be HSL.
 /* Standardized Typography System */
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
-
-    --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 100%;
-
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 100%;
-
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+ 
     --radius: 0.5rem;
 
-    --luxury-glow: 45 86% 83%; /* Gold for luxury */
-    --luxury-text: 0 0% 95%;
-    --frosted-glass: 0 0% 10% / 0.4;
-    --trust-blue: 220 89% 56%; /* Deep blue for trust */
-    --luxury-gold: 45 86% 83%; /* Rich gold */
-    --elegant-purple: 270 50% 40%; /* Sophisticated purple */
-    --premium-gray: 0 0% 20%; /* Elegant gray */
+    /* Zavira Custom Design Tokens */
+    --bg: #f8fafb;
+    --panel: #ffffff;
+    --muted: #6b7280;
+    --accent-1: #f87171; /* red */
+    --accent-2: #60a5fa; /* blue */
+    --accent-3: #c084fc; /* purple */
+    --card-radius: 12px;
+    --card-pad-x: 14px;
+    --card-pad-y: 12px;
+    --shadow: 0 6px 18px rgba(10,10,10,0.06);
+    --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
 
-    /* Chart Colors for Data Visualization */
-    --chart-primary: 45 86% 83%; /* Luxury gold */
-    --chart-secondary: 220 89% 56%; /* Trust blue */
-    --chart-accent: 270 50% 40%; /* Elegant purple */
-    --chart-success: 142 76% 36%; /* Green */
-    --chart-warning: 38 92% 50%; /* Yellow */
-    --chart-error: 0 84% 60%; /* Red */
+    /* Sidebar variables */
+    --sidebar-background: 222.2 47.4% 11.2%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 96.1%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 222.2 84% 4.9%;
 
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 0 0% 100%;
+    /* Luxury theme variables */
+    --luxury-glow: 210 40% 98%; /* White for glow effect */
+    --luxury-text: 210 40% 98%; /* White for luxury text */
+    --luxury-gold: 38 92% 50%; /* A rich gold color */
 
-    /* Typography Scale */
-    --text-xs: 0.75rem;
-    --text-sm: 0.875rem;
-    --text-base: 1rem;
-    --text-lg: 1.125rem;
-    --text-xl: 1.25rem;
-    --text-2xl: 1.5rem;
-    --text-3xl: 1.875rem;
-    --text-4xl: 2.25rem;
-    --text-5xl: 3rem;
-    --text-6xl: 3.75rem;
-    --text-7xl: 4.5rem;
-    --text-8xl: 6rem;
-    --text-9xl: 8rem;
+    /* Trust theme variables */
+    --trust-blue: 210 90% 50%; /* A vibrant blue for trust elements */
 
-    /* Line Heights */
-    --leading-tight: 1.25;
-    --leading-snug: 1.375;
-    --leading-normal: 1.5;
-    --leading-relaxed: 1.625;
-    --leading-loose: 2;
+    /* Elegant theme variables */
+    --elegant-purple: 270 70% 60%; /* A sophisticated purple */
 
-    /* Letter Spacing */
-    --tracking-tighter: -0.05em;
-    --tracking-tight: -0.025em;
-    --tracking-normal: 0em;
-    --tracking-wide: 0.025em;
-    --tracking-wider: 0.05em;
-    --tracking-widest: 0.1em;
+    /* Premium theme variables */
+    --premium-gray: 210 10% 30%; /* A dark, premium gray */
   }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
 
-  .light {
+    /* Zavira Custom Design Tokens for dark mode */
+    --bg: #1a1a1a; /* Darker background for dark mode */
+    --panel: #2a2a2a; /* Darker panel for dark mode */
+    --muted: #a0a0a0; /* Lighter muted text for dark mode */
+    --accent-1: #f87171; /* red */
+    --accent-2: #60a5fa; /* blue */
+    --accent-3: #c084fc; /* purple */
+    --card-radius: 12px;
+    --card-pad-x: 14px;
+    --card-pad-y: 12px;
+    --shadow: 0 6px 18px rgba(0,0,0,0.3); /* Darker shadow for dark mode */
+    --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+
+    /* Sidebar variables for dark mode */
+    --sidebar-background: 222.2 47.4% 11.2%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 212.7 26.8% 83.9%;
+
+    /* Luxury theme variables for dark mode */
+    --luxury-glow: 210 40% 98%; /* White for glow effect */
+    --luxury-text: 210 40% 98%; /* White for luxury text */
+    --luxury-gold: 38 92% 50%; /* A rich gold color */
+
+    /* Trust theme variables for dark mode */
+    --trust-blue: 210 90% 50%; /* A vibrant blue for trust elements */
+
+    /* Elegant theme variables for dark mode */
+    --elegant-purple: 270 70% 60%; /* A sophisticated purple */
+
+    /* Premium theme variables for dark mode */
+    --premium-gray: 210 10% 30%; /* A dark, premium gray */
+  }
+}
+
+.light {
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
     --card: 0 0% 98%;
@@ -273,9 +323,8 @@ All colors MUST be HSL.
     text-shadow: 0 0 10px rgba(255, 255, 255, 1),
                  0 0 20px rgba(255, 255, 255, 0.8) !important;
   }
-}
 
-@layer base {
+  @layer base {
   * {
     @apply border-border;
   }

@@ -1,0 +1,154 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  HelpCircle,
+  Repeat,
+  X,
+  Home,
+  FileText,
+  Clipboard,
+  DollarSign,
+  Users,
+  Facebook,
+  Instagram,
+  MessageSquare,
+  CreditCard,
+  Package,
+  DollarSign as DepositIcon,
+  UserPlus,
+  RotateCcw,
+  RotateCcw as RotateCw,
+  CheckCircle,
+  UserCheck,
+  PlayCircle,
+  XCircle,
+  CalendarX,
+  Clock
+} from 'lucide-react';
+
+// Status colors mapping - expanded with all requested statuses
+const STATUS_COLORS = {
+  'requested': { bgClass: 'bg-yellow-400', label: 'New Request' },
+  'accepted': { bgClass: 'bg-blue-300', label: 'Accepted' },
+  'awaiting_confirmation': { bgClass: 'bg-orange-300', label: 'Awaiting Confirmation' },
+  'confirmed': { bgClass: 'bg-red-400', label: 'Confirmed' },
+  'show': { bgClass: 'bg-green-400', label: 'Show' },
+  'no_show': { bgClass: 'bg-gray-400', label: 'No Show' },
+  'ready_to_start': { bgClass: 'bg-teal-400', label: 'Ready to Start' },
+  'in_progress': { bgClass: 'bg-green-500', label: 'In Progress' },
+  'complete': { bgClass: 'bg-gray-600', label: 'Complete' },
+  'personal_task': { bgClass: 'bg-amber-700', label: 'Personal Task' },
+  'personal_task_blocked': { bgClass: 'bg-red-700', label: 'Personal Task Blocked' }
+};
+
+// Attribute icons mapping - comprehensive list as requested
+const ATTRIBUTE_ICONS = {
+  'recurring': { icon: Repeat, label: 'Recurring Appointment', color: 'text-blue-600' },
+  'stopped_recurring': { icon: X, label: 'Stopped Recurring', color: 'text-red-600' },
+  'bundle': { icon: Users, label: 'Bundle', color: 'text-purple-600' },
+  'house_call': { icon: Home, label: 'House Call', color: 'text-green-600' },
+  'note': { icon: FileText, label: 'Note', color: 'text-yellow-600' },
+  'popup_note': { icon: MessageSquare, label: 'Popup Note', color: 'text-orange-600' },
+  'form_required': { icon: Clipboard, label: 'Form Required', color: 'text-indigo-600' },
+  'prepaid': { icon: DollarSign, label: 'Pre-paid Appointment', color: 'text-green-700' },
+  'show_checked_in': { icon: CheckCircle, label: 'Show - Checked In', color: 'text-green-500' },
+  'online_booking_blocked': { icon: XCircle, label: 'Online Booking Blocked', color: 'text-red-500' },
+  'booked_instagram': { icon: Instagram, label: 'Booked on Instagram', color: 'text-pink-600' },
+  'booked_facebook': { icon: Facebook, label: 'Booked on Facebook', color: 'text-blue-700' },
+  'booked_yelp': { icon: MessageSquare, label: 'Booked on Yelp', color: 'text-red-600' },
+  'membership': { icon: CreditCard, label: 'Membership', color: 'text-indigo-500' },
+  'package': { icon: Package, label: 'Package', color: 'text-purple-500' },
+  'deposit_paid': { icon: DepositIcon, label: 'Deposit Paid', color: 'text-green-600' },
+  'new_request': { icon: UserPlus, label: 'New Request (NR)', color: 'text-blue-500' },
+  'return_request': { icon: RotateCcw, label: 'Return Request (RR)', color: 'text-green-500' },
+  'return_non_request': { icon: RotateCw, label: 'Return Non Request (RNR)', color: 'text-yellow-500' },
+  'new_non_request': { icon: UserCheck, label: 'New Non Request (NNR)', color: 'text-orange-500' }
+};
+
+const AppointmentLegend: React.FC = () => {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-gray-500 hover:text-gray-700 border border-gray-300 hover:border-gray-400"
+        >
+          <HelpCircle className="h-4 w-4 mr-1" />
+          Legend
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[600px] p-0 bg-white border border-gray-200 shadow-xl rounded-lg">
+        <div className="p-4">
+          {/* Header */}
+          <div className="text-center border-b border-gray-100 pb-3 mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Appointment Status & Attributes Legend
+            </h3>
+          </div>
+
+          {/* TWO-COLUMN LAYOUT - ATTRIBUTES and STATUS COLORS */}
+          <div className="grid grid-cols-2 gap-8">
+            
+            {/* LEFT COLUMN: ATTRIBUTES */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                ATTRIBUTES
+              </h4>
+              <div className="space-y-1">
+                {Object.entries(ATTRIBUTE_ICONS).map(([key, config]) => {
+                  const IconComponent = config.icon;
+                  return (
+                    <div key={key} className="flex items-center gap-2 py-0.5">
+                      <div className="flex items-center gap-2 flex-shrink-0 w-32">
+                        <IconComponent 
+                          size={12} 
+                          className={config.color} 
+                        />
+                        <span className="text-xs text-gray-700 font-medium truncate">
+                          {config.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: STATUS COLORS */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                STATUS COLORS
+              </h4>
+              <div className="space-y-1">
+                {Object.entries(STATUS_COLORS).map(([status, config]) => (
+                  <div key={status} className="flex items-center gap-2 py-0.5">
+                    {/* Color swatch */}
+                    <div 
+                      className={`w-3 h-3 rounded-full flex-shrink-0 border border-gray-300 ${config.bgClass}`}
+                    />
+                    <span className="text-xs text-gray-700 font-medium">
+                      {config.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Footer note */}
+          <div className="border-t border-gray-100 pt-3 mt-4">
+            <p className="text-xs text-gray-500 text-center">
+              Appointment pills are sized proportionally to service duration
+            </p>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+export default AppointmentLegend;

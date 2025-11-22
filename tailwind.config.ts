@@ -75,13 +75,21 @@ export default {
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'serif'],
-        sans: ['Montserrat', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'sans-serif'],
         script: ['Playfair Display', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        card: "var(--card-radius)",
+      },
+      spacing: {
+        'card-pad-x': 'var(--card-pad-x)',
+        'card-pad-y': 'var(--card-pad-y)',
+      },
+      boxShadow: {
+        'card': 'var(--shadow)',
       },
       keyframes: {
         "accordion-down": {

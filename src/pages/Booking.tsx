@@ -449,15 +449,39 @@ const Booking = () => {
     }
   };
 
-  // Keep the original handleBooking for form submission validation (but don't auto-book)
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('📝 DEBUG: Form submission detected - moving to next step or confirming');
-    
-    // Only proceed with booking if we're on the last step
+
     if (currentStep === steps.length - 1) {
-      console.log('📝 DEBUG: User is on confirmation step - proceeding with booking');
-      await confirmBooking();
+      console.log('📝 DEBUG: User is on confirmation step - navigating to checkout');
+      const selectedServiceData = services.find(s => s.id === selectedService);
+
+      if (!selectedServiceData || !date || !selectedTime) {
+        toast({
+          title: "Error",
+          description: "Please select a service, date, and time before proceeding to checkout.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      navigate('/pos/checkout', {
+        state: {
+          bookingDetails: {
+            service_id: selectedService,
+            service_name: selectedServiceData.name,
+            service_price: selectedServiceData.price,
+            appointment_date: date.toISOString().split('T')[0],
+            appointment_time: selectedTime,
+            customer_name: fullName,
+            customer_phone: phone,
+            notes: notes,
+            is_guest: isGuest,
+            user_id: user?.id,
+          },
+        },
+      });
     } else {
       console.log('📝 DEBUG: User moving to next step - no booking yet');
       nextStep();

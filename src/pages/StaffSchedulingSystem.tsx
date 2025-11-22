@@ -58,6 +58,11 @@ import { MultipleBookingModal } from '@/components/MultipleBookingModal';
 import { EditShiftModal } from '@/components/EditShiftModal';
 import { SlotActionMenu } from '@/components/SlotActionMenu';
 
+// Import new dynamic appointment components
+import DynamicAppointmentPill from '@/components/DynamicAppointmentPill';
+import AppointmentLegend from '@/components/AppointmentLegend';
+import { getAppointmentStyles, migrateAppointmentData, ExtendedAppointment, AppointmentStatusType } from '@/lib/appointmentConfig';
+
 // Live time line constants
 const LIVE_TIME_LINE_COLOR = '#FFD700'; // Gold color
 const SCHEDULE_START_HOUR = 8; // 8:00 AM
@@ -93,12 +98,19 @@ type Appointment = {
   appointment_date: string;
   appointment_time: string;
   staff_id: string;
-  status: 'confirmed' | 'arrived' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'requested' | 'accepted' | 'confirmed' | 'no_show' | 'ready_to_start' | 'in_progress' | 'complete' | 'personal_task';
   full_name: string;
   phone?: string;
   email?: string;
   total_amount?: number;
   notes?: string;
+  // New attribute fields for icons
+  is_recurring?: boolean;
+  is_bundle?: boolean;
+  is_house_call?: boolean;
+  has_note?: boolean;
+  form_required?: boolean;
+  deposit_paid?: boolean;
 };
 
 type TimeSlot = {
@@ -285,7 +297,7 @@ const mockStaff: StaffMember[] = [
   { id: 'EMP004', name: 'Alex Rivera', username: 'alex', password: 'staff2024', role: 'junior', specialty: 'Facials', status: 'break', access_level: 'basic', color: 'pink' }
 ];
 
-// Mock appointments data - Comprehensive booking data to show busy calendar
+// Mock appointments data - Comprehensive booking data to show busy calendar with new status and attributes
 const mockAppointments: Appointment[] = [
   // Early morning appointments
   {
@@ -307,7 +319,7 @@ const mockAppointments: Appointment[] = [
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '09:00',
     staff_id: 'EMP002',
-    status: 'confirmed',
+    status: 'accepted',
     full_name: 'Lisa Johnson',
     phone: '+1-555-0102',
     email: 'lisa.j@email.com',
@@ -315,7 +327,7 @@ const mockAppointments: Appointment[] = [
     notes: 'Classic red polish'
   },
 
-  // Morning appointments
+  // Morning appointments with various statuses and attributes
   {
     id: '3',
     service_name: 'Hair Cut & Style',
@@ -335,7 +347,7 @@ const mockAppointments: Appointment[] = [
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '10:30',
     staff_id: 'EMP003',
-    status: 'arrived',
+    status: 'ready_to_start',
     full_name: 'Emily Davis',
     phone: '+1-555-0124',
     email: 'emily.d@email.com',
@@ -348,7 +360,7 @@ const mockAppointments: Appointment[] = [
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '11:00',
     staff_id: 'EMP002',
-    status: 'confirmed',
+    status: 'in_progress',
     full_name: 'Maria Garcia',
     phone: '+1-555-0125',
     total_amount: 25,
@@ -375,7 +387,7 @@ const mockAppointments: Appointment[] = [
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '11:30',
     staff_id: 'EMP001',
-    status: 'in-progress',
+    status: 'in_progress',
     full_name: 'Jennifer Brown',
     phone: '+1-555-0127',
     email: 'jen.brown@email.com',
@@ -383,14 +395,14 @@ const mockAppointments: Appointment[] = [
     notes: 'Brown to blonde highlights'
   },
 
-  // Lunch time appointments
+  // No show example
   {
     id: '8',
     service_name: 'Eyebrow Wax',
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '12:00',
     staff_id: 'EMP004',
-    status: 'confirmed',
+    status: 'no_show',
     full_name: 'Rachel Green',
     phone: '+1-555-0128',
     total_amount: 30,
@@ -442,7 +454,7 @@ const mockAppointments: Appointment[] = [
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '14:00',
     staff_id: 'EMP004',
-    status: 'in-progress',
+    status: 'in_progress',
     full_name: 'Bob Wilson',
     phone: '+1-555-0132',
     total_amount: 95,
@@ -462,18 +474,18 @@ const mockAppointments: Appointment[] = [
     notes: 'Spa pedicure with massage'
   },
 
-  // Mid-afternoon appointments
+  // Personal task example
   {
     id: '14',
-    service_name: 'Hair Color',
+    service_name: 'Personal Task',
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '14:30',
     staff_id: 'EMP001',
-    status: 'confirmed',
-    full_name: 'Kelly Clarkson',
-    phone: '+1-555-0134',
-    total_amount: 165,
-    notes: 'Root touch-up'
+    status: 'personal_task',
+    full_name: 'Break Time',
+    phone: '',
+    total_amount: 0,
+    notes: 'Personal break'
   },
   {
     id: '15',
@@ -1574,51 +1586,71 @@ const StaffSchedulingSystem = () => {
     });
   };
 
-  // Get status icon for appointment
+  // Get status icon for appointment using new status system
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
+      case 'requested':
       case 'confirmed':
         return CheckCircle;
-      case 'arrived':
+      case 'accepted':
         return UserCheck;
-      case 'in-progress':
+      case 'ready_to_start':
         return PlayCircle;
-      case 'completed':
+      case 'in_progress':
+        return PlayCircle;
+      case 'complete':
         return CheckCircle;
-      case 'cancelled':
+      case 'no_show':
         return XCircle;
+      case 'personal_task':
+        return CalendarX;
       default:
         return Clock;
     }
   };
 
-  // Get status badge configuration (for list views)
+  // Get status badge configuration (for list views) with new status system
   const getStatusConfig = (status: string | null) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed':
-        return {
-          bgColor: 'bg-blue-100 text-blue-800 border-blue-300',
-          label: 'Confirmed'
-        };
-      case 'arrived':
-        return {
-          bgColor: 'bg-green-100 text-green-800 border-green-300',
-          label: 'Arrived'
-        };
-      case 'in-progress':
-        return {
-          bgColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-          label: 'In Progress'
-        };
-      case 'completed':
+      case 'requested':
         return {
           bgColor: 'bg-purple-100 text-purple-800 border-purple-300',
-          label: 'Completed'
+          label: 'Requested'
         };
-      case 'cancelled':
+      case 'accepted':
+        return {
+          bgColor: 'bg-blue-100 text-blue-800 border-blue-300',
+          label: 'Accepted'
+        };
+      case 'confirmed':
         return {
           bgColor: 'bg-red-100 text-red-800 border-red-300',
-          label: 'Cancelled'
+          label: 'Confirmed'
+        };
+      case 'ready_to_start':
+        return {
+          bgColor: 'bg-blue-600 text-white border-blue-600',
+          label: 'Ready'
+        };
+      case 'in_progress':
+        return {
+          bgColor: 'bg-green-100 text-green-800 border-green-300',
+          label: 'In Progress'
+        };
+      case 'complete':
+        return {
+          bgColor: 'bg-green-600 text-white border-green-600',
+          label: 'Complete'
+        };
+      case 'no_show':
+        return {
+          bgColor: 'bg-red-600 text-white border-red-600',
+          label: 'No Show'
+        };
+      case 'personal_task':
+        return {
+          bgColor: 'bg-gray-100 text-gray-800 border-gray-300',
+          label: 'Personal'
         };
       default:
         return {
@@ -1654,17 +1686,48 @@ const StaffSchedulingSystem = () => {
     setSelectedDate(newDate);
   };
 
-  // Check-in functions
+  // Check-in functions with new status system
   const handleCheckIn = (appointment: Appointment) => {
-    updateStatus(appointment.id, 'arrived');
+    updateStatus(appointment.id, 'accepted');
   };
 
   const handleStartService = (appointment: Appointment) => {
-    updateStatus(appointment.id, 'in-progress');
+    updateStatus(appointment.id, 'in_progress');
   };
 
   const handleCompleteService = (appointment: Appointment) => {
-    updateStatus(appointment.id, 'completed');
+    updateStatus(appointment.id, 'complete');
+  };
+
+  const handleCompleteServiceAndCheckout = (appointment: Appointment) => {
+    // Update appointment status to complete
+    updateStatus(appointment.id, 'complete');
+    
+    // Navigate to checkout page with appointment data
+    navigate('/checkout', {
+      state: {
+        appointmentData: {
+          appointmentId: appointment.id,
+          serviceName: appointment.service_name,
+          servicePrice: appointment.total_amount,
+          customerName: appointment.full_name,
+          customerPhone: appointment.phone,
+          customerEmail: appointment.email,
+          appointmentDate: appointment.appointment_date,
+          appointmentTime: appointment.appointment_time,
+          staffId: appointment.staff_id,
+          notes: appointment.notes,
+          completedAt: new Date().toISOString()
+        }
+      }
+    });
+    
+    // Show success message
+    toast({
+      title: "Service Completed",
+      description: "Redirecting to checkout for payment...",
+      duration: 3000,
+    });
   };
 
   // Delete appointment function
@@ -2143,6 +2206,9 @@ const StaffSchedulingSystem = () => {
                   </Select>
                 </div>
 
+                {/* Status Legend Popover */}
+                <AppointmentLegend />
+
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={() => navigateDate('prev')}
@@ -2242,21 +2308,21 @@ const StaffSchedulingSystem = () => {
                       </div>
                     </div>
                     
-                    {/* Staff Header Row */}
-                    <div className="flex border-b border-gray-100 mb-4 relative z-10">
-                    <div className="w-24 flex-shrink-0 border-r-2 border-gray-200">
-                      <div className="p-3 font-medium text-gray-600 text-sm">Time</div>
+                    {/* Staff Header Row - COMPRESSED for maximum density */}
+                    <div className="flex border-b border-gray-100 mb-2 relative z-10">
+                    <div className="w-12 flex-shrink-0 border-r-2 border-gray-200">
+                      <div className="p-1.5 font-medium text-gray-600 text-xs">Time</div>
                     </div>
                     {filteredStaff.map(staffMember => {
                       return (
-                        <div key={staffMember.id} className="flex-1 min-w-[140px] border-l border-gray-100 p-3 relative">
-                          <div className="text-sm font-medium text-black flex items-center">
+                        <div key={staffMember.id} className="flex-1 min-w-[160px] max-w-[180px] border-l border-gray-100 p-2 relative">
+                          <div className="text-xs font-medium text-black flex items-center">
                             {staffMember.name.split(' ')[0]}
-                            <div className="group relative ml-2">
+                            <div className="group relative ml-1">
                               <button className="text-gray-400 hover:text-gray-600 focus:outline-none">
-                                <HelpCircle className="h-4 w-4" />
+                                <HelpCircle className="h-3 w-3" />
                               </button>
-                              <div className="invisible group-hover:visible absolute left-0 top-6 w-48 bg-white shadow-lg rounded-md border border-gray-200 p-2 z-20">
+                              <div className="invisible group-hover:visible absolute left-0 top-5 w-48 bg-white shadow-lg rounded-md border border-gray-200 p-2 z-20">
                                 <div className="text-xs font-medium text-black mb-1">Services</div>
                                 <div className="text-xs text-gray-600">{staffMember.specialty}</div>
                               </div>
@@ -2268,11 +2334,11 @@ const StaffSchedulingSystem = () => {
                     })}
                   </div>
 
-                  {/* Time Slots as Rows - Now showing all 15-min slots */}
+                  {/* Time Slots as Rows - COMPRESSED for maximum density */}
                   {timeSlots.map((timeSlot, timeIndex) => (
                     <div
                       key={timeIndex}
-                      className="flex border-b-2 border-gray-200 min-h-[40px] relative"
+                      className="flex border-b border-gray-200 min-h-[30px] relative"
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => {
                         e.preventDefault();
@@ -2285,11 +2351,11 @@ const StaffSchedulingSystem = () => {
                         }
                       }}
                     >
-                      {/* Horizontal lines to divide 15-min intervals */}
-                      <div className="absolute left-0 right-0 top-1/2 border-t-2 border-gray-300 opacity-70"></div>
+                      {/* Horizontal lines to divide 15-min intervals - COMPRESSED */}
+                      <div className="absolute left-0 right-0 top-1/2 border-t border-gray-300 opacity-70"></div>
                       
-                      {/* Time Display */}
-                      <div className="w-24 flex-shrink-0 p-2 border-r-2 border-gray-200 bg-gray-50 relative z-10">
+                      {/* Time Display - COMPRESSED */}
+                      <div className="w-12 flex-shrink-0 p-1 border-r border-gray-200 bg-gray-50 relative z-10">
                         <div className="text-xs font-medium text-gray-600">
                           {timeSlot.minute === 0 ? formatTime(timeSlot.time) : ''}
                         </div>
@@ -2316,36 +2382,24 @@ const StaffSchedulingSystem = () => {
                               <div className="absolute inset-0 bg-gray-200 opacity-50 rounded pointer-events-none z-0"></div>
                             )}
                             
-                            {/* Show existing appointments with service-based colors */}
+                            {/* Show existing appointments with new DynamicAppointmentPill component */}
                             {slotAppointments.map(appointment => {
-                              const staffMember = staff.find(s => s.id === appointment.staff_id);
-                              const appointmentStyling = staffMember ? getAppointmentStyling(appointment, staffMember) : null;
-                              
                               return (
-                                <div
+                                <DynamicAppointmentPill
                                   key={appointment.id}
-                                  draggable
+                                  appointment={appointment}
+                                  staffMember={filteredStaff.find(s => s.id === appointment.staff_id)}
+                                  onClick={() => {
+                                    setSelectedSlot({ staffId: appointment.staff_id, time: appointment.appointment_time });
+                                    setSelectedAppointment(appointment);
+                                  }}
                                   onDragStart={() => {
                                     setDraggedAppointmentId(appointment.id);
                                   }}
                                   onDragEnd={() => {
                                     setDraggedAppointmentId(null);
                                   }}
-                                  onClick={() => {
-                                    setSelectedSlot({ staffId: appointment.staff_id, time: appointment.appointment_time });
-                                    setSelectedAppointment(appointment);
-                                  }}
-                                  className="p-1 rounded text-xs cursor-move border relative group"
-                                  style={{
-                                    backgroundColor: appointmentStyling?.backgroundColor,
-                                    borderColor: appointmentStyling?.borderColor,
-                                    color: appointmentStyling?.textColor
-                                  }}
-                                >
-                                  <div className="font-medium truncate text-xs">
-                                    {appointment.service_name || 'Service'}
-                                  </div>
-                                </div>
+                                />
                               );
                             })}
                             
@@ -2803,7 +2857,7 @@ const StaffSchedulingSystem = () => {
                       <div>
                         <p className="text-sm font-medium text-gray-600">In Progress</p>
                         <p className="text-2xl font-bold text-blue-600">
-                          {appointments.filter(a => a.status === 'in-progress' || a.status === 'arrived').length}
+                          {appointments.filter(a => a.status === 'in_progress' || a.status === 'accepted' || a.status === 'ready_to_start').length}
                         </p>
                       </div>
                       <PlayCircle className="h-8 w-8 text-blue-400" />
@@ -2817,7 +2871,7 @@ const StaffSchedulingSystem = () => {
                       <div>
                         <p className="text-sm font-medium text-gray-600">Completed Today</p>
                         <p className="text-2xl font-bold text-green-600">
-                          {appointments.filter(a => a.status === 'completed').length}
+                          {appointments.filter(a => a.status === 'complete').length}
                         </p>
                       </div>
                       <CheckCircle className="h-8 w-8 text-green-400" />
@@ -2907,14 +2961,14 @@ const StaffSchedulingSystem = () => {
                                   >
                                     Details
                                   </Button>
-                                  {appointment.status === 'confirmed' && (
+                                  {(appointment.status === 'confirmed' || appointment.status === 'accepted') && (
                                     <Button
                                       size="sm"
                                       className="text-white"
                                       style={{ backgroundColor: getStaffColorConfig(staffMember?.color || 'blue').color }}
                                       onClick={() => handleCheckIn(appointment)}
                                     >
-                                      Check In
+                                      {appointment.status === 'confirmed' ? 'Accept' : 'Start'}
                                     </Button>
                                   )}
                                 </div>
@@ -3083,35 +3137,50 @@ const StaffSchedulingSystem = () => {
                   </div>
                 )}
 
-                {/* Action Buttons */}
+                {/* Action Buttons with new status system */}
                 <div className="flex gap-3 pt-4 border-t border-gray-200">
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-2">
                     {selectedAppointment.status === 'confirmed' && (
                       <Button
                         onClick={() => handleCheckIn(selectedAppointment)}
-                        className="bg-green-600 hover:bg-gray-100 hover:text-black text-white"
+                        className="w-full bg-green-600 hover:bg-gray-100 hover:text-black text-white"
                       >
                         <UserCheck className="h-4 w-4 mr-2" />
-                        Check In
+                        Accept
                       </Button>
                     )}
-                    {selectedAppointment.status === 'arrived' && (
+                    {(selectedAppointment.status === 'accepted' || selectedAppointment.status === 'ready_to_start') && (
                       <Button
                         onClick={() => handleStartService(selectedAppointment)}
-                        className="bg-blue-600 hover:bg-gray-100 hover:text-black text-white"
+                        className="w-full bg-blue-600 hover:bg-gray-100 hover:text-black text-white"
                       >
                         <PlayCircle className="h-4 w-4 mr-2" />
                         Start Service
                       </Button>
                     )}
-                    {selectedAppointment.status === 'in-progress' && (
-                      <Button
-                        onClick={() => handleCompleteService(selectedAppointment)}
-                        className="bg-purple-600 hover:bg-gray-100 hover:text-black text-white"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Complete Service
-                      </Button>
+                    {selectedAppointment.status === 'in_progress' && (
+                      <>
+                        <Button
+                          onClick={() => handleCompleteServiceAndCheckout(selectedAppointment)}
+                          className="w-full bg-green-600 hover:bg-gray-100 hover:text-white text-white"
+                        >
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          Complete Service & Checkout
+                        </Button>
+                        <Button
+                          onClick={() => handleCompleteService(selectedAppointment)}
+                          className="w-full bg-gray-600 hover:bg-gray-100 hover:text-black text-white"
+                          variant="outline"
+                        >
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Complete Service Only
+                        </Button>
+                      </>
+                    )}
+                    {selectedAppointment.status === 'no_show' && (
+                      <div className="text-center">
+                        <span className="text-red-600 font-medium">Marked as No Show</span>
+                      </div>
                     )}
                   </div>
                   
