@@ -32,14 +32,10 @@ import {
   Wifi,
   WifiOff,
   HelpCircle,
-  Package,
   Plus,
   Minus,
   Search,
   Filter,
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
   CalendarPlus,
   CalendarDays,
   Timer,
@@ -47,9 +43,13 @@ import {
   Settings
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { format, addDays } from 'date-fns';
+import { format, addDays, parseISO, isToday } from 'date-fns';
 import { useTheme } from '@/hooks/use-theme';
-import { staffApi, appointmentApi, customerApi, serviceApi, inventoryApi, StaffMember, Appointment, Customer, Service, InventoryItem } from '@/services/api';
+import { supabase } from '@/integrations/supabase/client';
+import { staffApi, appointmentApi, customerApi, serviceApi, StaffMember, Appointment, Customer, Service } from '@/services/api';
+// Import LeftNav and ScheduleGrid components
+import LeftNav from '@/components/schedule/LeftNav';
+import ScheduleGrid from '@/components/schedule/ScheduleGrid';
 
 // Import new modal components for slot actions
 import { WaitlistModal } from '@/components/WaitlistModal';
@@ -118,20 +118,6 @@ type TimeSlot = {
   hour: number;
   minute: number;
   display: string;
-};
-
-type InventoryItem = {
-  id: string;
-  name: string;
-  category: string;
-  current_stock: number;
-  min_stock_level: number;
-  max_stock_level: number;
-  unit_cost: number;
-  supplier: string;
-  last_restocked: string;
-  expiration_date?: string;
-  status: 'in-stock' | 'low-stock' | 'out-of-stock' | 'expired';
 };
 
 // Generate time slots from 8 AM to 12 AM (16 hours) in 15-minute intervals (12-hour format)
@@ -289,13 +275,25 @@ const assignUniqueColor = (staffId: string, existingColors: string[]): string =>
   return STAFF_COLORS[Math.abs(hash) % STAFF_COLORS.length].id;
 };
 
-// Mock staff data with assigned colors
-const mockStaff: StaffMember[] = [
-  { id: 'EMP001', name: 'Sarah Johnson', username: 'sarah', password: 'staff2024', role: 'senior', specialty: 'Hair Styling', status: 'available', access_level: 'admin', color: 'blue' },
-  { id: 'EMP002', name: 'Mike Chen', username: 'mike', password: 'staff2024', role: 'senior', specialty: 'Nails', status: 'busy', access_level: 'manager', color: 'emerald' },
-  { id: 'EMP003', name: 'Emma Davis', username: 'emma', password: 'staff2024', role: 'junior', specialty: 'Massage', status: 'available', access_level: 'full', color: 'purple' },
-  { id: 'EMP004', name: 'Alex Rivera', username: 'alex', password: 'staff2024', role: 'junior', specialty: 'Facials', status: 'break', access_level: 'basic', color: 'pink' }
-];
+// Load staff data from Supabase database
+const loadStaffData = async (): Promise<StaffMember[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('staff')
+      .select('id, name, username, password, role, specialty, avatar, status, access_level, color')
+      .order('name');
+    
+    if (error) {
+      console.error('Error loading staff data:', error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error('Failed to load staff data:', error);
+    return [];
+  }
+};
 
 // Mock appointments data - Comprehensive booking data to show busy calendar with new status and attributes
 const mockAppointments: Appointment[] = [
@@ -604,6 +602,20 @@ const mockAppointments: Appointment[] = [
     notes: 'Cleansing facial'
   }
 ];
+
+interface InventoryItem {
+  id: string;
+  name: string;
+  category: string;
+  current_stock: number;
+  min_stock_level: number;
+  max_stock_level: number;
+  unit_cost: number;
+  supplier: string;
+  last_restocked: string;
+  expiration_date?: string;
+  status: 'in-stock' | 'low-stock' | 'out-of-stock';
+}
 
 // Mock inventory data - Extensive mock data for better testing
 const mockInventory: InventoryItem[] = [
@@ -1065,8 +1077,15 @@ const mockInventory: InventoryItem[] = [
     status: 'low-stock'
   }
 ];
+interface StaffSchedulingSystemProps {
+  isLegendOpen?: boolean;
+  setIsLegendOpen?: (open: boolean) => void;
+}
 
-const StaffSchedulingSystem = () => {
+const StaffSchedulingSystem: React.FC<StaffSchedulingSystemProps> = ({
+  isLegendOpen,
+  setIsLegendOpen
+}) => {
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentStaff, setCurrentStaff] = useState<StaffMember | null>(null);
@@ -1074,54 +1093,163 @@ const StaffSchedulingSystem = () => {
   const { setTheme } = useTheme();
   const navigate = useNavigate();
 
-  // Check for saved authentication and appointments on component mount
+  // LeftNav and ScheduleGrid state
+  const [selectedStaff, setSelectedStaff] = useState<string[]>([]);
+  const [showScheduleView, setShowScheduleView] = useState(true);
+
+  // Check for saved authentication only (remove appointments check to avoid conflicts)
   useEffect(() => {
     const savedAuth = localStorage.getItem('staffAuth');
     if (savedAuth) {
       try {
         const { staffMember } = JSON.parse(savedAuth);
-        const foundStaff = mockStaff.find(s => s.id === staffMember.id);
-        if (foundStaff) {
-          setCurrentStaff(foundStaff);
-          setIsAuthenticated(true);
-          setTheme('light');
-          navigate('/staff');
-        }
+        // Don't automatically authenticate - let the user log in manually
+        console.log('Found saved authentication, user needs to log in manually');
       } catch (error) {
         console.error('Error parsing saved auth:', error);
         localStorage.removeItem('staffAuth');
       }
     }
-
-    // Load appointments from localStorage
-    const savedAppointments = localStorage.getItem('staffAppointments');
-    if (savedAppointments) {
-      try {
-        const appointments = JSON.parse(savedAppointments);
-        setAppointments(appointments);
-      } catch (error) {
-        console.error('Error parsing saved appointments:', error);
-        localStorage.removeItem('staffAppointments');
-      }
-    }
   }, []);
 
-  // Data state - Start with empty appointments
+  // Load staff data from database, fallback to mock data
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const staffData = await loadStaffData();
+        if (staffData.length > 0) {
+          setStaff(staffData);
+        } else {
+          // Use mock staff data if database is empty
+          const mockStaff = [
+            {
+              id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+              name: 'Sarah Johnson',
+              username: 'EMP001',
+              password: 'demo123',
+              role: 'admin' as const,
+              specialty: 'Hair Cutting, Styling, Color',
+              avatar: '',
+              status: 'available' as const,
+              access_level: 'admin' as const,
+              color: 'blue'
+            },
+            {
+              id: 'b1ffc9aa-9c0b-4ef8-bb6d-6bb9bd380a22',
+              name: 'Emily Davis',
+              username: 'EMP002',
+              password: 'demo123',
+              role: 'senior' as const,
+              specialty: 'Manicures, Pedicures, Nail Art',
+              avatar: '',
+              status: 'available' as const,
+              access_level: 'manager' as const,
+              color: 'emerald'
+            },
+            {
+              id: 'c2ggdaabb-9c0b-4ef8-bb6d-6bb9bd380a33',
+              name: 'Michael Chen',
+              username: 'EMP003',
+              password: 'demo123',
+              role: 'senior' as const,
+              specialty: 'Massage Therapy, Spa Treatments',
+              avatar: '',
+              status: 'available' as const,
+              access_level: 'manager' as const,
+              color: 'purple'
+            },
+            {
+              id: 'd3hhedbcc-9c0b-4ef8-bb6d-6bb9bd380a44',
+              name: 'Jessica Wilson',
+              username: 'EMP004',
+              password: 'demo123',
+              role: 'junior' as const,
+              specialty: 'Facial Treatments, Waxing',
+              avatar: '',
+              status: 'available' as const,
+              access_level: 'basic' as const,
+              color: 'pink'
+            }
+          ];
+          setStaff(mockStaff);
+        }
+      } catch (error) {
+        console.error('Failed to load staff data:', error);
+        // Fallback to mock data on error
+        const mockStaff = [
+          {
+            id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+            name: 'Sarah Johnson',
+            username: 'EMP001',
+            password: 'demo123',
+            role: 'admin' as const,
+            specialty: 'Hair Cutting, Styling, Color',
+            avatar: '',
+            status: 'available' as const,
+            access_level: 'admin' as const,
+            color: 'blue'
+          },
+          {
+            id: 'b1ffc9aa-9c0b-4ef8-bb6d-6bb9bd380a22',
+            name: 'Emily Davis',
+            username: 'EMP002',
+            password: 'demo123',
+            role: 'senior' as const,
+            specialty: 'Manicures, Pedicures, Nail Art',
+            avatar: '',
+            status: 'available' as const,
+            access_level: 'manager' as const,
+            color: 'emerald'
+          },
+          {
+            id: 'c2ggdaabb-9c0b-4ef8-bb6d-6bb9bd380a33',
+            name: 'Michael Chen',
+            username: 'EMP003',
+            password: 'demo123',
+            role: 'senior' as const,
+            specialty: 'Massage Therapy, Spa Treatments',
+            avatar: '',
+            status: 'available' as const,
+            access_level: 'manager' as const,
+            color: 'purple'
+          },
+          {
+            id: 'd3hhedbcc-9c0b-4ef8-bb6d-6bb9bd380a44',
+            name: 'Jessica Wilson',
+            username: 'EMP004',
+            password: 'demo123',
+            role: 'junior' as const,
+            specialty: 'Facial Treatments, Waxing',
+            avatar: '',
+            status: 'available' as const,
+            access_level: 'basic' as const,
+            color: 'pink'
+          }
+        ];
+        setStaff(mockStaff);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+
+  // Data state - Initialize with mock data for immediate display
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [staff, setStaff] = useState<StaffMember[]>(mockStaff);
-  const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
-  const [loading, setLoading] = useState(false);
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [isOnline, setIsOnline] = useState(true);
-  const [activeTab, setActiveTab] = useState('schedule');
   
   // Real-time line state
   const [currentTime, setCurrentTime] = useState(new Date());
-  const PIXELS_PER_15_MINUTES = 40; // Deduced from min-h-[40px] on line 1952
+  const PIXELS_PER_15_MINUTES = 32; // PHASE 3 STEP 6: Reduced to 30-32px for optimal density
   const PIXELS_PER_MINUTE = PIXELS_PER_15_MINUTES / 15;
   
   // Auto-logout timer state
@@ -1148,6 +1276,32 @@ const StaffSchedulingSystem = () => {
   const [selectedFilterService, setSelectedFilterService] = useState<string>('All');
   const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
 
+  // Initialize with mock appointments if none exist
+  useEffect(() => {
+    const savedAppointments = localStorage.getItem('staffAppointments');
+    if (savedAppointments) {
+      try {
+        const appointments = JSON.parse(savedAppointments);
+        setAppointments(appointments);
+      } catch (error) {
+        console.error('Error parsing saved appointments:', error);
+        localStorage.removeItem('staffAppointments');
+        // If parsing fails, use mock data
+        setAppointments(mockAppointments);
+      }
+    } else {
+      // Use mock data when no saved appointments exist
+      setAppointments(mockAppointments);
+    }
+  }, []);
+
+  // Auto-select all staff when staff data is loaded
+  useEffect(() => {
+    if (staff.length > 0 && selectedStaff.length === 0) {
+      setSelectedStaff(staff.map(s => s.id));
+    }
+  }, [staff, selectedStaff.length]);
+
   // Popover positioning constants
   const ARROW_HALF_SIZE = 6; // Half of 12px arrow size
   const POPOVER_WIDTH = 320; // Width of the popover
@@ -1170,6 +1324,60 @@ const StaffSchedulingSystem = () => {
 
   // Generate time slots
   const timeSlots = useMemo(() => generateTimeSlots(), []);
+
+  // Transform appointments for ScheduleGrid compatibility
+  const transformedAppointments = useMemo(() => {
+    return appointments.map(apt => {
+      // Map staff IDs to get correct staff info
+      const staffMapping = {
+        'EMP001': { name: 'Sarah Johnson', color: 'blue' },
+        'EMP002': { name: 'Emily Davis', color: 'emerald' },
+        'EMP003': { name: 'Michael Chen', color: 'purple' },
+        'EMP004': { name: 'Jessica Wilson', color: 'pink' }
+      };
+      
+      const staffInfo = staffMapping[apt.staff_id as keyof typeof staffMapping] ||
+                       { name: 'Unknown Staff', color: 'blue' };
+      
+      // Calculate end time based on service duration
+      const serviceDurations: { [key: string]: number } = {
+        'Hair Cut & Style': 60,
+        'Manicure': 45,
+        'Pedicure': 60,
+        'Facial Treatment': 90,
+        'Massage': 75,
+        'Hair Color': 120,
+        'Highlights': 150,
+        'Waxing': 30,
+        'Eyebrow Wax': 15,
+        'Nail Polish Change': 20,
+        'Personal Task': 60
+      };
+      
+      const duration = serviceDurations[apt.service_name] || 60;
+      const [hours, minutes] = apt.appointment_time.split(':').map(Number);
+      const endMinutes = minutes + duration;
+      const endHours = hours + Math.floor(endMinutes / 60);
+      const finalMinutes = endMinutes % 60;
+      
+      return {
+        id: apt.id,
+        client_name: apt.full_name,
+        service_name: apt.service_name,
+        start_time: apt.appointment_time,
+        end_time: `${endHours.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}`,
+        duration_minutes: duration,
+        price: apt.total_amount || 0,
+        status: apt.status,
+        notes: apt.notes,
+        is_recurring: apt.is_recurring || false,
+        payment_status: 'paid', // Default
+        staff_id: apt.staff_id,
+        staff_name: staffInfo.name,
+        color: getStaffColorConfig(staffInfo.color).color,
+      };
+    });
+  }, [appointments, staff]);
 
   // Derived list of all unique services from appointments
   const allServices = useMemo(() => {
@@ -1382,7 +1590,59 @@ const StaffSchedulingSystem = () => {
 
   // Authenticate staff member
   const authenticate = () => {
-    const foundStaff = staff.find(s => s.id === employeeId);
+    // FIXED: Use mock staff data for immediate authentication while database setup is pending
+    const mockStaffData = {
+      'EMP001': {
+        id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        name: 'Sarah Johnson',
+        username: 'EMP001',
+        password: 'demo123',
+        role: 'admin' as const,
+        specialty: 'Hair Cutting, Styling, Color',
+        avatar: '',
+        status: 'available' as const,
+        access_level: 'admin' as const,
+        color: 'blue'
+      },
+      'EMP002': {
+        id: 'b1ffc9aa-9c0b-4ef8-bb6d-6bb9bd380a22',
+        name: 'Emily Davis',
+        username: 'EMP002',
+        password: 'demo123',
+        role: 'senior' as const,
+        specialty: 'Manicures, Pedicures, Nail Art',
+        avatar: '',
+        status: 'available' as const,
+        access_level: 'manager' as const,
+        color: 'emerald'
+      },
+      'EMP003': {
+        id: 'c2ggdaabb-9c0b-4ef8-bb6d-6bb9bd380a33',
+        name: 'Michael Chen',
+        username: 'EMP003',
+        password: 'demo123',
+        role: 'senior' as const,
+        specialty: 'Massage Therapy, Spa Treatments',
+        avatar: '',
+        status: 'available' as const,
+        access_level: 'manager' as const,
+        color: 'purple'
+      },
+      'EMP004': {
+        id: 'd3hhedbcc-9c0b-4ef8-bb6d-6bb9bd380a44',
+        name: 'Jessica Wilson',
+        username: 'EMP004',
+        password: 'demo123',
+        role: 'junior' as const,
+        specialty: 'Facial Treatments, Waxing',
+        avatar: '',
+        status: 'available' as const,
+        access_level: 'basic' as const,
+        color: 'pink'
+      }
+    };
+
+    const foundStaff = mockStaffData[employeeId as keyof typeof mockStaffData];
     if (foundStaff) {
       setCurrentStaff(foundStaff);
       setIsAuthenticated(true);
@@ -1403,7 +1663,7 @@ const StaffSchedulingSystem = () => {
     } else {
       toast({
         title: "Access Denied",
-        description: "Invalid employee ID",
+        description: "Invalid employee ID. Use EMP001, EMP002, EMP003, or EMP004",
         variant: "destructive",
       });
     }
@@ -1680,11 +1940,54 @@ const StaffSchedulingSystem = () => {
   // Navigation functions
   const navigateDate = (direction: 'prev' | 'next') => {
     const days = viewMode === 'day' ? 1 : 7;
-    const newDate = direction === 'prev' 
+    const newDate = direction === 'prev'
       ? addDays(selectedDate, -days)
       : addDays(selectedDate, days);
     setSelectedDate(newDate);
   };
+
+  // LeftNav and ScheduleGrid callback functions
+  const handleStaffToggle = useCallback((staffId: string) => {
+    setSelectedStaff(prev =>
+      prev.includes(staffId)
+        ? prev.filter(id => id !== staffId)
+        : [...prev, staffId]
+    );
+  }, []);
+
+  const handleDateChange = useCallback((date: Date) => {
+    setSelectedDate(date);
+  }, []);
+
+  const handleAppointmentEdit = useCallback((appointment: any) => {
+    setSelectedAppointment(appointment);
+    toast({
+      title: "Edit Appointment",
+      description: `Editing appointment for ${appointment.full_name || appointment.client_name}`,
+    });
+  }, [toast]);
+
+  const handleAppointmentView = useCallback((appointment: any) => {
+    setSelectedAppointment(appointment);
+    toast({
+      title: "View Appointment",
+      description: `Viewing details for ${appointment.full_name || appointment.client_name}`,
+    });
+  }, [toast]);
+
+  const handleAppointmentCheckIn = useCallback((appointment: any) => {
+    handleCheckIn(appointment);
+  }, []);
+
+  const handleCreateAppointment = useCallback((staffId: string, time: string) => {
+    const staffMember = staff.find(s => s.id === staffId);
+    setSelectedBookingSlot({ staffId, time, staffMember });
+    setShowBookingDialog(true);
+    toast({
+      title: "Create Appointment",
+      description: `Creating appointment for ${staffMember?.name} at ${time}`,
+    });
+  }, [staff, toast]);
 
   // Check-in functions with new status system
   const handleCheckIn = (appointment: Appointment) => {
@@ -1765,36 +2068,6 @@ const StaffSchedulingSystem = () => {
     }
   };
 
-  // Inventory management functions
-  const updateInventoryStock = (itemId: string, newStock: number) => {
-    setInventory(prev => prev.map(item =>
-      item.id === itemId
-        ? { ...item, current_stock: newStock }
-        : item
-    ));
-    
-    const item = inventory.find(i => i.id === itemId);
-    if (item) {
-      toast({
-        title: "Stock Updated",
-        description: `${item.name} stock: ${newStock}`,
-      });
-    }
-  };
-
-  const getInventoryStatus = (item: InventoryItem) => {
-    if (item.current_stock === 0) return { color: 'bg-red-500', label: 'Out of Stock' };
-    if (item.current_stock <= item.min_stock_level) return { color: 'bg-yellow-500', label: 'Low Stock' };
-    return { color: 'bg-green-500', label: 'In Stock' };
-  };
-
-  const getTotalInventoryValue = () => {
-    return inventory.reduce((total, item) => total + (item.current_stock * item.unit_cost), 0);
-  };
-
-  const getLowStockItems = () => {
-    return inventory.filter(item => item.current_stock <= item.min_stock_level);
-  };
 
   // Enhanced validation functions
   const formatPhoneNumber = (value: string) => {
@@ -1899,7 +2172,7 @@ const StaffSchedulingSystem = () => {
     // Store modal data BEFORE closing popover to maintain context
     const modalContextData = {
       staffId: selectedBookingSlot.staffId,
-      staffMemberName: selectedBookingSlot.staffMember.name,
+      staffMemberName: selectedBookingSlot.staffMember?.name || 'Unknown Staff',
       selectedDate: selectedDate,
       selectedTime: selectedBookingSlot.time
     };
@@ -2031,7 +2304,7 @@ const StaffSchedulingSystem = () => {
       // Enhanced success feedback
       toast({
         title: "✅ Appointment Booked Successfully!",
-        description: `${bookingForm.firstName.trim()} ${bookingForm.lastName.trim()} scheduled for ${formatTime(selectedBookingSlot.time)} with ${selectedBookingSlot.staffMember.name}`,
+        description: `${bookingForm.firstName.trim()} ${bookingForm.lastName.trim()} scheduled for ${formatTime(selectedBookingSlot.time)} with ${selectedBookingSlot.staffMember?.name || 'Unknown Staff'}`,
         duration: 5000,
       });
 
@@ -2090,7 +2363,7 @@ const StaffSchedulingSystem = () => {
         <div className="border border-gray-200 rounded-lg p-8 w-full max-w-md shadow-lg">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-light text-black mb-2">
-              Zavira
+              Staff Scheduling System
             </h1>
             <p className="text-gray-500 text-sm">
               Enter your credentials to access the scheduling system
@@ -2135,942 +2408,293 @@ const StaffSchedulingSystem = () => {
 
   return (
     <TooltipProvider>
-
       <div className="min-h-screen bg-gray-50 text-black">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-4">
-          <div className="container mx-auto">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-light text-black">
-                  Zavira
-                </h1>
-                <p className="text-sm text-gray-500">
-                  {format(selectedDate, 'EEEE, MMMM d')}
-                </p>
+        {/* Schedule Content - Always Visible */}
+        <div className="bg-white">
+          <div className="px-4 py-6">
+            <div className="overflow-auto relative">
+              {/* LIVE TIME CHECKER LINE */}
+              <div
+                className="absolute left-0 right-0 z-50 pointer-events-none transition-all duration-300 ease-linear"
+                style={{
+                  top: calculateLiveLineTop(),
+                  height: '3px', // Thickness of the line
+                  backgroundColor: LIVE_TIME_LINE_COLOR,
+                  boxShadow: `0 0 8px 1px ${LIVE_TIME_LINE_COLOR}` // Shiny effect
+                }}
+              >
+                {/* Optional: Time indicator next to the line (for better visibility) */}
+                <div
+                  className="absolute left-0 top-[-10px] transform -translate-x-full p-1 rounded text-xs font-bold text-white pointer-events-none"
+                  style={{
+                    backgroundColor: LIVE_TIME_LINE_COLOR,
+                    boxShadow: `0 0 5px 1px ${LIVE_TIME_LINE_COLOR}`,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {format(currentTime, 'h:mm a')}
+                </div>
               </div>
               
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs">
-                    <Wifi className="h-3 w-3 mr-1" />
-                    Online
-                  </Badge>
+              {/* Staff Header Row - COMPRESSED for maximum density */}
+              <div className="flex border-b border-gray-100 mb-2 relative z-10">
+                <div className="w-12 flex-shrink-0 border-r-2 border-gray-200">
+                  <div className="p-1.5 font-medium text-gray-600 text-xs">Time</div>
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">{currentStaff?.name}</span>
-                  <span className="text-xs text-gray-400">{currentStaff?.role}</span>
-                </div>
-                
-                <Button
-                  onClick={logout}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Logout
-                </Button>
+                {filteredStaff.map(staffMember => {
+                  return (
+                    <div key={staffMember.id} className="flex-1 min-w-[160px] max-w-[180px] border-l border-gray-100 p-2 relative">
+                      <div className="text-center">
+                        <div className="text-xs font-medium text-black flex items-center justify-center">
+                          <span>{staffMember.name}</span>
+                          <div className="group relative ml-1">
+                            <button className="text-gray-400 hover:text-gray-600 focus:outline-none">
+                              <HelpCircle className="h-3 w-3" />
+                            </button>
+                            <div className="invisible group-hover:visible absolute left-1/2 top-5 transform -translate-x-1/2 w-48 bg-white shadow-lg rounded-md border border-gray-200 p-2 z-20">
+                              <div className="text-xs font-medium text-black mb-1">Services</div>
+                              <div className="text-xs text-gray-600">{staffMember.specialty}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
+
+              {/* Time Slots as Rows - COMPRESSED for maximum density */}
+              {timeSlots.map((timeSlot, timeIndex) => (
+                <div
+                  key={timeIndex}
+                  className="flex border-b border-gray-200 min-h-[30px] relative"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedAppointmentId) {
+                      const targetStaffId = e.currentTarget.dataset.staffId;
+                      if (targetStaffId) {
+                        handleMoveAppointment(draggedAppointmentId, targetStaffId, timeSlot.time);
+                        setDraggedAppointmentId(null);
+                      }
+                    }
+                  }}
+                >
+                  {/* Horizontal lines to divide 15-min intervals - COMPRESSED */}
+                  <div className="absolute left-0 right-0 top-1/2 border-t border-gray-300 opacity-70"></div>
+                  
+                  {/* Time Display - COMPRESSED */}
+                  <div className="w-12 flex-shrink-0 p-1 border-r border-gray-200 bg-gray-50 relative z-10">
+                    <div className="text-xs font-medium text-gray-600">
+                      {timeSlot.minute === 0 ? formatTime(timeSlot.time) : ''}
+                    </div>
+                  </div>
+
+                  {/* Staff Columns for this time slot */}
+                  {filteredStaff.map(staffMember => {
+                    const slotAppointments = getAppointmentsForSlot(
+                      staffMember.id,
+                      selectedDate,
+                      timeSlot.time
+                    );
+                    
+                    return (
+                      <div
+                        key={`${staffMember.id}-${timeIndex}`}
+                        data-staff-id={staffMember.id}
+                        className="flex-1 min-w-[140px] border-l-2 border-gray-200 p-1 relative bg-white"
+                        onMouseEnter={() => handleSlotHover(staffMember.id, timeSlot.time)}
+                        onMouseLeave={handleSlotLeave}
+                      >
+                        {/* Persistent Selection Style */}
+                        {selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time && (
+                          <div className="absolute inset-0 bg-gray-200 opacity-50 rounded pointer-events-none z-0"></div>
+                        )}
+                        
+                        {/* Show existing appointments with new DynamicAppointmentPill component */}
+                        {slotAppointments.map(appointment => {
+                          return (
+                            <DynamicAppointmentPill
+                              key={appointment.id}
+                              appointment={appointment}
+                              staffMember={filteredStaff.find(s => s.id === appointment.staff_id)}
+                              onClick={() => {
+                                setSelectedSlot({ staffId: appointment.staff_id, time: appointment.appointment_time });
+                                setSelectedAppointment(appointment);
+                              }}
+                              onDragStart={() => {
+                                setDraggedAppointmentId(appointment.id);
+                              }}
+                              onDragEnd={() => {
+                                setDraggedAppointmentId(null);
+                              }}
+                            />
+                          );
+                        })}
+                        
+                        {/* Show clickable booking area for empty slots */}
+                        {slotAppointments.length === 0 && (
+                          <div
+                            className={`
+                              slot-clickable min-h-[32px] rounded border border-dashed border-gray-200
+                              flex items-center justify-center cursor-pointer transition-all duration-200
+                              hover:border-gray-400 hover:bg-gray-100
+                              ${hoveredSlot?.staffId === staffMember.id && hoveredSlot?.time === timeSlot.time
+                                ? 'border-gray-400 bg-gray-100'
+                                : ''
+                              }
+                              ${selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time
+                                ? 'border-blue-400 bg-blue-50'
+                                : ''
+                              }
+                            `}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('[DEBUG] Empty slot clicked:', { staffId: staffMember.id, time: timeSlot.time });
+                              handleEmptySlotClick(staffMember.id, timeSlot.time, staffMember, e);
+                              setSelectedSlot({ staffId: staffMember.id, time: timeSlot.time });
+                            }}
+                          >
+                            <div className="text-center">
+                              <div className="text-gray-400 text-xs transition-colors">
+                                {hoveredSlot?.staffId === staffMember.id && hoveredSlot?.time === timeSlot.time
+                                  ? 'Click for actions'
+                                  : selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time
+                                  ? 'Selected'
+                                  : timeSlot.display
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Slot Action Popover */}
+                        {showSlotPopover && selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time && (
+                          <div
+                            data-slot-popover
+                            className="absolute z-50 w-80 p-0 bg-white border border-gray-200 shadow-xl rounded-lg"
+                            style={{
+                              position: 'fixed',
+                              left: slotPopoverPosition?.x ? `${slotPopoverPosition.x}px` : 'auto',
+                              top: slotPopoverPosition?.y ? `${slotPopoverPosition.y}px` : 'auto',
+                              zIndex: 1000
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {/* Speech bubble arrow - positioned to point to exact cell center */}
+                            {slotPopoverPosition?.position === 'right' && slotPopoverPosition.cellCenterY !== undefined ? (
+                              // Arrow on left side pointing to the clicked cell
+                              <div
+                                className="absolute w-3 h-3 bg-white border-l border-t border-gray-200 transform rotate-45 -left-1"
+                                style={{
+                                  top: `${ARROW_HALF_SIZE}px`, // Arrow center is at 6px from popover top edge
+                                  transform: 'rotate(45deg)',
+                                  boxShadow: '-1px 1px 0 0 #d1d5db'
+                                }}
+                              />
+                            ) : slotPopoverPosition?.position === 'left' && slotPopoverPosition.cellCenterY !== undefined ? (
+                              // Arrow on right side pointing to the clicked cell
+                              <div
+                                className="absolute w-3 h-3 bg-white border-r border-b border-gray-200 transform rotate-45 -right-1"
+                                style={{
+                                  top: `${ARROW_HALF_SIZE}px`, // Arrow center is at 6px from popover top edge
+                                  transform: 'rotate(45deg)',
+                                  boxShadow: '1px -1px 0 0 #d1d5db'
+                                }}
+                              />
+                            ) : null}
+                            
+                            <div className="p-1 relative">
+                              {/* Header with slot info */}
+                              <div className="text-xs text-gray-600 mb-2 px-2 py-1 bg-gray-50 rounded-t-lg">
+                                {selectedBookingSlot?.staffMember.name} • {formatTime(selectedBookingSlot?.time || '')}
+                              </div>
+                              
+                              {/* Menu options */}
+                              <div className="space-y-1">
+                                {/* Option 1: New Appointment */}
+                                <button
+                                  onClick={() => handleSlotActionClick('new-appointment')}
+                                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
+                                    <CalendarPlus className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-black">New Appointment</div>
+                                    <div className="text-xs text-gray-500">Create a new appointment</div>
+                                  </div>
+                                </button>
+
+                                {/* Option 2: New Multiple Appointments */}
+                                <button
+                                  onClick={() => handleSlotActionClick('new-multiple-appointments')}
+                                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
+                                    <CalendarDays className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-black">New Multiple Appointments</div>
+                                    <div className="text-xs text-gray-500">Create multiple appointments</div>
+                                  </div>
+                                </button>
+
+                                {/* Option 3: Add to Waitlist */}
+                                <button
+                                  onClick={() => handleSlotActionClick('add-waitlist')}
+                                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
+                                    <Timer className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-black">Add to Waitlist</div>
+                                    <div className="text-xs text-gray-500">Add a customer to the waitlist</div>
+                                  </div>
+                                </button>
+
+                                {/* Option 4: Personal Task */}
+                                <button
+                                  onClick={() => handleSlotActionClick('personal-task')}
+                                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="w-6 h-6 bg-gray-800 rounded flex items-center justify-center flex-shrink-0">
+                                    <CalendarX className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-black">Personal Task</div>
+                                    <div className="text-xs text-gray-500">Add a personal task</div>
+                                  </div>
+                                </button>
+
+                                {/* Option 5: Edit Working Hours */}
+                                <button
+                                  onClick={() => handleSlotActionClick('edit-working-hours')}
+                                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center flex-shrink-0">
+                                    <Settings className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-black">Edit Working Hours</div>
+                                    <div className="text-xs text-gray-500">Edit your calendar working hours</div>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Content Area with proper bottom padding for fixed navigation */}
-        <div className="content-with-footer">
-          {/* Header with navigation - Always Visible */}
-          <div className="px-6 py-4 border-b border-gray-100 bg-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-medium text-black">Schedule & Bookings</h2>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                {/* Service Filter */}
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-500" />
-                  <Select
-                    value={selectedFilterService}
-                    onValueChange={setSelectedFilterService}
-                  >
-                    <SelectTrigger className="h-9 bg-white border-gray-300 focus:border-black focus:ring-black w-[180px]">
-                      <SelectValue placeholder="Filter by Service" className="text-sm" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200 max-h-48">
-                      {allServices.map(service => (
-                        <SelectItem key={service} value={service} className="text-black text-sm">
-                          {service}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Status Legend Popover */}
-                <AppointmentLegend />
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => navigateDate('prev')}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    onClick={() => setSelectedDate(new Date())}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    Today
-                  </Button>
-                  
-                  <Button
-                    onClick={() => navigateDate('next')}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Top Navigation Tabs - Always Visible */}
-          <div className="px-6 py-3 border-b border-gray-50 bg-white">
-            <div className="flex items-center gap-4">
-              {[
-                { id: 'schedule', label: 'Schedule', icon: Calendar, color: '#3B82F6' },
-                { id: 'customer', label: 'Customer', icon: Users, color: '#10B981' },
-                { id: 'booking', label: 'Bookings', icon: Clock, color: '#8B5CF6' },
-                { id: 'inventory', label: 'Inventory', icon: Package, color: '#F59E0B' },
-                { id: 'staff', label: 'Staff', icon: UserCheck, color: '#EF4444' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 16px',
-                    backgroundColor: activeTab === tab.id ? tab.color + '10' : 'transparent',
-                    border: `1px solid ${activeTab === tab.id ? tab.color : '#e5e7eb'}`,
-                    borderRadius: '6px',
-                    color: activeTab === tab.id ? tab.color : '#6b7280',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
-                >
-                  <tab.icon style={{
-                    width: '16px',
-                    height: '16px',
-                    color: activeTab === tab.id ? tab.color : '#6b7280'
-                  }} />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Tab Content */}
-          {activeTab === 'schedule' && (
-            <div className="bg-white">
-              <div className="px-4 py-6">
-                <div className="overflow-auto relative">
-                    {/* LIVE TIME CHECKER LINE */}
-                    <div
-                      className="absolute left-0 right-0 z-50 pointer-events-none transition-all duration-300 ease-linear"
-                      style={{
-                        top: calculateLiveLineTop(),
-                        height: '3px', // Thickness of the line
-                        backgroundColor: LIVE_TIME_LINE_COLOR,
-                        boxShadow: `0 0 8px 1px ${LIVE_TIME_LINE_COLOR}` // Shiny effect
-                      }}
-                    >
-                      {/* Optional: Time indicator next to the line (for better visibility) */}
-                      <div
-                        className="absolute left-0 top-[-10px] transform -translate-x-full p-1 rounded text-xs font-bold text-white pointer-events-none"
-                        style={{
-                          backgroundColor: LIVE_TIME_LINE_COLOR,
-                          boxShadow: `0 0 5px 1px ${LIVE_TIME_LINE_COLOR}`,
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        {format(currentTime, 'h:mm a')}
-                      </div>
-                    </div>
-                    
-                    {/* Staff Header Row - COMPRESSED for maximum density */}
-                    <div className="flex border-b border-gray-100 mb-2 relative z-10">
-                    <div className="w-12 flex-shrink-0 border-r-2 border-gray-200">
-                      <div className="p-1.5 font-medium text-gray-600 text-xs">Time</div>
-                    </div>
-                    {filteredStaff.map(staffMember => {
-                      return (
-                        <div key={staffMember.id} className="flex-1 min-w-[160px] max-w-[180px] border-l border-gray-100 p-2 relative">
-                          <div className="text-xs font-medium text-black flex items-center">
-                            {staffMember.name.split(' ')[0]}
-                            <div className="group relative ml-1">
-                              <button className="text-gray-400 hover:text-gray-600 focus:outline-none">
-                                <HelpCircle className="h-3 w-3" />
-                              </button>
-                              <div className="invisible group-hover:visible absolute left-0 top-5 w-48 bg-white shadow-lg rounded-md border border-gray-200 p-2 z-20">
-                                <div className="text-xs font-medium text-black mb-1">Services</div>
-                                <div className="text-xs text-gray-600">{staffMember.specialty}</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-xs text-gray-500">{staffMember.role}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Time Slots as Rows - COMPRESSED for maximum density */}
-                  {timeSlots.map((timeSlot, timeIndex) => (
-                    <div
-                      key={timeIndex}
-                      className="flex border-b border-gray-200 min-h-[30px] relative"
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        if (draggedAppointmentId) {
-                          const targetStaffId = e.currentTarget.dataset.staffId;
-                          if (targetStaffId) {
-                            handleMoveAppointment(draggedAppointmentId, targetStaffId, timeSlot.time);
-                            setDraggedAppointmentId(null);
-                          }
-                        }
-                      }}
-                    >
-                      {/* Horizontal lines to divide 15-min intervals - COMPRESSED */}
-                      <div className="absolute left-0 right-0 top-1/2 border-t border-gray-300 opacity-70"></div>
-                      
-                      {/* Time Display - COMPRESSED */}
-                      <div className="w-12 flex-shrink-0 p-1 border-r border-gray-200 bg-gray-50 relative z-10">
-                        <div className="text-xs font-medium text-gray-600">
-                          {timeSlot.minute === 0 ? formatTime(timeSlot.time) : ''}
-                        </div>
-                      </div>
-
-                      {/* Staff Columns for this time slot */}
-                      {filteredStaff.map(staffMember => {
-                        const slotAppointments = getAppointmentsForSlot(
-                          staffMember.id,
-                          selectedDate,
-                          timeSlot.time
-                        );
-                        
-                        return (
-                          <div
-                            key={`${staffMember.id}-${timeIndex}`}
-                            data-staff-id={staffMember.id}
-                            className="flex-1 min-w-[140px] border-l-2 border-gray-200 p-1 relative bg-white"
-                            onMouseEnter={() => handleSlotHover(staffMember.id, timeSlot.time)}
-                            onMouseLeave={handleSlotLeave}
-                          >
-                            {/* Persistent Selection Style */}
-                            {selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time && (
-                              <div className="absolute inset-0 bg-gray-200 opacity-50 rounded pointer-events-none z-0"></div>
-                            )}
-                            
-                            {/* Show existing appointments with new DynamicAppointmentPill component */}
-                            {slotAppointments.map(appointment => {
-                              return (
-                                <DynamicAppointmentPill
-                                  key={appointment.id}
-                                  appointment={appointment}
-                                  staffMember={filteredStaff.find(s => s.id === appointment.staff_id)}
-                                  onClick={() => {
-                                    setSelectedSlot({ staffId: appointment.staff_id, time: appointment.appointment_time });
-                                    setSelectedAppointment(appointment);
-                                  }}
-                                  onDragStart={() => {
-                                    setDraggedAppointmentId(appointment.id);
-                                  }}
-                                  onDragEnd={() => {
-                                    setDraggedAppointmentId(null);
-                                  }}
-                                />
-                              );
-                            })}
-                            
-                            {/* Show clickable booking area for empty slots */}
-                            {slotAppointments.length === 0 && (
-                              <div
-                                className={`
-                                  slot-clickable min-h-[38px] rounded border border-dashed border-gray-200
-                                  flex items-center justify-center cursor-pointer transition-all duration-200
-                                  hover:border-gray-400 hover:bg-gray-100
-                                  ${hoveredSlot?.staffId === staffMember.id && hoveredSlot?.time === timeSlot.time
-                                    ? 'border-gray-400 bg-gray-100'
-                                    : ''
-                                  }
-                                  ${selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time
-                                    ? 'border-blue-400 bg-blue-50'
-                                    : ''
-                                  }
-                                `}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  console.log('[DEBUG] Empty slot clicked:', { staffId: staffMember.id, time: timeSlot.time });
-                                  handleEmptySlotClick(staffMember.id, timeSlot.time, staffMember, e);
-                                  setSelectedSlot({ staffId: staffMember.id, time: timeSlot.time });
-                                }}
-                              >
-                                <div className="text-center">
-                                  <div className="text-gray-400 text-xs transition-colors">
-                                    {hoveredSlot?.staffId === staffMember.id && hoveredSlot?.time === timeSlot.time
-                                      ? 'Click for actions'
-                                      : selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time
-                                      ? 'Selected'
-                                      : timeSlot.display
-                                    }
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {/* Slot Action Popover */}
-                            {showSlotPopover && selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time && (
-                              <div
-                                data-slot-popover
-                                className="absolute z-50 w-80 p-0 bg-white border border-gray-200 shadow-xl rounded-lg"
-                                style={{
-                                  position: 'fixed',
-                                  left: slotPopoverPosition?.x ? `${slotPopoverPosition.x}px` : 'auto',
-                                  top: slotPopoverPosition?.y ? `${slotPopoverPosition.y}px` : 'auto',
-                                  zIndex: 1000
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {/* Speech bubble arrow - positioned to point to exact cell center */}
-                                {slotPopoverPosition?.position === 'right' && slotPopoverPosition.cellCenterY !== undefined ? (
-                                  // Arrow on left side pointing to the clicked cell
-                                  <div
-                                    className="absolute w-3 h-3 bg-white border-l border-t border-gray-200 transform rotate-45 -left-1"
-                                    style={{
-                                      top: `${ARROW_HALF_SIZE}px`, // Arrow center is at 6px from popover top edge
-                                      transform: 'rotate(45deg)',
-                                      boxShadow: '-1px 1px 0 0 #d1d5db'
-                                    }}
-                                  />
-                                ) : slotPopoverPosition?.position === 'left' && slotPopoverPosition.cellCenterY !== undefined ? (
-                                  // Arrow on right side pointing to the clicked cell
-                                  <div
-                                    className="absolute w-3 h-3 bg-white border-r border-b border-gray-200 transform rotate-45 -right-1"
-                                    style={{
-                                      top: `${ARROW_HALF_SIZE}px`, // Arrow center is at 6px from popover top edge
-                                      transform: 'rotate(45deg)',
-                                      boxShadow: '1px -1px 0 0 #d1d5db'
-                                    }}
-                                  />
-                                ) : null}
-                                
-                                <div className="p-1 relative">
-                                  {/* Header with slot info */}
-                                  <div className="text-xs text-gray-600 mb-2 px-2 py-1 bg-gray-50 rounded-t-lg">
-                                    {selectedBookingSlot?.staffMember.name} • {formatTime(selectedBookingSlot?.time || '')}
-                                  </div>
-                                  
-                                  {/* Menu options */}
-                                  <div className="space-y-1">
-                                    {/* Option 1: New Appointment */}
-                                    <button
-                                      onClick={() => handleSlotActionClick('new-appointment')}
-                                      className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
-                                    >
-                                      <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-                                        <CalendarPlus className="h-3 w-3 text-white" />
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-black">New Appointment</div>
-                                        <div className="text-xs text-gray-500">Create a new appointment</div>
-                                      </div>
-                                    </button>
-
-                                    {/* Option 2: New Multiple Appointments */}
-                                    <button
-                                      onClick={() => handleSlotActionClick('new-multiple-appointments')}
-                                      className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
-                                    >
-                                      <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-                                        <CalendarDays className="h-3 w-3 text-white" />
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-black">New Multiple Appointments</div>
-                                        <div className="text-xs text-gray-500">Create multiple appointments</div>
-                                      </div>
-                                    </button>
-
-                                    {/* Option 3: Add to Waitlist */}
-                                    <button
-                                      onClick={() => handleSlotActionClick('add-waitlist')}
-                                      className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
-                                    >
-                                      <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
-                                        <Timer className="h-3 w-3 text-white" />
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-black">Add to Waitlist</div>
-                                        <div className="text-xs text-gray-500">Add a customer to the waitlist</div>
-                                      </div>
-                                    </button>
-
-                                    {/* Option 4: Personal Task */}
-                                    <button
-                                      onClick={() => handleSlotActionClick('personal-task')}
-                                      className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
-                                    >
-                                      <div className="w-6 h-6 bg-gray-800 rounded flex items-center justify-center flex-shrink-0">
-                                        <CalendarX className="h-3 w-3 text-white" />
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-black">Personal Task</div>
-                                        <div className="text-xs text-gray-500">Add a personal task</div>
-                                      </div>
-                                    </button>
-
-                                    {/* Option 5: Edit Working Hours */}
-                                    <button
-                                      onClick={() => handleSlotActionClick('edit-working-hours')}
-                                      className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
-                                    >
-                                      <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center flex-shrink-0">
-                                        <Settings className="h-3 w-3 text-white" />
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-black">Edit Working Hours</div>
-                                        <div className="text-xs text-gray-500">Edit your calendar working hours</div>
-                                      </div>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-        {/* Inventory Tab Content */}
-        {activeTab === 'inventory' && (
-          <div className="bg-white p-6 content-with-footer">
-            <div className="container mx-auto">
-              {/* Inventory Overview Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Total Items</p>
-                        <p className="text-2xl font-bold text-black">{inventory.length}</p>
-                      </div>
-                      <Package className="h-8 w-8 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Total Value</p>
-                        <p className="text-2xl font-bold text-black">{formatCurrency(getTotalInventoryValue())}</p>
-                      </div>
-                      <BarChart3 className="h-8 w-8 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Low Stock</p>
-                        <p className="text-2xl font-bold text-yellow-600">{getLowStockItems().length}</p>
-                      </div>
-                      <TrendingDown className="h-8 w-8 text-yellow-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Out of Stock</p>
-                        <p className="text-2xl font-bold text-red-600">
-                          {inventory.filter(item => item.status === 'out-of-stock').length}
-                        </p>
-                      </div>
-                      <AlertTriangle className="h-8 w-8 text-red-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Inventory Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Inventory Management</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={() => setLastRefresh(new Date())}
-                        variant="outline"
-                        size="sm"
-                        className="border-gray-300 text-black hover:bg-gray-50"
-                      >
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
-                      </Button>
-                      <Button className="bg-white border border-gray-300 text-black hover:bg-gray-50">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Item
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Item</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Category</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Current Stock</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Min Level</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {inventory.map((item) => {
-                          const status = getInventoryStatus(item);
-                          return (
-                            <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                              <td className="py-3 px-4">
-                                <div>
-                                  <div className="font-medium text-black">{item.name}</div>
-                                  <div className="text-sm text-gray-500">Supplier: {item.supplier}</div>
-                                </div>
-                              </td>
-                              <td className="py-3 px-4 text-gray-600">{item.category}</td>
-                              <td className="py-3 px-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-black">{item.current_stock}</span>
-                                  <div className="flex items-center gap-1">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-6 w-6 p-0"
-                                      onClick={() => updateInventoryStock(item.id, Math.max(0, item.current_stock - 1))}
-                                    >
-                                      <Minus className="h-3 w-3" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-6 w-6 p-0"
-                                      onClick={() => updateInventoryStock(item.id, item.current_stock + 1)}
-                                    >
-                                      <Plus className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="py-3 px-4 text-gray-600">{item.min_stock_level}</td>
-                              <td className="py-3 px-4">
-                                <Badge className={`${status.color} text-white`}>
-                                  {status.label}
-                                </Badge>
-                              </td>
-                              <td className="py-3 px-4 font-medium text-black">
-                                {formatCurrency(item.current_stock * item.unit_cost)}
-                              </td>
-                              <td className="py-3 px-4">
-                                <div className="flex items-center gap-2">
-                                  <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                    Edit
-                                  </Button>
-                                  <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                    Reorder
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* Customers Tab Content */}
-        {activeTab === 'customer' && (
-          <div className="bg-white p-6 content-with-footer">
-            <div className="container mx-auto">
-              {/* Customer Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Customer Management</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-gray-300 text-black hover:bg-gray-50"
-                      >
-                        <Search className="h-4 w-4 mr-2" />
-                        Search
-                      </Button>
-                      <Button className="bg-white border border-gray-300 text-black hover:bg-gray-50">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Add Customer
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Customer</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Phone</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Email</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Last Visit</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Total Visits</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { name: 'Sarah Parker', phone: '+1-555-0101', email: 'sarah.p@email.com', lastVisit: '2024-11-19', visits: 15, status: 'Active', totalSpent: '$1,245' },
-                          { name: 'John Doe', phone: '+1-555-0123', email: 'john@example.com', lastVisit: '2024-11-18', visits: 8, status: 'Active', totalSpent: '$640' },
-                          { name: 'Jane Smith', phone: '+1-555-0124', email: 'jane@example.com', lastVisit: '2024-11-17', visits: 22, status: 'VIP', totalSpent: '$2,100' },
-                          { name: 'Mike Johnson', phone: '+1-555-0125', email: 'mike.j@email.com', lastVisit: '2024-11-16', visits: 12, status: 'Active', totalSpent: '$890' },
-                          { name: 'Emily Davis', phone: '+1-555-0126', email: 'emily.d@email.com', lastVisit: '2024-11-15', visits: 5, status: 'New', totalSpent: '$280' },
-                          { name: 'Bob Wilson', phone: '+1-555-0127', email: 'bob.w@email.com', lastVisit: '2024-11-14', visits: 18, status: 'Active', totalSpent: '$1,560' }
-                        ].map((customer, index) => (
-                          <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                  <span className="text-sm font-medium text-gray-600">
-                                    {customer.name.split(' ').map(n => n).join('')}
-                                  </span>
-                                </div>
-                                <span className="font-medium text-black">{customer.name}</span>
-                              </div>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600">{customer.phone}</td>
-                            <td className="py-3 px-4 text-gray-600">{customer.email}</td>
-                            <td className="py-3 px-4 text-gray-600">{format(new Date(customer.lastVisit), 'MMM d, yyyy')}</td>
-                            <td className="py-3 px-4 text-gray-600">{customer.visits}</td>
-                            <td className="py-3 px-4">
-                              <Badge className={
-                                customer.status === 'VIP' ? 'bg-purple-100 text-purple-800' :
-                                customer.status === 'New' ? 'bg-green-100 text-green-800' :
-                                'bg-blue-100 text-blue-800'
-                              }>
-                                {customer.status}
-                              </Badge>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2">
-                                <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                  View
-                                </Button>
-                                <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                  Book
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* Bookings Tab Content */}
-        {activeTab === 'booking' && (
-          <div className="bg-white p-6 content-with-footer">
-            <div className="container mx-auto">
-              {/* Bookings Overview Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Today's Bookings</p>
-                        <p className="text-2xl font-bold text-black">{appointments.length}</p>
-                      </div>
-                      <Calendar className="h-8 w-8 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Pending</p>
-                        <p className="text-2xl font-bold text-yellow-600">
-                          {appointments.filter(a => a.status === 'confirmed').length}
-                        </p>
-                      </div>
-                      <Clock className="h-8 w-8 text-yellow-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">In Progress</p>
-                        <p className="text-2xl font-bold text-blue-600">
-                          {appointments.filter(a => a.status === 'in_progress' || a.status === 'accepted' || a.status === 'ready_to_start').length}
-                        </p>
-                      </div>
-                      <PlayCircle className="h-8 w-8 text-blue-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Completed Today</p>
-                        <p className="text-2xl font-bold text-green-600">
-                          {appointments.filter(a => a.status === 'complete').length}
-                        </p>
-                      </div>
-                      <CheckCircle className="h-8 w-8 text-green-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Bookings Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Today's Bookings</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-gray-300 text-black hover:bg-gray-50"
-                      >
-                        <Filter className="h-4 w-4 mr-2" />
-                        Filter
-                      </Button>
-                      <Button className="bg-white border border-gray-300 text-black hover:bg-gray-50">
-                        <Plus className="h-4 w-4 mr-2" />
-                        New Booking
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Time</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Customer</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Service</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Staff</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Amount</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {appointments.map((appointment) => {
-                          const staffMember = staff.find(s => s.id === appointment.staff_id);
-                          const statusConfig = getStatusConfig(appointment.status);
-                          return (
-                            <tr key={appointment.id} className="border-b border-gray-100 hover:bg-gray-50">
-                              <td className="py-3 px-4 font-medium text-black">{formatTime(appointment.appointment_time)}</td>
-                              <td className="py-3 px-4">
-                                <div className="flex items-center gap-2">
-                                  {/* Staff color indicator */}
-                                  <div
-                                    className="w-3 h-3 rounded-full flex-shrink-0"
-                                    style={{ backgroundColor: getStaffColorConfig(staffMember?.color || 'blue').color }}
-                                  ></div>
-                                  <div>
-                                    <div className="font-medium text-black">{appointment.full_name}</div>
-                                    <div className="text-sm text-gray-500">{appointment.phone}</div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="py-3 px-4 text-gray-600">{appointment.service_name}</td>
-                              <td className="py-3 px-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-600">{staffMember?.name}</span>
-                                  <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ backgroundColor: getStaffColorConfig(staffMember?.color || 'blue').color }}
-                                  ></div>
-                                </div>
-                              </td>
-                              <td className="py-3 px-4 font-medium text-black">{formatCurrency(appointment.total_amount)}</td>
-                              <td className="py-3 px-4">
-                                <Badge className={statusConfig.bgColor}>
-                                  {statusConfig.label}
-                                </Badge>
-                              </td>
-                              <td className="py-3 px-4">
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="border-gray-300 text-black hover:bg-gray-50"
-                                    onClick={() => setSelectedAppointment(appointment)}
-                                  >
-                                    Details
-                                  </Button>
-                                  {(appointment.status === 'confirmed' || appointment.status === 'accepted') && (
-                                    <Button
-                                      size="sm"
-                                      className="text-white"
-                                      style={{ backgroundColor: getStaffColorConfig(staffMember?.color || 'blue').color }}
-                                      onClick={() => handleCheckIn(appointment)}
-                                    >
-                                      {appointment.status === 'confirmed' ? 'Accept' : 'Start'}
-                                    </Button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* Staff Tab Content */}
-        {activeTab === 'staff' && (
-          <div className="bg-white p-6 content-with-footer">
-            <div className="container mx-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Staff Management</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-gray-300 text-black hover:bg-gray-50"
-                      >
-                        <Search className="h-4 w-4 mr-2" />
-                        Search
-                      </Button>
-                      <Button className="bg-white border border-gray-300 text-black hover:bg-gray-50">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Add Staff
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Staff Member</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Role</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Specialty</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Today's Schedule</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {staff.map((member) => (
-                          <tr key={member.id} className="border-b border-gray-100 hover:bg-gray-50">
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                                  style={{ backgroundColor: getStaffColorConfig(member.color).color }}
-                                >
-                                  {member.name.split(' ').map(n => n).join('')}
-                                </div>
-                                <span className="font-medium text-black">{member.name}</span>
-                              </div>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600 capitalize">{member.role}</td>
-                            <td className="py-3 px-4 text-gray-600">{member.specialty}</td>
-                            <td className="py-3 px-4">
-                              <Badge className={
-                                member.status === 'available' ? 'bg-green-100 text-green-800' :
-                                member.status === 'busy' ? 'bg-red-100 text-red-800' :
-                                member.status === 'break' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-gray-100 text-gray-800'
-                              }>
-                                {member.status}
-                              </Badge>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600">
-                              {appointments.filter(apt => apt.staff_id === member.id).length} appointments
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2">
-                                <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                  View
-                                </Button>
-                                <Button size="sm" variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
-                                  Edit
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
 
         {/* Appointment Detail Dialog */}
         {selectedAppointment && (
@@ -3270,7 +2894,7 @@ const StaffSchedulingSystem = () => {
                   Book New Appointment
                 </DialogTitle>
                 <DialogDescription className="text-gray-600 text-xs leading-relaxed">
-                  {selectedBookingSlot.staffMember.name} • {formatTime(selectedBookingSlot.time)} • {format(selectedDate, 'MMM d, yyyy')}
+                  {selectedBookingSlot.staffMember?.name || 'Unknown Staff'} • {formatTime(selectedBookingSlot.time)} • {format(selectedDate, 'MMM d, yyyy')}
                 </DialogDescription>
               </DialogHeader>
               
@@ -3535,36 +3159,34 @@ const StaffSchedulingSystem = () => {
             />
           </>
         )}
+        {/* Custom scrollbar for black/white theme */}
+        <style>
+          {`
+            .custom-scrollbar {
+              scrollbar-width: thin;
+              scrollbar-color: #374151 #f9fafb;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar {
+              width: 6px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-track {
+              background: #f9fafb;
+              border-radius: 3px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+              background: #374151;
+              border-radius: 3px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+              background: #1f2937;
+            }
+          `}
+        </style>
       </div>
-    </div>
-
-    {/* Custom scrollbar for black/white theme */}
-    <style>
-      {`
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: #374151 #f9fafb;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f9fafb;
-          border-radius: 3px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #374151;
-          border-radius: 3px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #1f2937;
-        }
-      `}
-    </style>
     </TooltipProvider>
   );
 };

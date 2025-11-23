@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
 import {
   Repeat,
   Home,
@@ -16,23 +17,17 @@ interface DynamicAppointmentPillProps {
   appointment: {
     id: string;
     service_name: string;
-    appointment_time: string;
+    start_time: string;
+    end_time: string;
+    duration_minutes: number;
     staff_id: string;
     status: string;
-    full_name: string;
-    phone?: string;
-    email?: string;
-    total_amount?: number;
+    client_name: string;
+    price?: number;
     notes?: string;
-    // Service duration in minutes (to be calculated or fetched)
-    duration_minutes?: number;
     // Attribute flags
     is_recurring?: boolean;
-    is_bundle?: boolean;
-    is_house_call?: boolean;
-    has_note?: boolean;
-    form_required?: boolean;
-    deposit_paid?: boolean;
+    payment_status?: 'paid' | 'pending' | 'refunded';
   };
   staffMember?: {
     id: string;
@@ -105,10 +100,10 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
   const serviceDuration = appointment.duration_minutes || 
     SERVICE_DURATIONS[appointment.service_name] || 60; // Default 60 minutes
 
-  // Dynamic height calculation - COMPRESSED for maximum density
-  // Base height: 30px for 15-minute intervals (reduced from 40px)
+  // Dynamic height calculation - STRICT VERTICAL COMPRESSION
+  // Base height: 30px for 15-minute intervals (strict compression for 4-5 visible hours)
   // Formula: (duration_minutes / 15) * base_height
-  const BASE_HEIGHT_PX = 30; // This corresponds to 15-minute interval (compressed)
+  const BASE_HEIGHT_PX = 30; // This corresponds to 15-minute interval (strictly compressed)
   const calculatedHeight = Math.max(
     (serviceDuration / 15) * BASE_HEIGHT_PX,
     BASE_HEIGHT_PX // Minimum height of 15-minute interval
@@ -128,70 +123,71 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
   });
 
   // Extract customer name (remove any extra info)
-  const customerName = appointment.full_name.split(' ')[0] + ' ' + 
-    appointment.full_name.split(' ').slice(1).join(' ').split('(')[0].trim();
+  const customerName = appointment.client_name?.split(' ')[0] + ' ' +
+    (appointment.client_name?.split(' ').slice(1).join(' ').split('(')[0] || '').trim() || 'No Name';
 
   return (
     <div
       className={`
-        relative overflow-hidden border-2 rounded cursor-move
-        transition-all duration-200 hover:shadow-md
+        relative overflow-hidden border rounded-sm cursor-move
+        transition-all duration-200 hover:shadow-sm
         ${statusStyle.bgClass} ${statusStyle.borderClass} ${statusStyle.textClass}
       `}
       style={{
         height: `${calculatedHeight}px`,
-        minHeight: '30px' // Compressed minimum touch target
+        minHeight: '30px', // Strict compression minimum touch target to match time slots
+        borderRadius: '2px' // More rectangular, less rounded
       }}
       onClick={onClick}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       draggable
     >
-      {/* Internal padding for content - ULTRA COMPRESSED */}
-      <div className="p-0.5 h-full flex flex-col justify-between relative">
-        
-        {/* Top content - Customer Name (Primary focus) - COMPRESSED */}
-        <div className="flex-shrink-0">
-          <div className="text-xs font-medium leading-tight truncate pr-6">
+      {/* Internal padding - ULTRA COMPRESSED for maximum content density */}
+      <div className="p-0 h-full flex flex-col justify-between relative">
+
+        {/* Top content - Customer Name (Primary focus) - ULTRA COMPRESSED */}
+        <div className="flex-shrink-0 px-1 pt-0.5">
+          <div className="text-[10px] font-semibold leading-tight truncate pr-4">
             {customerName}
           </div>
         </div>
 
-        {/* Bottom content - Service Name (Secondary focus) - COMPRESSED */}
-        <div className="flex-shrink-0">
-          <div className="text-3xs leading-tight truncate opacity-85">
+        {/* Bottom content - Service Name (Secondary focus) - ULTRA COMPRESSED */}
+        <div className="flex-shrink-0 px-1 pb-0.5">
+          <div className="text-[9px] leading-tight truncate opacity-90">
             {appointment.service_name}
           </div>
         </div>
 
-        {/* Status icon in top-right corner - COMPRESSED */}
-        <div className="absolute top-0.5 right-0.5 opacity-80">
-          <StatusIcon size={8} className="currentColor" />
+        {/* Status icon in top-right corner - ULTRA COMPRESSED */}
+        <div className="absolute top-0 right-0 p-0.5 opacity-85">
+          <StatusIcon size={7} className="currentColor" />
         </div>
 
-        {/* Attribute icons in bottom-right corner - COMPRESSED */}
+        {/* Attribute icons in bottom-right corner - ULTRA COMPRESSED */}
         {activeAttributes.length > 0 && (
-          <div className="absolute bottom-0.5 right-0.5 flex flex-wrap gap-0">
-            {activeAttributes.slice(0, 3).map(([key, config], index) => {
+          <div className="absolute bottom-0 right-0 flex gap-px p-0.5">
+            {activeAttributes.slice(0, 2).map(([key, config], index) => {
               const IconComponent = config.icon;
               return (
                 <IconComponent
                   key={key}
-                  size={7}
-                  className={`${config.color} opacity-75`}
+                  size={6}
+                  className={`${config.color} opacity-80`}
                 />
               );
             })}
-            {activeAttributes.length > 3 && (
-              <span className="text-3xs opacity-60">+{activeAttributes.length - 3}</span>
+            {activeAttributes.length > 2 && (
+              <span className="text-[7px] opacity-70 font-medium">+{activeAttributes.length - 2}</span>
             )}
           </div>
         )}
 
-        {/* Additional info for larger pills (60+ minutes) - COMPRESSED */}
-        {serviceDuration >= 60 && (
-          <div className="absolute bottom-0.5 left-1 text-3xs opacity-60">
-            {serviceDuration}min
+        {/* Duration indicator for larger pills (90+ minutes) - ULTRA COMPRESSED */}
+        {serviceDuration >= 90 && (
+          <div className="absolute bottom-0.5 left-1 text-[7px] opacity-70 font-medium">
+            {serviceDuration}m
           </div>
         )}
 

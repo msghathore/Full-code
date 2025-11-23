@@ -1,6 +1,6 @@
 // POS Calculation Utilities
 export interface CartItem {
-  item_type: 'SERVICE' | 'PRODUCT' | 'GIFT' | 'PACKAGE';
+  item_type: 'service' | 'product' | 'gift' | 'package'; // Changed to lowercase to match database
   item_id: string;
   name: string;
   price: number;
@@ -11,7 +11,7 @@ export interface CartItem {
 }
 
 export interface PaymentMethod {
-  method: 'CASH' | 'CHECK' | 'CREDIT' | 'GIFT_CERTIFICATE' | 'IOU';
+  method: 'CASH' | 'CHECK' | 'CREDIT' | 'DEBIT' | 'GIFT_CERTIFICATE';
   amount: number;
 }
 

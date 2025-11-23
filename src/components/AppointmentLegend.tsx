@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  HelpCircle,
+  Palette,
   Repeat,
   X,
   Home,
@@ -66,26 +66,47 @@ const ATTRIBUTE_ICONS = {
   'new_non_request': { icon: UserCheck, label: 'New Non Request (NNR)', color: 'text-orange-500' }
 };
 
-const AppointmentLegend: React.FC = () => {
+interface AppointmentLegendProps {
+  isLegendOpen?: boolean;
+  setIsLegendOpen?: (open: boolean) => void;
+}
+
+const AppointmentLegend: React.FC<AppointmentLegendProps> = ({
+  isLegendOpen,
+  setIsLegendOpen
+}) => {
+  const handleOpenChange = (open: boolean) => {
+    setIsLegendOpen?.(open);
+  };
+
   return (
-    <Popover>
+    <Popover open={isLegendOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-gray-500 hover:text-gray-700 border border-gray-300 hover:border-gray-400"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
         >
-          <HelpCircle className="h-4 w-4 mr-1" />
+          <Palette className="h-4 w-4 mr-1" />
           Legend
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[600px] p-0 bg-white border border-gray-200 shadow-xl rounded-lg">
+      <PopoverContent className="w-[600px] p-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 border-4 border-transparent rounded-2xl shadow-2xl"
+                     style={{
+                       backgroundImage: `linear-gradient(white, white), linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff, #5f27cd)`,
+                       backgroundOrigin: 'border-box',
+                       backgroundClip: 'content-box, border-box',
+                       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 30px rgba(255, 107, 107, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                     }}>
         <div className="p-4">
           {/* Header */}
           <div className="text-center border-b border-gray-100 pb-3 mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
               Appointment Status & Attributes Legend
             </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Click outside or press Escape to close
+            </p>
           </div>
 
           {/* TWO-COLUMN LAYOUT - ATTRIBUTES and STATUS COLORS */}
@@ -103,9 +124,9 @@ const AppointmentLegend: React.FC = () => {
                   return (
                     <div key={key} className="flex items-center gap-2 py-0.5">
                       <div className="flex items-center gap-2 flex-shrink-0 w-32">
-                        <IconComponent 
-                          size={12} 
-                          className={config.color} 
+                        <IconComponent
+                          size={20}
+                          className={config.color}
                         />
                         <span className="text-xs text-gray-700 font-medium truncate">
                           {config.label}
@@ -127,8 +148,8 @@ const AppointmentLegend: React.FC = () => {
                 {Object.entries(STATUS_COLORS).map(([status, config]) => (
                   <div key={status} className="flex items-center gap-2 py-0.5">
                     {/* Color swatch */}
-                    <div 
-                      className={`w-3 h-3 rounded-full flex-shrink-0 border border-gray-300 ${config.bgClass}`}
+                    <div
+                      className={`w-6 h-6 rounded-full flex-shrink-0 border-2 border-gray-400 ${config.bgClass}`}
                     />
                     <span className="text-xs text-gray-700 font-medium">
                       {config.label}

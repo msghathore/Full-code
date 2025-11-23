@@ -4,14 +4,32 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronLeft, ChevronRight, Users, Calendar as CalendarIcon } from 'lucide-react';
-import { format, addDays, subDays, startOfWeek, addWeeks, subWeeks } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Users, 
+  Calendar as CalendarIcon,
+  MapPin,
+  CheckCircle2,
+  Circle,
+  ArrowRight
+} from 'lucide-react';
+import { format, addDays, subDays, startOfWeek, addWeeks, subWeeks, isToday } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 interface StaffMember {
   id: string;
   name: string;
   role: string;
   avatar?: string;
+  color: string;
+}
+
+interface Resource {
+  id: string;
+  name: string;
+  type: string;
   color: string;
 }
 
@@ -33,6 +51,20 @@ const LeftNav: React.FC<LeftNavProps> = ({
   className = '',
 }) => {
   const [currentMonth, setCurrentMonth] = useState(selectedDate);
+  const { toast } = useToast();
+
+  // Mock resources data
+  const resources: Resource[] = [
+    { id: 'room-1', name: 'Room 1', type: 'Treatment Room', color: '#f87171' },
+    { id: 'room-2', name: 'Room 2', type: 'Treatment Room', color: '#60a5fa' },
+    { id: 'room-3', name: 'Room 3', type: 'Treatment Room', color: '#c084fc' },
+    { id: 'room-4', name: 'Room 4', type: 'Consultation Room', color: '#34d399' },
+    { id: 'room-5', name: 'Room 5', type: 'Treatment Room', color: '#fbbf24' },
+  ];
+
+  const [selectedResources, setSelectedResources] = useState<string[]>(['room-1', 'room-2', 'room-3']);
+  const [checkedInCount, setCheckedInCount] = useState(3);
+  const [inTodayCount, setInTodayCount] = useState(8);
 
   // Generate calendar days for mini calendar
   const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
@@ -56,10 +88,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
     );
   };
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
+  const isTodayDate = (date: Date) => isToday(date);
 
   const isSelected = (date: Date) => {
     return date.toDateString() === selectedDate.toDateString();
@@ -69,13 +98,36 @@ const LeftNav: React.FC<LeftNavProps> = ({
     return date.getMonth() === currentMonth.getMonth();
   };
 
+  const handleResourceToggle = (resourceId: string) => {
+    setSelectedResources(prev => 
+      prev.includes(resourceId) 
+        ? prev.filter(id => id !== resourceId)
+        : [...prev, resourceId]
+    );
+  };
+
+  const handleCheckedIn = () => {
+    toast({
+      title: "Checked In",
+      description: "Daily check-in completed successfully",
+    });
+    setCheckedInCount(prev => prev + 1);
+  };
+
+  const handleInToday = () => {
+    toast({
+      title: "In Today Filter",
+      description: "Showing today's appointments",
+    });
+  };
+
   return (
-    <div className={`w-72 bg-[var(--panel)] border-r border-gray-200 flex flex-col h-screen ${className}`}>
+    <div className={`w-72 bg-white border-r border-gray-200 flex flex-col h-screen shadow-sm ${className}`}>
       {/* Mini Calendar Section */}
-      <Card className="m-4 mb-2 shadow-sm">
+      <Card className="m-4 mb-3 shadow-sm border-0 bg-gray-50">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">
+            <CardTitle className="text-lg font-semibold text-gray-900">
               {format(currentMonth, 'MMMM yyyy')}
             </CardTitle>
             <div className="flex gap-1">
@@ -83,17 +135,17 @@ const LeftNav: React.FC<LeftNavProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => navigateMonth('prev')}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 hover:bg-gray-200"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4 text-gray-600" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigateMonth('next')}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 hover:bg-gray-200"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 text-gray-600" />
               </Button>
             </div>
           </div>
@@ -115,11 +167,11 @@ const LeftNav: React.FC<LeftNavProps> = ({
                 key={index}
                 variant="ghost"
                 className={`
-                  h-8 w-8 p-0 text-sm rounded-md
+                  h-8 w-8 p-0 text-sm rounded-md transition-all
                   ${!isCurrentMonth(date) ? 'text-gray-300' : ''}
-                  ${isToday(date) ? 'bg-[var(--accent-2)] text-white' : ''}
-                  ${isSelected(date) && !isToday(date) ? 'bg-gray-100 font-semibold' : ''}
-                  ${!isCurrentMonth(date) || isToday(date) ? '' : 'hover:bg-gray-50'}
+                  ${isTodayDate(date) ? 'bg-blue-600 text-white font-semibold' : ''}
+                  ${isSelected(date) && !isTodayDate(date) ? 'bg-blue-100 text-blue-800 font-semibold border-2 border-blue-300' : ''}
+                  ${!isCurrentMonth(date) || isTodayDate(date) ? '' : 'hover:bg-gray-200'}
                 `}
                 onClick={() => onDateChange(date)}
               >
@@ -134,7 +186,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
               variant="outline"
               size="sm"
               onClick={() => onDateChange(new Date())}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs border-gray-300"
             >
               Today
             </Button>
@@ -142,7 +194,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
               variant="outline"
               size="sm"
               onClick={() => onDateChange(addDays(selectedDate, 1))}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs border-gray-300"
             >
               +1 Day
             </Button>
@@ -150,7 +202,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
               variant="outline"
               size="sm"
               onClick={() => onDateChange(addWeeks(selectedDate, 1))}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs border-gray-300"
             >
               +1 Week
             </Button>
@@ -158,16 +210,17 @@ const LeftNav: React.FC<LeftNavProps> = ({
         </CardContent>
       </Card>
 
-      {/* Staff Filter Section */}
-      <Card className="mx-4 mb-4 flex-1 shadow-sm">
+      {/* Employee Filter Section */}
+      <Card className="mx-4 mb-3 shadow-sm border-0">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
             <Users className="h-5 w-5" />
-            Staff & Resources
+            Employees
           </CardTitle>
+          <p className="text-xs text-gray-500">Select staff to display in schedule</p>
         </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+        <CardContent className="pt-0">
+          <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
             {staff.map((member) => (
               <div
                 key={member.id}
@@ -177,61 +230,112 @@ const LeftNav: React.FC<LeftNavProps> = ({
                   id={`staff-${member.id}`}
                   checked={selectedStaff.includes(member.id)}
                   onCheckedChange={() => onStaffToggle(member.id)}
-                  className="data-[state=checked]:bg-[var(--accent-2)] data-[state=checked]:border-[var(--accent-2)]"
+                  className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: member.color }}
-                    />
-                    <label
-                      htmlFor={`staff-${member.id}`}
-                      className="text-sm font-medium text-gray-900 cursor-pointer truncate"
-                    >
-                      {member.name}
-                    </label>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={member.avatar || '/images/client-1.jpg'} alt={member.name} />
+                      <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <label
+                        htmlFor={`staff-${member.id}`}
+                        className="text-sm font-medium text-gray-900 cursor-pointer truncate block"
+                      >
+                        {member.name}
+                      </label>
+                      <p className="text-xs text-gray-500 truncate">
+                        {member.role}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 truncate ml-5">
-                    {member.role}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Resources Filter Section */}
+      <Card className="mx-4 mb-3 shadow-sm border-0">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+            <MapPin className="h-5 w-5" />
+            Resources
+          </CardTitle>
+          <p className="text-xs text-gray-500">Treatment rooms and spaces</p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+            {resources.map((resource) => (
+              <div
+                key={resource.id}
+                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <Checkbox
+                  id={`resource-${resource.id}`}
+                  checked={selectedResources.includes(resource.id)}
+                  onCheckedChange={() => handleResourceToggle(resource.id)}
+                  className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                />
+                <div className="flex-1 min-w-0">
+                  <label
+                    htmlFor={`resource-${resource.id}`}
+                    className="text-sm font-medium text-gray-900 cursor-pointer truncate block"
+                  >
+                    {resource.name}
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    {resource.type}
                   </p>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Legend */}
-          <div className="pt-3 border-t border-gray-200">
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Service Types</h4>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs">
-                <div className="w-2 h-2 rounded-full bg-[var(--accent-1)]" />
-                <span className="text-gray-600">Hair Services</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs">
-                <div className="w-2 h-2 rounded-full bg-[var(--accent-2)]" />
-                <span className="text-gray-600">Beauty Treatments</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs">
-                <div className="w-2 h-2 rounded-full bg-[var(--accent-3)]" />
-                <span className="text-gray-600">Body Work</span>
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Current Date Display */}
-      <div className="mx-4 mb-4 p-3 bg-[var(--bg)] rounded-lg border">
+      {/* Action Buttons */}
+      <div className="mx-4 mb-4 space-y-2">
+        <Button
+          onClick={handleCheckedIn}
+          className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm"
+        >
+          <CheckCircle2 className="h-5 w-5 mr-2" />
+          Checked In ({checkedInCount})
+        </Button>
+        
+        <Button
+          onClick={handleInToday}
+          variant="outline"
+          className="w-full h-12 border-red-300 text-red-600 hover:bg-red-50 font-semibold"
+        >
+          <Circle className="h-5 w-5 mr-2 fill-current" />
+          In Today ({inTodayCount})
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
+      </div>
+
+      {/* Current Status Bar */}
+      <div className="mx-4 mb-4 p-3 bg-gray-50 rounded-lg border">
         <div className="flex items-center gap-2 text-sm">
           <CalendarIcon className="h-4 w-4 text-gray-500" />
-          <span className="font-medium">
-            {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+          <span className="font-medium text-gray-900">
+            {format(selectedDate, 'MMM d, yyyy')}
           </span>
+          {isToday(selectedDate) && (
+            <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+              Today
+            </Badge>
+          )}
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-          {selectedStaff.length} staff selected
-        </p>
+        <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
+          <span>{selectedStaff.length} staff</span>
+          <span>{selectedResources.length} resources</span>
+        </div>
       </div>
     </div>
   );

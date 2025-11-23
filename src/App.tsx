@@ -16,10 +16,12 @@ import { PageTransition } from "./components/PageTransition";
 import { FontSizeProvider } from "./hooks/use-font-size";
 import { useAppointmentNotifications } from "./hooks/use-appointment-notifications";
 import { Navigation } from "./components/Navigation";
+import AppLayout from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SEO from "./components/SEO";
 import CookieConsent from "./components/CookieConsent";
+import StaffDashboardWrapper from "./components/StaffDashboardWrapper";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import OAuthCallback from "./pages/OAuthCallback";
 // import { performanceTracker } from "./lib/performance";
@@ -57,8 +59,8 @@ const CustomersManagement = lazy(() => import("./pages/CustomersManagement"));
 const ServicesManagement = lazy(() => import("./pages/ServicesManagement"));
 // Staff Scheduling System
 const StaffSchedulingSystem = lazy(() => import("./pages/StaffSchedulingSystem"));
-// Vagaro-Style Schedule Page
-const VagaroSchedulePage = lazy(() => import("./pages/VagaroSchedulePage"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Inventory = lazy(() => import("./pages/Inventory"));
 
 const queryClient = new QueryClient();
 
@@ -75,6 +77,13 @@ const App = () => {
 
   // Track popup state for navbar hiding
   const [showSecretDeals, setShowSecretDeals] = useState(false);
+  
+  // Check if current route uses the new AppLayout (Vagaro-style app)
+  const isVagaroAppRoute = window.location.pathname === '/staff' ||
+                          window.location.pathname === '/checkout' ||
+                          window.location.pathname === '/inventory' ||
+                          window.location.pathname === '/settings' ||
+                          window.location.pathname === '/dashboard';
   
   // Check if current route is staff-related or POS terminal
   const isStaffRoute = window.location.pathname.startsWith('/staff') ||
@@ -114,7 +123,7 @@ const App = () => {
                     <Route path="/booking" element={<Booking />} />
                     <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
                     <Route path="/shop/checkout" element={<PageTransition><ShopCheckout /></PageTransition>} />
-                    <Route path="/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
+                    <Route path="/checkout" element={<PageTransition><AppLayout><CheckoutPage /></AppLayout></PageTransition>} />
                     <Route path="/pos/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
                     <Route path="/about" element={<PageTransition><About /></PageTransition>} />
                     <Route path="/blog" element={<Blog />} />
@@ -130,16 +139,17 @@ const App = () => {
                     <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
                     <Route path="/cookies" element={<PageTransition><CookiePolicy /></PageTransition>} />
                     <Route path="/community" element={<PageTransition><Community /></PageTransition>} />
-                    {/* Staff Dashboard - Simple and clean */}
-                    <Route path="/staff" element={<PageTransition><StaffSchedulingSystem /></PageTransition>} />
+                    {/* Staff Dashboard - Using StaffDashboardWrapper */}
+                    <Route path="/staff" element={<PageTransition><StaffDashboardWrapper /></PageTransition>} />
                     {/* Business Intelligence Routes */}
                     <Route path="/analytics" element={<PageTransition><Analytics /></PageTransition>} />
                     <Route path="/campaigns" element={<PageTransition><EmailCampaigns /></PageTransition>} />
                     <Route path="/feedback" element={<PageTransition><CustomerFeedback /></PageTransition>} />
                     <Route path="/revenue" element={<PageTransition><RevenueTracking /></PageTransition>} />
                     <Route path="/scheduling" element={<PageTransition><StaffScheduling /></PageTransition>} />
-                    {/* Vagaro-Style Schedule Page */}
-                    <Route path="/schedule" element={<PageTransition><VagaroSchedulePage /></PageTransition>} />
+                    {/* Vagaro-Style Application Pages - All Use AppLayout */}
+                    <Route path="/inventory" element={<PageTransition><AppLayout><Inventory /></AppLayout></PageTransition>} />
+                    <Route path="/settings" element={<PageTransition><AppLayout><Settings /></AppLayout></PageTransition>} />
                     {/* Admin Routes */}
                     <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/admin/services" element={<ProtectedRoute><ServicesManagement /></ProtectedRoute>} />
