@@ -90,51 +90,50 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMenuOpen]);
 
-  // Logo scaling with homepage scroll animation
+  // Logo scaling with homepage scroll animation - FIXED to eliminate race condition
   useEffect(() => {
-    const applyLogoSize = () => {
-      const logoContainer = logoRef.current;
-      const mainText = logoContainer?.querySelector('.main-logo-text');
-      
-      if (mainText) {
-        // Clear all text size classes
-        mainText.className = mainText.className
-          .replace(/\btext-(?:2xl|4xl|5xl|6xl|8xl|9xl)\b/g, '')
-          .replace(/\bsm:text-(?:3xl|5xl|6xl|9xl)\b/g, '')
-          .replace(/\bmd:text-(?:5xl|6xl)\b/g, '')
-          .trim();
-        
-        // Add smooth transition for all changes
-        (mainText as HTMLElement).style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-        
-        if (isHomePage) {
-          // Homepage: Enhanced responsive animation with improved mobile sizing
-          if (isOnBanner) {
-            // Enhanced mobile-optimized sizing: mobile → tablet → desktop
-            mainText.classList.add('text-6xl', 'sm:text-8xl', 'md:text-9xl');
-            (mainText as HTMLElement).style.transform = 'scale(1.3) translateY(20px)';
-            console.log('Applied ENHANCED mobile-optimized logo size - HOMEPAGE ON BANNER');
-          } else {
-            // Enhanced off-banner sizing with better mobile balance
-            mainText.classList.add('text-3xl', 'sm:text-4xl', 'md:text-5xl');
-            (mainText as HTMLElement).style.transform = 'scale(1) translateY(0px)';
-            console.log('Applied ENHANCED logo size - HOMEPAGE OFF BANNER');
-          }
-        } else {
-          // Other pages: Enhanced static sizing for better mobile visibility
-          mainText.classList.add('text-3xl', 'sm:text-4xl', 'md:text-5xl');
-          (mainText as HTMLElement).style.transform = 'scale(1.1) translateY(5px)';
-          console.log('Applied ENHANCED static logo size - OTHER PAGES');
-        }
+    const logoContainer = logoRef.current;
+    
+    if (!logoContainer) {
+      return; // Don't log error - element may not be rendered yet
+    }
+    
+    const mainText = logoContainer.querySelector('.main-logo-text') as HTMLElement;
+    
+    if (!mainText) {
+      return; // Don't log error - element may not be rendered yet
+    }
+    
+    // Clear all text size classes
+    mainText.className = mainText.className
+      .replace(/\btext-(?:2xl|4xl|5xl|6xl|8xl|9xl)\b/g, '')
+      .replace(/\bsm:text-(?:3xl|5xl|6xl|9xl)\b/g, '')
+      .replace(/\bmd:text-(?:5xl|6xl)\b/g, '')
+      .trim();
+    
+    // Add smooth transition for all changes
+    mainText.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    if (isHomePage) {
+      // Homepage: Enhanced responsive animation with improved mobile sizing
+      if (isOnBanner) {
+        // Enhanced mobile-optimized sizing: mobile → tablet → desktop
+        mainText.classList.add('text-6xl', 'sm:text-8xl', 'md:text-9xl');
+        mainText.style.transform = 'scale(1.3) translateY(20px)';
+        console.log('Applied ENHANCED mobile-optimized logo size - HOMEPAGE ON BANNER');
       } else {
-        console.log('Main text element not found, retrying...');
-        setTimeout(applyLogoSize, 50);
+        // Enhanced off-banner sizing with better mobile balance
+        mainText.classList.add('text-3xl', 'sm:text-4xl', 'md:text-5xl');
+        mainText.style.transform = 'scale(1) translateY(0px)';
+        console.log('Applied ENHANCED logo size - HOMEPAGE OFF BANNER');
       }
-    };
-
-    // Apply immediately
-    applyLogoSize();
-  }, [location.pathname, isOnBanner, isHomePage]);
+    } else {
+      // Other pages: Enhanced static sizing for better mobile visibility
+      mainText.classList.add('text-3xl', 'sm:text-4xl', 'md:text-5xl');
+      mainText.style.transform = 'scale(1.1) translateY(5px)';
+      console.log('Applied ENHANCED static logo size - OTHER PAGES');
+    }
+  }, [location.pathname, isOnBanner, isHomePage, logoRef.current]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -187,17 +186,17 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
       {!hideWhenPopup && (
         <nav
           className={`fixed top-0 left-0 right-0 z-[1000] py-2 transition-all duration-500 ${
-            isScrolled
+            (isHomePage ? !isOnBanner : isScrolled)
               ? 'bg-white/10 backdrop-blur-xl border-b border-white/20'
               : 'bg-transparent'
           }`}
           style={{
-            background: isScrolled
+            background: (isHomePage ? !isOnBanner : isScrolled)
               ? 'rgba(255, 255, 255, 0.1)'
               : 'transparent',
-            backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-            WebkitBackdropFilter: isScrolled ? 'blur(20px)' : 'none',
-            borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : 'none'
+            backdropFilter: (isHomePage ? !isOnBanner : isScrolled) ? 'blur(20px)' : 'none',
+            WebkitBackdropFilter: (isHomePage ? !isOnBanner : isScrolled) ? 'blur(20px)' : 'none',
+            borderBottom: (isHomePage ? !isOnBanner : isScrolled) ? '1px solid rgba(255, 255, 255, 0.2)' : 'none'
           }}
           role="navigation"
           aria-label="Main navigation"
@@ -223,7 +222,10 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
            <Link to="/" className={`cursor-hover absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${shouldHideNavigationLogo ? 'hidden' : ''}`}>
              <div ref={logoRef} className="transition-all duration-500 text-center">
                <div className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-white logo-main md:mt-6">
-                   <span className="main-logo-text text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer">
+                   <span
+                     className={`main-logo-text ${isHomePage ? 'text-6xl sm:text-8xl md:text-9xl' : 'text-3xl sm:text-4xl md:text-5xl'} text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer`}
+                     style={isHomePage ? { transform: 'scale(1.3) translateY(20px)' } : { transform: 'scale(1.1) translateY(5px)' }}
+                   >
                      ZAVIRA
                    </span>
                </div>
@@ -238,7 +240,7 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
            ) : (
              <a
                href="/auth"
-               className="text-footer-link hover:luxury-glow transition-all cursor-hover micro-hover-scale text-sm md:text-base px-2 py-1"
+               className="text-white hover:luxury-glow transition-all cursor-hover micro-hover-scale text-sm md:text-base px-2 py-1"
              >
                {t('login')}
              </a>
@@ -249,5 +251,5 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
 
      <AnimatedMenu isOpen={isMenuOpen} onClose={toggleMenu} />
    </>
- );
+  );
 };

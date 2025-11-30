@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAppointmentNotifications } from '@/hooks/use-appointment-notifications';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
-import { ChevronLeft, ChevronRight, RefreshCw, Clock, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RefreshCw, Clock, Calendar as CalendarIcon, Info, Check } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileWalletPayment } from '@/components/MobileWalletPayment';
 import { StripeProvider } from '@/components/StripeProvider';
@@ -20,19 +20,43 @@ import { StripePaymentForm } from '@/components/StripePaymentForm';
 import { ServiceRecommendations } from '@/components/ServiceRecommendations';
 import { CalendarSync } from '@/components/CalendarSync';
 import { useGoogleCalendarAvailability } from '@/hooks/use-google-calendar-availability';
+import EmailService from '@/lib/email-service';
 
 const Booking = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [selectedService, setSelectedService] = useState('');
-  const [selectedStaff, setSelectedStaff] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [notes, setNotes] = useState('');
+  const [currentStep, setCurrentStep] = useState(() => {
+    const saved = localStorage.getItem('booking-current-step');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [date, setDate] = useState<Date | undefined>(() => {
+    const saved = localStorage.getItem('booking-date');
+    return saved ? new Date(saved) : new Date();
+  });
+  const [selectedService, setSelectedService] = useState(() => {
+    return localStorage.getItem('booking-selected-service') || '';
+  });
+  const [selectedStaff, setSelectedStaff] = useState(() => {
+    return localStorage.getItem('booking-selected-staff') || '';
+  });
+  const [selectedTime, setSelectedTime] = useState(() => {
+    return localStorage.getItem('booking-selected-time') || '';
+  });
+  const [fullName, setFullName] = useState(() => {
+    return localStorage.getItem('booking-full-name') || '';
+  });
+  const [phone, setPhone] = useState(() => {
+    return localStorage.getItem('booking-phone') || '';
+  });
+  const [notes, setNotes] = useState(() => {
+    return localStorage.getItem('booking-notes') || '';
+  });
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
-  const [selectionMode, setSelectionMode] = useState<'service' | 'staff'>('service');
+  const [selectionMode, setSelectionMode] = useState<'service' | 'staff'>(() => {
+    return (localStorage.getItem('booking-selection-mode') as 'service' | 'staff') || 'service';
+  });
+  const [serviceSearch, setServiceSearch] = useState('');
+  const [staffSearch, setStaffSearch] = useState('');
+  const [showServiceInfo, setShowServiceInfo] = useState<string | null>(null);
   const [services, setServices] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -43,6 +67,69 @@ const Booking = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
+
+  // Phone number formatting function
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-numeric characters
+    const phoneNumber = value.replace(/\D/g, '');
+
+    // Don't format if empty
+    if (!phoneNumber) return '';
+
+    // Format as (XXX) XXX-XXXX
+    if (phoneNumber.length <= 3) {
+      return `(${phoneNumber}`;
+    } else if (phoneNumber.length <= 6) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    } else {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    }
+  };
+
+  // Handle phone number input with formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
+  // Persist booking state to localStorage
+  useEffect(() => {
+    localStorage.setItem('booking-current-step', currentStep.toString());
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (date) {
+      localStorage.setItem('booking-date', date.toISOString());
+    }
+  }, [date]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-selected-service', selectedService);
+  }, [selectedService]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-selected-staff', selectedStaff);
+  }, [selectedStaff]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-selected-time', selectedTime);
+  }, [selectedTime]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-full-name', fullName);
+  }, [fullName]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-phone', phone);
+  }, [phone]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-notes', notes);
+  }, [notes]);
+
+  useEffect(() => {
+    localStorage.setItem('booking-selection-mode', selectionMode);
+  }, [selectionMode]);
 
   // Service-Staff mapping (using actual service UUIDs from database)
   const serviceStaffMapping: { [key: string]: string[] } = {
@@ -148,33 +235,113 @@ const Booking = () => {
     }
   };
 
-  // Filter staff based on selection mode
+  // Filter staff based on selection mode and search
   const getFilteredStaff = () => {
+    let filtered = staff;
+
+    // Filter by selection mode
     if (selectionMode === 'service' && selectedService) {
       const availableStaffIds = serviceStaffMapping[selectedService] || [];
-      return staff.filter(member => availableStaffIds.includes(member.id));
+      filtered = staff.filter(member => availableStaffIds.includes(member.id));
     }
-    return staff;
+
+    // Filter by search term
+    if (staffSearch.trim()) {
+      const searchLower = staffSearch.toLowerCase();
+      filtered = filtered.filter(member =>
+        member.name.toLowerCase().includes(searchLower) ||
+        member.specialty?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered;
   };
 
-  // Filter services based on selection mode
+  // Filter services based on selection mode and search
   const getFilteredServices = () => {
+    let filtered = services;
+
+    // Filter by selection mode
     if (selectionMode === 'staff' && selectedStaff) {
       const availableServices = staffServiceMapping[selectedStaff] || [];
-      return services.filter(service => availableServices.includes(service.id));
+      filtered = services.filter(service => availableServices.includes(service.id));
     }
-    return services;
+
+    // Filter by search term
+    if (serviceSearch.trim()) {
+      const searchLower = serviceSearch.toLowerCase();
+      filtered = filtered.filter(service =>
+        service.name.toLowerCase().includes(searchLower) ||
+        service.description?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered;
   };
+
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
+      // Validation for each step
+      if (currentStep === 0) {
+        // Step 1: Service selection validation
+        if (!selectedService) {
+          toast({
+            title: "Service Required",
+            description: "Please select a service before proceeding.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } else if (currentStep === 1) {
+        // Step 2: Date & Time validation
+        if (!date || !selectedTime) {
+          toast({
+            title: "Date & Time Required",
+            description: "Please select a date and time before proceeding.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } else if (currentStep === 2) {
+        // Step 3: Contact Info validation
+        if (isGuest) {
+          if (!fullName.trim() || !phone.trim()) {
+            toast({
+              title: "Contact Info Required",
+              description: "Please provide your full name and phone number before proceeding.",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+      }
+
       setCurrentStep(currentStep + 1);
+      // Scroll to top of the booking section when changing steps
+      setTimeout(() => {
+        const bookingSection = document.querySelector('.pt-32');
+        if (bookingSection) {
+          bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top of the booking section when changing steps
+      setTimeout(() => {
+        const bookingSection = document.querySelector('.pt-32');
+        if (bookingSection) {
+          bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
@@ -275,7 +442,7 @@ const Booking = () => {
       const { data, error } = await supabase
         .from('staff')
         .select('*')
-        .eq('is_active', true);
+        .eq('status', 'available');
 
       if (error) {
         console.error('❌ ERROR: Error fetching staff from database:', error);
@@ -401,6 +568,45 @@ const Booking = () => {
 
       console.log('✅ DEBUG: Booking successfully saved to database:', insertResult);
 
+      // Send appointment confirmation email
+      try {
+        const customerEmail = EmailService.extractEmail({
+          email: user?.email,
+          fullName: fullName
+        });
+        const customerName = EmailService.extractCustomerName({
+          fullName: fullName,
+          user: user
+        });
+
+        if (customerEmail && selectedServiceData) {
+          const staffMember = staff.find(s => s.id === selectedStaff);
+          
+          const emailResult = await EmailService.sendAppointmentConfirmation({
+            customerEmail: customerEmail,
+            customerName: customerName || undefined,
+            serviceName: selectedServiceData.name,
+            appointmentDate: date.toISOString().split('T')[0],
+            appointmentTime: selectedTime,
+            staffName: staffMember?.name
+          });
+
+          if (emailResult.success) {
+            console.log('📧 Confirmation email sent successfully');
+            toast({
+              title: "✅ Booking Confirmed!",
+              description: "Confirmation email sent to your inbox.",
+              duration: 5000,
+            });
+          } else {
+            console.warn('⚠️ Failed to send confirmation email:', emailResult.error);
+          }
+        }
+      } catch (emailError) {
+        console.warn('⚠️ Email sending failed (non-critical):', emailError);
+        // Don't fail the booking if email fails
+      }
+
       // Schedule notifications
       const notificationServiceData = services.find(s => s.id === selectedService);
       const appointmentDateTime = `${date.toISOString().split('T')[0]}T${selectedTime}`;
@@ -425,7 +631,7 @@ const Booking = () => {
         description: "Your appointment has been scheduled successfully.",
       });
 
-      // Reset form
+      // Reset form (keep localStorage for user to see their booking history)
       console.log('🔄 DEBUG: Resetting form...');
       setSelectedService('');
       setSelectedStaff('');
@@ -434,6 +640,7 @@ const Booking = () => {
       setPhone('');
       setNotes('');
       setDate(new Date());
+      setCurrentStep(0);
 
       console.log('✅ DEBUG: Booking process completed successfully');
     } catch (error: any) {
@@ -466,7 +673,7 @@ const Booking = () => {
         return;
       }
 
-      navigate('/pos/checkout', {
+      navigate('/booking/checkout', {
         state: {
           bookingDetails: {
             service_id: selectedService,
@@ -489,11 +696,61 @@ const Booking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
 
-      <div className="pt-32 pb-24 px-4 md:px-8">
-        <div className="container mx-auto max-w-6xl">
+      {/* Sticky Booking Navigation */}
+      {currentStep > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-white/10 p-4">
+          <div className="max-w-2xl mx-auto flex justify-between items-center">
+            <Button
+              type="button"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <div className="flex items-center gap-2">
+              {Array.from({ length: steps.length }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentStep(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === currentStep ? 'bg-white' : 'bg-white/30'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {currentStep < steps.length - 1 ? (
+              <Button
+                type="button"
+                onClick={nextStep}
+                className="flex items-center gap-2"
+              >
+                Next Step
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={loading}
+                variant="cta"
+                className="font-serif text-base md:text-lg tracking-wider"
+              >
+                {loading ? 'CONFIRMING...' : 'CONFIRM BOOKING'}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="px-4 md:px-8 pt-32 pb-24">
+        <div className="container mx-auto max-w-6xl min-h-[70vh]">
           <div className="text-center mb-12 md:mb-16">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif luxury-glow mb-4">
               BOOK APPOINTMENT
@@ -579,21 +836,6 @@ const Booking = () => {
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div className="flex justify-center mb-6">
-            <div className="w-full max-w-md">
-              <div className="flex justify-between text-xs text-white/60 mb-2">
-                <span>Progress</span>
-                <span>{Math.round(((currentStep + 1) / steps.length) * 100)}%</span>
-              </div>
-              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-white to-white/80 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
 
           {/* Step Title */}
           <div className="text-center mb-8">
@@ -613,7 +855,7 @@ const Booking = () => {
               >
                 {/* Step 1: Service & Staff */}
                 <div className="w-full flex-shrink-0 px-4 md:px-0">
-                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-6 md:p-8 space-y-6">
+                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-4 md:p-6 space-y-1">
                     {dataLoading ? (
                       <div className="space-y-6">
                         <Skeleton className="h-4 w-32 mb-2 bg-white/10" />
@@ -624,44 +866,118 @@ const Booking = () => {
                     ) : (
                       <>
                         {selectionMode === 'service' ? (
-                          <div>
-                            <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT SERVICE</label>
-                            <select
-                              value={selectedService}
-                              onChange={(e) => handleServiceChange(e.target.value)}
-                              className="bg-black/50 border-white/20 text-white w-full p-3 rounded"
-                              required
-                            >
-                              <option value="">Choose a service</option>
-                              {services.map(service => (
-                                <option key={service.id} value={service.id} className="text-white bg-black">
-                                  {service.name} - ${service.price}
-                                </option>
-                              ))}
-                            </select>
-                            <p className="text-xs text-white/50 mt-1">
-                              We'll automatically assign the best available stylist for your service
-                            </p>
+                          <div className="space-y-1">
+                            <div>
+                              <label className="text-sm text-white/70 mb-2 block tracking-wider">SEARCH SERVICES</label>
+                              <Input
+                                type="text"
+                                value={serviceSearch}
+                                onChange={(e) => setServiceSearch(e.target.value)}
+                                placeholder="Search services..."
+                                className="bg-black/50 border-white/20 text-white placeholder:text-white/30 input-focus-glow"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm text-white/70 mb-2 block tracking-wider">AVAILABLE SERVICES</label>
+                              <div className="bg-black/50 border border-white/20 rounded max-h-60 overflow-y-auto">
+                                {getFilteredServices().length > 0 ? (
+                                  getFilteredServices().map(service => (
+                                    <div key={service.id} className="border-b border-white/10 last:border-b-0">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleServiceChange(service.id)}
+                                        className={`w-full text-left p-3 hover:bg-white/10 transition-colors ${
+                                          selectedService === service.id ? 'bg-white/20 text-white' : 'text-white/80'
+                                        }`}
+                                      >
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex-1 flex items-center gap-2">
+                                            {selectedService === service.id && (
+                                              <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                                            )}
+                                            <div>
+                                              <div className="font-medium">{service.name}</div>
+                                              <div className="text-sm text-white/60">${service.price}</div>
+                                            </div>
+                                          </div>
+                                          {service.description && (
+                                            <div
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowServiceInfo(showServiceInfo === service.id ? null : service.id);
+                                              }}
+                                              className="ml-2 p-1 hover:bg-white/20 rounded transition-colors cursor-pointer"
+                                              title="Show service details"
+                                            >
+                                              <Info className="h-4 w-4 text-white/60 hover:text-white" />
+                                            </div>
+                                          )}
+                                        </div>
+                                      </button>
+                                      {showServiceInfo === service.id && service.description && (
+                                        <div className="px-3 pb-3 text-xs text-white/70 bg-black/30 rounded-b">
+                                          {service.description}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="p-4 text-center text-white/50">
+                                    No services found matching "{serviceSearch}"
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-xs text-white/50 mt-1">
+                                We'll automatically assign the best available stylist for your service
+                              </p>
+                            </div>
                           </div>
                         ) : (
-                          <div>
-                            <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT STYLIST</label>
-                            <select
-                              value={selectedStaff}
-                              onChange={(e) => handleStaffChange(e.target.value)}
-                              className="bg-black/50 border-white/20 text-white w-full p-3 rounded"
-                              required
-                            >
-                              <option value="">Choose your stylist</option>
-                              {staff.map(member => (
-                                <option key={member.id} value={member.id} className="text-white bg-black">
-                                  {member.name} - {member.specialty}
-                                </option>
-                              ))}
-                            </select>
-                            <p className="text-xs text-white/50 mt-1">
-                              We'll automatically show services available with your selected stylist
-                            </p>
+                          <div className="space-y-1">
+                            <div>
+                              <label className="text-sm text-white/70 mb-2 block tracking-wider">SEARCH STYLISTS</label>
+                              <Input
+                                type="text"
+                                value={staffSearch}
+                                onChange={(e) => setStaffSearch(e.target.value)}
+                                placeholder="Search stylists..."
+                                className="bg-black/50 border-white/20 text-white placeholder:text-white/30 input-focus-glow"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm text-white/70 mb-2 block tracking-wider">AVAILABLE STYLISTS</label>
+                              <div className="bg-black/50 border border-white/20 rounded max-h-60 overflow-y-auto">
+                                {getFilteredStaff().length > 0 ? (
+                                  getFilteredStaff().map(member => (
+                                    <button
+                                      key={member.id}
+                                      type="button"
+                                      onClick={() => handleStaffChange(member.id)}
+                                      className={`w-full text-left p-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-b-0 ${
+                                        selectedStaff === member.id ? 'bg-white/20 text-white' : 'text-white/80'
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        {selectedStaff === member.id && (
+                                          <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                                        )}
+                                        <div>
+                                          <div className="font-medium">{member.name}</div>
+                                          <div className="text-sm text-white/60">{member.specialty}</div>
+                                        </div>
+                                      </div>
+                                    </button>
+                                  ))
+                                ) : (
+                                  <div className="p-4 text-center text-white/50">
+                                    No stylists found matching "{staffSearch}"
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-xs text-white/50 mt-1">
+                                We'll automatically show services available with your selected stylist
+                              </p>
+                            </div>
                           </div>
                         )}
 
@@ -698,16 +1014,25 @@ const Booking = () => {
 
                 {/* Step 2: Date & Time */}
                 <div className="w-full flex-shrink-0 px-4 md:px-0">
-                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-6 md:p-8">
-                    <div className="flex flex-col items-center space-y-6">
+                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-4 md:p-6">
+                    <div className="flex flex-col items-center space-y-1">
                       <div className="w-full flex justify-center">
                         <div className="bg-black/50 border border-white/20 rounded-lg p-4">
                           <Calendar
                             mode="single"
                             selected={date}
                             onSelect={handleDateChange}
-                            disabled={(date) => date < new Date()}
-                            className="rounded-md border-0 bg-transparent text-white"
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0); // Start of today
+                              return date < today;
+                            }}
+                            className="rounded-md border-0 bg-transparent text-white [&_[data-selected]]:bg-white [&_[data-selected]]:text-black [&_[data-selected]]:rounded-lg [&_[data-selected]]:font-semibold [&_[data-selected]]:shadow-lg"
+                            classNames={{
+                              day_outside: "text-white hover:text-white hover:bg-white/10",
+                              day_today: "text-white hover:bg-white/10",
+                              day: "hover:bg-white/10 focus:bg-white/20 rounded-md transition-all duration-200",
+                            }}
                           />
                           <div className="text-center mt-2 text-sm text-white/70">
                             Select your appointment date
@@ -715,8 +1040,8 @@ const Booking = () => {
                         </div>
                       </div>
 
-                      <div className="w-full space-y-3">
-                        <div className="flex items-center justify-center gap-4 mb-4">
+                      <div className="w-full space-y-1">
+                        <div className="flex items-center justify-center gap-4 mb-1">
                           <div className="flex items-center gap-2 text-sm text-white/70">
                             <Clock className="h-4 w-4" />
                             <span>Live Availability</span>
@@ -775,13 +1100,37 @@ const Booking = () => {
                           </p>
                         )}
                       </div>
+
+                      {/* Navigation Buttons for Date & Time Step */}
+                      {currentStep === 1 && (
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/10">
+                          <Button
+                            type="button"
+                            onClick={prevStep}
+                            variant="outline"
+                            className="flex items-center gap-2 luxury-button-hover"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            Previous
+                          </Button>
+
+                          <Button
+                            type="button"
+                            onClick={nextStep}
+                            className="flex items-center gap-2 luxury-button-hover"
+                          >
+                            Next Step
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* Step 3: Contact Info */}
                 <div className="w-full flex-shrink-0 px-4 md:px-0">
-                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-6 md:p-8 space-y-6">
+                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-4 md:p-6 space-y-1">
                     {isGuest ? (
                       <>
                         <div>
@@ -801,8 +1150,8 @@ const Booking = () => {
                           <Input
                             type="tel"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="+1 (555) 000-0000 - We'll text confirmation"
+                            onChange={handlePhoneChange}
+                            placeholder="(555) 000-0000 - We'll text confirmation"
                             className="bg-black/50 border-white/20 text-white placeholder:text-white/30 input-focus-glow"
                             required
                           />
@@ -826,8 +1175,8 @@ const Booking = () => {
                           <Input
                             type="tel"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="+1 (555) 000-0000"
+                            onChange={handlePhoneChange}
+                            placeholder="(555) 000-0000"
                             className="bg-black/50 border-white/20 text-white placeholder:text-white/30 input-focus-glow"
                           />
                         </div>
@@ -843,17 +1192,41 @@ const Booking = () => {
                         className="bg-black/50 border-white/20 text-white placeholder:text-white/30 min-h-[100px] input-focus-glow"
                       />
                     </div>
+
+                    {/* Navigation Buttons for Contact Info Step */}
+                    {currentStep === 2 && (
+                      <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/10">
+                        <Button
+                          type="button"
+                          onClick={prevStep}
+                          variant="outline"
+                          className="flex items-center gap-2 luxury-button-hover"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          Previous
+                        </Button>
+
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          className="flex items-center gap-2 luxury-button-hover"
+                        >
+                          Next Step
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Step 4: Confirm */}
                 <div className="w-full flex-shrink-0 px-4 md:px-0">
-                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-6 md:p-8 space-y-6">
+                  <div className="max-w-2xl mx-auto frosted-glass border border-white/10 rounded-lg p-4 md:p-6 space-y-1">
                     <div className="text-center">
-                      <h3 className="text-xl md:text-2xl font-serif luxury-glow mb-6">Booking Summary</h3>
+                      <h3 className="text-xl md:text-2xl font-serif luxury-glow mb-1">Booking Summary</h3>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-1">
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-white/70">Service:</span>
                         <span className="text-white">
@@ -879,8 +1252,8 @@ const Booking = () => {
                     </div>
 
                     {/* Payment Section */}
-                    <div className="border-t border-white/10 pt-6">
-                      <h4 className="text-lg font-serif luxury-glow mb-4">Payment</h4>
+                    <div className="border-t border-white/10 pt-3">
+                      <h4 className="text-lg font-serif luxury-glow mb-2">Payment</h4>
                       <div className="space-y-6">
                         <Button
                           type="submit"
@@ -893,57 +1266,74 @@ const Booking = () => {
                           Your booking will be confirmed shortly
                         </div>
                       </div>
+
+                      {/* Navigation Buttons for Review & Confirm Step */}
+                      {currentStep === 3 && (
+                        <div className="flex justify-center mt-3 pt-3 border-t border-white/10">
+                          <Button
+                            type="button"
+                            onClick={prevStep}
+                            variant="outline"
+                            className="flex items-center gap-2 luxury-button-hover"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            Previous
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between items-center mt-8 max-w-2xl mx-auto px-4 md:px-0">
-              <Button
-                type="button"
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                variant="outline"
-                className="flex items-center gap-2 luxury-button-hover"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-
-              <div className="flex items-center gap-2">
-                {Array.from({ length: steps.length }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentStep(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentStep ? 'bg-white' : 'bg-white/30'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {currentStep < steps.length - 1 ? (
+            {/* Navigation Buttons - Only show for steps other than Date & Time, Contact Info, and Review & Confirm */}
+            {currentStep === 0 && (
+              <div className="flex justify-between items-center mt-8 max-w-2xl mx-auto px-4 md:px-0">
                 <Button
                   type="button"
-                  onClick={nextStep}
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  variant="outline"
                   className="flex items-center gap-2 luxury-button-hover"
                 >
-                  Next Step
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
                 </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  variant="cta"
-                  className="font-serif text-base md:text-lg tracking-wider px-8 luxury-button-hover"
-                >
-                  {loading ? 'CONFIRMING...' : 'CONFIRM BOOKING'}
-                </Button>
-              )}
-            </div>
+
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: steps.length }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentStep(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentStep ? 'bg-white' : 'bg-white/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {currentStep < steps.length - 1 ? (
+                  <Button
+                    type="button"
+                    onClick={nextStep}
+                    className="flex items-center gap-2 luxury-button-hover"
+                  >
+                    Next Step
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    variant="cta"
+                    className="font-serif text-base md:text-lg tracking-wider px-8 luxury-button-hover"
+                  >
+                    {loading ? 'CONFIRMING...' : 'CONFIRM BOOKING'}
+                  </Button>
+                )}
+              </div>
+            )}
           </form>
         </div>
       </div>

@@ -25,8 +25,8 @@ import {
 import { calculateTotals, formatCurrency, parseCurrency, CartItem, PaymentMethod } from '@/lib/posCalculations';
 import { supabase } from '@/integrations/supabase/client';
 import { ReceiptConfirmationModal } from '@/components/ReceiptConfirmationModal';
-import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 import { useToast } from '@/hooks/use-toast';
+import EmailService from '@/lib/email-service';
 
 // Utility functions for database compatibility
 const generateUUID = (): string => {
@@ -99,8 +99,6 @@ const CheckoutPage = () => {
   const [staffList, setStaffList] = useState<{ id: string; name: string; }[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'SERVICE' | 'PRODUCT' | 'GIFT' | 'PACKAGE' | null>(null);
-  const [showSquarePayment, setShowSquarePayment] = useState(false);
-  const [squarePaymentAmount, setSquarePaymentAmount] = useState(0);
   const [tipAmount, setTipAmount] = useState(0);
   const [showPaymentInputs, setShowPaymentInputs] = useState<Record<string, boolean>>({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -323,39 +321,6 @@ const CheckoutPage = () => {
     setShowPaymentInputs(prev => ({ ...prev, [method]: false }));
   };
 
-  // Square Payment Handlers
-  const handleSquarePaymentSuccess = (result: any) => {
-    console.log('Square payment successful:', result);
-    
-    // Create a transaction with Square payment info
-    const transactionData = {
-      customer_id: currentCustomer.id,
-      staff_id: staffList[0]?.id, // Use first staff member
-      cart_items: cartItems,
-      payment_methods: [{
-        method: mapPaymentMethod('CREDIT'), // Treat as credit card payment
-        amount: squarePaymentAmount,
-        status: 'completed',
-        square_payment_id: result.paymentId
-      }],
-      tip_amount: tipAmount
-    };
-
-    // Finalize transaction in database
-    handleFinalizeTransactionWithData(transactionData);
-    
-    setShowSquarePayment(false);
-    setSquarePaymentAmount(0);
-  };
-
-  const handleSquarePaymentError = (error: string) => {
-    console.error('Square payment failed:', error);
-    toast({
-      title: "Payment Failed",
-      description: error || "There was an error processing your payment.",
-      variant: "destructive"
-    });
-  };
 
   // Modified finalize transaction function that can be called with custom data
   const handleFinalizeTransactionWithData = async (customData?: any) => {
@@ -401,6 +366,23 @@ const CheckoutPage = () => {
           cart_items: [...cartItems],
           customer_name: currentCustomer.name
         });
+
+        // Send receipt email if there's customer email from appointment data
+        if (appointmentData?.customerEmail && appointmentData.customerName) {
+          EmailService.sendReceiptEmail({
+            email: appointmentData.customerEmail,
+            transactionId: data.transaction_id,
+            totalAmount: squarePaymentAmount || totals.amountDue,
+            customerName: appointmentData.customerName,
+            cartItems: cartItems.map(item => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price
+            }))
+          }).catch(error => {
+            console.error('Failed to send receipt email:', error);
+          });
+        }
 
         setShowReceiptModal(true);
 
@@ -472,19 +454,6 @@ const CheckoutPage = () => {
     await handleFinalizeTransactionWithData();
   };
 
-  // Handle starting Square payment process
-  const handleStartSquarePayment = () => {
-    if (totals.amountDue > 0) {
-      setSquarePaymentAmount(totals.amountDue);
-      setShowSquarePayment(true);
-    } else {
-      toast({
-        title: "No Amount Due",
-        description: "There is no amount to pay.",
-        variant: "destructive"
-      });
-    }
-  };
 
   // Handler for category icon clicks
   const handleCategoryClick = (category: 'SERVICE' | 'PRODUCT' | 'GIFT' | 'PACKAGE') => {
@@ -727,6 +696,7 @@ const CheckoutPage = () => {
                   }}
                   disabled={paymentMethods.some(p => p.method === 'CREDIT')}
                 >
+                  <CreditCard className="h-4 w-4 mr-2" />
                   Credit Card
                 </Button>
                 <Button
@@ -738,6 +708,7 @@ const CheckoutPage = () => {
                   }}
                   disabled={paymentMethods.some(p => p.method === 'DEBIT')}
                 >
+                  <CreditCard className="h-4 w-4 mr-2" />
                   Debit Card
                 </Button>
                 <Button
@@ -750,15 +721,6 @@ const CheckoutPage = () => {
                   disabled={paymentMethods.some(p => p.method === 'GIFT_CERTIFICATE')}
                 >
                   Gift Cert.
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-blue-300 text-blue-700 hover:bg-blue-50 bg-blue-50"
-                  onClick={handleStartSquarePayment}
-                  disabled={showSquarePayment || totals.amountDue <= 0}
-                >
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Square Pay
                 </Button>
               </div>
 
@@ -948,31 +910,6 @@ const CheckoutPage = () => {
         />
       )}
 
-      {/* Square Payment Modal */}
-      {showSquarePayment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Square Payment</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSquarePayment(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <XCircle className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <SquarePaymentForm
-              amount={squarePaymentAmount}
-              onPaymentSuccess={handleSquarePaymentSuccess}
-              onPaymentError={handleSquarePaymentError}
-              description="Zavira Beauty Service Payment"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

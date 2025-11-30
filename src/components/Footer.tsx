@@ -1,6 +1,7 @@
 import { useLanguage } from '@/hooks/use-language';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 
 export const Footer = () => {
   console.log('Footer rendering');
@@ -41,8 +42,8 @@ export const Footer = () => {
       { name: 'YouTube', path: '#', external: true }
     ]
   }];
-  return <footer className="relative border-t border-white/10 overflow-hidden no-animations" style={{ backgroundColor: 'hsl(var(--background))' }} role="contentinfo" aria-label="Site footer">
-      <div className="container mx-auto container-padding relative z-10">
+  return <footer className="relative border-t border-white/10 overflow-hidden no-animations bg-black" role="contentinfo" aria-label="Site footer">
+     <div className="container mx-auto container-padding relative z-10">
         {/* Logo */}
         <div className="text-center mb-6 md:mb-8">
           <div className="text-3xl md:text-4xl font-serif font-light text-white" role="banner" aria-label="Zavira Salon and Spa">
@@ -84,7 +85,36 @@ export const Footer = () => {
         </div>
 
         {/* Social Icons */}
-         
+        <div className="flex justify-center space-x-6 mb-6">
+          <a
+            href="#"
+            className="text-white/70 hover:text-white transition-colors duration-300"
+            aria-label="Follow us on Instagram"
+          >
+            <Instagram className="w-6 h-6" />
+          </a>
+          <a
+            href="#"
+            className="text-white/70 hover:text-white transition-colors duration-300"
+            aria-label="Follow us on Facebook"
+          >
+            <Facebook className="w-6 h-6" />
+          </a>
+          <a
+            href="#"
+            className="text-white/70 hover:text-white transition-colors duration-300"
+            aria-label="Follow us on Twitter"
+          >
+            <Twitter className="w-6 h-6" />
+          </a>
+          <a
+            href="#"
+            className="text-white/70 hover:text-white transition-colors duration-300"
+            aria-label="Subscribe to our YouTube channel"
+          >
+            <Youtube className="w-6 h-6" />
+          </a>
+        </div>
 
         {/* Language Switcher */}
         <div className="flex justify-center mb-4">

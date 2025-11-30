@@ -222,7 +222,9 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                 className="block py-2 md:py-0"
                 onClick={onClose}
               >
-                <h2 className="text-lg sm:text-xl md:text-5xl font-serif text-white hover:luxury-glow transition-all duration-500 cursor-hover leading-tight">
+                <h2 className={`text-lg sm:text-xl md:text-5xl font-serif text-white hover:luxury-glow transition-all duration-500 cursor-hover leading-tight ${
+                  item.name === 'BOOKING' ? 'md:text-6xl font-bold text-luxury-gold' : ''
+                }`}>
                   {item.name}
                 </h2>
               </Link>

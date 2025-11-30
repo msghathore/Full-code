@@ -14,16 +14,26 @@ serve(async (req: Request) => {
   }
 
   try {
+    console.log('🏁 Square payment function started');
+    
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('❌ Missing Supabase environment variables');
+      throw new Error('Supabase configuration is missing');
+    }
+    
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    console.log('✅ Supabase client initialized');
 
     // Initialize Square client
     const squareAccessToken = Deno.env.get('SQUARE_ACCESS_TOKEN');
     const squareEnvironment = Deno.env.get('SQUARE_ENVIRONMENT') || 'sandbox';
 
     if (!squareAccessToken) {
+      console.error('❌ Missing Square access token');
       throw new Error('Square access token not configured');
     }
 
@@ -31,20 +41,54 @@ serve(async (req: Request) => {
       accessToken: squareAccessToken,
       environment: squareEnvironment === 'production' ? Environment.Production : Environment.Sandbox,
     });
+    console.log('✅ Square client initialized');
 
     // Parse request body
     const requestData = await req.json();
-    const { sourceId, amount, locationId, description, referenceId } = requestData;
+    const { nonce, sourceId, amount, locationId, description, referenceId, customerId, staffId } = requestData;
+    
+    console.log('📨 Request data:', {
+      nonce: nonce ? 'present' : 'missing',
+      sourceId: sourceId ? 'present' : 'missing',
+      amount,
+      locationId,
+      description,
+      referenceId,
+      customerId,
+      staffId
+    });
 
-    if (!sourceId || !amount || !locationId) {
-      throw new Error('Missing required payment parameters');
+    // Support both 'nonce' (frontend) and 'sourceId' (backend) parameter names
+    const paymentSourceId = nonce || sourceId;
+
+    if (!paymentSourceId || !amount || !locationId) {
+      console.error('❌ Missing required parameters:', {
+        hasSource: !!paymentSourceId,
+        hasAmount: !!amount,
+        hasLocation: !!locationId
+      });
+      throw new Error('Missing required payment parameters: sourceId/nonce, amount, and locationId are required');
     }
+
+    // Validate amount is a positive integer
+    const paymentAmount = parseInt(amount);
+    if (isNaN(paymentAmount) || paymentAmount <= 0) {
+      console.error('❌ Invalid amount:', amount);
+      throw new Error('Invalid amount: must be a positive number representing cents');
+    }
+
+    console.log('💰 Processing payment for amount:', paymentAmount, 'cents');
+
+    // Generate unique idempotency key to prevent duplicate charges
+    const idempotencyKey = crypto.randomUUID();
+    console.log('🔑 Generated idempotency key:', idempotencyKey);
 
     // Create payment with Square
     const paymentRequest = {
-      sourceId,
+      sourceId: paymentSourceId,
+      idempotencyKey,
       amountMoney: {
-        amount: BigInt(amount), // Amount in cents
+        amount: BigInt(paymentAmount), // Amount in cents
         currency: 'USD',
       },
       locationId,
@@ -52,41 +96,109 @@ serve(async (req: Request) => {
       note: description || 'Zavira Beauty Service Payment',
     };
 
+    console.log('🏦 Sending request to Square API...');
     const { result: paymentResult, statusCode } = await squareClient.paymentsApi.createPayment(paymentRequest);
 
     if (statusCode !== 200 || !paymentResult.payment) {
-      throw new Error('Payment failed to process');
+      console.error('❌ Square API error:', { statusCode, result: paymentResult });
+      
+      // Handle specific Square API errors
+      const errorMessage = paymentResult.errors?.[0]?.detail || 'Payment failed to process';
+      
+      // Map Square error codes to appropriate HTTP status codes
+      let httpStatusCode = 500;
+      if (paymentResult.errors?.[0]?.code) {
+        const errorCode = paymentResult.errors[0].code;
+        if (errorCode.includes('CARD_DECLINED') || errorCode.includes('INSUFFICIENT_FUNDS') ||
+            errorCode.includes('INVALID_CARD') || errorCode.includes('EXPIRED_CARD')) {
+          httpStatusCode = 400; // Bad Request - client error (invalid card)
+        } else if (errorCode.includes('RATE_LIMIT') || errorCode.includes('API_ERROR')) {
+          httpStatusCode = 429; // Too Many Requests - rate limiting
+        }
+      }
+      
+      throw new Error(`Payment failed: ${errorMessage}`);
     }
 
     const payment = paymentResult.payment;
+    console.log('✅ Square payment successful:', {
+      id: payment.id,
+      status: payment.status,
+      amount: payment.amountMoney.amount.toString()
+    });
 
-    // Store payment record in database
-    const { error: dbError } = await supabase
+    // Create transaction record first
+    const transactionId = crypto.randomUUID();
+    const paymentAmountInDollars = parseFloat(payment.amountMoney.amount.toString()) / 100;
+    
+    console.log('💾 Creating transaction record...');
+    const { data: transactionData, error: transactionError } = await supabase
+      .from('transactions')
+      .insert({
+        id: transactionId,
+        customer_id: customerId || null,
+        staff_id: staffId || null,
+        total_amount: paymentAmountInDollars,
+        status: 'PAID',
+        checkout_time: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (transactionError) {
+      console.error('❌ Transaction creation failed:', transactionError);
+      throw new Error(`Transaction creation failed: ${transactionError.message}`);
+    }
+    
+    console.log('✅ Transaction created:', transactionId);
+
+    // Store payment record in database (matching actual schema)
+    console.log('💾 Creating payment record...');
+    const { error: paymentError } = await supabase
       .from('payments')
       .insert({
-        appointment_id: payment.orderId || null,
-        amount: parseFloat(payment.amountMoney.amount.toString()) / 100, // Convert cents to dollars
-        payment_method: 'card', // Since this is processed through Square
-        status: payment.status === 'COMPLETED' ? 'completed' : 'pending',
-        square_payment_id: payment.id,
-        stripe_payment_id: null, // Clear any Stripe references
-        created_at: new Date().toISOString(),
+        transaction_id: transactionId,
+        method: 'CREDIT', // Square payments are always credit card
+        amount: paymentAmountInDollars,
       });
 
-    if (dbError) {
-      console.error('Database error:', dbError);
-      // Continue even if DB insert fails, as payment was successful
+    if (paymentError) {
+      console.error('❌ Payment record creation failed:', paymentError);
+      // Don't fail the whole transaction if payment record insert fails
+      console.log('⚠️ Payment was successful but record creation failed');
+    } else {
+      console.log('✅ Payment record created');
     }
 
     // Return success response
-    return new Response(
-      JSON.stringify({
-        success: true,
-        paymentId: payment.id,
+    const successResponse = {
+      success: true,
+      paymentId: payment.id,
+      status: payment.status,
+      amount: paymentAmountInDollars,
+      createdAt: payment.createdAt,
+      idempotencyKey,
+      transactionId: transactionId,
+      squareResponse: {
+        id: payment.id,
         status: payment.status,
-        amount: parseFloat(payment.amountMoney.amount.toString()) / 100,
-        createdAt: payment.createdAt,
-      }),
+        amount: payment.amountMoney.amount.toString(),
+        currency: payment.amountMoney.currency,
+        cardDetails: payment.cardDetails ? {
+          card: {
+            brand: payment.cardDetails.card?.brand,
+            last4: payment.cardDetails.card?.last4,
+            expMonth: payment.cardDetails.card?.expMonth,
+            expYear: payment.cardDetails.card?.expYear
+          }
+        } : null
+      }
+    };
+    
+    console.log('🎉 Returning success response:', successResponse);
+
+    return new Response(
+      JSON.stringify(successResponse),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -94,18 +206,52 @@ serve(async (req: Request) => {
     );
 
   } catch (error: any) {
-    console.error('Payment processing error:', error);
+    console.error('💥 Payment processing error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+
+    // Determine appropriate HTTP status code based on error type
+    let statusCode = 500;
+    let errorCode = 'PAYMENT_PROCESSING_ERROR';
+    
+    if (error.message.includes('Missing required payment parameters') ||
+        error.message.includes('Invalid amount')) {
+      statusCode = 400;
+      errorCode = 'INVALID_REQUEST';
+    } else if (error.message.includes('Payment failed:') &&
+               (error.message.includes('CARD_DECLINED') ||
+                error.message.includes('INSUFFICIENT_FUNDS') ||
+                error.message.includes('INVALID_CARD') ||
+                error.message.includes('EXPIRED_CARD'))) {
+      statusCode = 400;
+      errorCode = 'PAYMENT_DECLINED';
+    } else if (error.message.includes('Square access token not configured')) {
+      statusCode = 503; // Service Unavailable
+      errorCode = 'PAYMENT_SERVICE_UNAVAILABLE';
+    } else if (error.message.includes('RATE_LIMIT')) {
+      statusCode = 429; // Too Many Requests
+      errorCode = 'RATE_LIMITED';
+    } else if (error.message.includes('Transaction creation failed')) {
+      statusCode = 500;
+      errorCode = 'TRANSACTION_CREATION_FAILED';
+    }
 
     const errorResponse = {
       success: false,
       error: error?.message || 'Payment processing failed',
+      errorCode,
+      timestamp: new Date().toISOString(),
     };
+
+    console.error('📤 Returning error response:', errorResponse);
 
     return new Response(
       JSON.stringify(errorResponse),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: statusCode,
       }
     );
   }

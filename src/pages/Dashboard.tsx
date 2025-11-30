@@ -159,11 +159,15 @@ const Dashboard = () => {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single();
+
+        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is "not found"
+          console.error('Error fetching profile:', profileError);
+        }
 
         setUserProfile({
           name: profile?.full_name || `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() || 'User',

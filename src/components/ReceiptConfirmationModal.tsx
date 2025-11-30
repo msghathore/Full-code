@@ -176,20 +176,20 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-gray-200">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2 text-green-600">
+          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2 text-gray-900">
             <CheckCircle className="h-8 w-8" />
             Transaction Completed Successfully!
           </DialogTitle>
           <DialogDescription className="text-center text-lg">
             <div className="flex items-center justify-center gap-2">
               <Receipt className="h-5 w-5" />
-              <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+              <span className="font-mono text-sm bg-gray-50 text-gray-800 px-2 py-1 rounded border border-gray-200">
                 Transaction ID: {transactionId}
               </span>
             </div>
-            <div className="mt-2 text-lg font-semibold">
+            <div className="mt-2 text-lg font-semibold text-gray-900">
               Total: ${totalAmount.toFixed(2)}
             </div>
           </DialogDescription>
@@ -197,9 +197,9 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
 
         <div className="space-y-6 mt-6">
           {/* Receipt Actions Section */}
-          <div className="border rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Receipt className="h-5 w-5" />
+          <div className="border border-gray-200 rounded-lg p-4 bg-white">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900">
+              <Receipt className="h-5 w-5 text-gray-700" />
               Send Receipt
             </h3>
             
@@ -208,7 +208,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Mail className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium">Email Receipt</span>
+                  <span className="font-medium text-gray-900">Email Receipt</span>
                 </div>
                 
                 {!emailQueued ? (
@@ -218,13 +218,13 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                       placeholder="customer@email.com"
                       value={emailForm.email}
                       onChange={(e) => setEmailForm(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full"
+                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                       disabled={emailForm.isSubmitting}
                     />
-                    <Button 
+                    <Button
                       onClick={handleEmailReceipt}
                       disabled={emailForm.isSubmitting || !emailForm.email.trim()}
-                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       {emailForm.isSubmitting ? (
                         <>
@@ -251,12 +251,12 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Printer className="h-5 w-5 text-gray-600" />
-                  <span className="font-medium">Print Receipt</span>
+                  <span className="font-medium text-gray-900">Print Receipt</span>
                 </div>
-                <Button 
+                <Button
                   onClick={handlePrintReceipt}
                   variant="outline"
-                  className="w-full border-gray-300 hover:bg-gray-50"
+                  className="w-full border-gray-300 hover:bg-gray-50 text-gray-900 bg-white"
                 >
                   <Printer className="h-4 w-4 mr-2" />
                   Print Receipt
@@ -267,7 +267,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-green-600" />
-                  <span className="font-medium">SMS Receipt</span>
+                  <span className="font-medium text-gray-900">SMS Receipt</span>
                 </div>
                 
                 {!smsQueued ? (
@@ -277,14 +277,14 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                       placeholder="(555) 123-4567"
                       value={smsForm.phone}
                       onChange={(e) => setSmsForm(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full"
+                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-green-500 focus:ring-green-500"
                       disabled={smsForm.isSubmitting}
                     />
-                    <Button 
+                    <Button
                       onClick={handleSmsReceipt}
                       disabled={smsForm.isSubmitting || !smsForm.phone.trim()}
                       variant="outline"
-                      className="w-full border-green-300 text-green-600 hover:bg-green-50"
+                      className="w-full border-green-300 text-green-600 hover:bg-green-50 bg-white"
                     >
                       {smsForm.isSubmitting ? (
                         <>
@@ -311,16 +311,16 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
 
           {/* Next Action Section */}
           <div className="border-2 border-orange-200 rounded-lg p-4 bg-orange-50">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-orange-800">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-orange-900">
               <Calendar className="h-5 w-5" />
               Next Step - Book Another Appointment
             </h3>
             
             <div className="space-y-3">
-              <p className="text-sm text-orange-700">
+              <p className="text-sm text-orange-800">
                 Ready to schedule the next service or appointment?
               </p>
-              <Button 
+              <Button
                 onClick={handleRebookService}
                 className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 text-lg font-semibold"
               >
@@ -331,25 +331,25 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
           </div>
 
           {/* Transaction Summary */}
-          <div className="border rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-3">Transaction Summary</h3>
+          <div className="border border-gray-200 rounded-lg p-4 bg-white">
+            <h3 className="text-lg font-semibold mb-3 text-gray-900">Transaction Summary</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Items:</span>
-                <span className="font-medium">{cartItems.length}</span>
+                <span className="text-gray-700">Items:</span>
+                <span className="font-medium text-gray-900">{cartItems.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Services:</span>
-                <span>{cartItems.filter(item => item.item_type === 'SERVICE').length}</span>
+                <span className="text-gray-700">Services:</span>
+                <span className="text-gray-900">{cartItems.filter(item => item.item_type === 'SERVICE').length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Products:</span>
-                <span>{cartItems.filter(item => item.item_type === 'PRODUCT').length}</span>
+                <span className="text-gray-700">Products:</span>
+                <span className="text-gray-900">{cartItems.filter(item => item.item_type === 'PRODUCT').length}</span>
               </div>
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total Amount:</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                  <span className="text-gray-900">Total Amount:</span>
+                  <span className="text-gray-900">${totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -357,11 +357,11 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
         </div>
 
         {/* Modal Footer - Done Button */}
-        <div className="flex justify-center mt-6 pt-4 border-t">
-          <Button 
+        <div className="flex justify-center mt-6 pt-4 border-t border-gray-200">
+          <Button
             onClick={onClose}
             variant="outline"
-            className="px-8"
+            className="px-8 bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
           >
             Done
           </Button>

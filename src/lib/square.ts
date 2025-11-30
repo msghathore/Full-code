@@ -1,27 +1,12 @@
-// Square payment integration - Mock implementation for development
-// TODO: Replace with actual Square SDK when properly configured
-
-// Mock types to prevent import errors
-interface MockClient {
-  paymentsApi: {
-    createPayment: (request: any) => Promise<any>;
-  };
-}
-
-interface MockEnvironment {
-  Sandbox: string;
-  Production: string;
-}
+// Square payment integration - Production implementation
+// This file contains configuration and utility functions for Square Web Payments SDK
 
 // Initialize Square configuration with environment variables
-const squareAccessToken = import.meta.env.VITE_SQUARE_ACCESS_TOKEN;
 const squareApplicationId = import.meta.env.VITE_SQUARE_APPLICATION_ID;
 const squareLocationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
+const squareEnvironment = import.meta.env.VITE_SQUARE_ENVIRONMENT || 'sandbox';
 
-if (!squareAccessToken) {
-  console.warn('Square access token not found. Please add VITE_SQUARE_ACCESS_TOKEN to your .env file');
-}
-
+// Validate required environment variables
 if (!squareApplicationId) {
   console.warn('Square application ID not found. Please add VITE_SQUARE_APPLICATION_ID to your .env file');
 }
@@ -30,31 +15,52 @@ if (!squareLocationId) {
   console.warn('Square location ID not found. Please add VITE_SQUARE_LOCATION_ID to your .env file');
 }
 
-// Mock client that will be replaced when Square is properly configured
-const squareClient: MockClient | null = {
-  paymentsApi: {
-    createPayment: async (request: any) => {
-      console.log('Mock Square payment creation:', request);
-      return {
-        result: {
-          payment: {
-            id: `mock_payment_${Date.now()}`,
-            status: 'COMPLETED',
-            amountMoney: request.amountMoney
-          }
-        }
-      };
-    }
-  }
-};
-
-export { squareClient };
-
 export const SQUARE_CONFIG = {
   applicationId: squareApplicationId || '',
   locationId: squareLocationId || '',
-  environment: 'sandbox' as const, // Change to 'production' for live
-  isConfigured: !!(squareApplicationId && squareLocationId)
+  environment: squareEnvironment as 'sandbox' | 'production',
+  isConfigured: !!(squareApplicationId && squareLocationId),
+  // Square Web SDK base URL
+  sdkUrl: squareEnvironment === 'production'
+    ? 'https://web.squarecdn.com/v1/square.js'
+    : 'https://sandbox.web.squarecdn.com/v1/square.js'
+};
+
+// Check if Square SDK is loaded
+export const isSquareSdkLoaded = (): boolean => {
+  return typeof window !== 'undefined' && !!window.Square;
+};
+
+// Load Square Web SDK dynamically
+export const loadSquareSdk = (): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (isSquareSdkLoaded()) {
+      resolve(window.Square);
+      return;
+    }
+
+    // Create script element
+    const script = document.createElement('script');
+    script.src = SQUARE_CONFIG.sdkUrl;
+    script.type = 'text/javascript';
+    script.async = true;
+    
+    // Set up event handlers
+    script.onload = () => {
+      if (isSquareSdkLoaded()) {
+        resolve(window.Square);
+      } else {
+        reject(new Error('Square SDK failed to load properly'));
+      }
+    };
+    
+    script.onerror = () => {
+      reject(new Error('Failed to load Square SDK'));
+    };
+
+    // Add script to document
+    document.head.appendChild(script);
+  });
 };
 
 // Helper function to format amount for Square (converts dollars to cents)

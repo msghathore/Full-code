@@ -28,6 +28,7 @@ import AppointmentLegend from '@/components/AppointmentLegend';
 interface AppLayoutProps {
   children: ReactNode;
   showSidebar?: boolean;
+  showNavbar?: boolean;
   className?: string;
   isLegendOpen?: boolean;
   setIsLegendOpen?: (open: boolean) => void;
@@ -50,6 +51,7 @@ const navigationItems: NavItem[] = [
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   showSidebar = true,
+  showNavbar = true,
   className = '',
   isLegendOpen: externalIsLegendOpen,
   setIsLegendOpen: externalSetIsLegendOpen
@@ -57,10 +59,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const location = useLocation();
   const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
-  
+
   // Legend state management
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  
+
   // Use external props if provided, otherwise use internal state
   const effectiveIsLegendOpen = externalIsLegendOpen !== undefined ? externalIsLegendOpen : isLegendOpen;
   const effectiveSetIsLegendOpen = externalSetIsLegendOpen || setIsLegendOpen;
@@ -103,107 +105,111 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const isCurrentPage = (href: string) => {
-    return location.pathname === href || 
-           (href !== '/schedule' && location.pathname.startsWith(href));
+    return location.pathname === href ||
+      (href !== '/schedule' && location.pathname.startsWith(href));
   };
 
   return (
     <div className={`flex h-screen overflow-hidden ${className}`}>
       {/* Left Sidebar - Schedule Sidebar */}
-      <aside className="w-64 flex-shrink-0 border-r border-gray-200">
-        <ScheduleSidebar />
-      </aside>
+      {showSidebar && (
+        <aside className="w-64 flex-shrink-0 border-r border-gray-200">
+          <ScheduleSidebar />
+        </aside>
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto flex flex-col">
         {/* Black Top Navigation Bar - Remains at very top */}
-        <header className="bg-black text-white shadow-lg flex-shrink-0">
-          <div className="px-4">
-            <div className="flex items-center justify-between h-16">
-              {/* Left Navigation Links */}
-              <nav className="flex items-center space-x-1">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = isCurrentPage(item.href);
-                  
-                  return (
-                    <Link key={item.name} to={item.href}>
+        {showNavbar && (
+          <header className="bg-black text-white shadow-lg flex-shrink-0">
+            <div className="px-4">
+              <div className="flex items-center justify-between h-16">
+                {/* Left Navigation Links */}
+                <nav className="flex items-center space-x-1">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = isCurrentPage(item.href);
+
+                    return (
+                      <Link key={item.name} to={item.href}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`
+                            h-10 px-3 text-sm font-medium transition-colors
+                            ${isActive
+                              ? 'bg-gray-800 text-white border-b-2 border-white'
+                              : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                            }
+                          `}
+                        >
+                          <Icon className="h-4 w-4 mr-2" />
+                          {item.name}
+                          {item.badge && (
+                            <Badge
+                              variant="destructive"
+                              className="ml-2 h-4 w-4 p-0 text-xs"
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {/* Center - Legend Icon */}
+                <div className="flex items-center">
+                  <AppointmentLegend
+                    isLegendOpen={effectiveIsLegendOpen}
+                    setIsLegendOpen={effectiveSetIsLegendOpen}
+                  />
+                </div>
+
+                {/* Right Side - User Profile */}
+                <div className="flex items-center space-x-3">
+                  {/* User Profile Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className={`
-                          h-10 px-3 text-sm font-medium transition-colors
-                          ${isActive
-                            ? 'bg-gray-800 text-white border-b-2 border-white'
-                            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                          }
-                        `}
+                        className="h-10 px-3 text-gray-300 hover:bg-gray-800 hover:text-white"
                       >
-                        <Icon className="h-4 w-4 mr-2" />
-                        {item.name}
-                        {item.badge && (
-                          <Badge
-                            variant="destructive"
-                            className="ml-2 h-4 w-4 p-0 text-xs"
-                          >
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* Center - Legend Icon */}
-              <div className="flex items-center">
-                <AppointmentLegend
-                  isLegendOpen={effectiveIsLegendOpen}
-                  setIsLegendOpen={effectiveSetIsLegendOpen}
-                />
-              </div>
-
-              {/* Right Side - User Profile */}
-              <div className="flex items-center space-x-3">
-                {/* User Profile Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="h-10 px-3 text-gray-300 hover:bg-gray-800 hover:text-white"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src="/images/client-1.jpg" alt="Sarah Johnson" />
-                          <AvatarFallback className="bg-gray-600 text-white text-sm">
-                            SJ
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col items-start">
-                          <span className="text-sm font-medium">Sarah Johnson</span>
-                          <span className="text-xs text-gray-400">Administrator</span>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src="/images/client-1.jpg" alt="Sarah Johnson" />
+                            <AvatarFallback className="bg-gray-600 text-white text-sm">
+                              SJ
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col items-start">
+                            <span className="text-sm font-medium">Sarah Johnson</span>
+                            <span className="text-xs text-gray-400">Administrator</span>
+                          </div>
+                          <ChevronDown className="h-4 w-4" />
                         </div>
-                        <ChevronDown className="h-4 w-4" />
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 bg-white shadow-lg border"
-                  >
-                    <DropdownMenuItem
-                      onClick={handleLogout}
-                      className="bg-white text-red-600 hover:bg-red-50 cursor-pointer font-semibold"
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-white shadow-lg border"
                     >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="bg-white text-red-600 hover:bg-red-50 cursor-pointer font-semibold"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {/* Page Content Area */}
         <main className="flex-1 bg-gray-50 p-4">

@@ -47,12 +47,16 @@ const UserDropdown = () => {
         setIsLoading(true);
         
         // Get user profile from Supabase
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single();
-          
+
+        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is "not found"
+          console.error('Error fetching profile:', profileError);
+        }
+
         // Set profile information
         setUserProfile({
           name: profile?.full_name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User',

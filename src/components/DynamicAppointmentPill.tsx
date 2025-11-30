@@ -12,6 +12,7 @@ import {
   CalendarX,
   Clock
 } from 'lucide-react';
+import { DRAG_TYPES, DragAppointmentData } from '@/lib/dragTypes';
 
 interface DynamicAppointmentPillProps {
   appointment: {
@@ -34,9 +35,21 @@ interface DynamicAppointmentPillProps {
     name: string;
     color: string;
   };
-  onClick?: () => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
+  onClick?: (event: React.MouseEvent) => void;
+  // Removed onDragStart/onDragEnd as they're handled by react-dnd
+  originalAppointment?: {
+    id: string;
+    service_name: string;
+    appointment_date: string;
+    appointment_time: string;
+    staff_id: string;
+    status: string;
+    full_name: string;
+    phone?: string;
+    email?: string;
+    total_amount?: number;
+    notes?: string;
+  };
 }
 
 // Service duration mapping (you can replace this with real data from your backend)
@@ -93,11 +106,10 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
   appointment,
   staffMember,
   onClick,
-  onDragStart,
-  onDragEnd
+  originalAppointment
 }) => {
   // Calculate service duration (use provided duration or get from mapping)
-  const serviceDuration = appointment.duration_minutes || 
+  const serviceDuration = appointment.duration_minutes ||
     SERVICE_DURATIONS[appointment.service_name] || 60; // Default 60 minutes
 
   // Dynamic height calculation - STRICT VERTICAL COMPRESSION
@@ -110,7 +122,7 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
   );
 
   // Get status styling
-  const statusStyle = STATUS_COLOR_MAP[appointment.status as keyof typeof STATUS_COLOR_MAP] || 
+  const statusStyle = STATUS_COLOR_MAP[appointment.status as keyof typeof STATUS_COLOR_MAP] ||
     STATUS_COLOR_MAP['requested'];
 
   // Get status icon
@@ -126,22 +138,44 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
   const customerName = appointment.client_name?.split(' ')[0] + ' ' +
     (appointment.client_name?.split(' ').slice(1).join(' ').split('(')[0] || '').trim() || 'No Name';
 
+  // Setup react-dnd drag functionality
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: DRAG_TYPES.APPOINTMENT,
+    item: {
+      appointmentId: appointment.id,
+      originalAppointment: originalAppointment || {
+        id: appointment.id,
+        service_name: appointment.service_name,
+        appointment_date: '', // Will be set by parent
+        appointment_time: appointment.start_time,
+        staff_id: appointment.staff_id,
+        status: appointment.status,
+        full_name: appointment.client_name,
+        price: appointment.price,
+        notes: appointment.notes
+      }
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }), [appointment, originalAppointment]);
+
   return (
     <div
+      ref={drag}
       className={`
         relative overflow-hidden border rounded-sm cursor-move
         transition-all duration-200 hover:shadow-sm
         ${statusStyle.bgClass} ${statusStyle.borderClass} ${statusStyle.textClass}
+        ${isDragging ? 'opacity-50 scale-95 z-50 shadow-lg' : ''}
       `}
       style={{
         height: `${calculatedHeight}px`,
         minHeight: '30px', // Strict compression minimum touch target to match time slots
-        borderRadius: '2px' // More rectangular, less rounded
+        borderRadius: '2px', // More rectangular, less rounded
+        transform: isDragging ? 'rotate(2deg)' : 'none'
       }}
-      onClick={onClick}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      draggable
+      onClick={(e) => onClick?.(e)}
     >
       {/* Internal padding - ULTRA COMPRESSED for maximum content density */}
       <div className="p-0 h-full flex flex-col justify-between relative">

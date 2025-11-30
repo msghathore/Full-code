@@ -50,24 +50,6 @@ global.ResizeObserver = class ResizeObserver {
   }
 } as any;
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: (key: string) => null,
-  setItem: (key: string, value: string) => null,
-  removeItem: (key: string) => null,
-  clear: () => null,
-  length: 0,
-  key: (index: number) => null,
-};
-(global as any).localStorage = localStorageMock;
-
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: (key: string) => null,
-  setItem: (key: string, value: string) => null,
-  removeItem: (key: string) => null,
-  clear: () => null,
-  length: 0,
-  key: (index: number) => null,
-};
-(global as any).sessionStorage = sessionStorageMock;
+// Test environment now uses modern Clerk authentication
+// localStorage and sessionStorage mocks removed as they're no longer needed
+// Authentication is handled by Clerk which uses in-memory storage

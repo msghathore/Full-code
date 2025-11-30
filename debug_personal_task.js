@@ -1,117 +1,138 @@
-// Debug script to test personal task creation step by step
-// Run this in the browser console while on the staff page
+#!/usr/bin/env node
 
-console.log('🔍 Personal Task Debug Script Started');
-console.log('=====================================');
+/**
+ * DIAGNOSTIC SCRIPT FOR PERSONAL TASK CREATION ERROR
+ * This script will help identify the exact cause of the failure
+ */
 
-// Check if we're on the right page
-if (!window.location.pathname.includes('staff')) {
-  console.log('❌ Please navigate to the staff scheduling page first');
-  return;
-}
+import { createClient } from '@supabase/supabase-js';
 
-// 1. Check if Supabase client is available
-console.log('\n1. Checking Supabase client...');
-try {
-  const supabase = window.supabase || window.__SUPABASE_CLIENT__;
-  if (supabase) {
-    console.log('✅ Supabase client found');
-  } else {
-    console.log('❌ Supabase client not found');
-  }
-} catch (error) {
-  console.log('❌ Error accessing Supabase:', error);
-}
+// Load environment variables
+const supabaseUrl = 'https://stppkvkcjsyusxwtbaej.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cHBrdmtjanN5dXN4d3RiYWVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjk4MTUsImV4cCI6MjA3ODgwNTgxNX0.sH9es8xu2tZlkhQrfaPcaYTAC8t6CjrI7LL9BKfT-v0';
 
-// 2. Check slotActionServices
-console.log('\n2. Checking slotActionServices...');
-try {
-  const serviceFunctions = Object.keys(window).filter(key => 
-    key.includes('createPersonalTask') || 
-    key.includes('slotAction') ||
-    typeof window[key] === 'function'
-  );
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function testPersonalTaskCreation() {
+  console.log('🔍 Starting Personal Task Creation Diagnostic...\n');
   
-  if (serviceFunctions.length > 0) {
-    console.log('✅ Found service functions:', serviceFunctions);
-  } else {
-    console.log('❌ No service functions found');
-  }
-} catch (error) {
-  console.log('❌ Error checking services:', error);
-}
+  // Test data
+  const testStaffId = 'test-staff-123'; // This is what the frontend would send
+  const testDate = '2024-12-01';
+  const testTime = '10:00:00';
+  const testDescription = 'Test personal task';
+  const testDuration = 60;
 
-// 3. Test database connection
-console.log('\n3. Testing database connection...');
-async function testDatabase() {
+  console.log('📊 Test Parameters:');
+  console.log(`  Staff ID: "${testStaffId}" (type: ${typeof testStaffId})`);
+  console.log(`  Date: "${testDate}"`);
+  console.log(`  Time: "${testTime}"`);
+  console.log(`  Description: "${testDescription}"`);
+  console.log(`  Duration: ${testDuration} minutes\n`);
+
+  // Test 1: Check if RPC function exists
+  console.log('🧪 Test 1: Checking RPC function existence...');
   try {
-    const supabase = window.supabase || window.__SUPABASE_CLIENT__;
-    if (!supabase) {
-      console.log('❌ Cannot test - Supabase not available');
-      return;
+    const { data: functionInfo, error: funcError } = await supabase
+      .rpc('create_personal_task', {
+        staffId: testStaffId,
+        appointmentDate: testDate,
+        appointmentTime: testTime,
+        description: testDescription,
+        durationMinutes: testDuration
+      });
+    
+    if (funcError) {
+      console.log('❌ RPC function call failed:', funcError);
+      console.log('   Error code:', funcError.code);
+      console.log('   Error message:', funcError.message);
+      console.log('   Error details:', funcError.details);
+      console.log('   Error hint:', funcError.hint);
+    } else {
+      console.log('✅ RPC function call succeeded:', data);
     }
+  } catch (err) {
+    console.log('❌ RPC function call threw exception:', err.message);
+  }
 
-    console.log('Checking if personal_tasks table exists...');
-    const { data, error } = await supabase
+  console.log('\n' + '='.repeat(60) + '\n');
+
+  // Test 2: Try direct table insertion
+  console.log('🧪 Test 2: Testing direct table insertion...');
+  try {
+    const { data: directData, error: directError } = await supabase
       .from('personal_tasks')
-      .select('count')
-      .limit(1);
+      .insert([{
+        staff_id: testStaffId,
+        appointment_date: testDate,
+        appointment_time: testTime,
+        duration_minutes: testDuration,
+        description: testDescription,
+        status: 'scheduled'
+      }])
+      .select('id')
+      .single();
 
-    if (error) {
-      console.log('❌ personal_tasks table error:', error.message);
-      console.log('This means you need to run the SQL migration script');
+    if (directError) {
+      console.log('❌ Direct insertion failed:', directError);
+      console.log('   Error code:', directError.code);
+      console.log('   Error message:', directError.message);
+      console.log('   Error details:', directError.details);
     } else {
-      console.log('✅ personal_tasks table exists and is accessible');
+      console.log('✅ Direct insertion succeeded:', directData);
     }
-
-  } catch (error) {
-    console.log('❌ Database test failed:', error);
+  } catch (err) {
+    console.log('❌ Direct insertion threw exception:', err.message);
   }
-}
 
-// 4. Test RPC function
-console.log('\n4. Testing RPC function...');
-async function testRPC() {
+  console.log('\n' + '='.repeat(60) + '\n');
+
+  // Test 3: Check staff table to see the actual staff_id format
+  console.log('🧪 Test 3: Checking actual staff data format...');
   try {
-    const supabase = window.supabase || window.__SUPABASE_CLIENT__;
-    if (!supabase) {
-      console.log('❌ Cannot test RPC - Supabase not available');
-      return;
-    }
+    const { data: staffData, error: staffError } = await supabase
+      .from('staff')
+      .select('id, name')
+      .limit(3);
 
-    console.log('Testing create_personal_task RPC function...');
-    const { data, error } = await supabase.rpc('create_personal_task', {
-      staffId: 'test-staff-id',
-      appointmentDate: '2024-11-22',
-      appointmentTime: '10:00:00',
-      description: 'Test personal task',
-      durationMinutes: 60
-    });
-
-    if (error) {
-      console.log('❌ RPC function error:', error.message);
+    if (staffError) {
+      console.log('❌ Staff query failed:', staffError);
     } else {
-      console.log('✅ RPC function works:', data);
+      console.log('✅ Staff data found:');
+      staffData.forEach(staff => {
+        console.log(`  - ID: "${staff.id}" (type: ${typeof staff.id}), Name: ${staff.name}`);
+      });
     }
-
-  } catch (error) {
-    console.log('❌ RPC test failed:', error);
+  } catch (err) {
+    console.log('❌ Staff query threw exception:', err.message);
   }
+
+  console.log('\n' + '='.repeat(60) + '\n');
+
+  // Test 4: Test with UUID staff_id (what might be expected)
+  console.log('🧪 Test 4: Testing with UUID staff_id format...');
+  try {
+    const { data: uuidData, error: uuidError } = await supabase
+      .rpc('create_personal_task', {
+        staffId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // UUID format
+        appointmentDate: testDate,
+        appointmentTime: testTime,
+        description: testDescription,
+        durationMinutes: testDuration
+      });
+    
+    if (uuidError) {
+      console.log('❌ UUID RPC call failed:', uuidError);
+      console.log('   Error code:', uuidError.code);
+      console.log('   Error message:', uuidError.message);
+    } else {
+      console.log('✅ UUID RPC call succeeded:', uuidData);
+    }
+  } catch (err) {
+    console.log('❌ UUID RPC call threw exception:', err.message);
+  }
+
+  console.log('\n🎯 DIAGNOSTIC COMPLETE\n');
 }
 
-// Run all tests
-async function runAllTests() {
-  await testDatabase();
-  await testRPC();
-  
-  console.log('\n🔍 Debug script completed');
-  console.log('=====================================');
-  
-  console.log('\n📋 Next Steps:');
-  console.log('1. If personal_tasks table error: Run complete_personal_task_fix.sql in Supabase');
-  console.log('2. If RPC error: Run complete_personal_task_fix.sql in Supabase');
-  console.log('3. If all tests pass: Try creating a personal task manually');
-}
-
-// Execute tests
-runAllTests();
+testPersonalTaskCreation().catch(console.error);

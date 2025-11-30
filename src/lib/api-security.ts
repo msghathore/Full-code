@@ -91,9 +91,6 @@ export const handleApiError = (error: any, url: string) => {
   // Handle specific security-related errors
   if (error.status === 401) {
     // Unauthorized - might indicate session expiry
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth-token');
-    }
     throw new Error('Session expired. Please log in again.');
   }
 

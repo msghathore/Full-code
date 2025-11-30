@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { NewsletterService } from '@/lib/newsletter';
+import EmailService from '@/lib/email-service';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,7 +44,6 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNewsletterSubmitting, setIsNewsletterSubmitting] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 36, minutes: 0, seconds: 0 });
-  const [flipping, setFlipping] = useState({ hours: false, minutes: false, seconds: false });
   const [services, setServices] = useState<any[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const { t } = useLanguage();
@@ -63,45 +62,37 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
 
   // Separate useEffect for timers (runs on mount)
   useEffect(() => {
-    // Countdown timer for secret deals
+    console.log('🔍 DEBUG: Setting up secret deals popup timers');
+
+    // Lightweight countdown timer for secret deals - updates every second
     const countdownInterval = setInterval(() => {
       setTimeLeft(prev => {
         let { hours, minutes, seconds } = prev;
-        const newFlipping = { hours: false, minutes: false, seconds: false };
 
         if (seconds > 0) {
           seconds--;
-          newFlipping.seconds = true;
         } else if (minutes > 0) {
           minutes--;
           seconds = 59;
-          newFlipping.minutes = true;
-          newFlipping.seconds = true;
         } else if (hours > 0) {
           hours--;
           minutes = 59;
           seconds = 59;
-          newFlipping.hours = true;
-          newFlipping.minutes = true;
-          newFlipping.seconds = true;
         } else {
           // Timer expired
           clearInterval(countdownInterval);
-          return prev;
+          return { hours: 0, minutes: 0, seconds: 0 };
         }
-
-        setFlipping(newFlipping);
-        // Reset flipping after animation
-        setTimeout(() => setFlipping({ hours: false, minutes: false, seconds: false }), 600);
 
         return { hours, minutes, seconds };
       });
-    }, 1000);
+    }, 1000); // Update every second
 
-    // Show secret deals popup after 10 seconds
+    // Show secret deals popup after 30 seconds (less intrusive)
     const popupTimer = setTimeout(() => {
+      console.log('🔍 DEBUG: Showing secret deals popup');
       setShowSecretDeals(true);
-    }, 10000);
+    }, 30000);
 
     return () => {
       clearTimeout(popupTimer);
@@ -142,7 +133,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
         name: 'PIERCING',
         image: '/images/piercing-service.jpg',
         category: 'Piercing'
-      },
+      }
     ]);
     setServicesLoading(false);
     
@@ -432,6 +423,25 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
     }
   }, []);
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-numeric characters
+    const phoneNumber = value.replace(/\D/g, '');
+
+    // Format as (XXX) XXX-XXXX
+    if (phoneNumber.length <= 3) {
+      return phoneNumber;
+    } else if (phoneNumber.length <= 6) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    } else {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    }
+  };
+
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhoneNumber(formatted);
+  };
+
   const handleSecretDealsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneNumber.trim()) {
@@ -474,21 +484,24 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
     try {
       console.log('📧 Frontend form submission:', data.email);
       
-      // Use Brevo newsletter service
-      const result = await NewsletterService.subscribe(data.email, undefined, 'website');
-      console.log('✅ Brevo service result:', result);
+      // Use centralized email service for newsletter
+      const result = await EmailService.subscribeToNewsletter({
+        email: data.email,
+        source: 'website'
+      });
+      console.log('✅ Email service result:', result);
       
       if (result.success) {
         toast({
           title: "🎉 Welcome to ZAVIRA!",
-          description: result.message,
+          description: result.message || "Successfully subscribed to our newsletter!",
         });
         reset(); // Clear form on success
       } else {
         // Provide helpful error message
-        const errorMessage = result.message.includes('mandeepghathore0565@gmail.com')
+        const errorMessage = result.error?.includes('mandeepghathore0565@gmail.com')
           ? `Testing account limitation: Use mandeepghathore0565@gmail.com for testing. Your email: ${data.email}`
-          : result.message;
+          : result.message || result.error || "Failed to subscribe. Please try again.";
           
         toast({
           title: "Newsletter Info",
@@ -585,7 +598,12 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               )}
             </div>
 
-            <div className="text-center mt-12">
+            <div className="text-center mt-12 space-y-4">
+              <Button variant="cta" asChild className="animate-button hover:scale-105 transition-transform duration-300 px-8 py-4 text-lg">
+                <Link to="/booking">
+                  BOOK NOW
+                </Link>
+              </Button>
               <Button variant="outline" asChild className="animate-button hover:scale-105 transition-transform duration-300">
                 <Link to="/services">
                   {t('viewAllServices')}
@@ -700,7 +718,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                   id: 4,
                   title: "Massage Therapy Benefits",
                   desc: "Why regular massages are essential for your well-being and relaxation.",
-                  image: "/images/product-1.jpg"
+                  image: "/images/blog-4.jpg"
                 }
               ].map((blog, index) => (
                 <div key={index} className="blog-card flex-1 min-w-0 transition-all duration-700 ease-out hover:flex-grow-[2] group cursor-hover">
@@ -810,34 +828,34 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
       <Dialog open={showSecretDeals} onOpenChange={setShowSecretDeals}>
         {/* Custom Backdrop with Heavy Blur */}
         {showSecretDeals && (
-          <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xl" />
+          <div className="fixed inset-0 z-[1100] bg-black/60" />
         )}
-        <DialogContent className="frosted-glass border-white/20 w-[90vw] mx-auto transform scale-55 [&>button]:transition-all [&>button]:duration-500 [&>button]:hover:rotate-90 [&>button]:hover:scale-110 [&>button]:hover:drop-shadow-xl [&>button]:hover:drop-shadow-white/30 [&>button]:hover:bg-white/10">
+        <DialogContent className="frosted-glass border-white/20 w-[90vw] mx-auto mt-20 z-[1200] shadow-2xl shadow-white/20">
           <DialogHeader className="text-center">
-            <DialogTitle className="text-3xl md:text-4xl font-serif font-light text-white luxury-glow animate-glow-pulse mb-8 text-center w-full">
-              ZAVIRA SECRET DEALS
+            <DialogTitle className="text-3xl md:text-4xl font-serif font-light text-white mb-4 text-center w-full">
+              SECRET DEALS
             </DialogTitle>
-            <DialogDescription className="text-white/80 text-base leading-relaxed text-center">
-              Join our exclusive VIP list and unlock <span className="luxury-glow font-bold">50% OFF</span> on premium services,
-              <span className="luxury-glow font-bold"> free upgrades</span>, and <span className="luxury-glow font-bold">early access</span> to new treatments.
+            <div className="text-white/80 text-base leading-relaxed text-center">
+              Join our exclusive VIP list and unlock <span className="font-bold">50% OFF</span> on premium services,
+              <span className="font-bold"> free upgrades</span>, and <span className="font-bold">early access</span> to new treatments.
               <br /><br />
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-sm text-white/60">Offer expires in:</span>
               </div>
               <div className="flex items-center justify-center gap-1 text-2xl md:text-3xl font-mono font-bold">
-                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center">
-                  {timeLeft.hours}
+                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                  {timeLeft.hours.toString().padStart(2, '0')}
                 </span>
                 <span className="text-white/60 px-1">:</span>
-                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center">
-                  {timeLeft.minutes}
+                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                  {timeLeft.minutes.toString().padStart(2, '0')}
                 </span>
                 <span className="text-white/60 px-1">:</span>
-                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center">
-                  {timeLeft.seconds}
+                <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                  {timeLeft.seconds.toString().padStart(2, '0')}
                 </span>
               </div>
-            </DialogDescription>
+            </div>
           </DialogHeader>
 
           <form onSubmit={handleSecretDealsSubmit} className="space-y-6 mt-6">
@@ -848,7 +866,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                 inputMode="tel"
                 pattern="[0-9\-\+\(\)\s]+"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={handlePhoneNumberChange}
                 placeholder="+1 (555) 000-0000"
                 className="bg-black/50 border-white/20 text-white placeholder:text-white/30 text-center text-lg py-4 caret-transparent mx-auto max-w-xs"
                 required
@@ -868,7 +886,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               <Button
                 type="submit"
                 variant="cta"
-                className="px-6 py-3 font-serif text-base tracking-wider"
+                className="px-6 py-3 font-serif text-base tracking-wider font-bold"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'JOINING...' : 'CLAIM DEALS'}

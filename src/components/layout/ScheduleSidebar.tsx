@@ -17,11 +17,10 @@ interface Resource {
 }
 
 const employees: Employee[] = [
-  { id: '1', name: 'Sarah Johnson', initials: 'SJ', image: '/images/client-1.jpg' },
-  { id: '2', name: 'Mike Chen', initials: 'MC', image: '/images/client-2.jpg' },
-  { id: '3', name: 'Emma Rodriguez', initials: 'ER', image: '/images/client-3.jpg' },
-  { id: '4', name: 'David Kim', initials: 'DK', image: '/images/client-4.jpg' },
-  { id: '5', name: 'Lisa Anderson', initials: 'LA', image: '/images/client-5.jpg' },
+  { id: '40ff39ae-34b0-4d51-baaf-64cf276d37f7', name: 'Sarah Johnson', initials: 'SJ', image: '/images/client-1.jpg' },
+  { id: 'b6403223-b206-4dbb-a296-ba53823ecee6', name: 'Mike Chen', initials: 'MC', image: '/images/client-2.jpg' },
+  { id: 'bc685d56-2e4a-4027-bc37-40712938722f', name: 'Emma Davis', initials: 'ED', image: '/images/client-3.jpg' },
+  { id: 'b30effc6-2fd0-49a6-ac12-4675bced187a', name: 'Alex Rivera', initials: 'AR', image: '/images/client-4.jpg' },
 ];
 
 const resources: Resource[] = [

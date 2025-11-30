@@ -7,13 +7,13 @@ import { Button } from '@/components/ui/button';
 gsap.registerPlugin(ScrollTrigger);
 
 export const VideoHero = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const controlsRef = useRef<HTMLDivElement>(null);
-  const heroLogoRef = useRef<HTMLDivElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [videoError, setVideoError] = useState(false);
+    const controlsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (controlsRef.current && heroLogoRef.current) {
+    if (controlsRef.current) {
       const tl = gsap.timeline();
 
       tl.fromTo(controlsRef.current, {
@@ -50,31 +50,14 @@ export const VideoHero = () => {
         duration: 0.5,
         ease: 'power2.inOut'
       }, '-=0.5');
-
-      // Hero logo animation - fade out when scrolling
-      const heroLogoSection = heroLogoRef.current.querySelector('.hero-logo-section');
-      if (heroLogoSection) {
-        gsap.fromTo(heroLogoSection, {
-          opacity: 1,
-          scale: 1,
-          y: 0
-        }, {
-          opacity: 0,
-          scale: 0.8,
-          y: -100,
-          duration: 1.2,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: heroLogoSection,
-            start: 'top 60%',
-            end: 'top 20%',
-            scrub: 1,
-            toggleActions: 'play none none reverse'
-          }
-        });
-      }
     }
   }, []);
+
+  // Handle video errors
+  const handleVideoError = () => {
+    console.error('Video failed to load, switching to fallback');
+    setVideoError(true);
+  };
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -95,6 +78,7 @@ export const VideoHero = () => {
         loop
         playsInline
         aria-label="Background video showcasing Zavira salon atmosphere"
+        onError={handleVideoError}
       >
         <source src="/videos/hero-video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
@@ -102,17 +86,6 @@ export const VideoHero = () => {
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/30" />
-
-      {/* ZAVIRA Logo - Mobile Homepage Only (4x bigger) */}
-      <div ref={heroLogoRef} className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        <div className="hero-logo-section opacity-100 transform translate-y-0">
-          <div className="text-8xl sm:text-9xl md:text-[12rem] font-serif font-light text-white luxury-glow animate-glow-pulse">
-            <span className="text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer tracking-wider">
-              ZAVIRA
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* Video Controls */}
       <div ref={controlsRef} className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-20">

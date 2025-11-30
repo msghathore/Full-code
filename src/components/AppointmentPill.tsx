@@ -65,11 +65,11 @@ const SERVICE_DURATIONS: { [key: string]: number } = {
 const STATUS_COLOR_MAP = {
   'requested': { bgClass: 'bg-yellow-400', borderClass: 'border-yellow-500', textClass: 'text-gray-900' },
   'accepted': { bgClass: 'bg-blue-300', borderClass: 'border-blue-400', textClass: 'text-gray-900' },
-  'confirmed': { bgClass: 'bg-red-400', borderClass: 'border-red-500', textClass: 'text-white' },
+  'confirmed': { bgClass: 'bg-green-400', borderClass: 'border-green-500', textClass: 'text-white' },
   'no_show': { bgClass: 'bg-gray-400', borderClass: 'border-gray-500', textClass: 'text-gray-900' },
   'ready_to_start': { bgClass: 'bg-teal-400', borderClass: 'border-teal-500', textClass: 'text-gray-900' },
   'in_progress': { bgClass: 'bg-green-400', borderClass: 'border-green-500', textClass: 'text-gray-900' },
-  'completed': { bgClass: 'bg-gray-600', borderClass: 'border-gray-700', textClass: 'text-white' },
+  'completed': { bgClass: 'bg-blue-400', borderClass: 'border-blue-500', textClass: 'text-white' },
   'cancelled': { bgClass: 'bg-red-500', borderClass: 'border-red-600', textClass: 'text-white' },
   'pending': { bgClass: 'bg-yellow-300', borderClass: 'border-yellow-400', textClass: 'text-gray-900' },
   'personal_task': { bgClass: 'bg-amber-700', borderClass: 'border-amber-800', textClass: 'text-white' }
@@ -187,95 +187,133 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
     setContextMenuOpen(false);
   };
 
-  // Context menu action handlers
-  const handleStatusChange = (appointmentId: string, newStatus: string) => {
-    // Simulate status change with success feedback
-    toast({
-      title: "Status Updated",
-      description: `Appointment status changed to ${newStatus.replace('_', ' ')}`,
-    });
-  };
-
-  const handleNotes = (appointment: any) => {
-    // Simulate opening notes
-    toast({
-      title: "Notes View",
-      description: `Opening notes for ${appointment.client_name}`,
-    });
-  };
-
-  const handleForms = (appointment: any) => {
-    // Simulate forms view
-    toast({
-      title: "Forms",
-      description: `Viewing forms for ${appointment.client_name}`,
-    });
-  };
-
-  const handleRebook = (appointment: any) => {
-    // Simulate rebooking
-    toast({
-      title: "Rebook",
-      description: `Creating new appointment for ${appointment.client_name}`,
-    });
-  };
-
-  const handlePrint = (appointment: any) => {
-    // Simulate printing
-    window.print();
-    toast({
-      title: "Print",
-      description: `Printing ticket for ${appointment.client_name}`,
-    });
-  };
-
-  const handleDelete = (appointment: any) => {
-    if (window.confirm(`Are you sure you want to delete the appointment for ${appointment.client_name}?`)) {
-      toast({
-        title: "Appointment Deleted",
-        description: `Successfully deleted appointment for ${appointment.client_name}`,
-      });
-    }
-  };
-
-  const handleMove = (appointment: any) => {
-    // Simulate move operation
-    toast({
-      title: "Move",
-      description: `Moving appointment for ${appointment.client_name}`,
-    });
-  };
-
-  const handleUpload = (appointment: any) => {
-    // Simulate file upload
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
+  // Unified action handler for context menu
+  const handleContextMenuAction = (action: string, appointment: any) => {
+    switch (action) {
+      case 'edit':
+        onEdit?.(appointment);
+        break;
+      case 'change-status':
+        // Status submenu is handled separately
+        break;
+      case 'status-accept':
         toast({
-          title: "File Uploaded",
-          description: `File "${file.name}" attached to appointment`,
+          title: "Status Updated",
+          description: `Appointment status changed to accepted`,
         });
-      }
-    };
-    input.click();
-  };
-
-  const handleCheckout = (appointment: any) => {
-    // Navigate to checkout with appointment data
-    navigate('/staff/checkout', {
-      state: {
-        appointmentData: {
-          appointmentId: appointment.id,
-          serviceName: appointment.service_name,
-          servicePrice: appointment.price,
-          staffId: appointment.staff_id,
-          customerName: appointment.client_name,
-          appointmentTime: appointment.start_time
+        break;
+      case 'status-deny':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to denied`,
+        });
+        break;
+      case 'status-confirm':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to confirmed`,
+        });
+        break;
+      case 'status-show':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to show`,
+        });
+        break;
+      case 'status-no-show':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to no-show`,
+        });
+        break;
+      case 'status-ready':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to ready to start`,
+        });
+        break;
+      case 'status-progress':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to in progress`,
+        });
+        break;
+      case 'status-cancel':
+        toast({
+          title: "Status Updated",
+          description: `Appointment status changed to cancelled`,
+        });
+        break;
+      case 'notes':
+        toast({
+          title: "Notes View",
+          description: `Opening notes for ${appointment.client_name}`,
+        });
+        break;
+      case 'view-forms':
+        toast({
+          title: "Forms",
+          description: `Viewing forms for ${appointment.client_name}`,
+        });
+        break;
+      case 'rebook':
+        toast({
+          title: "Rebook",
+          description: `Creating new appointment for ${appointment.client_name}`,
+        });
+        break;
+      case 'print-ticket':
+        window.print();
+        toast({
+          title: "Print",
+          description: `Printing ticket for ${appointment.client_name}`,
+        });
+        break;
+      case 'delete':
+        if (window.confirm(`Are you sure you want to delete the appointment for ${appointment.client_name}?`)) {
+          toast({
+            title: "Appointment Deleted",
+            description: `Successfully deleted appointment for ${appointment.client_name}`,
+          });
         }
-      }
-    });
+        break;
+      case 'move':
+        toast({
+          title: "Move",
+          description: `Moving appointment for ${appointment.client_name}`,
+        });
+        break;
+      case 'upload-file':
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (file) {
+            toast({
+              title: "File Uploaded",
+              description: `File "${file.name}" attached to appointment`,
+            });
+          }
+        };
+        input.click();
+        break;
+      case 'checkout':
+        navigate('/staff/checkout', {
+          state: {
+            appointmentData: {
+              appointmentId: appointment.id,
+              serviceName: appointment.service_name,
+              servicePrice: appointment.price,
+              staffId: appointment.staff_id,
+              customerName: appointment.client_name,
+              appointmentTime: appointment.start_time
+            }
+          }
+        });
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
   };
 
   // Calculate service duration
@@ -409,25 +447,16 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
 
         </div>
       </div>
-      
-      {/* Context Menu */}
-      <AppointmentContextMenu
-        appointment={appointment}
-        staffMember={staffMember}
-        isOpen={contextMenuOpen}
-        position={contextMenuPosition}
-        onClose={handleContextMenuClose}
-        onEdit={onEdit}
-        onStatusChange={handleStatusChange}
-        onNotes={handleNotes}
-        onForms={handleForms}
-        onRebook={handleRebook}
-        onPrint={handlePrint}
-        onDelete={handleDelete}
-        onMove={handleMove}
-        onUpload={handleUpload}
-        onCheckout={handleCheckout}
-      />
+
+      {/* Context Menu - Only render when open */}
+      {contextMenuOpen && (
+        <AppointmentContextMenu
+          appointment={appointment}
+          onAction={handleContextMenuAction}
+          onClose={handleContextMenuClose}
+          position={contextMenuPosition}
+        />
+      )}
     </>
   );
 };

@@ -34,11 +34,12 @@ export interface Appointment {
   notes?: string;
   is_recurring?: boolean;
   payment_status?: 'paid' | 'pending' | 'refunded';
-  staff_id: string;
+  staff_id: string | null;
   staff_name?: string;
   client_phone?: string;
   client_email?: string;
   color?: string;
+  appointment_date?: string;
 }
 
 interface AppointmentCardProps {

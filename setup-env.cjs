@@ -1,0 +1,74 @@
+const fs = require('fs');
+const path = require('path');
+
+const envFilePath = path.join(__dirname, '.env');
+
+const envTemplate = `# Environment Variables for Vercel Deployment
+# Copy these values and paste them into Vercel's Environment Variables section
+
+# Supabase Configuration
+VITE_SUPABASE_URL=your_supabase_url_here
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key_here
+
+# Payment Configuration
+VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_here
+
+# Square Payment Configuration
+# Frontend (Public Keys - Safe to expose)
+VITE_SQUARE_APPLICATION_ID=your_square_application_id
+VITE_SQUARE_LOCATION_ID=your_square_location_id
+VITE_SQUARE_ENVIRONMENT=sandbox
+
+# Backend (Private Keys - Configure in Supabase Dashboard Only)
+# SQUARE_ACCESS_TOKEN=your_square_access_token
+# SQUARE_ENVIRONMENT=sandbox
+
+# Clerk Authentication Configuration (REQUIRED)
+# Find these keys in your Clerk Dashboard under "API Keys" section
+# Client publishable key is for public client-side usage
+VITE_CLIENT_CLERK_PUBLISHABLE_KEY=your_client_clerk_publishable_key_here
+# Staff publishable key is for staff authentication
+VITE_STAFF_CLERK_PUBLISHABLE_KEY=your_staff_clerk_publishable_key_here
+
+# Legacy single key (keep for backward compatibility)
+# VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
+CLERK_SECRET_KEY=your_clerk_secret_key_here
+
+# Email Configuration
+VITE_BREVO_API_KEY=your_brevo_api_key_here
+
+# Production Configuration
+VITE_APP_ENV=production
+VITE_APP_URL=https://zavira.ca
+
+# Clerk Organization Settings (Optional - for staff management)
+CLERK_ORGANIZATION_ID=your_organization_id_here
+CLERK_STAFF_ORG_SLUG=zavira-staff
+
+# Social OAuth Credentials (Configure in Clerk Dashboard)
+GOOGLE_CLIENT_ID=your_google_client_id_here
+FACEBOOK_APP_ID=your_facebook_app_id_here
+
+# Optional Additional Variables
+VITE_GOOGLE_ANALYTICS_ID=
+VITE_SENTRY_DSN=
+`;
+
+try {
+  if (fs.existsSync(envFilePath)) {
+    console.log('✅ .env file already exists. No changes were made.');
+    console.log('   To modify the existing .env file, please edit it manually.');
+  } else {
+    fs.writeFileSync(envFilePath, envTemplate);
+    console.log('✅ Successfully created .env file from template.');
+    console.log('   Please add your actual API keys and configuration values to the .env file.');
+    console.log('');
+    console.log('   Next steps:');
+    console.log('   1. Open the .env file');
+    console.log('   2. Replace placeholder values with your actual keys');
+    console.log('   3. Configure your Supabase, Clerk, and other service credentials');
+  }
+} catch (error) {
+  console.error('❌ Error creating .env file:', error.message);
+  process.exit(1);
+}
