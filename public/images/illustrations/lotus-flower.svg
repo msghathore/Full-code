@@ -1,0 +1,31 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lotusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#f8f8f8;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#e8e8e8;stop-opacity:0.5" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer petals -->
+  <path d="M60 15 C45 15, 35 25, 35 40 C35 55, 45 65, 60 75 C75 65, 85 55, 85 40 C85 25, 75 15, 60 15 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.8"/>
+  <path d="M85 40 C85 25, 95 15, 110 15 C95 15, 85 25, 85 40 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.6"/>
+  <path d="M85 60 C95 60, 105 50, 105 35 C105 50, 95 60, 85 60 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.7"/>
+  <path d="M60 85 C75 85, 85 75, 85 60 C85 75, 75 85, 60 85 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.8"/>
+  <path d="M35 60 C25 60, 15 50, 15 35 C15 50, 25 60, 35 60 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.7"/>
+  <path d="M35 40 C35 25, 25 15, 10 15 C25 15, 35 25, 35 40 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.6"/>
+
+  <!-- Inner petals -->
+  <path d="M60 25 C50 25, 45 30, 45 40 C45 50, 50 55, 60 65 C70 55, 75 50, 75 40 C75 30, 70 25, 60 25 Z" fill="url(#lotusGradient)" filter="url(#glow)" opacity="0.9"/>
+
+  <!-- Center -->
+  <circle cx="60" cy="45" r="8" fill="#ffd700" filter="url(#glow)"/>
+  <circle cx="60" cy="45" r="4" fill="#ffed4e"/>
+</svg>

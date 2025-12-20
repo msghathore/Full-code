@@ -1,0 +1,52 @@
+import { Resend } from 'resend';
+
+// Debug the actual frontend form submission
+console.log('🔍 DEBUGGING FRONTEND FORM SUBMISSION');
+console.log('Testing with your actual email: ghathoremandeep@gmail.com\n');
+
+async function debugFormSubmission() {
+  try {
+    console.log('1. Testing API key access in browser environment...');
+    
+    // Simulate what happens in the browser
+    const apiKey = import.meta.env?.VITE_RESEND_API_KEY || 're_CyBgdUxr_K37fqo6QcqEMQ2xggPNnTHfR';
+    console.log('   API Key available:', apiKey ? 'YES' : 'NO');
+    
+    console.log('\n2. Testing email service initialization...');
+    const resend = new Resend(apiKey);
+    console.log('   Resend client: INITIALIZED');
+    
+    console.log('\n3. Sending test email to your actual email...');
+    const result = await resend.emails.send({
+      from: 'ZAVIRA Beauty <onboarding@resend.dev>',
+      to: ['ghathoremandeep@gmail.com'],
+      subject: '🧪 Frontend Form Debug Test',
+      html: `
+        <h2>🔍 Debug Test Results</h2>
+        <p>This email confirms:</p>
+        <ul>
+          <li>✅ Email service is working</li>
+          <li>✅ API key is accessible</li>
+          <li>✅ Emails can be sent to your email</li>
+        </ul>
+        <p><strong>If you receive this email, the issue is with the frontend form integration.</strong></p>
+        <p>Check browser console for JavaScript errors when submitting the form.</p>
+      `
+    });
+    
+    console.log('\n📧 Email send result:', result.error ? 'FAILED' : 'SUCCESS');
+    
+    if (result.error) {
+      console.log('❌ Error:', result.error.message);
+    } else {
+      console.log('✅ Email ID:', result.data?.id);
+      console.log('✅ SUCCESS! Check ghathoremandeep@gmail.com');
+      console.log('\n🎯 CONCLUSION: Email service works, frontend form has issues');
+    }
+    
+  } catch (error) {
+    console.error('❌ Debug test failed:', error.message);
+  }
+}
+
+debugFormSubmission();

@@ -1,0 +1,66 @@
+{
+  "dangerouslySkipPermissions": true,
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(claude /mcp:*)",
+      "Bash(dir:*)",
+      "Bash(npx supabase:*)",
+      "Bash(find:*)",
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(move:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp list:*)",
+      "Bash(npm run dev:8080:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__get_console_message",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__apply_migration",
+      "mcp__chrome-devtools__fill",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__fill_form",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__supabase__execute_sql",
+      "Bash(npm run dev:8081:*)",
+      "mcp__supabase__list_migrations",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(ping:*)",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__press_key",
+      "mcp__chrome-devtools__get_network_request",
+      "Bash(git -C \"C:\\Users\\Ghath\\OneDrive\\Desktop\\Zavira-Front-End\" log --name-status --oneline -n 20)",
+      "Bash(ls:*)",
+      "Bash(powershell -Command \"Remove-Item -Force after_click.png, before_click.png, ''booking-footer-gap-fixed.png'', ''booking-forms-enlarged.png'', ''booking-page-after-fix.png'', ''booking-page-after-gap-fix.png'', ''booking-page-final-fix.png'', ''booking-page-ultra-compact.png'', ''booking-step3-contact-info.png'', ''booking-step4-review-confirm.png'', ''high-contrast-theme-screenshot.png'' -ErrorAction SilentlyContinue; Write-Host ''Screenshots removed''\")",
+      "Bash(powershell -Command:*)"
+    ]
+  },
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_fe11b68fffaa532ffa647e9505d3bbb883431948"
+      ]
+    },
+    "huggingface": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@llmindset/mcp-hfspace",
+        "--work-dir=C:/Users/Ghath/OneDrive/Desktop/Zavira-Front-End/public/images",
+        "black-forest-labs/FLUX.1-schnell",
+        "shuttleai/shuttle-3.1-aesthetic"
+      ]
+    }
+  }
+}

@@ -1,0 +1,97 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Run unit tests
+      run: npm run test:run
+
+    - name: Build application
+      run: npm run build
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Run E2E tests
+      run: npm run e2e
+      env:
+        CI: true
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build for production
+      run: npm run build
+      env:
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+        VITE_APP_ENV: production
+        VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
+        VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID }}
+        VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+
+    - name: Health check
+      run: |
+        sleep 30
+        curl -f ${{ secrets.VITE_APP_URL }} || exit 1
+
+  notify:
+    needs: [test, build-and-deploy]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "Deployment failed. Check the logs above for details."
+        # Add notification logic here (Slack, Discord, etc.)

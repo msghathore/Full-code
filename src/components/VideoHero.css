@@ -1,0 +1,111 @@
+/* VideoHero Component Styles */
+
+@keyframes glow {
+  from {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 1px 8px rgba(255,255,255,0.1) inset, 0 0 20px rgba(255,255,255,0.1);
+  }
+  to {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 1px 8px rgba(255,255,255,0.1) inset, 0 0 30px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.1);
+  }
+}
+
+.shadow-glow {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 1px 8px rgba(255,255,255,0.1) inset, 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.2);
+}
+
+.glow-button {
+  position: relative;
+}
+
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05), rgba(255,255,255,0.1));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-button:hover::before {
+  opacity: 1;
+}
+
+/* Skeleton hover effect - shimmer animation on hover */
+.skeleton-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .min-w-[200px] {
+    min-width: 180px;
+  }
+
+  .px-10 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Touch device hover overrides */
+@media (hover: none) and (pointer: coarse) {
+  .hover\\:bg-transparent:hover,
+  .hover\\:text-white:hover,
+  .hover\\:border-white:hover,
+  .hover\\:shadow-glow:hover {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: black !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 1px 8px rgba(255,255,255,0.1) inset !important;
+  }
+
+  .glow-button {
+    animation: none !important;
+  }
+
+  .skeleton-button::after {
+    animation: none !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .glow-button {
+    animation: none !important;
+  }
+
+  .skeleton-button::after {
+    animation: none !important;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
