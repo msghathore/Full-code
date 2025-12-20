@@ -1,0 +1,639 @@
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Navigation } from '@/components/Navigation';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
+import {
+  TrendingUp,
+  Users,
+  Calendar,
+  DollarSign,
+  Star,
+  Target,
+  Activity,
+  BarChart3,
+  PieChart as PieChartIcon,
+  Clock,
+  Award,
+  AlertCircle,
+  Loader2
+} from 'lucide-react';
+import { AuthWrapper } from '@/components/auth/AuthWrapper';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { analyticsService, type AnalyticsData } from '@/services/analyticsService';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const Analytics = () => {
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const [timeRange, setTimeRange] = useState('30d');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch analytics data on mount and when timeRange changes
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await analyticsService.getAnalyticsData(timeRange);
+        setAnalyticsData(data);
+      } catch (err) {
+        console.error('Error fetching analytics data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load analytics data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalyticsData();
+  }, [timeRange]);
+
+  // Process data when analyticsData changes
+  const processedData = analyticsData ? {
+    revenueMetrics: analyticsService.processRevenueMetrics(analyticsData),
+    customerInsights: analyticsService.processCustomerInsights(analyticsData),
+    staffPerformance: analyticsService.processStaffPerformance(analyticsData),
+    servicePopularity: analyticsService.processServicePopularity(analyticsData),
+    feedbackTrends: analyticsService.processFeedbackTrends(analyticsData),
+    nps: analyticsService.calculateNPS(analyticsData.feedback)
+  } : null;
+
+  // Chart configurations
+  const bookingChartConfig = {
+    bookings: {
+      label: "Bookings",
+      color: "hsl(var(--chart-1))",
+    },
+    revenue: {
+      label: "Revenue ($)",
+      color: "hsl(var(--chart-2))",
+    },
+  };
+
+  const serviceChartConfig = {
+    bookings: {
+      label: "Bookings",
+      color: "hsl(var(--chart-1))",
+    },
+  };
+
+  const segmentColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
+
+  useEffect(() => {
+    // Animate dashboard entrance
+    if (dashboardRef.current && !loading) {
+      gsap.fromTo(dashboardRef.current.children,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out"
+        }
+      );
+    }
+  }, [loading]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD'
+    }).format(amount);
+  };
+
+  if (loading) {
+    return (
+      <AuthWrapper>
+        <div className="min-h-screen bg-black text-white flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+            <p className="text-muted-foreground">Loading analytics data...</p>
+          </div>
+        </div>
+      </AuthWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <AuthWrapper>
+        <div className="min-h-screen bg-black text-white">
+          <Navigation />
+          <div className="pt-24 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto">
+              <Alert className="border-red-500/20 bg-red-500/10">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-red-400">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </div>
+      </AuthWrapper>
+    );
+  }
+
+  if (!processedData || !analyticsData) {
+    return (
+      <AuthWrapper>
+        <div className="min-h-screen bg-black text-white">
+          <Navigation />
+          <div className="pt-24 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  No analytics data available.
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </div>
+      </AuthWrapper>
+    );
+  }
+
+  const { revenueMetrics, customerInsights, staffPerformance, servicePopularity, feedbackTrends, nps } = processedData;
+
+  return (
+    <AuthWrapper>
+      <div className="min-h-screen bg-black text-white">
+        <Navigation />
+
+      <div className="pt-24 px-4 md:px-8">
+        <div ref={dashboardRef} className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-serif luxury-glow mb-2">Business Analytics</h1>
+              <p className="text-muted-foreground">Data-driven insights for your beauty salon</p>
+            </div>
+            <div className="flex gap-4">
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className="w-32 bg-white/5 border-white/20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="frosted-glass border-white/20">
+                  <SelectItem value="7d">Last 7 days</SelectItem>
+                  <SelectItem value="30d">Last 30 days</SelectItem>
+                  <SelectItem value="90d">Last 90 days</SelectItem>
+                  <SelectItem value="6m">Last 6 months</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Export Report
+              </Button>
+            </div>
+          </div>
+
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <Card className="frosted-glass border-white/10 hover:border-white/20 transition-all">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-muted-foreground">Total Revenue</p>
+                    <p className="text-lg md:text-2xl font-bold luxury-glow">
+                      {formatCurrency(revenueMetrics.reduce((sum, r) => sum + r.revenue, 0) || 0)}
+                    </p>
+                    <p className="text-xs text-green-400">+12.5% from last month</p>
+                  </div>
+                  <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-green-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="frosted-glass border-white/10 hover:border-white/20 transition-all">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-muted-foreground">Total Bookings</p>
+                    <p className="text-lg md:text-2xl font-bold luxury-glow">
+                      {revenueMetrics.reduce((sum, r) => sum + r.bookings, 0) || 0}
+                    </p>
+                    <p className="text-xs text-violet-400">+8.2% from last month</p>
+                  </div>
+                  <Calendar className="h-6 w-6 md:h-8 md:w-8 text-violet-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="frosted-glass border-white/10 hover:border-white/20 transition-all">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-muted-foreground">Net Promoter Score</p>
+                    <p className="text-lg md:text-2xl font-bold luxury-glow">
+                      {nps}
+                    </p>
+                    <p className="text-xs text-amber-400">Based on {analyticsData.feedback.length} reviews</p>
+                  </div>
+                  <Star className="h-6 w-6 md:h-8 md:w-8 text-amber-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="frosted-glass border-white/10 hover:border-white/20 transition-all">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-muted-foreground">Active Customers</p>
+                    <p className="text-lg md:text-2xl font-bold luxury-glow">
+                      {analyticsData.customers.length || 0}
+                    </p>
+                    <p className="text-xs text-yellow-400">{customerInsights.retentionRate}% retention rate</p>
+                  </div>
+                  <Users className="h-6 w-6 md:h-8 md:w-8 text-yellow-400" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Analytics Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="frosted-glass border-white/10">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-white/10">Overview</TabsTrigger>
+              <TabsTrigger value="bookings" className="data-[state=active]:bg-white/10">Bookings</TabsTrigger>
+              <TabsTrigger value="customers" className="data-[state=active]:bg-white/10">Customers</TabsTrigger>
+              <TabsTrigger value="revenue" className="data-[state=active]:bg-white/10">Revenue</TabsTrigger>
+              <TabsTrigger value="staff" className="data-[state=active]:bg-white/10">Staff Performance</TabsTrigger>
+            </TabsList>
+
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Booking Trends */}
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5" />
+                      Booking Trends
+                    </CardTitle>
+                    <CardDescription>Daily booking volume over time</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={bookingChartConfig} className="h-[200px] md:h-[300px]">
+                      <LineChart data={revenueMetrics.slice(-30)}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" fontSize={10} />
+                        <YAxis fontSize={10} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Line
+                          type="monotone"
+                          dataKey="bookings"
+                          stroke="var(--color-bookings)"
+                          strokeWidth={2}
+                          dot={{ fill: 'var(--color-bookings)' }}
+                        />
+                      </LineChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+
+                {/* Customer Segments */}
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <PieChartIcon className="h-5 w-5" />
+                      Customer Segments
+                    </CardTitle>
+                    <CardDescription>Distribution of customer segments</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={{}} className="h-[200px] md:h-[300px]">
+                      <PieChart>
+                        <Pie
+                          data={Object.entries(customerInsights.segments).map(([segment, count]) => ({
+                            segment,
+                            count,
+                            percentage: analyticsData.customers.length > 0 ? Math.round((count / analyticsData.customers.length) * 100) : 0
+                          }))}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={60}
+                          dataKey="count"
+                          label={({ segment, percentage }) => `${segment}: ${percentage}%`}
+                          fontSize={10}
+                        >
+                          {Object.keys(customerInsights.segments).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={segmentColors[index % segmentColors.length]} />
+                          ))}
+                        </Pie>
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Service Popularity */}
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Target className="h-5 w-5" />
+                      Service Popularity
+                    </CardTitle>
+                    <CardDescription>Most booked services</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={serviceChartConfig} className="h-[200px] md:h-[300px]">
+                      <BarChart data={servicePopularity}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="service" angle={-45} textAnchor="end" height={60} fontSize={10} />
+                        <YAxis fontSize={10} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="bookings" fill="var(--color-bookings)" />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+
+                {/* Revenue Trends */}
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5" />
+                      Revenue Trends
+                    </CardTitle>
+                    <CardDescription>Revenue and booking correlation</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={bookingChartConfig} className="h-[200px] md:h-[300px]">
+                      <AreaChart data={revenueMetrics.slice(-30)}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" fontSize={10} />
+                        <YAxis fontSize={10} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Area
+                          type="monotone"
+                          dataKey="revenue"
+                          stackId="1"
+                          stroke="var(--color-revenue)"
+                          fill="var(--color-revenue)"
+                          fillOpacity={0.6}
+                        />
+                      </AreaChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Bookings Tab */}
+            <TabsContent value="bookings" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle>Booking Volume by Day</CardTitle>
+                    <CardDescription>Daily booking patterns</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={bookingChartConfig} className="h-[400px]">
+                      <BarChart data={revenueMetrics.slice(-14)}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="bookings" fill="var(--color-bookings)" />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle>Service Distribution</CardTitle>
+                    <CardDescription>Booking distribution by service type</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {servicePopularity.map((service, index) => (
+                        <div key={service.service} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: segmentColors[index % segmentColors.length] }}
+                            />
+                            <span className="text-sm">{service.service}</span>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">{service.bookings} bookings</p>
+                            <p className="text-xs text-muted-foreground">{formatCurrency(service.revenue)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Customers Tab */}
+            <TabsContent value="customers" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {Object.entries(customerInsights.segments).map(([segment, count], index) => (
+                  <Card key={segment} className="frosted-glass border-white/10">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge
+                          className="text-white"
+                          style={{ backgroundColor: segmentColors[index % segmentColors.length] }}
+                        >
+                          {segment}
+                        </Badge>
+                        <Users className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-3xl font-bold luxury-glow">{count}</p>
+                        <p className="text-sm text-muted-foreground">customers ({analyticsData.customers.length > 0 ? Math.round((count / analyticsData.customers.length) * 100) : 0}%)</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <Card className="frosted-glass border-white/10">
+                <CardHeader>
+                  <CardTitle>Customer Satisfaction Trends</CardTitle>
+                  <CardDescription>Average ratings and NPS over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={{}} className="h-[300px]">
+                    <LineChart data={feedbackTrends.slice(-30)}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis domain={[0, 10]} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line
+                        type="monotone"
+                        dataKey="avgRating"
+                        stroke="#8884d8"
+                        strokeWidth={2}
+                        name="Avg Rating"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="avgNPS"
+                        stroke="#82ca9d"
+                        strokeWidth={2}
+                        name="Avg NPS"
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Revenue Tab */}
+            <TabsContent value="revenue" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle>Revenue Breakdown</CardTitle>
+                    <CardDescription>Services vs Products revenue</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={{}} className="h-[300px]">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            {
+                              name: 'Services',
+                              value: revenueMetrics.reduce((sum, r) => sum + r.servicesRevenue, 0) || 0,
+                              fill: '#8884d8'
+                            },
+                            {
+                              name: 'Products',
+                              value: revenueMetrics.reduce((sum, r) => sum + r.productsRevenue, 0) || 0,
+                              fill: '#82ca9d'
+                            }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="frosted-glass border-white/10">
+                  <CardHeader>
+                    <CardTitle>Key Performance Indicators</CardTitle>
+                    <CardDescription>Important business metrics</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                      <span className="text-sm">Average Booking Value</span>
+                      <span className="font-medium">
+                        {formatCurrency(revenueMetrics.length > 0 ? revenueMetrics.reduce((sum, r) => sum + r.avgBookingValue, 0) / revenueMetrics.length : 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                      <span className="text-sm">Monthly Growth Rate</span>
+                      <span className="font-medium text-green-400">+12.5%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                      <span className="text-sm">Customer Acquisition Cost</span>
+                      <span className="font-medium">{formatCurrency(45)}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                      <span className="text-sm">Lifetime Customer Value</span>
+                      <span className="font-medium">{formatCurrency(customerInsights.avgLifetimeValue)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Staff Performance Tab */}
+            <TabsContent value="staff" className="space-y-6">
+              <Card className="frosted-glass border-white/10">
+                <CardHeader>
+                  <CardTitle>Staff Performance Metrics</CardTitle>
+                  <CardDescription>Bookings and revenue by staff member</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={{}} className="h-[400px]">
+                    <BarChart data={staffPerformance} layout="horizontal">
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="staff" type="category" width={100} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="bookings" fill="#8884d8" name="Bookings" />
+                      <Bar dataKey="revenue" fill="#82ca9d" name="Revenue ($)" />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {staffPerformance.map((staff, index) => (
+                  <Card key={staff.staff} className="frosted-glass border-white/10">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Award className="h-8 w-8 text-yellow-400" />
+                        <div>
+                          <h3 className="font-semibold">{staff.staff}</h3>
+                          <p className="text-sm text-muted-foreground">Staff Member</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm">Bookings</span>
+                          <span className="font-medium">{staff.bookings}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm">Revenue</span>
+                          <span className="font-medium">{formatCurrency(staff.revenue)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm">Avg per Booking</span>
+                          <span className="font-medium">{formatCurrency(staff.bookings > 0 ? staff.revenue / staff.bookings : 0)}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  </AuthWrapper>
+  );
+};
+
+export default Analytics;
