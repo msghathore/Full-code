@@ -1,0 +1,137 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/cors.ts';
+
+interface StaffUser {
+  id: string;
+  email: string;
+  role: 'admin' | 'senior' | 'junior';
+  staff_id: string;
+  access_level: 'full' | 'limited' | 'basic' | 'admin' | 'manager';
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Initialize Supabase client with service role for admin operations
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Parse request body
+    const { username, password } = await req.json();
+
+    // Verify staff credentials against staff table (not auth.users)
+    const { data: staffData, error: staffError } = await supabaseClient
+      .from('staff')
+      .select('*')
+      .eq('username', username)
+      .single();
+
+    if (staffError || !staffData) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid credentials' }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // In a production environment, you would hash and compare passwords
+    // For this example, we're assuming password is stored in plain text (NOT RECOMMENDED)
+    if (staffData.password_hash !== password) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid credentials' }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Get or create auth user for this staff member
+    let authUser;
+    const { data: existingAuthUser } = await supabaseClient.auth.admin.getUserByEmail(staffData.email || `${staffData.username}@zavira.com`);
+    
+    if (existingAuthUser.user) {
+      authUser = existingAuthUser.user;
+    } else {
+      // Create a new auth user
+      const { data: newAuthUser, error: authError } = await supabaseClient.auth.admin.createUser({
+        email: staffData.email || `${staffData.username}@zavira.com`,
+        password: password,
+        email_confirm: true,
+        user_metadata: {
+          role: staffData.role,
+          access_level: staffData.access_level,
+          staff_id: staffData.id
+        }
+      });
+
+      if (authError || !newAuthUser.user) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to create authentication user' }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+
+      authUser = newAuthUser.user;
+    }
+
+    // Generate access token
+    const { data: tokenData, error: tokenError } = await supabaseClient.auth.admin.generateLink({
+      type: 'magiclink',
+      email: authUser.email || '',
+    });
+
+    if (tokenError || !tokenData.properties) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate access token' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Return staff data and access token
+    const staffUser: StaffUser = {
+      id: authUser.id,
+      email: authUser.email || '',
+      role: staffData.role,
+      staff_id: staffData.id,
+      access_level: staffData.access_level
+    };
+
+    return new Response(
+      JSON.stringify({
+        user: staffUser,
+        access_token: tokenData.properties?.access_token,
+        refresh_token: tokenData.properties?.refresh_token
+      }),
+      { 
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Authentication failed' }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+});

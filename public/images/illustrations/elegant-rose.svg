@@ -1,0 +1,42 @@
+<svg width="100" height="120" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="roseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#c44569;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8b3a4a;stop-opacity:0.7" />
+    </linearGradient>
+    <linearGradient id="stemGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a7c59;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d5a3d;stop-opacity:1" />
+    </linearGradient>
+    <filter id="roseGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Stem -->
+  <path d="M50 120 L50 80 Q45 70, 50 60 Q55 70, 50 80 Z" fill="url(#stemGradient)"/>
+  <path d="M50 80 L45 75 L55 75 Z" fill="#2d5a3d"/>
+
+  <!-- Outer petals -->
+  <ellipse cx="50" cy="35" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(-15 50 35)"/>
+  <ellipse cx="50" cy="35" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(15 50 35)"/>
+  <ellipse cx="35" cy="40" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(-45 35 40)"/>
+  <ellipse cx="65" cy="40" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(45 65 40)"/>
+  <ellipse cx="32" cy="50" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(-75 32 50)"/>
+  <ellipse cx="68" cy="50" rx="18" ry="25" fill="url(#roseGradient)" filter="url(#roseGlow)" transform="rotate(75 68 50)"/>
+
+  <!-- Inner petals -->
+  <ellipse cx="50" cy="42" rx="12" ry="18" fill="#ff8fab" filter="url(#roseGlow)" transform="rotate(-10 50 42)"/>
+  <ellipse cx="50" cy="42" rx="12" ry="18" fill="#ff8fab" filter="url(#roseGlow)" transform="rotate(10 50 42)"/>
+  <ellipse cx="42" cy="45" rx="12" ry="18" fill="#ff8fab" filter="url(#roseGlow)" transform="rotate(-35 42 45)"/>
+  <ellipse cx="58" cy="45" rx="12" ry="18" fill="#ff8fab" filter="url(#roseGlow)" transform="rotate(35 58 45)"/>
+
+  <!-- Center -->
+  <circle cx="50" cy="48" r="6" fill="#ffd700"/>
+  <circle cx="50" cy="48" r="3" fill="#ffed4e"/>
+</svg>
