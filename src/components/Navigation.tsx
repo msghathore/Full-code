@@ -173,35 +173,26 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
     });
   }, []); // Empty dependency array - function never changes
 
-  // Show loading state while Clerk loads - don't return null, render basic nav
-  if (!isLoaded) {
-    return (
-      <nav
-        className="fixed top-0 left-0 right-0 z-[1000] py-2 transition-all duration-500 bg-black/10 backdrop-blur-xl border-b border-white/20"
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        <div className="container mx-auto px-8 flex items-center justify-between relative z-10">
-          <Link to="/" className="cursor-hover absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="transition-all duration-500 text-center">
-              <div className="text-3xl md:text-5xl font-serif font-light text-white logo-main">
-                <span className="text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer">
-                  ZAVIRA
-                </span>
-              </div>
-              <div className="text-sm md:text-lg font-light text-white/80 -mt-1" style={{transform: 'scale(1.125)'}}>
-                {t('salonAndSpa')}
-              </div>
-            </div>
-          </Link>
-        </div>
-      </nav>
-    );
-  }
+  // Timeout for Clerk loading - if it takes more than 3 seconds, render without Clerk
+  const [showWithoutClerk, setShowWithoutClerk] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!isLoaded) {
+        console.warn('[Navigation] Clerk failed to load within 3 seconds, rendering without authentication');
+        setShowWithoutClerk(true);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoaded]);
+
+  // Render navigation if Clerk loaded OR if timeout expired
+  const shouldRenderNav = isLoaded || showWithoutClerk;
 
   return (
     <>
-      {!hideWhenPopup && (
+      {!hideWhenPopup && shouldRenderNav && (
         <nav
           className={`fixed top-0 left-0 right-0 z-[1000] py-2 transition-all duration-500 ${
             (isHomePage ? !isOnBanner : isScrolled)
@@ -278,7 +269,7 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
            </Link>
 
            {/* Right side - Login/User */}
-           {isSignedIn ? (
+           {isLoaded && isSignedIn ? (
              <motion.div
                className="flex items-center space-x-2 md:space-x-4 z-10"
                initial={{ opacity: 0, x: 20 }}
