@@ -17,7 +17,8 @@ export const StaffClerkProvider: React.FC<StaffClerkProviderProps> = ({ children
   return (
     <ClerkProvider
       publishableKey={publishableKey}
-      clerkJSUrl="https://viable-beagle-4.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      domain="viable-beagle-4.clerk.accounts.dev"
+      isSatellite={false}
       appearance={{
         elements: {
           formButtonPrimary: 'bg-amber-600 hover:bg-amber-700',
