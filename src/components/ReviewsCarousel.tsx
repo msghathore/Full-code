@@ -42,20 +42,20 @@ export const ReviewsCarousel = React.memo(() => {
       repeat: -1
     });
 
-    // Scroll-driven fade-in animation
+    // Scroll-driven fade-in animation - Start with opacity 1 for mobile visibility
     gsap.fromTo(sectionRef.current, {
-      opacity: 0,
-      y: 50
+      opacity: 1,
+      y: 30
     }, {
       opacity: 1,
       y: 0,
-      duration: 1,
+      duration: 0.8,
       ease: 'power2.out',
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: 'top 80%',
+        start: 'top 85%',
         end: 'bottom 20%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none none'
       }
     });
   }, []);
