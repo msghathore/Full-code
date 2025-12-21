@@ -133,11 +133,16 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
     };
   }, [isMenuOpen]);
 
-  // Reset body overflow on route change
+  // Reset body overflow on mount and route change
   useEffect(() => {
     document.body.style.overflow = '';
     setIsMenuOpen(false);
   }, [location.pathname]);
+
+  // Ensure body overflow is cleared on initial mount
+  useEffect(() => {
+    document.body.style.overflow = '';
+  }, []);
 
   // Logo sizing is now handled via inline conditional classes in JSX for React-idiomatic approach
 

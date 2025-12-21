@@ -280,8 +280,8 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
       <DynamicBackground />
       <VideoHero />
 
-      {/* Main Content */}
-      <main className="absolute top-[100vh] left-0 right-0 flex flex-col bg-black">
+      {/* Main Content - Using relative positioning with top margin for scroll to work */}
+      <main className="relative mt-[100vh] flex flex-col bg-black">
 
         {/* Services Preview Section - Mobile Responsive with Framer Motion */}
         <section ref={servicesRef} className="py-8 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="services-heading">
