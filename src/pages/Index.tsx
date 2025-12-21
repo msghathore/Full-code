@@ -133,7 +133,6 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
     const checkMobile = () => {
       const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       setIsMobile(mobile);
-      console.log(`🔍 DEBUG: Device detected as ${mobile ? 'mobile' : 'desktop'}`);
     };
     checkMobile();
   }, []);
@@ -233,21 +232,17 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
     if (isMobile) return;
 
     // No animations - everything appears instantly
-    console.log('GSAP animations disabled for better readability');
   }, [isMobile]);
 
   const handleNewsletterSubmit = async (data: NewsletterForm) => {
     setIsNewsletterSubmitting(true);
 
     try {
-      console.log('📧 Frontend form submission:', data.email);
-
       // Use centralized email service for newsletter
       const result = await EmailService.subscribeToNewsletter({
         email: data.email,
         source: 'website'
       });
-      console.log('✅ Email service result:', result);
 
       if (result.success) {
         toast({
@@ -289,7 +284,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
       <main className="absolute top-[100vh] left-0 right-0 flex flex-col bg-black">
 
         {/* Services Preview Section - Mobile Responsive with Framer Motion */}
-        <section ref={servicesRef} className="py-6 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="services-heading">
+        <section ref={servicesRef} className="py-8 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="services-heading">
           <motion.div
             initial={{ scaleX: 0 }}
             animate={servicesInView ? { scaleX: 1 } : { scaleX: 0 }}
@@ -421,7 +416,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
         </section>
 
         {/* Shop Our Products Section with Framer Motion */}
-        <section ref={shopRef} className="py-6 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="shop-heading">
+        <section ref={shopRef} className="py-8 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="shop-heading">
           <motion.div
             initial={{ scaleX: 0 }}
             animate={shopInView ? { scaleX: 1 } : { scaleX: 0 }}
@@ -541,7 +536,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
 
 
         {/* Newsletter Subscription Section with Framer Motion */}
-        <section ref={newsletterRef} className="py-6 md:py-12 px-4 md:px-8 bg-gradient-to-b from-black via-gray-900/50 to-black" aria-labelledby="newsletter-heading">
+        <section ref={newsletterRef} className="py-8 md:py-12 px-4 md:px-8 bg-gradient-to-b from-black via-gray-900/50 to-black" aria-labelledby="newsletter-heading">
           <motion.div
             initial={{ scaleX: 0 }}
             animate={newsletterInView ? { scaleX: 1 } : { scaleX: 0 }}
