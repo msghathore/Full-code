@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, memo, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -52,9 +52,12 @@ interface NavigationProps {
   hideWhenPopup?: boolean;
 }
 
-export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
-  // Hamburger animation working - cache refresh
-  console.log('Navigation rendering');
+const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
+  // Track renders for performance monitoring
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Navigation] Rendering');
+  }
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOnBanner, setIsOnBanner] = useState(true);
@@ -64,58 +67,55 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
   const { isLoaded, isSignedIn, user } = useUser();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  
+
   // Check if device is mobile
   const [isMobile, setIsMobile] = useState(false);
   const [hasScrolledPastBanner, setHasScrolledPastBanner] = useState(false);
   
+  // Memoize mobile check to prevent unnecessary recalculation
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
-  // Detect scroll position for mobile homepage
+
+  // CONSOLIDATED scroll handler - combines both scroll effects into one
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (isMobile && isHomePage) {
-        // Show navigation logo when scrolled past video banner (80vh)
-        const scrolledPastBanner = window.scrollY > window.innerHeight * 0.8;
-        setHasScrolledPastBanner(scrolledPastBanner);
-        console.log('Mobile scroll - Scroll Y:', window.scrollY, 'Threshold:', window.innerHeight * 0.8, 'Past Banner:', scrolledPastBanner);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const bannerThreshold = window.innerHeight * 0.8;
+
+          setIsScrolled(scrollY > 0);
+
+          if (isHomePage) {
+            const onBanner = scrollY <= bannerThreshold;
+            setIsOnBanner(onBanner);
+
+            if (isMobile) {
+              setHasScrolledPastBanner(scrollY > bannerThreshold);
+            }
+          }
+
+          ticking = false;
+        });
+
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     // Initial check
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile, isHomePage]);
-  
-  // Hide navigation logo only on mobile homepage when not scrolled past banner
-  const shouldHideNavigationLogo = isMobile && isHomePage && !hasScrolledPastBanner;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-      
-      // Only apply banner detection on homepage
-      if (isHomePage) {
-        const onBanner = window.scrollY <= window.innerHeight * 0.8;
-        setIsOnBanner(onBanner);
-        console.log('Homepage scroll - Scroll Y:', window.scrollY, 'Threshold:', window.innerHeight * 0.8, 'On Banner:', onBanner);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    // Initial check
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHomePage]);
+  }, [isHomePage, isMobile]); // Only re-run if these change
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -141,33 +141,37 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
 
   // Logo sizing is now handled via inline conditional classes in JSX for React-idiomatic approach
 
-  const toggleMenu = () => {
-    const newState = !isMenuOpen;
-    setIsMenuOpen(newState);
+  // Memoize toggleMenu to prevent recreation on every render
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen((prev) => {
+      const newState = !prev;
 
-    // Lock/unlock body scroll when menu opens/closes
-    if (newState) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    if (hamburgerRef.current) {
-      const lines = hamburgerRef.current.querySelectorAll('.hamburger-line');
-
-      if (!isMenuOpen) {
-        // Animate hamburger to cross when opening menu
-        gsap.to(lines[0], { rotation: 45, y: 8, duration: 0.3, ease: 'power2.out' });
-        gsap.to(lines[1], { opacity: 0, duration: 0.3, ease: 'power2.out' });
-        gsap.to(lines[2], { rotation: -45, y: -8, duration: 0.3, ease: 'power2.out' });
+      // Lock/unlock body scroll when menu opens/closes
+      if (newState) {
+        document.body.style.overflow = 'hidden';
       } else {
-        // Animate cross back to hamburger when closing menu
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease: 'power2.out' });
-        gsap.to(lines[1], { opacity: 1, duration: 0.3, ease: 'power2.out' });
-        gsap.to(lines[2], { rotation: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+        document.body.style.overflow = '';
       }
-    }
-  };
+
+      if (hamburgerRef.current) {
+        const lines = hamburgerRef.current.querySelectorAll('.hamburger-line');
+
+        if (!prev) {
+          // Animate hamburger to cross when opening menu
+          gsap.to(lines[0], { rotation: 45, y: 8, duration: 0.3, ease: 'power2.out' });
+          gsap.to(lines[1], { opacity: 0, duration: 0.3, ease: 'power2.out' });
+          gsap.to(lines[2], { rotation: -45, y: -8, duration: 0.3, ease: 'power2.out' });
+        } else {
+          // Animate cross back to hamburger when closing menu
+          gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+          gsap.to(lines[1], { opacity: 1, duration: 0.3, ease: 'power2.out' });
+          gsap.to(lines[2], { rotation: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+        }
+      }
+
+      return newState;
+    });
+  }, []); // Empty dependency array - function never changes
 
   // Show loading state while Clerk loads - don't return null, render basic nav
   if (!isLoaded) {
@@ -233,11 +237,11 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
              <span className="hidden sm:inline text-white text-sm font-semibold group-hover:luxury-glow transition-all">Menu</span>
            </button>
 
-           {/* Logo - Centered (Shows on Mobile Other Pages and Desktop) */}
+           {/* Logo - Centered (Always visible on all screen sizes) */}
            <Link
              to="/"
-             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} ${shouldHideNavigationLogo ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity duration-300`}
-             aria-hidden={shouldHideNavigationLogo}
+             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} opacity-100 transition-opacity duration-300`}
+             aria-hidden={false}
            >
              <motion.div
                ref={logoRef}
@@ -294,3 +298,6 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
    </>
  );
 };
+
+// Wrap component with React.memo to prevent unnecessary re-renders
+export const Navigation = memo(NavigationComponent);
