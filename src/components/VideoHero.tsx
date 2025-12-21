@@ -221,9 +221,12 @@ const VideoHero = React.memo(() => {
         x5-video-player-type="h5"
         x5-video-player-fullscreen="true"
         style={{
-          // Ensure video is visible and non-interactive
+          // GPU acceleration for smooth playback
           pointerEvents: 'none',
-          zIndex: 1
+          zIndex: 1,
+          transform: 'translateZ(0)',
+          willChange: 'auto',
+          backfaceVisibility: 'hidden'
         }}
       >
         {/* MP4 with H.264 - Optimized (1.66 MB) - Universal browser support */}
@@ -234,7 +237,10 @@ const VideoHero = React.memo(() => {
       </video>
 
       {/* Single optimized overlay */}
-      <div className="absolute inset-0 bg-black/40 z-5 pointer-events-none" />
+      <div
+        className="absolute inset-0 bg-black/40 z-5 pointer-events-none"
+        style={{ transform: 'translateZ(0)', willChange: 'auto' }}
+      />
 
       {/* ZAVIRA Hero Logo - Centered on Video - ALWAYS VISIBLE */}
       <div
@@ -250,43 +256,21 @@ const VideoHero = React.memo(() => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <motion.h1
+          <h1
             className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] xl:text-[16rem] font-serif font-light text-white luxury-glow"
             style={{
-              textShadow: '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.6)',
+              textShadow: '0 0 25px rgba(255,255,255,0.9), 0 0 50px rgba(255,255,255,0.6)',
               letterSpacing: '0.05em',
-              WebkitTextStroke: '2px rgba(255,255,255,0.5)',
               fontWeight: 300,
-              filter: 'drop-shadow(0 0 30px rgba(255,255,255,1))'
+              transform: 'translateZ(0)',
+              willChange: 'auto'
             }}
-            animate={{
-              textShadow: [
-                '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8)',
-                '0 0 30px rgba(255,255,255,1), 0 0 60px rgba(255,255,255,1)',
-                '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8)',
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
             ZAVIRA
-          </motion.h1>
+          </h1>
         </motion.div>
       </div>
 
-      {/* Floating decorative elements - simplified for better performance */}
-      <motion.div
-        className="absolute top-20 left-10 w-2 h-2 rounded-full bg-white/30 z-10"
-        variants={floatingVariants}
-        animate="animate"
-      />
-      <motion.div
-        className="absolute top-40 right-20 w-2 h-2 rounded-full bg-white/20 z-10"
-        variants={floatingVariants}
-        animate="animate"
-        style={{ animationDelay: '1s' }}
-      />
-
-      
       {/* Hero Buttons - Bottom Center with Framer Motion */}
       <motion.div
         className="absolute bottom-20 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20 flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full px-6 justify-center max-w-sm sm:max-w-none"
