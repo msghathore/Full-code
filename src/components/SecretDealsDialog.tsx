@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -398,7 +398,7 @@ export const SecretDealsDialog = React.memo(() => {
                     <DialogTitle className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-light text-white mb-3 sm:mb-4 text-center w-full">
                         SECRET DEALS
                     </DialogTitle>
-                    <div className="text-white/80 text-sm sm:text-base lg:text-lg leading-relaxed text-center px-4">
+                    <DialogDescription className="text-white/80 text-sm sm:text-base lg:text-lg leading-relaxed text-center px-4">
                         Join our exclusive VIP list and unlock <span className="font-bold">50% OFF</span> on premium services,
                         <span className="font-bold"> free upgrades</span>, and <span className="font-bold">early access</span> to new treatments.
                         <br /><br />
@@ -418,7 +418,7 @@ export const SecretDealsDialog = React.memo(() => {
                                 {timeLeft.seconds.toString().padStart(2, '0')}
                             </span>
                         </div>
-                    </div>
+                    </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSecretDealsSubmit} className="space-y-4 sm:space-y-6 mt-4 sm:mt-6 px-4 sm:px-0">
