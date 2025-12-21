@@ -1879,8 +1879,11 @@ All colors MUST be HSL.
 }
 
 /* Caption - centered */
-.calendar-stretch .rdp-caption {
+.calendar-stretch .rdp-caption,
+.calendar-stretch .rdp-month_caption {
+  display: flex !important;
   justify-content: center !important;
+  text-align: center !important;
   padding-bottom: 12px !important;
 }
 
