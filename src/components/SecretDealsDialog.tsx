@@ -157,7 +157,6 @@ export const SecretDealsDialog = React.memo(() => {
         );
 
         if (isExcludedPath) {
-            console.log('🔒 Popup disabled: excluded_path');
             return;
         }
 
@@ -165,28 +164,18 @@ export const SecretDealsDialog = React.memo(() => {
         if (dismissedAt) {
             const daysSinceDismiss = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
             if (daysSinceDismiss < POPUP_CONFIG.WEEKLY_COOLDOWN_DAYS) {
-                console.log('🔒 Popup disabled: weekly_cooldown');
                 return;
             }
         }
 
         const sessionShows = parseInt(sessionStorage.getItem('secretDealsShown') || '0');
         if (sessionShows >= POPUP_CONFIG.SESSION_LIMIT) {
-            console.log('🔒 Popup disabled: session_limit');
             return;
         }
 
         if (localStorage.getItem('secretDealsSubscribed') === 'true') {
-            console.log('🔒 Popup disabled: already_subscribed');
             return;
         }
-
-        console.log('🎯 Smart popup initialized with config:', {
-            minTime: `${POPUP_CONFIG.MIN_TIME_ON_PAGE / 1000}s`,
-            minScroll: `${POPUP_CONFIG.MIN_SCROLL_PERCENT}%`,
-            device: isMobile ? 'mobile' : 'desktop',
-            testMode: POPUP_CONFIG.IS_TEST_MODE
-        });
 
         let startTime = Date.now();
         let hasTriggered = false;

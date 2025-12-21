@@ -9,10 +9,7 @@ export const PWAInstallPrompt = () => {
   const [dismissed, setDismissed] = useState(false);
   const isMobile = useIsMobile();
 
-  console.log('PWAInstallPrompt render:', { isInstallable, dismissed, isMobile });
-
   if (!isInstallable || dismissed || !isMobile) {
-    console.log('PWAInstallPrompt hidden:', { isInstallable, dismissed, isMobile });
     return null;
   }
 

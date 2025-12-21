@@ -132,7 +132,6 @@ const VideoHero = React.memo(() => {
   // Recovery function for stalled video
   const recoverFromStall = useCallback((video: HTMLVideoElement) => {
     if (recoveryAttemptRef.current >= 3) {
-      console.warn('🎥 VideoHero: Max recovery attempts reached');
       return;
     }
 
@@ -181,8 +180,8 @@ const VideoHero = React.memo(() => {
             stallCountRef.current = 0;
             recoveryAttemptRef.current = 0;
           })
-          .catch((error) => {
-            console.warn('🎥 VideoHero: Autoplay blocked:', error.message);
+          .catch(() => {
+            // Autoplay blocked - silent fail, user interaction will trigger play
           });
       }
     };
@@ -197,8 +196,6 @@ const VideoHero = React.memo(() => {
       // If time hasn't advanced in 1 second while video should be playing
       if (timeDiff < 0.1 && isPlaying && !video.seeking) {
         stallCountRef.current++;
-        console.warn(`🎥 VideoHero: Video stall detected (count: ${stallCountRef.current}), time stuck at ${currentTime.toFixed(2)}s`);
-
         if (stallCountRef.current >= 2) {
           recoverFromStall(video);
           stallCountRef.current = 0;
@@ -221,7 +218,6 @@ const VideoHero = React.memo(() => {
     };
 
     const handleStalled = () => {
-      console.warn('🎥 VideoHero: Video stalled');
       // Give it a moment, then try recovery
       setTimeout(() => {
         if (video && video.paused) {
@@ -257,17 +253,7 @@ const VideoHero = React.memo(() => {
     };
 
     const handleProgress = () => {
-      // Monitor buffering progress
-      if (video.buffered.length > 0) {
-        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-        const duration = video.duration || 0;
-        const bufferPercent = duration > 0 ? ((bufferedEnd / duration) * 100).toFixed(1) : 0;
-
-        // If buffer is very low and video is near buffer boundary
-        if (bufferedEnd - video.currentTime < 1 && bufferedEnd < duration - 1) {
-          console.warn(`🎥 VideoHero: Low buffer warning - buffered to ${bufferedEnd.toFixed(1)}s, playing at ${video.currentTime.toFixed(1)}s`);
-        }
-      }
+      // Monitor buffering progress - handled silently
     };
 
     // User interaction handler for browsers that block autoplay
@@ -325,7 +311,6 @@ const VideoHero = React.memo(() => {
   }, [recoverFromStall]);
 
   const handleVideoError = () => {
-    console.error('❌ VideoHero: Video failed to load');
     setVideoError(true);
   };
 

@@ -6,7 +6,6 @@ interface PageTransitionProps {
 }
 
 export const PageTransition = ({ children }: PageTransitionProps) => {
-  console.log('PageTransition component rendering for path:', window.location.pathname);
   const containerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 

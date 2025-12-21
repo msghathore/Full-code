@@ -10,8 +10,6 @@ import StaffLogin from '@/pages/StaffLogin';
 import GroupBookingsManagement from '@/pages/GroupBookingsManagement';
 
 const StaffApp = () => {
-  console.log('🚀 StaffApp initialized!');
-
   return (
     <Routes>
       {/* Public Staff Route - Login */}

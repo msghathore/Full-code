@@ -17,7 +17,6 @@ const isMobile = () => {
 if (isMobile()) {
   document.body.classList.add('mobile-device');
   document.documentElement.setAttribute('data-mobile', 'true');
-  console.log('Mobile device detected - custom cursor disabled');
 }
 
 const RootApp = () => {

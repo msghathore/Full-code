@@ -44,34 +44,53 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
 
     if (isMobile) {
       // On mobile, use native scrolling - no Lenis
-      console.log('📱 Mobile detected - using native scrolling');
+      if (import.meta.env.DEV) {
+        console.log('📱 Mobile detected - using native scrolling');
+      }
       return;
     }
 
-    const lenis = new Lenis({
-      duration: 0.6, // Faster scroll (was 1.2 - too slow)
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1.2, // Slightly faster wheel response (was 1)
-      touchMultiplier: 2,
-      syncTouch: false, // Disabled to prevent stuck scroll on touch devices
-      infinite: false, // Prevent infinite scroll issues
-    });
+    let lenis: Lenis | null = null;
+    let rafId: number | null = null;
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    try {
+      lenis = new Lenis({
+        duration: 0.6, // Faster scroll (was 1.2 - too slow)
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1.2, // Slightly faster wheel response (was 1)
+        touchMultiplier: 2,
+        syncTouch: false, // Disabled to prevent stuck scroll on touch devices
+        infinite: false, // Prevent infinite scroll issues
+      });
+
+      function raf(time: number) {
+        if (lenis) {
+          lenis.raf(time);
+          rafId = requestAnimationFrame(raf);
+        }
+      }
+
+      rafId = requestAnimationFrame(raf);
+
+      // Expose lenis to window for use by scroll helpers
+      (window as any).lenis = lenis;
+    } catch (error) {
+      // Silently fail - native scrolling will be used as fallback
+      if (import.meta.env.DEV) {
+        console.warn('Lenis initialization failed, using native scrolling:', error);
+      }
     }
 
-    requestAnimationFrame(raf);
-
-    // Expose lenis to window for use by scroll helpers
-    (window as any).lenis = lenis;
-
     return () => {
-      lenis.destroy();
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      if (lenis) {
+        lenis.destroy();
+      }
       delete (window as any).lenis;
     };
   }, []);
