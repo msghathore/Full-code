@@ -169,34 +169,6 @@ const VideoHero = React.memo(() => {
         style={{ transform: 'translateZ(0)' }}
       />
 
-      {/* ZAVIRA Hero Logo - Centered on Video with optimized fade-in */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        style={{
-          zIndex: 30,
-          paddingBottom: '200px'
-        }}
-      >
-        <motion.div
-          className="text-center px-4 w-full max-w-[95vw]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <h1
-            className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] xl:text-[16rem] font-serif font-light text-white"
-            style={{
-              textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)',
-              letterSpacing: '0.05em',
-              fontWeight: 300,
-              transform: 'translateZ(0)'
-            }}
-          >
-            ZAVIRA
-          </h1>
-        </motion.div>
-      </div>
-
       {/* Hero Buttons - Bottom Center with optimized animations */}
       <motion.div
         className="absolute bottom-20 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20 flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full px-6 justify-center max-w-sm sm:max-w-none"
