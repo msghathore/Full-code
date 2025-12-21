@@ -1855,36 +1855,30 @@ All colors MUST be HSL.
 }
 
 /* Calendar Alignment Fix - Ensure dates align properly under day headers */
-.rdp-weekdays {
+.rdp-caption {
   display: flex !important;
-  width: 100%;
-}
-
-.rdp-weekday {
-  flex: 1 1 0%;
-  min-width: 36px;
-  max-width: 36px;
-  text-align: center !important;
-  padding: 0 !important;
-  font-size: 0.8rem;
-}
-
-.rdp-week {
-  display: flex !important;
-  width: 100%;
-}
-
-.rdp-day {
-  flex: 1 1 0%;
-  min-width: 36px;
-  max-width: 36px;
-  display: flex !important;
-  align-items: center !important;
   justify-content: center !important;
-  padding: 0 !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.rdp-caption_label {
+  text-align: center !important;
+}
+
+.rdp-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.rdp-weekday,
+.rdp-day {
+  width: 14.285% !important; /* 100% / 7 columns */
+  text-align: center !important;
 }
 
 .rdp-day button {
+  margin: 0 auto !important;
   width: 36px !important;
   height: 36px !important;
 }
