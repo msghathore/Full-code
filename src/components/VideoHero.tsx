@@ -107,9 +107,6 @@ const staggerContainer = {
 const VideoHero = React.memo(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoError, setVideoError] = useState(false);
-  const lastTimeRef = useRef<number>(0);
-  const stallCountRef = useRef<number>(0);
-  const recoveryAttemptRef = useRef<number>(0);
   const { t } = useLanguage();
 
   const handleBookNowClick = async (e: React.MouseEvent) => {
@@ -129,165 +126,29 @@ const VideoHero = React.memo(() => {
     window.location.href = '/booking';
   };
 
-  // Recovery function for stalled video
-  const recoverFromStall = useCallback((video: HTMLVideoElement) => {
-    if (recoveryAttemptRef.current >= 3) {
-      return;
-    }
-
-    recoveryAttemptRef.current++;
-
-    // Try different recovery strategies
-    if (recoveryAttemptRef.current === 1) {
-      // Strategy 1: Seek slightly forward (only if video duration is valid)
-      if (isFinite(video.duration) && video.duration > 0) {
-        const seekTo = Math.min(video.currentTime + 0.1, video.duration - 0.5);
-        if (isFinite(seekTo) && seekTo >= 0) {
-          video.currentTime = seekTo;
-        }
-      }
-      video.play().catch(() => {});
-    } else if (recoveryAttemptRef.current === 2) {
-      // Strategy 2: Restart from beginning (safe - always set to 0)
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    } else {
-      // Strategy 3: Force reload the video
-      const currentSrc = video.currentSrc;
-      video.src = '';
-      video.load();
-      video.src = currentSrc;
-      video.load();
-      video.play().catch(() => {});
-    }
-  }, []);
-
-  // Enhanced video initialization for cross-browser compatibility
+  // Simple video initialization - let the browser handle playback smoothly
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    let stallCheckInterval: NodeJS.Timeout | null = null;
-    let isPlaying = false;
-
-    // Attempt to play video
+    // Simple autoplay attempt
     const attemptPlay = () => {
       if (!video) return;
-
       video.muted = true;
-      const playPromise = video.play();
-
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            isPlaying = true;
-            stallCountRef.current = 0;
-            recoveryAttemptRef.current = 0;
-          })
-          .catch(() => {
-            // Autoplay blocked - silent fail, user interaction will trigger play
-          });
-      }
+      video.play().catch(() => {
+        // Autoplay blocked - user interaction will trigger play
+      });
     };
 
-    // Monitor for stalls - optimized to reduce performance impact
-    const checkForStall = () => {
-      if (!video || video.paused || video.ended || !isFinite(video.currentTime)) return;
-
-      const currentTime = video.currentTime;
-      const timeDiff = Math.abs(currentTime - lastTimeRef.current);
-
-      // If time hasn't advanced in 2 seconds while video should be playing
-      if (timeDiff < 0.05 && isPlaying && !video.seeking) {
-        stallCountRef.current++;
-        if (stallCountRef.current >= 3) {
-          recoverFromStall(video);
-          stallCountRef.current = 0;
-        }
-      } else {
-        stallCountRef.current = 0;
-        recoveryAttemptRef.current = 0; // Reset on successful play
-      }
-
-      lastTimeRef.current = currentTime;
-    };
-
-    // Event handlers
+    // Try to play when video is ready
     const handleCanPlay = () => {
       attemptPlay();
     };
 
-    const handleLoadedData = () => {
-      // Video loaded successfully
-    };
-
-    const handleStalled = () => {
-      // Give it a moment, then try recovery
-      setTimeout(() => {
-        if (video && video.paused) {
-          recoverFromStall(video);
-        }
-      }, 1000);
-    };
-
-    const handleWaiting = () => {
-      // Video waiting for more data
-    };
-
-    const handlePlaying = () => {
-      isPlaying = true;
-      stallCountRef.current = 0;
-    };
-
-    const handlePause = () => {
-      // Video paused - might be due to buffer underrun in Edge
-      if (!video.ended) {
-        setTimeout(() => {
-          if (video && video.paused && !video.ended) {
-            video.play().catch(() => {});
-          }
-        }, 100);
-      }
-    };
-
-    const handleEnded = () => {
-      // For looping video, this shouldn't fire, but just in case
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    };
-
-    const handleProgress = () => {
-      // Monitor buffering progress - handled silently
-    };
-
-    // User interaction handler for browsers that block autoplay
-    const handleUserInteraction = () => {
-      if (video && video.paused) {
-        video.muted = true;
-        video.play().catch(() => {});
-      }
-    };
-
-    // Add event listeners
+    // Only add essential event listeners
     video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('stalled', handleStalled);
-    video.addEventListener('waiting', handleWaiting);
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('ended', handleEnded);
-    video.addEventListener('progress', handleProgress);
 
-    // Add user interaction listeners - REMOVED SCROLL to fix scrolling issues
-    const interactionEvents = ['click', 'touchstart', 'keydown'];
-    interactionEvents.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { passive: true, once: true });
-    });
-
-    // Start stall detection interval - runs every 2 seconds for better performance
-    stallCheckInterval = setInterval(checkForStall, 2000);
-
-    // Initial play attempt after a short delay
+    // Initial play attempt
     const initTimer = setTimeout(() => {
       if (video.readyState >= 2) {
         attemptPlay();
@@ -297,22 +158,9 @@ const VideoHero = React.memo(() => {
     // Cleanup
     return () => {
       clearTimeout(initTimer);
-      if (stallCheckInterval) clearInterval(stallCheckInterval);
-
       video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('stalled', handleStalled);
-      video.removeEventListener('waiting', handleWaiting);
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('ended', handleEnded);
-      video.removeEventListener('progress', handleProgress);
-
-      interactionEvents.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
     };
-  }, [recoverFromStall]);
+  }, []);
 
   const handleVideoError = () => {
     setVideoError(true);
@@ -386,7 +234,7 @@ const VideoHero = React.memo(() => {
       </video>
 
       {/* Single optimized overlay */}
-      <div className="absolute inset-0 bg-black/40 z-5" />
+      <div className="absolute inset-0 bg-black/40 z-5 pointer-events-none" />
 
       {/* ZAVIRA Hero Logo - Centered on Video - ALWAYS VISIBLE */}
       <div
@@ -403,7 +251,7 @@ const VideoHero = React.memo(() => {
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <motion.h1
-            className="text-[5.5rem] sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[15rem] font-serif font-light text-white luxury-glow"
+            className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] xl:text-[16rem] font-serif font-light text-white luxury-glow"
             style={{
               textShadow: '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.6)',
               letterSpacing: '0.05em',
