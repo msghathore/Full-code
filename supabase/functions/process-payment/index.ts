@@ -5,8 +5,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SQUARE_ACCESS_TOKEN = 'EAAAl-RUwasfDDumATJMPcM2a8pb9LZ6iL0bbTqWUqC5chg1Iyl84eT0rgXvnu4Y';
-const SQUARE_LOCATION_ID = 'LKH6TY590G319';
+const SQUARE_ACCESS_TOKEN = Deno.env.get('SQUARE_ACCESS_TOKEN');
+const SQUARE_LOCATION_ID = Deno.env.get('SQUARE_LOCATION_ID') || 'LKH6TY590G319';
+
+if (!SQUARE_ACCESS_TOKEN) {
+  throw new Error('SQUARE_ACCESS_TOKEN environment variable is required');
+}
 
 serve(async (req: Request) => {
   // Handle CORS preflight requests
