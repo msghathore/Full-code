@@ -771,6 +771,7 @@ All colors MUST be HSL.
     scroll-behavior: auto;
     margin: 0;
     height: 100%;
+    overflow-x: hidden;
   }
 
   /* Calendar Today Date - Ensure consistent glow effect across all browsers */

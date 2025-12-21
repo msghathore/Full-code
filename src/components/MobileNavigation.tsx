@@ -121,15 +121,25 @@ export const MobileNavigation = ({ hideWhenPopup = false }: MobileNavigationProp
             </button>
 
             {/* Mobile Logo - Optimized visibility */}
-            {showLogo && (
-              <Link to="/" className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="text-xl font-serif font-light text-white logo-main">
-                  <span className="text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer">
-                    ZAVIRA
-                  </span>
-                </div>
-              </Link>
-            )}
+            <Link
+              to="/"
+              className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${!showLogo ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity duration-300`}
+              aria-hidden={!showLogo}
+            >
+              <div className="text-xl font-serif font-light text-white logo-main">
+                <span
+                  className="text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer"
+                  style={{
+                    willChange: 'transform, filter',
+                    backfaceVisibility: 'hidden',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale'
+                  }}
+                >
+                  ZAVIRA
+                </span>
+              </div>
+            </Link>
 
             {/* Right side - Login/User */}
             <div className="flex items-center">

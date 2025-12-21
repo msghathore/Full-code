@@ -234,7 +234,11 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
            </button>
 
            {/* Logo - Centered (Shows on Mobile Other Pages and Desktop) */}
-           <Link to="/" className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} ${shouldHideNavigationLogo ? 'hidden' : ''}`}>
+           <Link
+             to="/"
+             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} ${shouldHideNavigationLogo ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity duration-300`}
+             aria-hidden={shouldHideNavigationLogo}
+           >
              <motion.div
                ref={logoRef}
                className="transition-all duration-500 text-center"
@@ -246,7 +250,14 @@ export const Navigation = ({ hideWhenPopup = false }: NavigationProps) => {
                <div className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-white logo-main">
                    <motion.span
                      className={`main-logo-text ${(isHomePage && isOnBanner) ? 'text-6xl sm:text-8xl md:text-[11rem]' : 'text-3xl sm:text-4xl md:text-5xl'} text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer max-w-[90vw]`}
-                     style={{ transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+                     style={{
+                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                       filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+                       willChange: 'transform, filter',
+                       backfaceVisibility: 'hidden',
+                       WebkitFontSmoothing: 'antialiased',
+                       MozOsxFontSmoothing: 'grayscale'
+                     }}
                      animate={{
                        textShadow: [
                          '0 0 10px rgba(255,255,255,0.8)',

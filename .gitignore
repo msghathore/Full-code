@@ -28,12 +28,19 @@ dist-ssr
 
 # SECURITY: Never commit environment files with secrets
 .env
-.env.production
+.env.*
 .env.staging
 *.pem
 *.key
 secrets/
 nul
+backend/.env
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+e2e/screenshots/
+.playwright-mcp/
 
 # Sensitive files
 .roo/

@@ -321,8 +321,11 @@ const Auth = () => {
   // Shared Clerk appearance configuration for brand consistency
   const clerkAppearance = {
     elements: {
-      rootBox: 'w-full',
-      card: 'bg-black shadow-none p-0 border-0',
+      rootBox: 'w-full max-w-full',
+      card: 'bg-black shadow-none p-0 border-0 max-w-full',
+      cardBox: 'max-w-full',
+      main: 'max-w-full',
+      socialButtonsRoot: 'max-w-full',
       header: 'hidden',
       footer: 'hidden',
       formButtonPrimary: 'w-full bg-white text-black hover:bg-gray-100 rounded-md py-2.5 sm:py-3 text-base sm:text-lg font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]',
@@ -359,7 +362,7 @@ const Auth = () => {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-md px-2 sm:px-0">
+      <div className="w-full max-w-md px-5 sm:px-0">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-white text-3xl sm:text-4xl font-serif text-center luxury-glow mb-3 sm:mb-4 px-2">
             Welcome to Zavira
@@ -386,7 +389,7 @@ const Auth = () => {
           </TabsList>
 
           <TabsContent value="sign-in" className="w-full">
-            <div className="bg-black border border-white/20 rounded-lg p-4 sm:p-5 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(255,255,255,0.05)] w-full overflow-hidden">
+            <div className="bg-black border border-white/20 rounded-lg p-3 sm:p-5 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(255,255,255,0.05)] w-full overflow-hidden">
               <SignIn
                 routing="path"
                 path="/auth"
@@ -400,7 +403,7 @@ const Auth = () => {
           </TabsContent>
 
           <TabsContent value="sign-up" className="w-full">
-            <div className="bg-black border border-white/20 rounded-lg p-4 sm:p-5 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(255,255,255,0.05)] w-full overflow-hidden">
+            <div className="bg-black border border-white/20 rounded-lg p-3 sm:p-5 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(255,255,255,0.05)] w-full overflow-hidden">
               <CustomSignUpForm appearance={clerkAppearance} />
             </div>
           </TabsContent>

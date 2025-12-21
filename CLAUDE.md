@@ -140,6 +140,8 @@ Claude has access to these MCP tools and MUST use them proactively:
 **Location:** `e2e/` folder
 **Run with:** `npx playwright test`
 
+**⚠️ CLEANUP:** Delete temporary test scripts from `e2e/` after verification is complete. Only keep permanent regression tests. Remove screenshots from `e2e/screenshots/` after review.
+
 ---
 
 ## CRITICAL: Verification Behavior
