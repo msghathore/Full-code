@@ -1878,9 +1878,9 @@ All colors MUST be HSL.
   max-width: 100% !important;
 }
 
-/* Caption - left aligned */
+/* Caption - centered */
 .calendar-stretch .rdp-caption {
-  justify-content: flex-start !important;
+  justify-content: center !important;
   padding-bottom: 12px !important;
 }
 
