@@ -1,105 +1,38 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/hooks/use-language';
 
-// Text reveal animation variants
-const titleVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const letterVariants = {
-  hidden: {
-    opacity: 0,
-    y: 50,
-    rotateX: -90,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    transition: {
-      type: "spring",
-      damping: 12,
-      stiffness: 100,
-    },
-  },
-};
-
-const subtitleVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      delay: 0.6,
-      ease: [0.25, 0.4, 0.25, 1],
-    },
-  },
-};
-
-// Floating decorative elements
-const floatingVariants = {
-  animate: {
-    y: [-10, 10, -10],
-    opacity: [0.3, 0.6, 0.3],
-    transition: {
-      y: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-      opacity: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  },
-};
-
-// Framer Motion variants for hero entrance animations
+// Optimized animations - reduced complexity for better initial performance
 const heroButtonVariants = {
   initial: {
     opacity: 0,
-    y: 50,
-    scale: 0.9
+    y: 20
   },
   animate: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
-      delay: 0.8
+      duration: 0.6,
+      ease: "easeOut",
+      delay: 0.3
     }
   },
   hover: {
     scale: 1.05,
-    y: -3,
-    transition: { type: "spring", stiffness: 400, damping: 10 }
+    transition: { duration: 0.2, ease: "easeOut" }
   },
   tap: {
     scale: 0.95,
-    transition: { type: "spring", stiffness: 400, damping: 10 }
+    transition: { duration: 0.1, ease: "easeOut" }
   }
 };
 
 const staggerContainer = {
   animate: {
     transition: {
-      staggerChildren: 0.15
+      staggerChildren: 0.1
     }
   }
 };
@@ -126,48 +59,45 @@ const VideoHero = React.memo(() => {
     window.location.href = '/booking';
   };
 
-  // Simple video initialization - let the browser handle playback smoothly
+  // Optimized video initialization - minimal overhead
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video) {
+      if (import.meta.env.DEV) {
+        console.error('[VideoHero] Video ref not found');
+      }
+      return;
+    }
 
-    // Simple autoplay attempt
-    const attemptPlay = () => {
-      if (!video) return;
+    // Single play attempt when video can play through
+    const handleCanPlayThrough = () => {
       video.muted = true;
-      video.play().catch(() => {
-        // Autoplay blocked - user interaction will trigger play
+      video.play().catch((error) => {
+        if (import.meta.env.DEV) {
+          console.error('[VideoHero] Autoplay failed:', error.message);
+        }
       });
     };
 
-    // Try to play when video is ready
-    const handleCanPlay = () => {
-      attemptPlay();
-    };
-
-    // Only add essential event listeners
-    video.addEventListener('canplay', handleCanPlay);
-
-    // Initial play attempt
-    const initTimer = setTimeout(() => {
-      if (video.readyState >= 2) {
-        attemptPlay();
-      }
-    }, 100);
-
-    // Cleanup
-    return () => {
-      clearTimeout(initTimer);
-      video.removeEventListener('canplay', handleCanPlay);
-    };
+    // Check if video is already ready (handles cached videos)
+    if (video.readyState >= 3) {
+      // Video already has enough data buffered
+      handleCanPlayThrough();
+    } else {
+      // Wait for video to buffer enough data
+      video.addEventListener('canplaythrough', handleCanPlayThrough, { once: true });
+    }
   }, []);
 
-  const handleVideoError = () => {
+  const handleVideoError = (e: any) => {
+    if (import.meta.env.DEV) {
+      console.error('[VideoHero] Video error:', e, {
+        videoError: videoRef.current?.error,
+        networkState: videoRef.current?.networkState,
+        readyState: videoRef.current?.readyState
+      });
+    }
     setVideoError(true);
-  };
-
-  const handleVideoLoad = () => {
-    // Video loaded successfully
   };
 
   if (videoError) {
@@ -202,19 +132,17 @@ const VideoHero = React.memo(() => {
 
   return (
     <section className="fixed inset-0 w-full h-screen z-0" aria-label="Hero video section">
-      {/* Video - Optimized for all browsers (Edge, Safari, Chrome, Firefox) */}
+      {/* Video - Optimized for smooth streaming without stalling */}
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover object-center"
-        muted
-        loop
-        playsInline
-        autoPlay
+        muted={true}
+        loop={true}
+        playsInline={true}
+        autoPlay={true}
         preload="auto"
         aria-label="Background video showcasing Zavira salon atmosphere"
         onError={handleVideoError}
-        onLoadedData={handleVideoLoad}
-        poster="/images/hair-service.jpg"
         // @ts-ignore - webkit specific attribute
         webkit-playsinline="true"
         // @ts-ignore - x5 video player attribute for mobile
@@ -225,7 +153,6 @@ const VideoHero = React.memo(() => {
           pointerEvents: 'none',
           zIndex: 1,
           transform: 'translateZ(0)',
-          willChange: 'auto',
           backfaceVisibility: 'hidden'
         }}
       >
@@ -239,12 +166,38 @@ const VideoHero = React.memo(() => {
       {/* Single optimized overlay */}
       <div
         className="absolute inset-0 bg-black/40 z-5 pointer-events-none"
-        style={{ transform: 'translateZ(0)', willChange: 'auto' }}
+        style={{ transform: 'translateZ(0)' }}
       />
 
-      {/* ZAVIRA Hero Logo - HIDDEN to show only Navigation logo (the larger one on homepage) */}
+      {/* ZAVIRA Hero Logo - Centered on Video with optimized fade-in */}
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{
+          zIndex: 30,
+          paddingBottom: '200px'
+        }}
+      >
+        <motion.div
+          className="text-center px-4 w-full max-w-[95vw]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <h1
+            className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] xl:text-[16rem] font-serif font-light text-white"
+            style={{
+              textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)',
+              letterSpacing: '0.05em',
+              fontWeight: 300,
+              transform: 'translateZ(0)'
+            }}
+          >
+            ZAVIRA
+          </h1>
+        </motion.div>
+      </div>
 
-      {/* Hero Buttons - Bottom Center with Framer Motion */}
+      {/* Hero Buttons - Bottom Center with optimized animations */}
       <motion.div
         className="absolute bottom-20 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20 flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full px-6 justify-center max-w-sm sm:max-w-none"
         variants={staggerContainer}
