@@ -11,7 +11,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-0 w-full", className)}
+      className={cn("p-0 w-full calendar-stretch", className)}
       classNames={{
         months: "flex flex-col w-full",
         month: "w-full space-y-3",
@@ -24,12 +24,12 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ),
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
-        table: "w-full border-collapse table-fixed",
-        head_row: "grid grid-cols-7 gap-1 sm:gap-2 w-full",
-        head_cell: "text-muted-foreground text-center font-semibold text-sm sm:text-base py-2",
-        row: "grid grid-cols-7 gap-1 sm:gap-2 w-full mt-1",
-        cell: "text-center text-sm p-0 relative aspect-square flex items-center justify-center [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: cn(buttonVariants({ variant: "ghost" }), "w-full h-full aspect-square p-0 font-medium text-sm sm:text-base aria-selected:opacity-100 rounded-md"),
+        table: "w-full border-collapse",
+        head_row: "",
+        head_cell: "text-muted-foreground text-center font-semibold text-sm sm:text-base p-1 sm:p-2",
+        row: "",
+        cell: "text-center text-sm p-1 sm:p-2 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: cn(buttonVariants({ variant: "ghost" }), "w-full h-10 sm:h-12 md:h-14 p-0 font-medium text-sm sm:text-base aria-selected:opacity-100 rounded-md"),
         day_range_end: "day-range-end",
         day_selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",

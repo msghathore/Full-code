@@ -1854,136 +1854,115 @@ All colors MUST be HSL.
   }
 }
 
-/* Calendar UI - Edge-to-Edge Fill Design */
-/* Calendar fills container completely with proper spacing */
+/* Calendar UI - Fill Container Completely */
+/* Uses table-layout: fixed to force equal column distribution */
 
-/* Root - stretch to fill container width */
-.rdp {
-  --rdp-accent-color: #7c3aed;
-  margin: 0 !important;
-  padding: 0 !important;
+/* Target calendar with stretch class */
+.calendar-stretch,
+.calendar-stretch * {
+  box-sizing: border-box !important;
+}
+
+.calendar-stretch {
   width: 100% !important;
   max-width: 100% !important;
 }
 
-/* Month wrapper - full width */
-.rdp-months {
+/* All child elements stretch to full width */
+.calendar-stretch .rdp-months,
+.calendar-stretch .rdp-month,
+.calendar-stretch .rdp-caption,
+.calendar-stretch .rdp-table,
+.calendar-stretch table {
   width: 100% !important;
+  max-width: 100% !important;
 }
 
-.rdp-month {
-  width: 100% !important;
-}
-
-/* Month header - left aligned to stretch across */
-.rdp-caption {
-  display: flex !important;
+/* Caption - left aligned */
+.calendar-stretch .rdp-caption {
   justify-content: flex-start !important;
-  align-items: center !important;
-  padding: 0 0 12px 0 !important;
-  width: 100% !important;
+  padding-bottom: 12px !important;
 }
 
-.rdp-caption_label {
-  font-size: 1.125rem !important;
-  font-weight: 600 !important;
-}
-
-/* Table - FILL container with gaps between cells */
-.rdp-table {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-spacing: 6px 8px !important; /* horizontal vertical gaps */
+/* TABLE - This is the key: table-layout fixed + explicit width */
+.calendar-stretch table,
+.calendar-stretch .rdp-table {
+  table-layout: fixed !important;
   border-collapse: separate !important;
-  table-layout: fixed !important; /* Equal width columns */
+  border-spacing: 4px !important;
 }
 
-/* Day headers row */
-.rdp-head_row {
-  width: 100% !important;
-}
-
-/* Day header cells - spread evenly */
-.rdp-head_cell {
-  width: 14.285% !important;
+/* Table cells - each gets equal 14.285% width */
+.calendar-stretch th,
+.calendar-stretch td,
+.calendar-stretch .rdp-head_cell,
+.calendar-stretch .rdp-cell {
+  width: 14.285714% !important; /* 100% / 7 */
   text-align: center !important;
-  padding: 6px 2px !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  color: rgba(255, 255, 255, 0.85) !important;
-}
-
-/* Week rows */
-.rdp-row {
-  width: 100% !important;
-}
-
-/* Day cells - stretch to fill */
-.rdp-cell {
-  width: 14.285% !important;
-  text-align: center !important;
-  padding: 0 !important;
+  padding: 4px !important;
   vertical-align: middle !important;
 }
 
-/* Day buttons - fill cell completely */
-.rdp-day {
+/* Day buttons - fill their cells */
+.calendar-stretch .rdp-day,
+.calendar-stretch button[name="day"] {
   width: 100% !important;
-  height: auto !important;
-  aspect-ratio: 1 / 1 !important; /* Square cells */
-  min-height: 36px !important;
-  font-size: 0.95rem !important;
-  font-weight: 500 !important;
-  border-radius: 6px !important;
-  transition: all 0.15s ease !important;
+  min-width: 100% !important;
+  height: 40px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
 }
 
-.rdp-day:hover:not(.rdp-day_disabled):not([aria-selected="true"]) {
+.calendar-stretch .rdp-day:hover:not(.rdp-day_disabled):not([aria-selected="true"]) {
   background-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Responsive - more spacing on larger screens */
+/* Responsive sizing */
 @media (min-width: 480px) {
-  .rdp-table {
-    border-spacing: 8px 10px !important;
+  .calendar-stretch table,
+  .calendar-stretch .rdp-table {
+    border-spacing: 6px !important;
   }
 
-  .rdp-caption_label {
-    font-size: 1.25rem !important;
+  .calendar-stretch th,
+  .calendar-stretch td {
+    padding: 5px !important;
   }
 
-  .rdp-head_cell {
-    font-size: 1rem !important;
-    padding: 8px 2px !important;
-  }
-
-  .rdp-day {
-    min-height: 42px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
+  .calendar-stretch .rdp-day,
+  .calendar-stretch button[name="day"] {
+    height: 44px !important;
   }
 }
 
 @media (min-width: 768px) {
-  .rdp-table {
-    border-spacing: 10px 12px !important;
+  .calendar-stretch table,
+  .calendar-stretch .rdp-table {
+    border-spacing: 8px !important;
   }
 
-  .rdp-day {
-    min-height: 48px !important;
-    font-size: 1.0625rem !important;
+  .calendar-stretch th,
+  .calendar-stretch td {
+    padding: 6px !important;
+  }
+
+  .calendar-stretch .rdp-day,
+  .calendar-stretch button[name="day"] {
+    height: 48px !important;
   }
 }
 
 @media (min-width: 1024px) {
-  .rdp-table {
-    border-spacing: 12px 14px !important;
+  .calendar-stretch table,
+  .calendar-stretch .rdp-table {
+    border-spacing: 10px !important;
   }
 
-  .rdp-day {
-    min-height: 52px !important;
+  .calendar-stretch .rdp-day,
+  .calendar-stretch button[name="day"] {
+    height: 52px !important;
   }
 }
