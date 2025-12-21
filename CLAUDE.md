@@ -112,6 +112,8 @@ text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0
 
 Claude has access to these MCP tools and MUST use them proactively:
 
+**⚠️ PERFORMANCE:** When running background agents, limit to **2 agents at a time maximum** to prevent CLI lag. Run agents in batches and wait for completion before starting new ones.
+
 ### Supabase MCP (mcp__supabase__)
 **ALWAYS USE for database operations:**
 - `mcp__supabase__list_tables` - View database structure

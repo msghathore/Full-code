@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,6 +17,7 @@ import {
   Receipt,
   Loader2
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ReceiptConfirmationModalProps {
   isOpen: boolean;
@@ -56,6 +57,44 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
   const [smsForm, setSmsForm] = useState<SmsFormData>({ phone: '', isSubmitting: false });
   const [emailQueued, setEmailQueued] = useState(false);
   const [smsQueued, setSmsQueued] = useState(false);
+  const [businessInfo, setBusinessInfo] = useState({
+    name: 'ZAVIRA SALON',
+    address: '283 Tache Avenue, Winnipeg, MB, Canada',
+    phone: '(431) 816-3330'
+  });
+
+  // Fetch business settings from database
+  useEffect(() => {
+    const fetchBusinessSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('business_settings')
+          .select('setting_key, setting_value')
+          .in('setting_key', ['business_name', 'address', 'phone']);
+
+        if (error) {
+          console.error('Error fetching business settings:', error);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          const settings: Record<string, string> = {};
+          data.forEach(row => {
+            settings[row.setting_key] = row.setting_value;
+          });
+          setBusinessInfo({
+            name: settings.business_name?.toUpperCase() || 'ZAVIRA SALON',
+            address: settings.address || '283 Tache Avenue, Winnipeg, MB, Canada',
+            phone: settings.phone || '(431) 816-3330'
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch business settings:', error);
+      }
+    };
+
+    fetchBusinessSettings();
+  }, []);
 
   // Email receipt handler
   const handleEmailReceipt = async () => {
@@ -115,9 +154,9 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
     const receiptContent = `
       <div style="font-family: monospace; max-width: 300px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">
-          <h2 style="margin: 0;">ZAVIRA SALON</h2>
-          <p style="margin: 5px 0;">123 Beauty Street, Toronto, ON</p>
-          <p style="margin: 5px 0;">(431) 816-3330</p>
+          <h2 style="margin: 0;">${businessInfo.name}</h2>
+          <p style="margin: 5px 0;">${businessInfo.address}</p>
+          <p style="margin: 5px 0;">${businessInfo.phone}</p>
         </div>
         
         <div style="border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">

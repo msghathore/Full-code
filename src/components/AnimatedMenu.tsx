@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 
 interface AnimatedMenuProps {
   isOpen: boolean;
@@ -12,8 +13,8 @@ interface AnimatedMenuProps {
 // Universal maps URL generator - opens Apple Maps on iOS/macOS, Google Maps on others
 const SALON_ADDRESS = '283 Tache Avenue, Winnipeg, MB, Canada';
 
-const getUniversalMapsUrl = (): string => {
-  const encodedAddress = encodeURIComponent(SALON_ADDRESS);
+const getUniversalMapsUrl = (address: string = SALON_ADDRESS): string => {
+  const encodedAddress = encodeURIComponent(address);
 
   // Detect platform
   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera || '';
@@ -34,13 +35,6 @@ const getUniversalMapsUrl = (): string => {
   return `https://maps.google.com/maps?q=${encodedAddress}`;
 };
 
-// Handle directions click with platform detection
-const handleDirectionsClick = (e: React.MouseEvent) => {
-  e.preventDefault();
-  const mapsUrl = getUniversalMapsUrl();
-  window.open(mapsUrl, '_blank', 'noopener,noreferrer');
-};
-
 // Menu items will be built dynamically with translations inside the component
 
 export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
@@ -49,6 +43,15 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const { t } = useLanguage();
+  const { settings } = useBusinessSettings();
+
+  // Handle directions click with platform detection
+  const handleDirectionsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const address = settings?.address_full || '283 Tache Avenue, Winnipeg, MB, Canada';
+    const mapsUrl = getUniversalMapsUrl(address);
+    window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+  };
 
   // Build menu items with translations
   const menuItems = useMemo(() => [

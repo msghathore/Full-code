@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useLanguage } from '@/hooks/use-language';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 import { Footer } from '@/components/Footer';
 
 export default function Privacy() {
   const { t } = useLanguage();
+  const { settings } = useBusinessSettings();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -69,8 +71,8 @@ export default function Privacy() {
           <section className="bg-white/5 border border-white/10 rounded-lg p-4 sm:p-8 frosted-glass">
             <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-semibold text-white mb-4 sm:mb-6 luxury-glow tracking-wider">Contact Us</h2>
             <p className="leading-relaxed text-sm sm:text-base text-muted-foreground tracking-wide">
-              If you have any questions about this Privacy Policy, please contact us at zavirasalonandspa@gmail.com
-              or call us at (431) 816-3330. You can also reach us through our contact page.
+              If you have any questions about this Privacy Policy, please contact us at {settings?.email || 'zavirasalonandspa@gmail.com'}
+              or call us at {settings?.phone || '(431) 816-3330'}. You can also reach us through our contact page.
             </p>
           </section>
         </div>

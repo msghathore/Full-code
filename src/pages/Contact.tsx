@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { FadeInUp, FadeInLeft, FadeInRight, MagneticButton } from '@/components/animations';
 import { useLanguage } from '@/hooks/use-language';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 
 // Animation variants
 const containerVariants = {
@@ -47,6 +48,7 @@ const inputVariants = {
 const Contact = () => {
   const location = useLocation();
   const { t } = useLanguage();
+  const { settings, loading: settingsLoading } = useBusinessSettings();
 
   // Scroll to hash section on load
   useEffect(() => {
@@ -190,13 +192,19 @@ const Contact = () => {
                 <div>
                   <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('addressLabel')}</h4>
                   <a
-                    href="https://maps.google.com/?q=283+Tache+Avenue,+Winnipeg,+MB,+Canada"
+                    href={`https://maps.google.com/?q=${encodeURIComponent(settings?.address_full || '283 Tache Avenue, Winnipeg, MB, Canada')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
                   >
-                    283 Tache Avenue<br />
-                    Winnipeg, MB
+                    {settingsLoading ? (
+                      <span className="text-white/50">Loading address...</span>
+                    ) : (
+                      <>
+                        {settings?.address_street || '283 Tache Avenue'}<br />
+                        {settings?.address_city || 'Winnipeg'}, {settings?.address_province || 'MB'}
+                      </>
+                    )}
                   </a>
                 </div>
               </div>
@@ -225,10 +233,14 @@ const Contact = () => {
                 <div>
                   <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('phoneLabel')}</h4>
                   <a
-                    href="tel:+14318163330"
+                    href={`tel:${settings?.phone_raw || '+14318163330'}`}
                     className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
                   >
-                    (431) 816-3330
+                    {settingsLoading ? (
+                      <span className="text-white/50">Loading phone...</span>
+                    ) : (
+                      settings?.phone || '(431) 816-3330'
+                    )}
                   </a>
                 </div>
               </div>
@@ -256,10 +268,14 @@ const Contact = () => {
                 <div>
                   <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('emailLabel')}</h4>
                   <a
-                    href="mailto:zavirasalonandspa@gmail.com"
+                    href={`mailto:${settings?.email || 'zavirasalonandspa@gmail.com'}`}
                     className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
                   >
-                    zavirasalonandspa@gmail.com
+                    {settingsLoading ? (
+                      <span className="text-white/50">Loading email...</span>
+                    ) : (
+                      settings?.email || 'zavirasalonandspa@gmail.com'
+                    )}
                   </a>
                 </div>
               </div>
@@ -288,7 +304,11 @@ const Contact = () => {
                 <div>
                   <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('hoursLabel')}</h4>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Daily: 8:00 AM - 11:30 PM
+                    {settingsLoading ? (
+                      <span className="text-white/50">Loading hours...</span>
+                    ) : (
+                      settings?.hours_display || 'Daily: 8:00 AM - 11:30 PM'
+                    )}
                   </p>
                 </div>
               </div>

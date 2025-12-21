@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { config } from '@/lib/environment';
+import { useBusinessSettings } from '@/hooks/useBusinessSettings';
 
 interface SEOProps {
   title?: string;
@@ -32,7 +33,9 @@ const SEO: React.FC<SEOProps> = ({
   noindex = false,
   structuredData,
 }) => {
-  const siteTitle = 'Zavira Beauty Salon';
+  const { settings } = useBusinessSettings();
+
+  const siteTitle = settings?.business_name || 'Zavira Beauty Salon';
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   const fullUrl = url ? `${config.app.url}${url}` : config.app.url;
   const fullImage = image.startsWith('http') ? image : `${config.app.url}${image}`;
@@ -48,22 +51,22 @@ const SEO: React.FC<SEOProps> = ({
     image: fullImage,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '123 Beauty Street',
-      addressLocality: 'Your City',
-      addressRegion: 'Your State',
-      postalCode: '12345',
-      addressCountry: 'US',
+      streetAddress: settings?.address_street || '283 Tache Avenue',
+      addressLocality: settings?.address_city || 'Winnipeg',
+      addressRegion: settings?.address_province || 'MB',
+      postalCode: settings?.address_full?.split(',').pop()?.trim() || 'R2H 1A4',
+      addressCountry: settings?.address_country || 'Canada',
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+1-431-816-3330',
+      telephone: settings?.phone_raw || '+1-431-816-3330',
       contactType: 'customer service',
       availableLanguage: 'English',
     },
     sameAs: [
-      'https://facebook.com/zavirabeauty',
-      'https://instagram.com/zavirabeauty',
-      'https://twitter.com/zavirabeauty',
+      settings?.social_facebook || 'https://facebook.com/zavirabeauty',
+      settings?.social_instagram || 'https://instagram.com/zavirabeauty',
+      settings?.social_twitter || 'https://twitter.com/zavirabeauty',
     ],
     priceRange: '$$',
     openingHours: [

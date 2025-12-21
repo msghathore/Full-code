@@ -41,12 +41,8 @@ export const MobileNavigation = ({ hideWhenPopup = false }: MobileNavigationProp
         setHasScrolledPastBanner(scrolledPastBanner);
         setIsScrolled(window.scrollY > 50);
 
-        // Always show logo on non-home pages, show on homepage after scroll
-        if (isHomePage) {
-          setShowLogo(scrolledPastBanner);
-        } else {
-          setShowLogo(true);
-        }
+        // Always show logo on mobile (removed homepage hiding logic)
+        setShowLogo(true);
       }
     };
 
