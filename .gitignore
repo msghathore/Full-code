@@ -46,3 +46,12 @@ e2e/screenshots/
 .roo/
 BREVO_INTEGRATION_COMPLETE.md
 test-bre*
+
+# Email configuration files
+EMAIL
+email.txt
+*.email
+CREDENTIALS
+CREDENTIALS.*
+API_KEYS
+API_KEYS.*
