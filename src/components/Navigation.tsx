@@ -233,11 +233,11 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
              <span className="hidden sm:inline text-white text-sm font-semibold group-hover:luxury-glow transition-all">Menu</span>
            </button>
 
-           {/* Logo - Centered (Hidden on homepage banner to avoid duplicate ZAVIRA text) */}
+           {/* Logo - Centered (Always visible on all screen sizes) */}
            <Link
              to="/"
-             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? 'opacity-0 pointer-events-none' : 'top-1/2 -translate-y-1/2 opacity-100'} transition-opacity duration-300`}
-             aria-hidden={isHomePage && isOnBanner}
+             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} opacity-100 transition-opacity duration-300`}
+             aria-hidden={false}
            >
              <motion.div
                ref={logoRef}
