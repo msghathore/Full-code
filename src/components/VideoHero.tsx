@@ -378,12 +378,10 @@ const VideoHero = React.memo(() => {
           zIndex: 1
         }}
       >
-        {/* MP4 with H.264 - widest compatibility */}
-        <source src="/videos/hero-video.mp4" type="video/mp4; codecs=avc1.42E01E,mp4a.40.2" />
-        {/* WebM with VP9 - better compression */}
-        <source src="/videos/hero-video.webm" type="video/webm; codecs=vp9,opus" />
+        {/* MP4 with H.264 - Optimized (1.66 MB) - Universal browser support */}
+        <source src="/videos/hero-video-optimized.mp4" type="video/mp4; codecs=avc1.42E01E,mp4a.40.2" />
         {/* Fallback MP4 without codec specification */}
-        <source src="/videos/hero-video.mp4" type="video/mp4" />
+        <source src="/videos/hero-video-optimized.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
