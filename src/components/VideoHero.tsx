@@ -139,12 +139,16 @@ const VideoHero = React.memo(() => {
 
     // Try different recovery strategies
     if (recoveryAttemptRef.current === 1) {
-      // Strategy 1: Seek slightly forward
-      const seekTo = Math.min(video.currentTime + 0.1, video.duration - 0.5);
-      video.currentTime = seekTo;
+      // Strategy 1: Seek slightly forward (only if video duration is valid)
+      if (isFinite(video.duration) && video.duration > 0) {
+        const seekTo = Math.min(video.currentTime + 0.1, video.duration - 0.5);
+        if (isFinite(seekTo) && seekTo >= 0) {
+          video.currentTime = seekTo;
+        }
+      }
       video.play().catch(() => {});
     } else if (recoveryAttemptRef.current === 2) {
-      // Strategy 2: Restart from beginning
+      // Strategy 2: Restart from beginning (safe - always set to 0)
       video.currentTime = 0;
       video.play().catch(() => {});
     } else {
@@ -186,17 +190,17 @@ const VideoHero = React.memo(() => {
       }
     };
 
-    // Monitor for stalls - critical for Edge browser
+    // Monitor for stalls - optimized to reduce performance impact
     const checkForStall = () => {
-      if (!video || video.paused || video.ended) return;
+      if (!video || video.paused || video.ended || !isFinite(video.currentTime)) return;
 
       const currentTime = video.currentTime;
       const timeDiff = Math.abs(currentTime - lastTimeRef.current);
 
-      // If time hasn't advanced in 1 second while video should be playing
-      if (timeDiff < 0.1 && isPlaying && !video.seeking) {
+      // If time hasn't advanced in 2 seconds while video should be playing
+      if (timeDiff < 0.05 && isPlaying && !video.seeking) {
         stallCountRef.current++;
-        if (stallCountRef.current >= 2) {
+        if (stallCountRef.current >= 3) {
           recoverFromStall(video);
           stallCountRef.current = 0;
         }
@@ -274,14 +278,14 @@ const VideoHero = React.memo(() => {
     video.addEventListener('ended', handleEnded);
     video.addEventListener('progress', handleProgress);
 
-    // Add user interaction listeners
-    const interactionEvents = ['click', 'touchstart', 'keydown', 'scroll'];
+    // Add user interaction listeners - REMOVED SCROLL to fix scrolling issues
+    const interactionEvents = ['click', 'touchstart', 'keydown'];
     interactionEvents.forEach(event => {
       document.addEventListener(event, handleUserInteraction, { passive: true, once: true });
     });
 
-    // Start stall detection interval - critical for Edge
-    stallCheckInterval = setInterval(checkForStall, 1000);
+    // Start stall detection interval - runs every 2 seconds for better performance
+    stallCheckInterval = setInterval(checkForStall, 2000);
 
     // Initial play attempt after a short delay
     const initTimer = setTimeout(() => {
@@ -416,30 +420,24 @@ const VideoHero = React.memo(() => {
                 '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8)',
               ],
             }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
             ZAVIRA
           </motion.h1>
         </motion.div>
       </div>
 
-      {/* Floating decorative elements */}
+      {/* Floating decorative elements - simplified for better performance */}
       <motion.div
-        className="absolute top-20 left-10 w-2 h-2 rounded-full bg-white/40 blur-sm z-10"
+        className="absolute top-20 left-10 w-2 h-2 rounded-full bg-white/30 z-10"
         variants={floatingVariants}
         animate="animate"
       />
       <motion.div
-        className="absolute top-40 right-20 w-3 h-3 rounded-full bg-white/30 blur-sm z-10"
+        className="absolute top-40 right-20 w-2 h-2 rounded-full bg-white/20 z-10"
         variants={floatingVariants}
         animate="animate"
         style={{ animationDelay: '1s' }}
-      />
-      <motion.div
-        className="absolute bottom-40 left-1/4 w-2 h-2 rounded-full bg-white/20 blur-sm z-10"
-        variants={floatingVariants}
-        animate="animate"
-        style={{ animationDelay: '2s' }}
       />
 
       
