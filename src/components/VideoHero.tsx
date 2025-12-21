@@ -242,34 +242,7 @@ const VideoHero = React.memo(() => {
         style={{ transform: 'translateZ(0)', willChange: 'auto' }}
       />
 
-      {/* ZAVIRA Hero Logo - Centered on Video - ALWAYS VISIBLE */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        style={{
-          zIndex: 30,
-          paddingBottom: '200px'
-        }}
-      >
-        <motion.div
-          className="text-center px-4 w-full max-w-[95vw]"
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          <h1
-            className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] xl:text-[16rem] font-serif font-light text-white luxury-glow"
-            style={{
-              textShadow: '0 0 25px rgba(255,255,255,0.9), 0 0 50px rgba(255,255,255,0.6)',
-              letterSpacing: '0.05em',
-              fontWeight: 300,
-              transform: 'translateZ(0)',
-              willChange: 'auto'
-            }}
-          >
-            ZAVIRA
-          </h1>
-        </motion.div>
-      </div>
+      {/* ZAVIRA Hero Logo - HIDDEN to show only Navigation logo (the larger one on homepage) */}
 
       {/* Hero Buttons - Bottom Center with Framer Motion */}
       <motion.div
