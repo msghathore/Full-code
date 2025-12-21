@@ -384,7 +384,7 @@ const VideoHero = React.memo(() => {
         loop
         playsInline
         autoPlay
-        preload="metadata"
+        preload="auto"
         aria-label="Background video showcasing Zavira salon atmosphere"
         onError={handleVideoError}
         onLoadedData={handleVideoLoad}

@@ -114,6 +114,8 @@ Claude has access to these MCP tools and MUST use them proactively:
 
 **⚠️ PERFORMANCE:** When running background agents, limit to **2 agents at a time maximum** to prevent CLI lag. Run agents in batches and wait for completion before starting new ones.
 
+**🤖 MAIN AGENT AVAILABILITY:** The main Claude agent MUST always remain available for chat. Use background agents (with `run_in_background: true`) for long-running tasks like testing, building, or multi-file updates. NEVER block the main conversation thread with lengthy operations.
+
 ### Supabase MCP (mcp__supabase__)
 **ALWAYS USE for database operations:**
 - `mcp__supabase__list_tables` - View database structure
