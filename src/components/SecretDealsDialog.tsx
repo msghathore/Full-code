@@ -385,44 +385,45 @@ export const SecretDealsDialog = React.memo(() => {
                 <div className="fixed inset-0 z-[1100] bg-black/60 backdrop-blur-sm" />
             )}
             <DialogContent
-                className={`
+                className="
                     frosted-glass border-white/20 z-[1200] shadow-2xl shadow-white/20
-                    ${isMobile
-                        ? 'fixed bottom-0 left-0 right-0 w-full max-w-none rounded-t-2xl rounded-b-none animate-in slide-in-from-bottom duration-300'
-                        : 'w-[90vw] max-w-md mx-auto mt-20 rounded-xl'
-                    }
-                `}
+                    fixed bottom-0 left-0 right-0 w-full max-w-none rounded-t-2xl rounded-b-none
+                    sm:static sm:bottom-auto sm:left-auto sm:right-auto sm:w-[95vw] sm:max-w-md sm:mx-auto sm:mt-10 sm:rounded-xl
+                    md:w-[85vw] md:max-w-lg md:mt-16
+                    lg:w-[70vw] lg:max-w-xl lg:mt-20
+                    animate-in slide-in-from-bottom sm:slide-in-from-top duration-300
+                "
             >
-                <DialogHeader className="text-center">
-                    <DialogTitle className="text-3xl md:text-5xl font-serif font-light text-white mb-4 text-center w-full">
+                <DialogHeader className="text-center px-2 sm:px-4">
+                    <DialogTitle className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light text-white mb-3 sm:mb-4 text-center w-full">
                         SECRET DEALS
                     </DialogTitle>
-                    <div className="text-white/80 text-base leading-relaxed text-center">
+                    <div className="text-white/80 text-sm sm:text-base leading-relaxed text-center px-2">
                         Join our exclusive VIP list and unlock <span className="font-bold">50% OFF</span> on premium services,
                         <span className="font-bold"> free upgrades</span>, and <span className="font-bold">early access</span> to new treatments.
                         <br /><br />
                         <div className="flex items-center justify-center gap-2 mb-2">
-                            <span className="text-sm text-white/60">Offer expires in:</span>
+                            <span className="text-xs sm:text-sm text-white/60">Offer expires in:</span>
                         </div>
-                        <div className="flex items-center justify-center gap-1 text-2xl md:text-3xl font-mono font-bold">
-                            <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                        <div className="flex items-center justify-center gap-1 text-xl sm:text-2xl md:text-3xl font-mono font-bold">
+                            <span className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
                                 {timeLeft.hours.toString().padStart(2, '0')}
                             </span>
-                            <span className="text-white/60 px-1">:</span>
-                            <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                            <span className="text-white/60 px-0.5 sm:px-1">:</span>
+                            <span className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
                                 {timeLeft.minutes.toString().padStart(2, '0')}
                             </span>
-                            <span className="text-white/60 px-1">:</span>
-                            <span className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
+                            <span className="text-white/60 px-0.5 sm:px-1">:</span>
+                            <span className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 rounded border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20">
                                 {timeLeft.seconds.toString().padStart(2, '0')}
                             </span>
                         </div>
                     </div>
                 </DialogHeader>
 
-                <form onSubmit={handleSecretDealsSubmit} className="space-y-6 mt-6">
+                <form onSubmit={handleSecretDealsSubmit} className="space-y-4 sm:space-y-6 mt-4 sm:mt-6 px-2 sm:px-4">
                     <div className="text-center">
-                        <label className="text-sm text-white/70 mb-3 block tracking-wider">YOUR PHONE NUMBER</label>
+                        <label className="text-xs sm:text-sm text-white/70 mb-2 sm:mb-3 block tracking-wider">YOUR PHONE NUMBER</label>
                         <Input
                             type="text"
                             inputMode="tel"
@@ -430,18 +431,18 @@ export const SecretDealsDialog = React.memo(() => {
                             value={phoneNumber}
                             onChange={handlePhoneNumberChange}
                             placeholder="+1 (555) 000-0000"
-                            className="bg-black/50 border-white/20 text-white placeholder:text-white/30 text-center text-lg py-4 caret-white mx-auto max-w-xs"
+                            className="bg-black/50 border-white/20 text-white placeholder:text-white/30 text-center text-base sm:text-lg py-3 sm:py-4 caret-white mx-auto w-full max-w-xs"
                             required
                             autoFocus={false}
                         />
                     </div>
 
-                    <div className="flex gap-3 justify-center pb-4">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center pb-2 sm:pb-4">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={handleDismiss}
-                            className="px-6 py-3"
+                            className="px-4 sm:px-6 py-2.5 sm:py-3 w-full sm:w-auto text-sm sm:text-base"
                             disabled={isSubmitting}
                         >
                             Maybe Later
@@ -449,7 +450,7 @@ export const SecretDealsDialog = React.memo(() => {
                         <Button
                             type="submit"
                             variant="cta"
-                            className="px-6 py-3 font-serif text-base tracking-wider font-bold"
+                            className="px-4 sm:px-6 py-2.5 sm:py-3 font-serif text-sm sm:text-base tracking-wider font-bold w-full sm:w-auto"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'JOINING...' : 'CLAIM DEALS'}
