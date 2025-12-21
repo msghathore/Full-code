@@ -1384,9 +1384,9 @@ const Booking = () => {
                 )}
 
                 {/* Horizontal layout: Calendar on left, Time slots on right */}
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Calendar Section - fills container width */}
-                  <div className="w-full md:w-1/2 lg:w-auto lg:min-w-[400px]">
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Calendar Section */}
+                  <div className="w-full lg:w-[55%] lg:max-w-[500px]">
                     <div className="bg-black border border-white/30 rounded-lg p-3 sm:p-4 md:p-5 w-full">
                       <Calendar
                         mode="single"
@@ -1409,7 +1409,7 @@ const Booking = () => {
                   </div>
 
                   {/* Time Slots Section */}
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 min-w-0 lg:min-w-[280px] space-y-3">
                     <div className="flex items-center gap-2 text-sm text-white">
                       <Clock className="h-4 w-4" />
                       <span>Available Times</span>
