@@ -87,7 +87,9 @@ export const SquarePaymentForm = ({
 
   const staffToken = localStorage.getItem('staff_auth_token');
   const isValidStaffToken = staffToken && /^[a-f0-9]{64}$/i.test(staffToken);
-  const isAuthenticated = (isAuthLoaded && isStaffLoaded && isSignedIn && isStaffMember) || isValidStaffToken || allowGuestCheckout;
+
+  // Prioritize guest checkout to avoid auth dependency issues
+  const isAuthenticated = allowGuestCheckout || isValidStaffToken || (isAuthLoaded && isStaffLoaded && isSignedIn && isStaffMember);
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   useEffect(() => {
