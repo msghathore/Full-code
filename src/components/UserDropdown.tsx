@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import {
@@ -11,15 +11,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
 
-const UserDropdown = () => {
+const UserDropdownComponent = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     navigate('/');
-  };
+  }, [signOut, navigate]);
+
+  const handleDashboard = useCallback(() => {
+    navigate('/dashboard');
+  }, [navigate]);
 
   return (
     <DropdownMenu>
@@ -42,7 +46,7 @@ const UserDropdown = () => {
       <DropdownMenuContent className="w-48 bg-black/90 border-white/20 backdrop-blur-xl" align="end">
         <DropdownMenuItem
           className="cursor-pointer focus:bg-white/10 focus:text-white text-white hover:bg-white/10"
-          onClick={() => navigate('/dashboard')}
+          onClick={handleDashboard}
         >
           <User className="mr-2 h-4 w-4" />
           <span>Dashboard</span>
@@ -59,5 +63,8 @@ const UserDropdown = () => {
     </DropdownMenu>
   );
 };
+
+// Wrap with React.memo to prevent unnecessary re-renders
+const UserDropdown = memo(UserDropdownComponent);
 
 export default UserDropdown;

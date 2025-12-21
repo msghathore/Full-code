@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { memo } from 'react';
 
 interface AnimatedUserIconProps {
   className?: string;
@@ -6,7 +7,7 @@ interface AnimatedUserIconProps {
   onClick?: () => void;
 }
 
-export const AnimatedUserIcon = ({ className = '', size = 36, onClick }: AnimatedUserIconProps) => {
+const AnimatedUserIconComponent = ({ className = '', size = 36, onClick }: AnimatedUserIconProps) => {
   return (
     <motion.a
       href="/auth"
@@ -93,5 +94,8 @@ export const AnimatedUserIcon = ({ className = '', size = 36, onClick }: Animate
     </motion.a>
   );
 };
+
+// Wrap with React.memo to prevent unnecessary re-renders
+export const AnimatedUserIcon = memo(AnimatedUserIconComponent);
 
 export default AnimatedUserIcon;

@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 
 export const Footer = React.memo(() => {
-  console.log('Footer rendering');
   const { language, setLanguage, t } = useLanguage();
 
   const footerSections = [{
