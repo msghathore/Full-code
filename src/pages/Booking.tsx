@@ -1385,9 +1385,9 @@ const Booking = () => {
 
                 {/* Horizontal layout: Calendar on left, Time slots on right */}
                 <div className="flex flex-col md:flex-row gap-6">
-                  {/* Calendar Section */}
-                  <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
-                    <div className="bg-black border border-white/30 rounded-lg p-4 sm:p-6 w-full mx-auto md:mx-0">
+                  {/* Calendar Section - fills container width */}
+                  <div className="w-full md:w-1/2 lg:w-auto lg:min-w-[400px]">
+                    <div className="bg-black border border-white/30 rounded-lg p-3 sm:p-4 md:p-5 w-full">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -1397,14 +1397,14 @@ const Booking = () => {
                           today.setHours(0, 0, 0, 0);
                           return date < today;
                         }}
-                        className="rounded-md border-0 bg-transparent text-white [&_[data-selected]]:bg-white [&_[data-selected]]:text-black [&_[data-selected]]:rounded-lg [&_[data-selected]]:font-semibold"
+                        className="w-full rounded-md border-0 bg-transparent text-white [&_[data-selected]]:bg-white [&_[data-selected]]:text-black [&_[data-selected]]:rounded-lg [&_[data-selected]]:font-semibold"
                         classNames={{
                           day_outside: "text-white/50 hover:text-white hover:bg-white/10",
                           day_today: "bg-white text-black font-semibold shadow-[0_0_10px_rgba(255,255,255,0.8)] rounded-md",
                           day: "hover:bg-white/10 focus:bg-white/20 rounded-md transition-all duration-200",
                         }}
                       />
-                      <div className="text-center mt-4 text-sm text-white/70">Select your appointment date</div>
+                      <div className="text-center mt-3 text-sm text-white/70">Select your appointment date</div>
                     </div>
                   </div>
 
