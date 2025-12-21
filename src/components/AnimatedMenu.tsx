@@ -42,6 +42,8 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
   const leftPanelRef = useRef<HTMLDivElement>(null);
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(false);
   const { t } = useLanguage();
   const { settings } = useBusinessSettings();
 
@@ -52,6 +54,16 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
     const mapsUrl = getUniversalMapsUrl(address);
     window.open(mapsUrl, '_blank', 'noopener,noreferrer');
   };
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Build menu items with translations
   const menuItems = useMemo(() => [
@@ -129,6 +141,13 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     }
   ], [t]);
+
+  // Set default selected item to Services when menu opens
+  useEffect(() => {
+    if (isOpen && menuItems.length > 0) {
+      setSelectedItem(menuItems[0].name);
+    }
+  }, [isOpen, menuItems]);
 
   useEffect(() => {
     if (!menuRef.current || !leftPanelRef.current || !rightPanelRef.current) return;
@@ -221,7 +240,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       {/* Left Panel - Menu Items */}
       <div
         ref={leftPanelRef}
-        className="absolute left-0 top-0 h-full w-full md:w-1/3 border-r border-white/10 animate-fade-in relative"
+        className="absolute left-0 top-0 h-full w-[40%] md:w-1/3 border-r border-white/10 animate-fade-in relative"
         style={{
           transform: 'translateX(-100%)',
           background: 'rgba(0, 0, 0, 0.1)',
@@ -241,31 +260,58 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
           className="flex flex-col justify-center h-full px-4 py-20 md:px-16 md:py-0 space-y-3 md:space-y-8"
           onMouseEnter={() => setHoveredItem(null)}
         >
-          {menuItems.map((item, index) => (
-            <div
-              key={item.name}
-              className="menu-item-text group"
-              onMouseEnter={() => setHoveredItem(item.name)}
-              onClick={() => setHoveredItem(hoveredItem === item.name ? null : item.name)}
-            >
-              <Link
-                to={item.href}
-                className="block py-2 md:py-0"
-                onClick={onClose}
+          {menuItems.map((item, index) => {
+            const isSelected = selectedItem === item.name;
+            return (
+              <div
+                key={item.name}
+                className="menu-item-text group"
+                onMouseEnter={() => !isMobile && setHoveredItem(item.name)}
+                onClick={(e) => {
+                  if (isMobile) {
+                    e.preventDefault();
+                    setSelectedItem(item.name);
+                  } else {
+                    setHoveredItem(hoveredItem === item.name ? null : item.name);
+                  }
+                }}
               >
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white hover:luxury-glow transition-all duration-500 cursor-hover leading-tight">
-                  {item.name}
-                </h2>
-              </Link>
-            </div>
-          ))}
+                <Link
+                  to={item.href}
+                  className={`block py-2 md:py-0 px-4 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
+                    isMobile && isSelected
+                      ? 'bg-white text-black'
+                      : ''
+                  }`}
+                  style={isMobile && isSelected ? {
+                    textShadow: '0 0 15px rgba(255,255,255,0.6)',
+                  } : {}}
+                  onClick={(e) => {
+                    if (isMobile) {
+                      e.preventDefault();
+                    } else {
+                      onClose();
+                    }
+                  }}
+                >
+                  <h2 className={`text-2xl sm:text-3xl md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight ${
+                    isMobile && isSelected
+                      ? 'text-black font-semibold'
+                      : 'text-white hover:luxury-glow'
+                  }`}>
+                    {item.name}
+                  </h2>
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Right Panel - Service Cards */}
       <div
         ref={rightPanelRef}
-        className="absolute right-0 top-0 h-full w-full md:w-2/3 overflow-hidden hidden md:block"
+        className="absolute right-0 top-0 h-full w-[60%] md:w-2/3 overflow-hidden"
         style={{
           background: 'rgba(0, 0, 0, 0.1)',
           backdropFilter: 'blur(20px)',
@@ -278,11 +324,11 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
         }}
         onMouseLeave={handleMenuMouseLeave}
       >
-        {hoveredItem && (
+        {(isMobile ? selectedItem : hoveredItem) && (
           <div className="flex flex-col h-full p-4 md:p-8">
             <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
-                {menuItems.find(item => item.name === hoveredItem)?.subItems.map((subItem, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                {menuItems.find(item => item.name === (isMobile ? selectedItem : hoveredItem))?.subItems.map((subItem, index) => (
                   <div
                     key={subItem.name}
                     className="card-item transform translate-y-4 opacity-0"
@@ -381,98 +427,6 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                       </Link>
                     )}
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Mobile Submenu Panel */}
-      <div
-        className="absolute left-0 top-0 h-full w-full md:hidden bg-black/90 backdrop-blur-xl border-r border-white/10"
-        style={{
-          transform: hoveredItem ? 'translateX(0%)' : 'translateX(100%)',
-          transition: 'transform 0.3s ease'
-        }}
-      >
-        {hoveredItem && (
-          <div className="flex flex-col h-full p-4 pt-16">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-serif text-white luxury-glow">{hoveredItem}</h3>
-              <button
-                onClick={() => setHoveredItem(null)}
-                className="text-white hover:text-gray-300 p-2 rounded-full hover:bg-white/10 transition-colors"
-                aria-label="Back to main menu"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <div className="grid grid-cols-1 gap-3">
-                {menuItems.find(item => item.name === hoveredItem)?.subItems.map((subItem, index) => (
-                  (subItem as any).universalMaps ? (
-                    <button
-                      key={subItem.name}
-                      onClick={(e) => {
-                        handleDirectionsClick(e);
-                        onClose();
-                      }}
-                      className="flex items-center space-x-3 p-3 sm:p-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg group min-h-[60px] w-full text-left"
-                    >
-                      <img
-                        src={subItem.image}
-                        alt={subItem.name}
-                        className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md sm:rounded-lg group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-white font-medium group-hover:text-white transition-colors duration-300 text-sm sm:text-base leading-tight truncate">
-                          {subItem.name}
-                        </h4>
-                      </div>
-                    </button>
-                  ) : (subItem as any).external ? (
-                    <a
-                      key={subItem.name}
-                      href={subItem.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={onClose}
-                      className="flex items-center space-x-3 p-3 sm:p-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg group min-h-[60px]"
-                    >
-                      <img
-                        src={subItem.image}
-                        alt={subItem.name}
-                        className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md sm:rounded-lg group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-white font-medium group-hover:text-white transition-colors duration-300 text-sm sm:text-base leading-tight truncate">
-                          {subItem.name}
-                        </h4>
-                      </div>
-                    </a>
-                  ) : (
-                    <Link
-                      key={subItem.name}
-                      to={subItem.href}
-                      onClick={onClose}
-                      className="flex items-center space-x-3 p-3 sm:p-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg group min-h-[60px]"
-                    >
-                      <img
-                        src={subItem.image}
-                        alt={subItem.name}
-                        className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md sm:rounded-lg group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-white font-medium group-hover:text-white transition-colors duration-300 text-sm sm:text-base leading-tight truncate">
-                          {subItem.name}
-                        </h4>
-                      </div>
-                    </Link>
-                  )
                 ))}
               </div>
             </div>
