@@ -192,6 +192,384 @@ Claude has access to these MCP tools and MUST use them proactively:
 
 ---
 
+## 🚀 Background Agent Execution & Parallel Processing
+
+> **Based on 2025 industry best practices for AI agent orchestration**
+
+### Why Use Background Agents?
+
+**Performance Impact:**
+- **50% faster completion** for multi-task workflows ([Skywork AI Research](https://skywork.ai/blog/agent/multi-agent-parallel-execution-running-multiple-ai-agents-simultaneously/))
+- **90.2% improvement** on complex tasks with parallel subagents
+- **14% time reduction** by eliminating sequential blocking
+- Handle **50% more tasks per hour** vs sequential processing
+
+**Productivity Benefits:**
+- Continue chatting while agents work in background
+- Complete independent tasks concurrently
+- Reduce overall workflow time from minutes to seconds
+- Main agent stays responsive for new requests
+
+**Sources:**
+- [Azure AI Agent Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns)
+- [Multi-Agent Parallel Execution Guide](https://skywork.ai/blog/agent/multi-agent-parallel-execution-running-multiple-ai-agents-simultaneously/)
+- [Claude Async Workflows](https://claudefa.st/blog/guide/agents/async-workflows)
+- [Medium: Scale Multi-Agent Systems](https://medium.com/@manojjahgirdar/scale-a-multi-agent-system-effectively-by-parallel-execution-of-agents-acc79a126a0b)
+
+---
+
+### Core Pattern: Orchestrator-Subagent Model
+
+**Claude (Main Agent) = Orchestrator**
+- Manages task routing and coordination
+- Launches specialized subagents for specific jobs
+- Synthesizes results from multiple agents
+- Remains available for user interaction
+
+**Background Agents = Specialized Workers**
+- Each handles ONE specific task
+- Run asynchronously without blocking main agent
+- Report back results when complete
+- Can run in parallel if tasks are independent
+
+**Industry Standard (2025):**
+> "The predominant model features a central orchestrator managing task routing and coordination, while specialized subagents address distinct tasks. In production, stable agents give each subagent one job with the orchestrator handling global planning, delegation, and state."
+> — [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns)
+
+---
+
+### When to Use Background Agents
+
+#### ✅ USE Background Agents For:
+
+1. **Independent Tasks** (can run in parallel)
+   - Multiple file searches across different directories
+   - Security fixes in separate files (rotate API keys, fix configs)
+   - API calls to different services
+   - Database migrations + npm installs
+   - Code linting + running tests
+   - Generating multiple reports
+
+2. **Long-Running Operations**
+   - `npm install` / `npm audit fix`
+   - Git history cleanup with filter-repo
+   - Large file processing or transformations
+   - Deployment monitoring and verification
+   - Running comprehensive E2E test suites
+   - Building multiple environments
+
+3. **Research & Analysis**
+   - Searching documentation from multiple sources
+   - Gathering data from different APIs
+   - Analyzing multiple code files for patterns
+   - Verifying deployments across environments
+   - Security audits across multiple layers
+
+#### ❌ DON'T Use Background Agents For:
+
+1. **Dependent Tasks** (must run sequentially)
+   - Edit file → Build → Test → Deploy
+   - Create database → Apply migrations → Seed data
+   - Install package → Import in code → Use component
+   - Fix code → Run tests → Verify pass
+
+2. **Quick Operations** (faster to do directly)
+   - Single file edits
+   - Simple grep searches
+   - Reading one file
+   - Running a single bash command
+   - Taking a screenshot
+
+3. **Interactive Tasks** (require user input)
+   - Asking clarifying questions
+   - Getting user approval for changes
+   - Requesting credentials or secrets
+   - Selecting from multiple options
+
+---
+
+### Batching Strategy: Run 2 Agents at a Time
+
+**Why limit to 2 concurrent agents?**
+- **Prevents resource contention** - Each agent needs CPU/memory
+- **Avoids system lag** - Too many parallel processes slow everything
+- **Easier to monitor** - Track 2 agents vs 6 agents
+- **Better error handling** - Issues are easier to debug
+- **Balances speed with stability** - Optimal parallelization
+
+**Optimal Batching Pattern:**
+```
+Batch 1: Launch 2 agents → Wait for completion → Check results
+Batch 2: Launch 2 agents → Wait for completion → Check results
+Batch 3: Launch 2 agents → Wait for completion → Check results
+
+NOT RECOMMENDED: Launch all 6 agents at once (causes lag and crashes)
+```
+
+**Real-World Example: Security Fix Workflow**
+```
+TASK: Fix 6 security issues across codebase
+
+Batch 1 (Critical Secrets - 2 agents):
+  Agent 1: Remove hardcoded Square token from payment function
+  Agent 2: Delete EMAIL file containing exposed Resend API key
+  → Wait ~2 minutes for completion
+  → Verify both succeeded
+
+Batch 2 (Configuration - 2 agents):
+  Agent 3: Fix vercel.json (remove hardcoded API keys)
+  Agent 4: Run npm audit fix (resolve vulnerabilities)
+  → Wait ~3 minutes for completion
+  → Check for errors
+
+Batch 3 (Cleanup - 2 agents):
+  Agent 5: Clean Git history (remove exposed secrets)
+  Agent 6: Add security headers to vercel.json
+  → Wait ~2 minutes for completion
+  → Final verification
+
+Total Time: ~7 minutes
+vs Sequential: ~15 minutes (53% faster!)
+```
+
+---
+
+### How to Launch Background Agents
+
+#### Using the Task Tool with run_in_background
+
+**Single Background Agent:**
+```
+Task tool parameters:
+- subagent_type: "general-purpose" (or specialized type)
+- description: "Short 3-5 word summary"
+- prompt: "Detailed task instructions"
+- run_in_background: true  ← KEY: Makes it async
+```
+
+**Multiple Agents in Parallel (Batch):**
+Send a SINGLE message with MULTIPLE Task tool calls:
+```
+Message contains:
+  Task 1 with run_in_background: true
+  Task 2 with run_in_background: true
+
+Both launch immediately in parallel
+```
+
+#### Checking Agent Status
+
+**Non-Blocking Check (peek at progress):**
+```
+TaskOutput with:
+- task_id: (agent ID from launch response)
+- block: false  ← Returns immediately
+- Shows current status without waiting
+```
+
+**Blocking Check (wait for completion):**
+```
+TaskOutput with:
+- task_id: (agent ID)
+- block: true  ← Waits until agent finishes
+- timeout: 120000 (2 minutes)
+```
+
+**Best Practice:**
+- Use `block: false` to check progress while working
+- Use `block: true` when you need the result to continue
+- Always set reasonable timeouts (30s-120s typical)
+
+---
+
+### Agent Communication Patterns
+
+#### 1. Fire-and-Forget (Non-Critical)
+```
+Launch agent → Continue working → Check results later
+Example: Background build, non-critical analysis
+```
+
+#### 2. Monitored Execution (Standard)
+```
+Launch batch → Continue chatting → Check progress → Get results → Launch next batch
+Example: Most development tasks
+```
+
+#### 3. Synchronized Execution (Critical)
+```
+Launch batch → Wait for completion → Verify results → Then proceed
+Example: Security fixes, deployment verification
+```
+
+---
+
+### Best Practices for Background Agents
+
+#### DO:
+✅ **Launch independent tasks in parallel** (batch of 2)
+✅ **Keep main agent available** for user chat
+✅ **Use TodoWrite** to track batch progress
+✅ **Set descriptive names** (helps debugging)
+✅ **Include error handling** in agent prompts
+✅ **Verify results** before launching next batch
+✅ **Document what each agent does** in description
+✅ **Use timeouts** to prevent hanging
+
+#### DON'T:
+❌ **Launch >2 agents** simultaneously (causes lag)
+❌ **Launch dependent tasks** in parallel
+❌ **Forget to check results** before continuing
+❌ **Use background agents for quick tasks**
+❌ **Block the main agent** unnecessarily
+❌ **Launch agents without clear goals**
+❌ **Ignore agent failures** (check status!)
+
+---
+
+### Performance Monitoring
+
+#### Key Metrics to Track:
+1. **Completion Time** - How long did batch take?
+2. **Success Rate** - Did all agents complete successfully?
+3. **Error Rate** - How many failed and why?
+4. **Speedup** - Sequential time vs parallel time
+
+#### Example Tracking:
+```
+Batch 1 Started: 10:00:00
+Batch 1 Complete: 10:02:15 (2min 15sec)
+  ✅ Agent 1: Success (removed token)
+  ✅ Agent 2: Success (deleted EMAIL)
+
+Batch 2 Started: 10:02:20
+Batch 2 Complete: 10:05:30 (3min 10sec)
+  ✅ Agent 3: Success (fixed vercel.json)
+  ⚠️ Agent 4: Partial (11 vulns fixed, 24 remain)
+
+Total: 5min 30sec (vs 12min sequential = 54% faster)
+```
+
+---
+
+### Common Patterns by Task Type
+
+#### Code Changes (Parallel)
+```
+Agent 1: Fix file A
+Agent 2: Fix file B
+→ Independent files = safe to parallelize
+```
+
+#### Build Pipeline (Sequential)
+```
+Agent 1: Fix code
+→ Wait for completion
+Agent 2: Run build
+→ Wait for completion
+Agent 3: Run tests
+→ Sequential due to dependencies
+```
+
+#### Multi-Service Deployment (Parallel)
+```
+Agent 1: Deploy to Vercel
+Agent 2: Deploy Supabase Edge Functions
+→ Independent services = safe to parallelize
+```
+
+#### Security Audit (Mixed)
+```
+Batch 1 (Parallel):
+  Agent 1: Scan frontend code
+  Agent 2: Scan backend code
+
+Batch 2 (Sequential - uses Batch 1 results):
+  Agent 3: Generate combined report
+  Agent 4: Create fix recommendations
+```
+
+---
+
+### Error Handling
+
+**If an agent fails:**
+1. Check the error message in TaskOutput
+2. Review agent's attempted actions
+3. Fix the underlying issue
+4. Relaunch only the failed agent (not entire batch)
+5. Verify success before proceeding
+
+**Common Failures:**
+- **Timeout** → Increase timeout or split task
+- **Tool Error** → Fix tool parameters
+- **Dependency Missing** → Run prerequisite first
+- **Permission Error** → Check file access
+- **Resource Exhaustion** → Reduce batch size
+
+---
+
+### Integration with TodoWrite
+
+**Track batch progress:**
+```
+TodoWrite with todos:
+  1. [in_progress] Batch 1: Fix critical secrets (Agent 1 & 2)
+  2. [pending] Batch 2: Update configs (Agent 3 & 4)
+  3. [pending] Batch 3: Final cleanup (Agent 5 & 6)
+
+Update after each batch:
+  1. [completed] Batch 1: Fix critical secrets ✅
+  2. [in_progress] Batch 2: Update configs (Agent 3 & 4)
+  3. [pending] Batch 3: Final cleanup (Agent 5 & 6)
+```
+
+---
+
+### Advanced: Dynamic Batching
+
+**Adaptive batch sizes based on task complexity:**
+```
+Simple tasks (file edits): Batch of 3
+Medium tasks (npm install): Batch of 2
+Complex tasks (git rebase): Batch of 1 (sequential)
+```
+
+**Auto-scaling based on system resources:**
+```
+If CPU < 50% and Memory < 70%:
+  → Increase batch size to 3
+Else:
+  → Stick with batch size of 2
+```
+
+---
+
+### Summary: The Parallel Processing Advantage
+
+**Before (Sequential):**
+```
+Task 1 (2 min) → Task 2 (3 min) → Task 3 (2 min) → Task 4 (3 min) = 10 minutes total
+Main agent BLOCKED during entire process
+User must WAIT for completion
+```
+
+**After (Parallel Batches of 2):**
+```
+Batch 1: Task 1 + Task 2 (3 min in parallel)
+Batch 2: Task 3 + Task 4 (3 min in parallel)
+= 6 minutes total (40% faster!)
+
+Main agent AVAILABLE for chat
+User can CONTINUE working
+```
+
+**The Future is Parallel:**
+> "2025 is positioning parallel execution as a fundamental pattern for scaling AI agent systems effectively in production environments."
+> — Industry research on [agentic AI workflow patterns](https://www.marktechpost.com/2025/08/09/9-agentic-ai-workflow-patterns-transforming-ai-agents-in-2025/)
+
+---
+
 ## Tech Stack
 
 | Category | Technology |
@@ -546,4 +924,4 @@ VITE_CLERK_PUBLISHABLE_KEY=
 
 ---
 
-*Last updated: December 20, 2025*
+*Last updated: December 20, 2025 - Added comprehensive parallel agent execution guide*
