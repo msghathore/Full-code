@@ -116,7 +116,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
       <div style="font-family: monospace; max-width: 300px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">
           <h2 style="margin: 0;">ZAVIRA SALON</h2>
-          <p style="margin: 5px 0;">123 Beauty Street, Toronto, ON</p>
+          <p style="margin: 5px 0;">283 Tache Avenue, Winnipeg, MB, Canada</p>
           <p style="margin: 5px 0;">(431) 816-3330</p>
         </div>
         

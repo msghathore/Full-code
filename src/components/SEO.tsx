@@ -48,11 +48,11 @@ const SEO: React.FC<SEOProps> = ({
     image: fullImage,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '123 Beauty Street',
-      addressLocality: 'Your City',
-      addressRegion: 'Your State',
-      postalCode: '12345',
-      addressCountry: 'US',
+      streetAddress: '283 Tache Avenue',
+      addressLocality: 'Winnipeg',
+      addressRegion: 'MB',
+      postalCode: 'R2H 2C2',
+      addressCountry: 'CA',
     },
     contactPoint: {
       '@type': 'ContactPoint',
@@ -73,8 +73,8 @@ const SEO: React.FC<SEOProps> = ({
       '@type': 'GeoCircle',
       geoMidpoint: {
         '@type': 'GeoCoordinates',
-        latitude: 40.7128,
-        longitude: -74.0060,
+        latitude: 49.8873,
+        longitude: -97.1476,
       },
       geoRadius: 50000,
     },
