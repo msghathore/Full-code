@@ -1854,31 +1854,88 @@ All colors MUST be HSL.
   }
 }
 
-/* Calendar Alignment Fix - Ensure dates align properly under day headers */
+/* Calendar UI - Following 2025 Best Practices */
+/* Reference: https://www.eleken.co/blog-posts/calendar-ui */
+/* Reference: https://pageflows.com/resources/exploring-calendar-design/ */
+
+/* Remove excessive padding, make calendar fill container */
+.rdp {
+  --rdp-cell-size: 44px; /* Minimum touch target size */
+  --rdp-accent-color: #7c3aed; /* Brand violet */
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Month header - centered with proper spacing */
 .rdp-caption {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  width: 100% !important;
+  padding: 8px 0 16px 0 !important;
+  margin-bottom: 8px !important;
 }
 
 .rdp-caption_label {
-  text-align: center !important;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
 }
 
+/* Table fills full width */
 .rdp-table {
   width: 100% !important;
-  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  border-collapse: separate !important;
 }
 
-.rdp-weekday,
-.rdp-day {
-  width: 14.285% !important; /* 100% / 7 columns */
+/* Day headers - proper spacing and sizing */
+.rdp-head_cell {
+  width: calc(100% / 7) !important;
   text-align: center !important;
+  padding: 8px 0 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
 }
 
-.rdp-day button {
-  margin: 0 auto !important;
-  width: 36px !important;
-  height: 36px !important;
+/* Day cells - fill width evenly with spacing */
+.rdp-cell {
+  width: calc(100% / 7) !important;
+  text-align: center !important;
+  padding: 4px !important;
+}
+
+/* Day buttons - responsive sizing with minimum touch target */
+.rdp-day {
+  width: 100% !important;
+  height: var(--rdp-cell-size) !important;
+  min-height: 44px !important;
+  font-size: 0.9375rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.rdp-day:hover:not(.rdp-day_disabled) {
+  background-color: rgba(124, 58, 237, 0.1) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Responsive sizing for larger screens */
+@media (min-width: 640px) {
+  .rdp {
+    --rdp-cell-size: 48px;
+  }
+
+  .rdp-caption_label {
+    font-size: 1.25rem !important;
+  }
+
+  .rdp-day {
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rdp {
+    --rdp-cell-size: 52px;
+  }
 }

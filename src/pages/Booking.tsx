@@ -1387,7 +1387,7 @@ const Booking = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Calendar Section */}
                   <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
-                    <div className="bg-black border border-white/30 rounded-lg p-3 sm:p-4 w-full max-w-[320px] mx-auto md:mx-0">
+                    <div className="bg-black border border-white/30 rounded-lg p-4 sm:p-6 w-full mx-auto md:mx-0">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -1404,7 +1404,7 @@ const Booking = () => {
                           day: "hover:bg-white/10 focus:bg-white/20 rounded-md transition-all duration-200",
                         }}
                       />
-                      <div className="text-center mt-2 text-sm text-white/70">Select your appointment date</div>
+                      <div className="text-center mt-4 text-sm text-white/70">Select your appointment date</div>
                     </div>
                   </div>
 
