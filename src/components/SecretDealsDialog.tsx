@@ -387,18 +387,18 @@ export const SecretDealsDialog = React.memo(() => {
             <DialogContent
                 className="
                     frosted-glass border-white/20 z-[1200] shadow-2xl shadow-white/20
-                    fixed bottom-0 left-0 right-0 w-full max-w-none rounded-t-2xl rounded-b-none
-                    sm:static sm:bottom-auto sm:left-auto sm:right-auto sm:w-[95vw] sm:max-w-md sm:mx-auto sm:mt-10 sm:rounded-xl
+                    fixed bottom-0 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] rounded-t-2xl rounded-b-none
+                    sm:static sm:bottom-auto sm:left-auto sm:translate-x-0 sm:w-[95vw] sm:max-w-md sm:mx-auto sm:mt-10 sm:rounded-xl
                     md:w-[85vw] md:max-w-lg md:mt-16
                     lg:w-[70vw] lg:max-w-xl lg:mt-20
                     animate-in slide-in-from-bottom sm:slide-in-from-top duration-300
                 "
             >
-                <DialogHeader className="text-center px-4 sm:px-6 md:px-8">
-                    <DialogTitle className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light text-white mb-3 sm:mb-4 text-center w-full">
+                <DialogHeader className="text-center px-6 sm:px-8 md:px-10">
+                    <DialogTitle className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-light text-white mb-3 sm:mb-4 text-center w-full">
                         SECRET DEALS
                     </DialogTitle>
-                    <div className="text-white/80 text-base lg:text-lg leading-relaxed text-center px-2">
+                    <div className="text-white/80 text-sm sm:text-base lg:text-lg leading-relaxed text-center px-4">
                         Join our exclusive VIP list and unlock <span className="font-bold">50% OFF</span> on premium services,
                         <span className="font-bold"> free upgrades</span>, and <span className="font-bold">early access</span> to new treatments.
                         <br /><br />
@@ -421,7 +421,7 @@ export const SecretDealsDialog = React.memo(() => {
                     </div>
                 </DialogHeader>
 
-                <form onSubmit={handleSecretDealsSubmit} className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+                <form onSubmit={handleSecretDealsSubmit} className="space-y-4 sm:space-y-6 mt-4 sm:mt-6 px-4 sm:px-0">
                     <div className="text-center">
                         <label className="text-xs sm:text-sm text-white/70 mb-2 sm:mb-3 block tracking-wider">YOUR PHONE NUMBER</label>
                         <Input

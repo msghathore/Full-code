@@ -122,9 +122,8 @@ const VideoHero = React.memo(() => {
           'Content-Type': 'application/json',
         },
       });
-      console.log('Book Now API response:', response.status);
     } catch (error) {
-      console.log('Book Now API call failed (expected for mock):', error);
+      // Silent fail for mock API
     }
     // Navigate to booking page
     window.location.href = '/booking';
@@ -133,12 +132,11 @@ const VideoHero = React.memo(() => {
   // Recovery function for stalled video
   const recoverFromStall = useCallback((video: HTMLVideoElement) => {
     if (recoveryAttemptRef.current >= 3) {
-      console.warn('🎥 VideoHero: Max recovery attempts reached, video may not play correctly');
+      console.warn('🎥 VideoHero: Max recovery attempts reached');
       return;
     }
 
     recoveryAttemptRef.current++;
-    console.log(`🎥 VideoHero: Attempting recovery (attempt ${recoveryAttemptRef.current})`);
 
     // Try different recovery strategies
     if (recoveryAttemptRef.current === 1) {
@@ -166,8 +164,6 @@ const VideoHero = React.memo(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    console.log('🎥 VideoHero: Starting video initialization for all browsers (Edge, Safari, Chrome, Firefox)');
-
     let stallCheckInterval: NodeJS.Timeout | null = null;
     let isPlaying = false;
 
@@ -181,13 +177,12 @@ const VideoHero = React.memo(() => {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            console.log('🎥 VideoHero: ✅ Video playing successfully');
             isPlaying = true;
             stallCountRef.current = 0;
             recoveryAttemptRef.current = 0;
           })
           .catch((error) => {
-            console.warn('🎥 VideoHero: ⚠️ Autoplay blocked, will play on interaction:', error.message);
+            console.warn('🎥 VideoHero: Autoplay blocked:', error.message);
           });
       }
     };
@@ -218,16 +213,15 @@ const VideoHero = React.memo(() => {
 
     // Event handlers
     const handleCanPlay = () => {
-      console.log('🎥 VideoHero: canplay event fired');
       attemptPlay();
     };
 
     const handleLoadedData = () => {
-      console.log('✅ VideoHero: Video loaded successfully');
+      // Video loaded successfully
     };
 
     const handleStalled = () => {
-      console.warn('🎥 VideoHero: Video stalled event - browser stopped fetching media');
+      console.warn('🎥 VideoHero: Video stalled');
       // Give it a moment, then try recovery
       setTimeout(() => {
         if (video && video.paused) {
@@ -237,11 +231,10 @@ const VideoHero = React.memo(() => {
     };
 
     const handleWaiting = () => {
-      console.log('🎥 VideoHero: Video waiting for more data');
+      // Video waiting for more data
     };
 
     const handlePlaying = () => {
-      console.log('🎥 VideoHero: Video is now playing');
       isPlaying = true;
       stallCountRef.current = 0;
     };
@@ -249,7 +242,6 @@ const VideoHero = React.memo(() => {
     const handlePause = () => {
       // Video paused - might be due to buffer underrun in Edge
       if (!video.ended) {
-        console.log('🎥 VideoHero: Video paused unexpectedly, attempting to resume');
         setTimeout(() => {
           if (video && video.paused && !video.ended) {
             video.play().catch(() => {});
@@ -260,7 +252,6 @@ const VideoHero = React.memo(() => {
 
     const handleEnded = () => {
       // For looping video, this shouldn't fire, but just in case
-      console.log('🎥 VideoHero: Video ended, restarting');
       video.currentTime = 0;
       video.play().catch(() => {});
     };
@@ -283,9 +274,7 @@ const VideoHero = React.memo(() => {
     const handleUserInteraction = () => {
       if (video && video.paused) {
         video.muted = true;
-        video.play().then(() => {
-          console.log('🎥 VideoHero: ✅ Video playing after user interaction');
-        }).catch(() => {});
+        video.play().catch(() => {});
       }
     };
 
@@ -336,12 +325,12 @@ const VideoHero = React.memo(() => {
   }, [recoverFromStall]);
 
   const handleVideoError = () => {
-    console.error('❌ VideoHero: Video failed to load, switching to fallback');
+    console.error('❌ VideoHero: Video failed to load');
     setVideoError(true);
   };
 
   const handleVideoLoad = () => {
-    console.log('✅ VideoHero: Video loaded successfully');
+    // Video loaded successfully
   };
 
   if (videoError) {
@@ -412,6 +401,43 @@ const VideoHero = React.memo(() => {
       {/* Single optimized overlay */}
       <div className="absolute inset-0 bg-black/40 z-5" />
 
+      {/* ZAVIRA Hero Logo - Centered on Video - ALWAYS VISIBLE */}
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{
+          zIndex: 30,
+          paddingBottom: '200px'
+        }}
+      >
+        <motion.div
+          className="text-center px-4 w-full max-w-[95vw]"
+          initial={{ opacity: 0, y: 30, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
+          <motion.h1
+            className="text-[5.5rem] sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[15rem] font-serif font-light text-white luxury-glow"
+            style={{
+              textShadow: '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.6)',
+              letterSpacing: '0.05em',
+              WebkitTextStroke: '2px rgba(255,255,255,0.5)',
+              fontWeight: 300,
+              filter: 'drop-shadow(0 0 30px rgba(255,255,255,1))'
+            }}
+            animate={{
+              textShadow: [
+                '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8)',
+                '0 0 30px rgba(255,255,255,1), 0 0 60px rgba(255,255,255,1)',
+                '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8)',
+              ],
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            ZAVIRA
+          </motion.h1>
+        </motion.div>
+      </div>
+
       {/* Floating decorative elements */}
       <motion.div
         className="absolute top-20 left-10 w-2 h-2 rounded-full bg-white/40 blur-sm z-10"
@@ -434,7 +460,7 @@ const VideoHero = React.memo(() => {
       
       {/* Hero Buttons - Bottom Center with Framer Motion */}
       <motion.div
-        className="absolute bottom-44 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20 flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full px-6 justify-center max-w-sm sm:max-w-none"
+        className="absolute bottom-20 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20 flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full px-6 justify-center max-w-sm sm:max-w-none"
         variants={staggerContainer}
         initial="initial"
         animate="animate"
