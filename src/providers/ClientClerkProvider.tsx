@@ -14,8 +14,6 @@ export const ClientClerkProvider: React.FC<ClientClerkProviderProps> = ({ childr
   return (
     <ClerkProvider
       publishableKey={publishableKey}
-      domain="welcomed-crane-15.clerk.accounts.dev"
-      isSatellite={false}
       appearance={{
         elements: {
           formButtonPrimary: 'bg-violet-600 hover:bg-violet-700',

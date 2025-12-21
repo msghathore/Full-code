@@ -6,19 +6,15 @@ interface StaffClerkProviderProps {
 }
 
 export const StaffClerkProvider: React.FC<StaffClerkProviderProps> = ({ children }) => {
-  const publishableKey = import.meta.env.VITE_STAFF_CLERK_PUBLISHABLE_KEY || 'pk_test_dmlhYmxlLWJlYWdsZS00LmNsZXJrLmFjY291bnRzLmRldiQ'; // fallback to .env value
-  
-  // Only log warning if key is truly missing, don't crash the server
+  const publishableKey = import.meta.env.VITE_STAFF_CLERK_PUBLISHABLE_KEY;
+
   if (!publishableKey) {
-    console.warn('Missing VITE_STAFF_CLERK_PUBLISHABLE_KEY. Staff authentication may not work properly.');
-    return <>{children}</>; // Return children without ClerkProvider if key is missing
+    throw new Error('Missing required environment variable VITE_STAFF_CLERK_PUBLISHABLE_KEY. Please check your .env file and ensure you have configured your Clerk publishable key for staff authentication.');
   }
 
   return (
     <ClerkProvider
       publishableKey={publishableKey}
-      domain="viable-beagle-4.clerk.accounts.dev"
-      isSatellite={false}
       appearance={{
         elements: {
           formButtonPrimary: 'bg-amber-600 hover:bg-amber-700',
