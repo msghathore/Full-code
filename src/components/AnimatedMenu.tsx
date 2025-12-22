@@ -149,6 +149,26 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
     }
   }, [isOpen, menuItems]);
 
+  // Prevent background scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (!menuRef.current || !leftPanelRef.current || !rightPanelRef.current) return;
 
