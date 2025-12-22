@@ -294,11 +294,16 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                     }
                   }}
                 >
-                  <h2 className={`text-base xs:text-lg sm:text-2xl md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight ${
-                    isMobile && isSelected
-                      ? 'text-black font-semibold'
-                      : 'text-white hover:luxury-glow'
-                  }`}>
+                  <h2
+                    className={`md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight ${
+                      isMobile && isSelected
+                        ? 'text-black font-semibold'
+                        : 'text-white hover:luxury-glow'
+                    }`}
+                    style={!isMobile ? {} : {
+                      fontSize: 'clamp(0.875rem, 4vw, 1.5rem)'
+                    }}
+                  >
                     {item.name}
                   </h2>
                 </Link>
