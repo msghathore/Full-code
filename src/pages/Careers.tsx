@@ -13,6 +13,15 @@ import { submitJobApplication } from '@/lib/careers-api';
 import { scrollIntoViewFast } from '@/lib/utils';
 import { scrollToPosition, scrollToElement } from '@/components/animations';
 
+const availablePositions = [
+  'Nail Tech',
+  'Tattoo Artist',
+  'Massage Therapist',
+  'Esthetician',
+  'Medical Esthetician',
+  'Hairstylist'
+];
+
 export default function Careers() {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -224,7 +233,7 @@ export default function Careers() {
             {/* Why Choose Zavira */}
             <div className="frosted-glass border border-white/10 rounded-2xl p-5 md:p-5 hover:border-white/30 transition-all duration-500">
               <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4">Why Choose Zavira?</h2>
-              <div className="space-y-4 md:space-y-1.5">
+              <div className="space-y-4 md:space-y-5">
                 <div className="flex items-start space-x-2">
                   <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <DollarSign className="w-4 h-4 text-white drop-shadow-lg" />
@@ -268,14 +277,7 @@ export default function Careers() {
             <div id="openings" className="frosted-glass border border-white/10 rounded-2xl p-5 md:p-5 hover:border-white/30 transition-all duration-500 scroll-mt-24">
               <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4">Current Opportunities</h2>
               <div className="space-y-3 md:space-y-1.5">
-                {[
-                  'Nail Tech',
-                  'Tattoo Artist',
-                  'Massage Therapist',
-                  'Esthetician',
-                  'Medical Esthetician',
-                  'Hairstylist'
-                ].map((position) => (
+                {availablePositions.map((position) => (
                   <div key={position} className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
                     <div>
                       <h3 className="text-xs md:text-sm font-semibold">{position}</h3>
@@ -283,9 +285,12 @@ export default function Careers() {
                     </div>
                     <Button
                       onClick={() => handleApplyClick(position)}
-                      className="bg-green-400 hover:bg-green-500 text-black font-semibold px-2.5 py-1 text-xs rounded-md transition-colors"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-2.5 py-1 text-xs rounded-md transition-all"
+                      style={{
+                        boxShadow: '0 0 15px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+                      }}
                     >
-                      Apply
+                      Click to Apply Now
                     </Button>
                   </div>
                 ))}
@@ -346,12 +351,36 @@ export default function Careers() {
                   </div>
                   <div>
                     <label className="text-xs text-white/70 mb-1 block tracking-wider">POSITION APPLYING FOR</label>
-                    <Input
-                      type="text"
+                    <Select
                       value={formData.position}
-                      readOnly
-                      className="bg-black/30 border-white/20 text-white h-10 rounded-lg cursor-not-allowed"
-                    />
+                      onValueChange={(value) => {
+                        handleInputChange('position', value);
+                        setSelectedJob(value);
+                      }}
+                      required
+                    >
+                      <SelectTrigger className="bg-black/50 border-white/20 text-white h-10 rounded-lg">
+                        <SelectValue placeholder="Select position" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-black border-white/20 rounded-lg">
+                        {availablePositions.map((position) => (
+                          <SelectItem
+                            key={position}
+                            value={position}
+                            className="text-white hover:bg-white/10 focus:bg-emerald-500/20 focus:text-white data-[state=checked]:bg-emerald-500/30"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span>{position}</span>
+                              {formData.position === position && (
+                                <span className="text-emerald-400" style={{
+                                  textShadow: '0 0 8px rgba(16, 185, 129, 0.8)'
+                                }}>✓</span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
