@@ -53,11 +53,11 @@ const StaffApp = lazy(() => import("./staff-app.tsx"));
 const Settings = lazy(() => import("./pages/Settings"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 const Inventory = lazy(() => import("./pages/Inventory"));
-// Group Booking Pages
-const GroupBooking = lazy(() => import("./pages/GroupBooking"));
-const GroupBookingConfirmation = lazy(() => import("./pages/GroupBookingConfirmation"));
-const GroupBookingJoin = lazy(() => import("./pages/GroupBookingJoin"));
-const GroupBookingCheckout = lazy(() => import("./pages/GroupBookingCheckout"));
+// Group Booking Pages - REMOVED: Group booking is now integrated in the main /booking page
+// const GroupBooking = lazy(() => import("./pages/GroupBooking"));
+// const GroupBookingConfirmation = lazy(() => import("./pages/GroupBookingConfirmation"));
+// const GroupBookingJoin = lazy(() => import("./pages/GroupBookingJoin"));
+// const GroupBookingCheckout = lazy(() => import("./pages/GroupBookingCheckout"));
 const Team = lazy(() => import("./pages/Team"));
 
 const queryClient = new QueryClient();
@@ -119,11 +119,11 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
             {/* COMMUNITY PAGE DISABLED - Remove comment to re-enable when ready */}
             {/* <Route path="/community" element={<PageTransition><Community /></PageTransition>} /> */}
 
-            {/* Group Booking Routes */}
-            <Route path="/group-booking" element={<PageTransition><GroupBooking /></PageTransition>} />
-            <Route path="/group-booking/confirmation/:shareCode" element={<PageTransition><GroupBookingConfirmation /></PageTransition>} />
-            <Route path="/group-booking/join/:shareCode" element={<PageTransition><GroupBookingJoin /></PageTransition>} />
-            <Route path="/group-booking/checkout/:shareCode" element={<PageTransition><GroupBookingCheckout /></PageTransition>} />
+            {/* Group Booking Routes - REMOVED: Group booking is now integrated in the main /booking page with ?mode=group parameter */}
+            {/* <Route path="/group-booking" element={<PageTransition><GroupBooking /></PageTransition>} /> */}
+            {/* <Route path="/group-booking/confirmation/:shareCode" element={<PageTransition><GroupBookingConfirmation /></PageTransition>} /> */}
+            {/* <Route path="/group-booking/join/:shareCode" element={<PageTransition><GroupBookingJoin /></PageTransition>} /> */}
+            {/* <Route path="/group-booking/checkout/:shareCode" element={<PageTransition><GroupBookingCheckout /></PageTransition>} /> */}
 
             {/* Staff Application Routes - Rendered via StaffApp component */}
             <Route path="/staff/*" element={<StaffApp />} />

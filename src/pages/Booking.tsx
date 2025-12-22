@@ -534,6 +534,12 @@ const Booking = () => {
     const serviceParam = searchParams.get('service');
     if (serviceParam) setSelectedServices([serviceParam]);
 
+    // Check for mode parameter in URL and set booking mode
+    const modeParam = searchParams.get('mode');
+    if (modeParam === 'group' || modeParam === 'stylist' || modeParam === 'service') {
+      setBookingMode(modeParam as BookingMode);
+    }
+
     setDataLoading(false);
   };
 
