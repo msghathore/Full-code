@@ -278,7 +278,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
               >
                 <Link
                   to={item.href}
-                  className={`block py-2 md:py-0 px-2 sm:px-3 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
+                  className={`block py-1.5 md:py-0 px-1.5 sm:px-3 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
                     isMobile && isSelected
                       ? 'bg-white text-black'
                       : ''
@@ -301,7 +301,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                         : 'text-white hover:luxury-glow'
                     }`}
                     style={!isMobile ? {} : {
-                      fontSize: 'clamp(0.875rem, 4vw, 1.5rem)'
+                      fontSize: 'clamp(0.7rem, 2.5vw, 1.1rem)'
                     }}
                   >
                     {item.name}
