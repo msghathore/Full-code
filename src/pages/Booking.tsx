@@ -1828,23 +1828,23 @@ const Booking = () => {
                 exit="exit"
                 className="space-y-6"
               >
-                <div className="text-center">
+                <div className="text-center px-2">
                   <motion.h3
-                    className="text-xl md:text-2xl font-serif luxury-glow mb-2"
+                    className="text-lg sm:text-xl md:text-2xl font-serif luxury-glow mb-2"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
                     {bookingMode === 'group' ? 'Review & Pay' : 'Review & Pay'}
                   </motion.h3>
-                  <p className="text-white/60 text-sm">Please review your booking details and complete payment</p>
+                  <p className="text-white/60 text-xs sm:text-sm">Please review your booking details and complete payment</p>
                 </div>
 
                 {/* Two-column layout: Summary on left, Payment on right */}
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6 max-w-6xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto">
                   {/* Left Column - Booking Summary */}
-                  <div className="frosted-glass border border-white/10 rounded-lg p-6 space-y-4">
-                    <h4 className="text-white font-semibold text-lg flex items-center justify-between">
+                  <div className="frosted-glass border border-white/10 rounded-lg p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
+                    <h4 className="text-white font-semibold text-base sm:text-lg flex items-center justify-between">
                       Booking Summary
                     </h4>
 
@@ -2088,9 +2088,9 @@ const Booking = () => {
                   </div>
 
                   {/* Right Column - Payment */}
-                  <div className="frosted-glass border border-white/10 rounded-lg p-6 space-y-4">
-                    <h4 className="text-white font-semibold text-lg flex items-center gap-2">
-                      <CreditCard className="h-5 w-5" />
+                  <div className="frosted-glass border border-white/10 rounded-lg p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
+                    <h4 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 sm:h-5 sm:w-5" />
                       Secure Payment
                     </h4>
 
@@ -2100,30 +2100,30 @@ const Booking = () => {
                         const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
                         const depositAmount = total * 0.5;
                         return (
-                          <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                            <div className="flex justify-between text-white text-sm">
-                              <span>Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
-                              <span>${subtotal.toFixed(2)}</span>
+                          <div className="bg-white/5 rounded-lg p-2.5 sm:p-3 md:p-4 space-y-1.5 sm:space-y-2">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
+                              <span className="truncate mr-2">Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
+                              <span className="whitespace-nowrap">${subtotal.toFixed(2)}</span>
                             </div>
                             {discountPercent > 0 && (
-                              <div className="flex justify-between text-green-400 text-sm">
-                                <span>Group Discount ({discountPercent}%)</span>
-                                <span>-${discount.toFixed(2)}</span>
+                              <div className="flex justify-between text-green-400 text-xs sm:text-sm">
+                                <span className="truncate mr-2">Group Discount ({discountPercent}%)</span>
+                                <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
                               </div>
                             )}
-                            <Separator className="bg-white/10 my-2" />
-                            <div className="flex justify-between text-white text-sm">
+                            <Separator className="bg-white/10 my-1 sm:my-2" />
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span>Total Price:</span>
-                              <span>${total.toFixed(2)}</span>
+                              <span className="whitespace-nowrap">${total.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-white text-sm">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span>Deposit (50%):</span>
-                              <span>${depositAmount.toFixed(2)}</span>
+                              <span className="whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
-                            <Separator className="bg-white/10 my-2" />
-                            <div className="flex justify-between text-white font-semibold text-lg">
+                            <Separator className="bg-white/10 my-1 sm:my-2" />
+                            <div className="flex justify-between text-white font-semibold text-base sm:text-lg">
                               <span>Due Today:</span>
-                              <span className="text-green-400">${depositAmount.toFixed(2)}</span>
+                              <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
                           </div>
                         );
@@ -2133,23 +2133,23 @@ const Booking = () => {
                         const totalPrice = calculateServicesTotal();
                         const depositAmount = totalPrice * 0.5;
                         return (
-                          <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                            <div className="flex justify-between text-white text-sm">
+                          <div className="bg-white/5 rounded-lg p-2.5 sm:p-3 md:p-4 space-y-1.5 sm:space-y-2">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span>Service Price:</span>
-                              <span>${totalPrice.toFixed(2)}</span>
+                              <span className="whitespace-nowrap">${totalPrice.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-white text-sm">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span>Duration:</span>
-                              <span>{calculateServicesDuration()} min</span>
+                              <span className="whitespace-nowrap">{calculateServicesDuration()} min</span>
                             </div>
-                            <div className="flex justify-between text-white text-sm">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span>Deposit (50%):</span>
-                              <span>${depositAmount.toFixed(2)}</span>
+                              <span className="whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
-                            <Separator className="bg-white/10 my-2" />
-                            <div className="flex justify-between text-white font-semibold text-lg">
+                            <Separator className="bg-white/10 my-1 sm:my-2" />
+                            <div className="flex justify-between text-white font-semibold text-base sm:text-lg">
                               <span>Due Today:</span>
-                              <span className="text-green-400">${depositAmount.toFixed(2)}</span>
+                              <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
                           </div>
                         );
@@ -2157,8 +2157,8 @@ const Booking = () => {
                     )}
 
                     {/* Payment Note */}
-                    <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-3">
-                      <p className="text-violet-300 text-xs">
+                    <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-2 sm:p-2.5 md:p-3">
+                      <p className="text-violet-300 text-[10px] sm:text-xs leading-tight sm:leading-normal">
                         💳 You'll pay a 50% deposit now. The remaining balance will be collected at your appointment.
                       </p>
                     </div>
