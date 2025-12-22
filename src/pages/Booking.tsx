@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -707,21 +707,19 @@ const Booking = () => {
     }
   }, [selectedServices, currentStep, bookingMode]);
 
-  // Scroll to next button when time is selected (step 2)
-  // Using useLayoutEffect to run synchronously after DOM updates but before paint
-  useLayoutEffect(() => {
-    if (currentStep === 1 && selectedTime) {
-      // Use requestAnimationFrame to ensure scroll happens after browser paint
-      requestAnimationFrame(() => {
-        if (nextButtonRef.current) {
-          nextButtonRef.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        }
-      });
-    }
-  }, [selectedTime, currentStep]);
+  // Handler for time slot selection - updates state and scrolls to next button
+  const handleTimeSelect = (timeDisplay: string) => {
+    setSelectedTime(timeDisplay);
+    // Scroll to next button after time selection
+    setTimeout(() => {
+      if (nextButtonRef.current) {
+        nextButtonRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 100);
+  };
 
   // Scroll to calendar when entering step 2
   useEffect(() => {
@@ -1694,7 +1692,7 @@ const Booking = () => {
                           <Button
                             key={slot.time}
                             type="button"
-                            onClick={() => slot.available && setSelectedTime(slot.display)}
+                            onClick={() => slot.available && handleTimeSelect(slot.display)}
                             variant={selectedTime === slot.display ? "default" : "outline"}
                             disabled={!slot.available}
                             className={`py-2 px-3 text-sm ${
