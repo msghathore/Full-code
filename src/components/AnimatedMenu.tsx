@@ -278,7 +278,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
               >
                 <Link
                   to={item.href}
-                  className={`block py-2 md:py-0 px-4 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
+                  className={`block py-2.5 md:py-0 px-3 md:px-0 rounded-lg md:rounded-none transition-all duration-300 w-full ${
                     isMobile && isSelected
                       ? 'bg-white text-black'
                       : ''
@@ -294,7 +294,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                     }
                   }}
                 >
-                  <h2 className={`text-2xl sm:text-3xl md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight ${
+                  <h2 className={`text-lg sm:text-2xl md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight break-words ${
                     isMobile && isSelected
                       ? 'text-black font-semibold'
                       : 'text-white hover:luxury-glow'
