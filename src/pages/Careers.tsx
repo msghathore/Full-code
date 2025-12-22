@@ -238,36 +238,36 @@ export default function Careers() {
                   <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <DollarSign className="w-4 h-4 text-white drop-shadow-lg" />
                   </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-semibold mb-0.5">Competitive Compensation</h3>
-                    <p className="text-white/70 text-xs">Industry-leading pay with performance bonuses</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm md:text-base font-semibold leading-tight">Competitive Compensation</h3>
+                    <p className="text-white/70 text-xs leading-relaxed">Industry-leading pay with performance bonuses</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <GraduationCap className="w-4 h-4 text-white drop-shadow-lg" />
                   </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-semibold mb-0.5">Professional Development</h3>
-                    <p className="text-white/70 text-xs">Ongoing training and certification programs</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm md:text-base font-semibold leading-tight">Professional Development</h3>
+                    <p className="text-white/70 text-xs leading-relaxed">Ongoing training and certification programs</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <Award className="w-4 h-4 text-white drop-shadow-lg" />
                   </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-semibold mb-0.5">Luxury Environment</h3>
-                    <p className="text-white/70 text-xs">State-of-the-art facility with premium equipment</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm md:text-base font-semibold leading-tight">Luxury Environment</h3>
+                    <p className="text-white/70 text-xs leading-relaxed">State-of-the-art facility with premium equipment</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <Zap className="w-4 h-4 text-white drop-shadow-lg" />
                   </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-semibold mb-0.5">Work-Life Balance</h3>
-                    <p className="text-white/70 text-xs">Flexible scheduling and benefits package</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm md:text-base font-semibold leading-tight">Work-Life Balance</h3>
+                    <p className="text-white/70 text-xs leading-relaxed">Flexible scheduling and benefits package</p>
                   </div>
                 </div>
               </div>
