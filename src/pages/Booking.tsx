@@ -1171,10 +1171,15 @@ const Booking = () => {
                       onClick={() => {
                         if (index < currentStep) {
                           // Going back - always allowed
+                          if (index === 0) {
+                            isNavigatingFromEdit.current = true;
+                          }
                           setCurrentStep(index);
+                          scrollToTop();
                         } else if (index > currentStep && isAccessible) {
                           // Going forward - only if validated
                           setCurrentStep(index);
+                          scrollToTop();
                         } else if (index > currentStep && !isAccessible) {
                           // Show toast for what's missing
                           toast({
