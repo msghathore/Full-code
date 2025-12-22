@@ -278,10 +278,10 @@ export default function Careers() {
               <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4">Current Opportunities</h2>
               <div className="space-y-3 md:space-y-1.5">
                 {availablePositions.map((position) => (
-                  <div key={position} className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
-                    <div>
-                      <h3 className="text-xs md:text-sm font-semibold">{position}</h3>
-                      <p className="text-white/60 text-[10px]">Part/Full Time</p>
+                  <div key={position} className="flex items-center justify-between p-3 md:p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
+                    <div className="space-y-1">
+                      <h3 className="text-xs md:text-sm font-semibold leading-tight">{position}</h3>
+                      <p className="text-white/60 text-[10px] leading-relaxed">Part/Full Time</p>
                     </div>
                     <Button
                       onClick={() => handleApplyClick(position)}
