@@ -367,16 +367,9 @@ export default function Careers() {
                           <SelectItem
                             key={position}
                             value={position}
-                            className="text-white hover:bg-white/10 focus:bg-emerald-500/20 focus:text-white data-[state=checked]:bg-emerald-500/30"
+                            className="text-white hover:bg-white/10 focus:bg-emerald-500/20 focus:text-white data-[state=checked]:bg-emerald-500/30 [&>span:first-child]:text-emerald-400"
                           >
-                            <div className="flex items-center gap-2">
-                              <span>{position}</span>
-                              {formData.position === position && (
-                                <span className="text-emerald-400" style={{
-                                  textShadow: '0 0 8px rgba(16, 185, 129, 0.8)'
-                                }}>✓</span>
-                              )}
-                            </div>
+                            {position}
                           </SelectItem>
                         ))}
                       </SelectContent>
