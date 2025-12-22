@@ -236,7 +236,7 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
            {/* Logo - Centered (Always visible on all screen sizes) */}
            <Link
              to="/"
-             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-5 md:-top-4' : 'top-1/2 -translate-y-1/2'} opacity-100 transition-opacity duration-300`}
+             className={`cursor-hover absolute left-1/2 transform -translate-x-1/2 ${(isHomePage && isOnBanner) ? '-top-3.5 md:-top-4' : 'top-1/2 -translate-y-1/2'} opacity-100 transition-opacity duration-300`}
              aria-hidden={false}
            >
              <motion.div
