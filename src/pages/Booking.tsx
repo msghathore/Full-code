@@ -710,10 +710,10 @@ const Booking = () => {
   // Scroll to next button when time is selected (step 2)
   useEffect(() => {
     if (currentStep === 1 && selectedTime) {
-      // Add small delay to ensure time slot rendering is complete before scrolling
+      // Add delay to ensure time slot rendering is complete before scrolling
       setTimeout(() => {
         smoothScrollTo(nextButtonRef);
-      }, 100);
+      }, 300);
     }
   }, [selectedTime, currentStep]);
 
