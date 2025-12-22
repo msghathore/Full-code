@@ -167,16 +167,28 @@ export const SquarePaymentForm = ({
 
           const cardContainer = document.getElementById('card-container');
           if (cardContainer) {
-            await newCard.attach('#card-container');
-            setCard(newCard);
-            console.log('✅ Card form attached successfully');
-          } else if (retryCount < 5) {
+            try {
+              await newCard.attach('#card-container');
+              setCard(newCard);
+              console.log('✅ Card form attached successfully');
+            } catch (attachError: any) {
+              console.error('❌ Card attach failed:', attachError);
+              // Retry on attach failure
+              if (retryCount < 10) {
+                console.log(`🔄 Retrying card attach (${retryCount + 1}/10)`);
+                setTimeout(() => initializePaymentMethods(retryCount + 1), 500);
+                return;
+              } else {
+                throw new Error(`Card attach failed after ${retryCount + 1} attempts: ${attachError.message}`);
+              }
+            }
+          } else if (retryCount < 10) {
             // Retry if container not found (DOM might not be ready)
-            console.log(`⏳ Card container not found, retrying... (${retryCount + 1}/5)`);
-            setTimeout(() => initializePaymentMethods(retryCount + 1), 200);
+            console.log(`⏳ Card container not found, retrying... (${retryCount + 1}/10)`);
+            setTimeout(() => initializePaymentMethods(retryCount + 1), 500);
             return;
           } else {
-            console.error('❌ Card container not found after 5 retries');
+            console.error('❌ Card container not found after 10 retries');
             setHasError(true);
             onPaymentError('Payment form failed to load. Please refresh the page.');
             return;
@@ -228,15 +240,18 @@ export const SquarePaymentForm = ({
 
         } catch (error: any) {
           console.error('Failed to initialize payment methods:', error);
+          console.error('Error details:', error.message, error.stack);
           setHasError(true);
           onPaymentError('Failed to initialize payment form');
         }
       };
 
       // Delay to ensure DOM elements are rendered before initializing payment
-      setTimeout(() => initializePaymentMethods(0), 300);
+      // Increased delay to 800ms to give React more time to render the DOM
+      setTimeout(() => initializePaymentMethods(0), 800);
     }
-  }, [isLoaded, card, safeAmount, isDemoMode, isAuthenticated, onPaymentError]);
+  }, [isLoaded, card, safeAmount, isDemoMode, isAuthenticated]);
+  // Note: onPaymentError intentionally excluded from deps to prevent re-initialization on parent re-renders
 
   const processPayment = async (paymentMethod: any, type: string) => {
     setIsProcessing(true);
