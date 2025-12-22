@@ -1722,7 +1722,7 @@ const Booking = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-4 border-t border-white/10">
+                <div ref={nextButtonRef} className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-4 border-t border-white/10">
                   <Button type="button" onClick={prevStep} variant="outline" className="luxury-button-hover w-full sm:w-auto">
                     <ChevronLeft className="h-4 w-4 mr-2" /> Previous
                   </Button>
