@@ -766,8 +766,8 @@ const Booking = () => {
         ? m.services.filter(s => s !== serviceId)
         : [...m.services, serviceId];
 
-      // If adding a service to person 1, scroll to show Add Another Person and Next button
-      if (memberId === '1' && !hasService && newServices.length > 0) {
+      // If adding a service to any person, scroll to show Add Another Person and Next button
+      if (!hasService && newServices.length > 0) {
         setTimeout(() => {
           if (groupActionsRef.current) {
             groupActionsRef.current.scrollIntoView({
