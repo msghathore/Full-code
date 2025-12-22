@@ -9,16 +9,20 @@ import { Lightbulb, Languages, Type, Sun, Moon } from "lucide-react"
 // Wheelchair Ramp Accessibility Icon
 const AnimatedAccessibilityIcon = ({ className = "", isLight = false }: { className?: string; isLight?: boolean }) => {
   return (
-    <img
-      src="/images/wheelchair-ramp.gif"
-      alt="Accessibility"
+    <video
+      autoPlay
+      loop
+      muted
+      playsInline
       className={className}
       style={{
         filter: isLight
           ? 'grayscale(1) brightness(0.2)'
           : 'grayscale(1) invert(1) brightness(1.5)',
       }}
-    />
+    >
+      <source src="/videos/wheelchair.mp4" type="video/mp4" />
+    </video>
   );
 };
 
