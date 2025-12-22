@@ -240,7 +240,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       {/* Left Panel - Menu Items */}
       <div
         ref={leftPanelRef}
-        className="absolute left-0 top-0 h-full w-[42%] md:w-1/3 border-r border-white/10 animate-fade-in relative"
+        className="absolute left-0 top-0 h-full w-[40%] md:w-1/3 border-r border-white/10 animate-fade-in relative overflow-hidden"
         style={{
           transform: 'translateX(-100%)',
           background: 'rgba(0, 0, 0, 0.1)',
@@ -278,7 +278,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
               >
                 <Link
                   to={item.href}
-                  className={`block py-1.5 md:py-0 px-1 sm:px-3 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
+                  className={`block py-1 md:py-0 px-0.5 sm:px-3 md:px-0 rounded-md md:rounded-none transition-all duration-300 ${
                     isMobile && isSelected
                       ? 'bg-white text-black'
                       : ''
@@ -295,14 +295,14 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                   }}
                 >
                   <h2
-                    className={`md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight tracking-tight ${
+                    className={`md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight tracking-tighter ${
                       isMobile && isSelected
                         ? 'text-black font-semibold'
                         : 'text-white hover:luxury-glow'
                     }`}
                     style={!isMobile ? {} : {
-                      fontSize: 'clamp(0.625rem, 2vw, 0.95rem)',
-                      letterSpacing: '-0.02em'
+                      fontSize: 'clamp(0.5rem, 1.8vw, 0.85rem)',
+                      letterSpacing: '-0.03em'
                     }}
                   >
                     {item.name}
@@ -317,7 +317,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       {/* Right Panel - Service Cards */}
       <div
         ref={rightPanelRef}
-        className="absolute right-0 top-0 h-full w-[58%] md:w-2/3 overflow-hidden"
+        className="absolute right-0 top-0 h-full w-[60%] md:w-2/3 overflow-hidden"
         style={{
           background: 'rgba(0, 0, 0, 0.1)',
           backdropFilter: 'blur(20px)',
