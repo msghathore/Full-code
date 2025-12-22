@@ -712,8 +712,15 @@ const Booking = () => {
     if (currentStep === 1 && selectedTime) {
       // Add delay to ensure time slot rendering is complete before scrolling
       setTimeout(() => {
-        smoothScrollTo(nextButtonRef);
-      }, 300);
+        if (nextButtonRef.current) {
+          const elementTop = nextButtonRef.current.getBoundingClientRect().top;
+          const offsetPosition = elementTop + window.pageYOffset - 150;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 400);
     }
   }, [selectedTime, currentStep]);
 
