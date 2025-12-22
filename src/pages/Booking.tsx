@@ -137,6 +137,7 @@ const Booking = () => {
   const nextButtonRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const timeSlotsRef = useRef<HTMLDivElement>(null);
+  const groupActionsRef = useRef<HTMLDivElement>(null);
   const isNavigatingFromEdit = useRef(false);
 
   // Check for expired or invalid booking data on mount
@@ -758,14 +759,28 @@ const Booking = () => {
 
   // Toggle service selection for a group member
   const toggleGroupMemberService = (memberId: string, serviceId: string) => {
-    setGroupMembers(groupMembers.map(m => {
+    setGroupMembers(prev => prev.map(m => {
       if (m.id !== memberId) return m;
       const hasService = m.services.includes(serviceId);
+      const newServices = hasService
+        ? m.services.filter(s => s !== serviceId)
+        : [...m.services, serviceId];
+
+      // If adding a service to person 1, scroll to show Add Another Person and Next button
+      if (memberId === '1' && !hasService && newServices.length > 0) {
+        setTimeout(() => {
+          if (groupActionsRef.current) {
+            groupActionsRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        }, 100);
+      }
+
       return {
         ...m,
-        services: hasService
-          ? m.services.filter(s => s !== serviceId)
-          : [...m.services, serviceId]
+        services: newServices
       };
     }));
   };
@@ -1579,14 +1594,16 @@ const Booking = () => {
                           ))}
 
                           {/* Add Another Person */}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={addGroupMember}
-                            className="w-full border-dashed border-white/30 text-white/70 hover:text-white hover:bg-white/5"
-                          >
-                            <Plus className="h-4 w-4 mr-2" /> Add Another Person
-                          </Button>
+                          <div ref={groupActionsRef}>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={addGroupMember}
+                              className="w-full border-dashed border-white/30 text-white/70 hover:text-white hover:bg-white/5"
+                            >
+                              <Plus className="h-4 w-4 mr-2" /> Add Another Person
+                            </Button>
+                          </div>
                         </div>
 
                         {/* Group Total */}
