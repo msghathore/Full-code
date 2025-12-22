@@ -2,7 +2,7 @@ import React from 'react';
 
 export const DynamicBackground = React.memo(() => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 bg-black">
+    <div className="fixed inset-0 pointer-events-none z-0 bg-black h-screen w-screen">
       {/* Static gradient overlay - No animations for maximum performance */}
       <div
         className="absolute inset-0"
