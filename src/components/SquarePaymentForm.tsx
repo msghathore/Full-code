@@ -134,21 +134,19 @@ export const SquarePaymentForm = ({
         try {
           const payments = window.Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
 
-          // Card styling with black text for readability
+          // Card styling - production Square SDK requires specific properties
           const newCard = await payments.card({
             style: {
               input: {
                 color: '#000000',
-                fontSize: '16px',
-                fontFamily: 'system-ui, -apple-system, sans-serif'
+                fontSize: '16px'
               },
               'input::placeholder': {
                 color: '#6B7280'
               },
               '.input-container': {
                 borderColor: '#E5E7EB',
-                borderRadius: '8px',
-                backgroundColor: '#FFFFFF'
+                borderRadius: '8px'
               },
               '.input-container.is-focus': {
                 borderColor: '#000000'
