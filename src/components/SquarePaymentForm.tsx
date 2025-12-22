@@ -471,7 +471,7 @@ export const SquarePaymentForm = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="space-y-6 bg-black border border-white/20 rounded-xl p-6 md:p-8"
+      className="space-y-3 sm:space-y-6 bg-black border border-white/20 rounded-xl p-3 sm:p-6 md:p-8 w-full max-w-full overflow-hidden"
     >
       {/* Demo Mode Banner */}
       <AnimatePresence>
@@ -511,15 +511,15 @@ export const SquarePaymentForm = ({
       </AnimatePresence>
 
       {/* Quick Pay Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 text-white text-sm font-semibold tracking-wider uppercase">
+      <div className="space-y-2 sm:space-y-4">
+        <div className="flex items-center gap-2 text-white text-xs sm:text-sm font-semibold tracking-wider uppercase">
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
           </svg>
           QUICK PAYMENT
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {/* Apple Pay Button */}
           <motion.button
             type="button"
@@ -529,14 +529,14 @@ export const SquarePaymentForm = ({
             onHoverEnd={() => setHoveredButton(null)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`relative h-14 bg-white rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+            className={`relative h-10 sm:h-14 bg-white rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
               isProcessing || isDemoMode ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg hover:shadow-white/20'
             }`}
           >
             <motion.div
               animate={{ scale: hoveredButton === 'apple' ? 1.05 : 1 }}
               transition={{ type: 'spring', stiffness: 400 }}
-              className="text-black"
+              className="text-black scale-75 sm:scale-100"
             >
               <ApplePayLogo />
             </motion.div>
@@ -551,13 +551,14 @@ export const SquarePaymentForm = ({
             onHoverEnd={() => setHoveredButton(null)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`relative h-14 bg-white rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+            className={`relative h-10 sm:h-14 bg-white rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
               isProcessing || isDemoMode ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg hover:shadow-white/20'
             }`}
           >
             <motion.div
               animate={{ scale: hoveredButton === 'google' ? 1.05 : 1 }}
               transition={{ type: 'spring', stiffness: 400 }}
+              className="scale-75 sm:scale-100"
             >
               <GooglePayLogo />
             </motion.div>
@@ -565,10 +566,10 @@ export const SquarePaymentForm = ({
         </div>
 
         {/* Divider */}
-        <div className="relative py-3">
+        <div className="relative py-2 sm:py-3">
           <Separator className="bg-white/20" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="bg-black px-4 text-white/60 text-sm font-medium tracking-wider uppercase">
+            <span className="bg-black px-2 sm:px-4 text-white/60 text-[10px] sm:text-sm font-medium tracking-wider uppercase">
               or pay with card
             </span>
           </div>
@@ -576,16 +577,16 @@ export const SquarePaymentForm = ({
       </div>
 
       {/* Card Details Header */}
-      <div className="flex justify-between items-center">
-        <div className="text-white text-sm font-semibold tracking-wider uppercase">CARD DETAILS</div>
+      <div className="flex justify-between items-center gap-2">
+        <div className="text-white text-xs sm:text-sm font-semibold tracking-wider uppercase">CARD DETAILS</div>
         <motion.button
           type="button"
           onClick={showScanner ? stopScanner : startScanner}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 px-3 py-1.5 border border-white/30 rounded-lg text-white text-sm hover:bg-white/10 transition-colors"
+          className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 border border-white/30 rounded-lg text-white text-[10px] sm:text-sm hover:bg-white/10 transition-colors whitespace-nowrap"
         >
-          <Camera className="h-4 w-4" />
+          <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
           {showScanner ? 'Close' : 'Scan Card'}
         </motion.button>
       </div>
@@ -622,16 +623,16 @@ export const SquarePaymentForm = ({
       </AnimatePresence>
 
       {/* Card Payment Form */}
-      <form onSubmit={handleCardSubmit} className="space-y-6">
+      <form onSubmit={handleCardSubmit} className="space-y-3 sm:space-y-6 w-full max-w-full">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="relative"
+          className="relative w-full max-w-full overflow-hidden"
         >
           <div
             id="card-container"
-            className="min-h-[60px] rounded-lg bg-white p-3"
+            className="min-h-[60px] rounded-lg bg-white p-2 sm:p-3 w-full max-w-full overflow-hidden"
           />
           {/* Hidden Google Pay button container */}
           <div id="google-pay-button" className="hidden" />
@@ -644,7 +645,7 @@ export const SquarePaymentForm = ({
           <Button
             type="submit"
             disabled={(!card && !isDemoMode) || isProcessing || safeAmount <= 0}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-14 text-lg tracking-wide transition-all duration-300 rounded-lg"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-11 sm:h-14 text-sm sm:text-lg tracking-wide transition-all duration-300 rounded-lg"
           >
             {isProcessing ? (
               <motion.div
