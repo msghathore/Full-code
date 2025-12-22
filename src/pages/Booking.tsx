@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles, Edit, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles, Edit, CreditCard, Search } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Switch } from '@/components/ui/switch';
 import { format, differenceInHours, isPast, startOfDay } from 'date-fns';
@@ -285,6 +285,15 @@ const Booking = () => {
   // Time slots state
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+
+  // Service search state
+  const [serviceSearch, setServiceSearch] = useState('');
+
+  // Filter services based on search query
+  const filteredServices = services.filter(service =>
+    service.name.toLowerCase().includes(serviceSearch.toLowerCase()) ||
+    service.description?.toLowerCase().includes(serviceSearch.toLowerCase())
+  );
 
   // Smooth scroll helper function - optimized for mobile
   const smoothScrollTo = (ref: React.RefObject<HTMLDivElement>) => {
@@ -706,6 +715,13 @@ const Booking = () => {
       smoothScrollTo(calendarRef);
     }
   }, [currentStep]);
+
+  // Scroll to services when staff is selected in stylist mode
+  useEffect(() => {
+    if (currentStep === 0 && bookingMode === 'stylist' && selectedStaff) {
+      smoothScrollTo(serviceSelectionRef);
+    }
+  }, [selectedStaff, currentStep, bookingMode]);
 
   // Group booking helper functions
   const addGroupMember = () => {
@@ -1192,7 +1208,7 @@ const Booking = () => {
             </div>
           </div>
 
-          <form onSubmit={handleBooking} className="w-full">
+          <div className="w-full">
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
@@ -1301,9 +1317,32 @@ const Booking = () => {
 
                         <div className="flex-1" ref={serviceSelectionRef}>
                           <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT SERVICES (choose multiple)</label>
+
+                          {/* Service Search Box */}
+                          <div className="relative mb-3">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                            <Input
+                              type="text"
+                              placeholder="Search services..."
+                              value={serviceSearch}
+                              onChange={(e) => setServiceSearch(e.target.value)}
+                              className="pl-10 bg-black border-white/30 text-white placeholder:text-white/50"
+                              disabled={!selectedStaff}
+                            />
+                            {serviceSearch && (
+                              <button
+                                type="button"
+                                onClick={() => setServiceSearch('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+
                           <div className={`bg-black border border-white/30 rounded max-h-[400px] overflow-y-auto ${!selectedStaff ? 'opacity-50 pointer-events-none' : ''}`}>
-                            {services.length > 0 ? (
-                              services.map(service => (
+                            {filteredServices.length > 0 ? (
+                              filteredServices.map(service => (
                                 <button
                                   key={service.id}
                                   type="button"
@@ -1322,7 +1361,9 @@ const Booking = () => {
                                 </button>
                                 ))
                               ) : (
-                                <div className="p-4 text-center text-white/50">No services available</div>
+                                <div className="p-4 text-center text-white/50">
+                                  {serviceSearch ? 'No services match your search' : 'No services available'}
+                                </div>
                               )}
                             </div>
                           {selectedServices.length > 0 && (
@@ -1341,9 +1382,31 @@ const Booking = () => {
                     {bookingMode === 'service' && (
                       <div ref={serviceSelectionRef}>
                         <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT SERVICES (choose multiple)</label>
+
+                        {/* Service Search Box */}
+                        <div className="relative mb-3">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                          <Input
+                            type="text"
+                            placeholder="Search services..."
+                            value={serviceSearch}
+                            onChange={(e) => setServiceSearch(e.target.value)}
+                            className="pl-10 bg-black border-white/30 text-white placeholder:text-white/50"
+                          />
+                          {serviceSearch && (
+                            <button
+                              type="button"
+                              onClick={() => setServiceSearch('')}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
                         <div className="bg-black border border-white/30 rounded max-h-[400px] overflow-y-auto">
-                          {services.length > 0 ? (
-                            services.map(service => (
+                          {filteredServices.length > 0 ? (
+                            filteredServices.map(service => (
                               <button
                                 key={service.id}
                                 type="button"
@@ -1365,7 +1428,9 @@ const Booking = () => {
                               </button>
                             ))
                           ) : (
-                            <div className="p-4 text-center text-white/50">No services available</div>
+                            <div className="p-4 text-center text-white/50">
+                              {serviceSearch ? 'No services match your search' : 'No services available'}
+                            </div>
                           )}
                         </div>
                         {selectedServices.length > 0 && (
@@ -1421,8 +1486,30 @@ const Booking = () => {
                               {/* Multi-Service Selection */}
                               <div>
                                 <label className="text-xs text-white block mb-1">Services * (select multiple)</label>
+
+                                {/* Service Search Box */}
+                                <div className="relative mb-2">
+                                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-white/50" />
+                                  <Input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={serviceSearch}
+                                    onChange={(e) => setServiceSearch(e.target.value)}
+                                    className="pl-8 text-xs h-8 bg-black border-white/30 text-white placeholder:text-white/50"
+                                  />
+                                  {serviceSearch && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setServiceSearch('')}
+                                      className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  )}
+                                </div>
+
                                 <div className="bg-black border border-white/30 rounded max-h-[200px] overflow-y-auto">
-                                  {services.map(s => (
+                                  {filteredServices.map(s => (
                                     <button
                                       key={s.id}
                                       type="button"
@@ -1754,7 +1841,7 @@ const Booking = () => {
                 </div>
 
                 {/* Two-column layout: Summary on left, Payment on right */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-4 md:gap-6 max-w-6xl mx-auto">
                   {/* Left Column - Booking Summary */}
                   <div className="frosted-glass border border-white/10 rounded-lg p-6 space-y-4">
                     <h4 className="text-white font-semibold text-lg flex items-center justify-between">
@@ -2122,7 +2209,7 @@ const Booking = () => {
               </motion.div>
             )}
             </AnimatePresence>
-          </form>
+          </div>
         </div>
       </div>
 
