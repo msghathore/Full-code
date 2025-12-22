@@ -1841,10 +1841,10 @@ const Booking = () => {
                 </div>
 
                 {/* Two-column layout: Summary on left, Payment on right */}
-                <div className="grid md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto w-full">
+                <div className="grid md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 max-w-6xl mx-auto w-full px-0">
                   {/* Left Column - Booking Summary */}
-                  <div className="frosted-glass border border-white/10 rounded-lg p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
-                    <h4 className="text-white font-semibold text-base sm:text-lg flex items-center justify-between">
+                  <div className="frosted-glass border border-white/10 rounded-lg p-2.5 sm:p-4 md:p-6 space-y-2 sm:space-y-4 overflow-hidden">
+                    <h4 className="text-white font-semibold text-sm sm:text-base md:text-lg flex items-center justify-between">
                       Booking Summary
                     </h4>
 
@@ -1975,11 +1975,11 @@ const Booking = () => {
                       </div>
                     ) : (
                       // Individual Booking Summary
-                      <div className="space-y-4">
+                      <div className="space-y-2 sm:space-y-4">
                         {/* Services List with Edit */}
-                        <div className="py-3 border-b border-white/10">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-white/70 text-sm font-medium">Services</span>
+                        <div className="py-2 sm:py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="text-white/70 text-xs sm:text-sm font-medium">Services</span>
                             <Button
                               type="button"
                               variant="ghost"
@@ -1988,42 +1988,42 @@ const Booking = () => {
                                 setCurrentStep(0);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
                           </div>
                         {selectedServices.length > 0 ? (
-                          <div className="space-y-1">
+                          <div className="space-y-0.5 sm:space-y-1">
                             {selectedServices.map(serviceId => {
                               const service = services.find(s => s.id === serviceId);
                               return (
-                                <div key={serviceId} className="flex justify-between text-white text-sm">
-                                  <span>{service?.name}</span>
-                                  <span>${service?.price} • {service?.duration_minutes} min</span>
+                                <div key={serviceId} className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                  <span className="truncate">{service?.name}</span>
+                                  <span className="whitespace-nowrap text-white/80">${service?.price} • {service?.duration_minutes}m</span>
                                 </div>
                               );
                             })}
                           </div>
                         ) : (
-                          <span className="text-white text-sm">Not selected</span>
+                          <span className="text-white text-xs sm:text-sm">Not selected</span>
                         )}
                         </div>
 
                         {/* Staff (if stylist mode) */}
                         {bookingMode === 'stylist' && selectedStaff && (
-                          <div className="py-3 border-b border-white/10">
-                            <div className="flex items-center justify-between">
-                              <span className="text-white/70 text-sm font-medium">Stylist:</span>
-                              <span className="text-white text-sm">{staff.find(s => s.id === selectedStaff)?.name || 'Not selected'}</span>
+                          <div className="py-2 sm:py-3 border-b border-white/10">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-white/70 text-xs sm:text-sm font-medium">Stylist:</span>
+                              <span className="text-white text-xs sm:text-sm truncate">{staff.find(s => s.id === selectedStaff)?.name || 'Not selected'}</span>
                             </div>
                           </div>
                         )}
 
                         {/* Date & Time with Edit */}
-                        <div className="py-3 border-b border-white/10">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-white/70 text-sm font-medium">Date & Time</span>
+                        <div className="py-2 sm:py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="text-white/70 text-xs sm:text-sm font-medium">Date & Time</span>
                             <Button
                               type="button"
                               variant="ghost"
@@ -2032,27 +2032,27 @@ const Booking = () => {
                                 setCurrentStep(1);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
                           </div>
-                          <div className="space-y-1 text-white text-sm">
-                            <div className="flex justify-between">
-                              <span>Date:</span>
+                          <div className="space-y-0.5 sm:space-y-1 text-white text-[11px] sm:text-sm">
+                            <div className="flex justify-between gap-2">
+                              <span className="text-white/70">Date:</span>
                               <span>{date ? date.toLocaleDateString() : 'Not selected'}</span>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Time:</span>
+                            <div className="flex justify-between gap-2">
+                              <span className="text-white/70">Time:</span>
                               <span>{selectedTime || 'Not selected'}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Contact Info with Edit */}
-                        <div className="py-3 border-b border-white/10">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-white/70 text-sm font-medium">Contact Information</span>
+                        <div className="py-2 sm:py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="text-white/70 text-xs sm:text-sm font-medium">Contact Info</span>
                             <Button
                               type="button"
                               variant="ghost"
@@ -2061,24 +2061,24 @@ const Booking = () => {
                                 setCurrentStep(2);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
                           </div>
-                          <div className="space-y-1 text-white text-sm">
-                            <div className="flex justify-between">
-                              <span>Name:</span>
-                              <span>{fullName || user?.user_metadata?.full_name || 'Not provided'}</span>
+                          <div className="space-y-0.5 sm:space-y-1 text-white text-[11px] sm:text-sm">
+                            <div className="flex justify-between gap-2">
+                              <span className="text-white/70">Name:</span>
+                              <span className="truncate max-w-[150px] sm:max-w-none">{fullName || user?.user_metadata?.full_name || 'Not provided'}</span>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Phone:</span>
+                            <div className="flex justify-between gap-2">
+                              <span className="text-white/70">Phone:</span>
                               <span>{phone || 'Not provided'}</span>
                             </div>
                             {user?.email && (
-                              <div className="flex justify-between">
-                                <span>Email:</span>
-                                <span className="text-xs">{user.email}</span>
+                              <div className="flex justify-between gap-2">
+                                <span className="text-white/70">Email:</span>
+                                <span className="text-[10px] sm:text-xs truncate max-w-[140px] sm:max-w-none">{user.email}</span>
                               </div>
                             )}
                           </div>
@@ -2088,9 +2088,9 @@ const Booking = () => {
                   </div>
 
                   {/* Right Column - Payment */}
-                  <div className="frosted-glass border border-white/10 rounded-lg p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
-                    <h4 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <div className="frosted-glass border border-white/10 rounded-lg p-2.5 sm:p-4 md:p-6 space-y-2 sm:space-y-4 overflow-hidden">
+                    <h4 className="text-white font-semibold text-sm sm:text-base md:text-lg flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                       Secure Payment
                     </h4>
 
@@ -2100,28 +2100,28 @@ const Booking = () => {
                         const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
                         const depositAmount = total * 0.5;
                         return (
-                          <div className="bg-white/5 rounded-lg p-2.5 sm:p-3 md:p-4 space-y-1.5 sm:space-y-2">
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span className="truncate mr-2">Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
-                              <span className="whitespace-nowrap">${subtotal.toFixed(2)}</span>
+                          <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="truncate text-white/70">Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
+                              <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
                             </div>
                             {discountPercent > 0 && (
-                              <div className="flex justify-between text-green-400 text-xs sm:text-sm">
-                                <span className="truncate mr-2">Group Discount ({discountPercent}%)</span>
+                              <div className="flex justify-between text-green-400 text-[11px] sm:text-sm gap-2">
+                                <span className="truncate">Group Discount ({discountPercent}%)</span>
                                 <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
                               </div>
                             )}
                             <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span>Total Price:</span>
-                              <span className="whitespace-nowrap">${total.toFixed(2)}</span>
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="text-white/70">Total Price:</span>
+                              <span className="whitespace-nowrap font-medium">${total.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span>Deposit (50%):</span>
-                              <span className="whitespace-nowrap">${depositAmount.toFixed(2)}</span>
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="text-white/70">Deposit (50%):</span>
+                              <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
                             </div>
                             <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white font-semibold text-base sm:text-lg">
+                            <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
                               <span>Due Today:</span>
                               <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
@@ -2133,21 +2133,21 @@ const Booking = () => {
                         const totalPrice = calculateServicesTotal();
                         const depositAmount = totalPrice * 0.5;
                         return (
-                          <div className="bg-white/5 rounded-lg p-2.5 sm:p-3 md:p-4 space-y-1.5 sm:space-y-2">
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span>Service Price:</span>
-                              <span className="whitespace-nowrap">${totalPrice.toFixed(2)}</span>
+                          <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="text-white/70">Service Price:</span>
+                              <span className="whitespace-nowrap font-medium">${totalPrice.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span>Duration:</span>
-                              <span className="whitespace-nowrap">{calculateServicesDuration()} min</span>
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="text-white/70">Duration:</span>
+                              <span className="whitespace-nowrap font-medium">{calculateServicesDuration()} min</span>
                             </div>
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span>Deposit (50%):</span>
-                              <span className="whitespace-nowrap">${depositAmount.toFixed(2)}</span>
+                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                              <span className="text-white/70">Deposit (50%):</span>
+                              <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
                             </div>
                             <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white font-semibold text-base sm:text-lg">
+                            <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
                               <span>Due Today:</span>
                               <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
                             </div>
@@ -2158,8 +2158,8 @@ const Booking = () => {
 
                     {/* Payment Note */}
                     <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-2 sm:p-2.5 md:p-3">
-                      <p className="text-violet-300 text-[10px] sm:text-xs leading-tight sm:leading-normal">
-                        💳 You'll pay a 50% deposit now. The remaining balance will be collected at your appointment.
+                      <p className="text-violet-300 text-[10px] sm:text-xs leading-tight sm:leading-normal break-words">
+                        💳 50% deposit now. Balance at appointment.
                       </p>
                     </div>
 
