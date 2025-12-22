@@ -137,6 +137,7 @@ const Booking = () => {
   const nextButtonRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const timeSlotsRef = useRef<HTMLDivElement>(null);
+  const isNavigatingFromEdit = useRef(false);
 
   // Check for expired or invalid booking data on mount
   const [isResuming, setIsResuming] = useState(false);
@@ -697,15 +698,22 @@ const Booking = () => {
 
   // Scroll to next button when services are selected (step 1)
   useEffect(() => {
-    if (currentStep === 0 && selectedServices.length > 0 && bookingMode !== 'stylist') {
+    if (currentStep === 0 && selectedServices.length > 0 && !isNavigatingFromEdit.current) {
       smoothScrollTo(nextButtonRef);
+    }
+    // Reset the flag after the effect runs
+    if (isNavigatingFromEdit.current) {
+      isNavigatingFromEdit.current = false;
     }
   }, [selectedServices, currentStep, bookingMode]);
 
   // Scroll to next button when time is selected (step 2)
   useEffect(() => {
     if (currentStep === 1 && selectedTime) {
-      smoothScrollTo(nextButtonRef);
+      // Add small delay to ensure time slot rendering is complete before scrolling
+      setTimeout(() => {
+        smoothScrollTo(nextButtonRef);
+      }, 100);
     }
   }, [selectedTime, currentStep]);
 
@@ -1446,7 +1454,7 @@ const Booking = () => {
 
                     {/* Group Mode - Add People & Services */}
                     {bookingMode === 'group' && (
-                      <>
+                      <div ref={serviceSelectionRef}>
                         {/* Auto Staff Toggle */}
                         <div className="flex items-center justify-between p-3 bg-black rounded-lg border border-white/20">
                           <div className="flex items-center gap-2">
@@ -1598,7 +1606,7 @@ const Booking = () => {
                             })()}
                           </div>
                         )}
-                      </>
+                      </div>
                     )}
                   </>
                 )}
@@ -1860,6 +1868,7 @@ const Booking = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
+                                isNavigatingFromEdit.current = true;
                                 setCurrentStep(0);
                                 scrollToTop();
                               }}
@@ -1985,6 +1994,7 @@ const Booking = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
+                                isNavigatingFromEdit.current = true;
                                 setCurrentStep(0);
                                 scrollToTop();
                               }}
