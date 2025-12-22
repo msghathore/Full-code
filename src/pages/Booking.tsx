@@ -1826,7 +1826,7 @@ const Booking = () => {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className="space-y-6"
+                className="space-y-4 sm:space-y-6"
               >
                 <div className="text-center px-2">
                   <motion.h3
@@ -1841,7 +1841,7 @@ const Booking = () => {
                 </div>
 
                 {/* Two-column layout: Summary on left, Payment on right */}
-                <div className="grid md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto w-full">
                   {/* Left Column - Booking Summary */}
                   <div className="frosted-glass border border-white/10 rounded-lg p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
                     <h4 className="text-white font-semibold text-base sm:text-lg flex items-center justify-between">
