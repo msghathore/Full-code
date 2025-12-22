@@ -303,7 +303,7 @@ const Booking = () => {
         if (ref.current) {
           // Get element position
           const elementTop = ref.current.getBoundingClientRect().top;
-          const offsetPosition = elementTop + window.pageYOffset - 100; // 100px from top for header
+          const offsetPosition = elementTop + window.pageYOffset - 200; // 200px from top for better visibility
 
           // Scroll to position
           window.scrollTo({
