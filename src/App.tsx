@@ -78,7 +78,7 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
   return (
     <SmoothScrollProvider>
       <KeyboardShortcuts />
-      {!hideNavigation && <AccessibilityControls />}
+      {location.pathname === '/' && <AccessibilityControls />}
       <ScrollToTop />
       {!hideNavigation && <GlenAssistant />}
       <PWAInstallPrompt />

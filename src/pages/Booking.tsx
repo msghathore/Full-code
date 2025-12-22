@@ -10,11 +10,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles, Edit, CreditCard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Switch } from '@/components/ui/switch';
 import { format, differenceInHours, isPast, startOfDay } from 'date-fns';
-import { FadeInUp, MagneticButton, scrollToTop } from '@/components/animations';
+import { FadeInUp, MagneticButton, scrollToTop, SuccessConfettiAnimation, SparkleAnimation } from '@/components/animations';
+import { SquarePaymentForm } from '@/components/SquarePaymentForm';
+import { Separator } from '@/components/ui/separator';
+import EmailService from '@/lib/email-service';
 
 // Booking session expiration time (24 hours)
 const BOOKING_EXPIRATION_HOURS = 24;
@@ -128,9 +131,20 @@ interface GroupMember {
 }
 
 const Booking = () => {
+  // Refs for smooth scrolling
+  const staffSelectionRef = useRef<HTMLDivElement>(null);
+  const serviceSelectionRef = useRef<HTMLDivElement>(null);
+  const nextButtonRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const timeSlotsRef = useRef<HTMLDivElement>(null);
+
   // Check for expired or invalid booking data on mount
   const [isResuming, setIsResuming] = useState(false);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
+
+  // Payment processing states
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   const [currentStep, setCurrentStep] = useState(() => {
     // Check if data is expired or date is past
@@ -271,6 +285,26 @@ const Booking = () => {
   // Time slots state
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+
+  // Smooth scroll helper function - optimized for mobile
+  const smoothScrollTo = (ref: React.RefObject<HTMLDivElement>) => {
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (ref.current) {
+          // Get element position
+          const elementTop = ref.current.getBoundingClientRect().top;
+          const offsetPosition = elementTop + window.pageYOffset - 100; // 100px from top for header
+
+          // Scroll to position
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 600); // Increased timeout for animations to complete
+    });
+  };
 
   // Phone number formatting function
   const formatPhoneNumber = (value: string) => {
@@ -647,8 +681,31 @@ const Booking = () => {
   useEffect(() => {
     if (date && currentStep === 1) {
       fetchAvailableTimeSlots(date);
+      // Scroll to time slots when date is selected
+      smoothScrollTo(timeSlotsRef);
     }
   }, [date, currentStep, fetchAvailableTimeSlots]);
+
+  // Scroll to next button when services are selected (step 1)
+  useEffect(() => {
+    if (currentStep === 0 && selectedServices.length > 0 && bookingMode !== 'stylist') {
+      smoothScrollTo(nextButtonRef);
+    }
+  }, [selectedServices, currentStep, bookingMode]);
+
+  // Scroll to next button when time is selected (step 2)
+  useEffect(() => {
+    if (currentStep === 1 && selectedTime) {
+      smoothScrollTo(nextButtonRef);
+    }
+  }, [selectedTime, currentStep]);
+
+  // Scroll to calendar when entering step 2
+  useEffect(() => {
+    if (currentStep === 1) {
+      smoothScrollTo(calendarRef);
+    }
+  }, [currentStep]);
 
   // Group booking helper functions
   const addGroupMember = () => {
@@ -731,98 +788,11 @@ const Booking = () => {
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (currentStep === steps.length - 1) {
-      if (bookingMode === 'group') {
-        // Group booking checkout
-        const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
-        const validMembers = groupMembers.filter(m => m.services.length > 0);
-
-        navigate('/booking/checkout', {
-          state: {
-            bookingDetails: {
-              booking_type: 'group',
-              group_members: validMembers.map(m => ({
-                // Support multiple services per member
-                services: m.services.map(serviceId => ({
-                  id: serviceId,
-                  name: services.find(s => s.id === serviceId)?.name,
-                  price: services.find(s => s.id === serviceId)?.price,
-                  duration: services.find(s => s.id === serviceId)?.duration_minutes,
-                })),
-                // Backward compatibility - also include single service fields
-                service_id: m.services[0],
-                service_name: m.services.map(sid => services.find(s => s.id === sid)?.name).join(', '),
-                service_price: calculateMemberTotal(m),
-                total_duration: calculateMemberDuration(m),
-                member_name: m.name,
-                member_phone: m.phone,
-                staff_id: autoStaffSelection ? null : groupStaffSelections[m.id],
-                staff_name: autoStaffSelection ? 'Auto-assigned' : staff.find(s => s.id === groupStaffSelections[m.id])?.name,
-              })),
-              appointment_date: date?.toISOString().split('T')[0],
-              appointment_time: selectedTime,
-              customer_name: fullName,
-              customer_phone: phone,
-              notes: notes,
-              is_guest: isGuest,
-              user_id: user?.id,
-              subtotal,
-              discount,
-              discount_percent: discountPercent,
-              total_price: total,
-              member_count: memberCount,
-              auto_staff: autoStaffSelection,
-            },
-          },
-        });
-      } else {
-        // Individual booking checkout (supports multiple services)
-        if (selectedServices.length === 0 || !date || !selectedTime) {
-          toast({
-            title: "Error",
-            description: "Please select at least one service, date, and time before proceeding to checkout.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // Get all selected services data
-        const selectedServicesData = selectedServices.map(id => services.find(s => s.id === id)).filter(Boolean);
-        const totalPrice = calculateServicesTotal();
-        const totalDuration = calculateServicesDuration();
-
-        navigate('/booking/checkout', {
-          state: {
-            bookingDetails: {
-              booking_type: bookingMode,
-              // For multiple services, pass array
-              services: selectedServicesData.map(s => ({
-                id: s.id,
-                name: s.name,
-                price: s.price,
-                duration: s.duration_minutes
-              })),
-              // Keep single service fields for backward compatibility
-              service_id: selectedServices[0],
-              service_name: selectedServicesData.map(s => s?.name).join(', '),
-              service_price: totalPrice,
-              total_duration: totalDuration,
-              staff_id: bookingMode === 'stylist' ? selectedStaff : null,
-              staff_name: bookingMode === 'stylist' ? staff.find(s => s.id === selectedStaff)?.name : null,
-              appointment_date: date.toISOString().split('T')[0],
-              appointment_time: selectedTime,
-              customer_name: fullName,
-              customer_phone: phone,
-              notes: notes,
-              is_guest: isGuest,
-              user_id: user?.id,
-            },
-          },
-        });
-      }
-    } else {
+    // Step 4 now handles payment directly, so just advance through steps
+    if (currentStep < steps.length - 1) {
       nextStep();
     }
+    // Step 4 (Review & Pay) is handled by SquarePaymentForm's onPaymentSuccess
   };
 
   // Reset selections when changing booking mode
@@ -834,6 +804,11 @@ const Booking = () => {
       setGroupMembers([{ id: '1', services: [], name: '', phone: '' }]);
       setAutoStaffSelection(true);
       setGroupStaffSelections({});
+      smoothScrollTo(serviceSelectionRef); // Scroll to service selection for group
+    } else if (mode === 'stylist') {
+      smoothScrollTo(staffSelectionRef); // Scroll to staff selection
+    } else if (mode === 'service') {
+      smoothScrollTo(serviceSelectionRef); // Scroll to service selection
     }
   };
 
@@ -863,6 +838,194 @@ const Booking = () => {
       return total + (service?.duration_minutes || 0);
     }, 0);
   };
+
+  // Payment success handler
+  const handlePaymentSuccess = async (paymentResult: any) => {
+    setIsProcessing(true);
+
+    try {
+      console.log('💰 Payment successful, saving appointment...');
+
+      const customerEmail = user?.email || '';
+      const customerName = fullName || user?.user_metadata?.full_name || '';
+      const customerPhone = phone || '';
+
+      if (bookingMode === 'group') {
+        // Handle group booking
+        const { subtotal, discount, total } = calculateGroupTotal();
+        const validMembers = groupMembers.filter(m => m.services.length > 0);
+
+        // Create appointments for each group member with error handling
+        const createdAppointments = [];
+        try {
+          for (const member of validMembers) {
+            const memberServices = member.services.map(sid => services.find(s => s.id === sid)?.name).filter(Boolean).join(', ');
+            const appointmentData = {
+              service_id: member.services[0], // Primary service
+              appointment_date: date?.toISOString().split('T')[0],
+              appointment_time: selectedTime,
+              status: 'confirmed',
+              payment_status: 'paid',
+              payment_intent_id: paymentResult.paymentId,
+              total_amount: calculateMemberTotal(member),
+              deposit_amount: calculateMemberTotal(member) * 0.5,
+              notes: `${notes || ''}${member.services.length > 1 ? `\n\nAll services: ${memberServices}` : ''}`.trim(),
+              full_name: member.name || customerName,
+              email: customerEmail,
+              phone: member.phone || customerPhone,
+              user_id: user?.id,
+              staff_id: autoStaffSelection ? null : groupStaffSelections[member.id],
+            };
+
+            const { data, error } = await supabase.from('appointments').insert(appointmentData).select().single();
+            if (error) throw error;
+            createdAppointments.push(data);
+          }
+        } catch (error) {
+          // If any appointment creation fails, show error
+          console.error('Failed to create group appointments:', error);
+          throw new Error('Failed to create all group appointments. Please contact support.');
+        }
+      } else {
+        // Handle individual booking
+        const selectedServicesData = selectedServices.map(id => services.find(s => s.id === id)).filter(Boolean);
+        const allServiceNames = selectedServicesData.map(s => s?.name).join(', ');
+
+        const appointmentData = {
+          service_id: selectedServices[0],
+          appointment_date: date?.toISOString().split('T')[0],
+          appointment_time: selectedTime,
+          status: 'confirmed',
+          payment_status: 'paid',
+          payment_intent_id: paymentResult.paymentId,
+          total_amount: calculateServicesTotal(),
+          deposit_amount: calculateServicesTotal() * 0.5,
+          notes: `${notes || ''}${selectedServices.length > 1 ? `\n\nAll services: ${allServiceNames}` : ''}`.trim(),
+          full_name: customerName,
+          email: customerEmail,
+          phone: customerPhone,
+          user_id: user?.id,
+          staff_id: bookingMode === 'stylist' ? selectedStaff : null,
+        };
+
+        const { data: appointment, error } = await supabase
+          .from('appointments')
+          .insert(appointmentData)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Award loyalty points
+        if (user?.id && calculateServicesTotal() > 0) {
+          try {
+            const pointsToAward = Math.floor(calculateServicesTotal());
+            await supabase.from('loyalty_transactions').insert({
+              user_id: user.id,
+              points_change: pointsToAward,
+              transaction_type: 'earned',
+              description: `Earned from booking`,
+              reference_id: appointment.id
+            });
+          } catch (e) {
+            console.warn('Failed to award loyalty points:', e);
+          }
+        }
+      }
+
+      // Send confirmation email
+      let emailSent = false;
+      if (customerEmail) {
+        try {
+          const selectedServicesData = selectedServices.map(id => services.find(s => s.id === id)).filter(Boolean);
+          await EmailService.sendAppointmentConfirmation({
+            customerEmail,
+            customerName,
+            serviceName: selectedServicesData.map(s => s?.name).join(', '),
+            appointmentDate: date?.toISOString().split('T')[0] || '',
+            appointmentTime: selectedTime,
+            staffName: 'Your Stylist'
+          });
+          emailSent = true;
+        } catch (e) {
+          console.warn('Email sending failed:', e);
+          // Show warning toast for email failure
+          toast({
+            title: "Email Not Sent",
+            description: "Your booking is confirmed, but we couldn't send the confirmation email. Please save your appointment details.",
+            variant: "default",
+          });
+        }
+      }
+
+      setPaymentCompleted(true);
+      clearBookingData();
+
+      toast({
+        title: "Booking Confirmed! 🎉",
+        description: "Your appointment has been scheduled successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error completing booking:', error);
+      toast({
+        title: "Booking Error",
+        description: error.message || "There was an error completing your booking.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePaymentError = (error: string) => {
+    toast({
+      title: "Payment Failed",
+      description: error,
+      variant: "destructive",
+    });
+  };
+
+  // Show success page after payment
+  if (paymentCompleted) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col">
+        <Navigation />
+        <div className="flex-1 flex items-center justify-center px-4 pt-20 relative overflow-hidden">
+          <div className="absolute top-20 left-1/4 opacity-60">
+            <SparkleAnimation className="w-12 h-12" />
+          </div>
+          <div className="absolute top-32 right-1/4 opacity-50">
+            <SparkleAnimation className="w-8 h-8" />
+          </div>
+          <div className="max-w-md w-full relative z-10">
+            <div className="frosted-glass border border-white/10 rounded-lg p-8 text-center">
+              <div className="w-32 h-32 mx-auto mb-4">
+                <SuccessConfettiAnimation className="w-full h-full" />
+              </div>
+              <h1 className="text-2xl font-serif luxury-glow mb-4 text-white">
+                Booking Confirmed!
+              </h1>
+              <div className="space-y-3 text-white/80 mb-6">
+                <p><strong>Date:</strong> {date?.toLocaleDateString()}</p>
+                <p><strong>Time:</strong> {selectedTime}</p>
+                <p><strong>Total:</strong> ${bookingMode === 'group' ? calculateGroupTotal().total.toFixed(2) : calculateServicesTotal().toFixed(2)}</p>
+              </div>
+              <p className="text-white/60 text-sm mb-6">
+                A confirmation email has been sent with all the details.
+              </p>
+              <Button
+                onClick={() => navigate('/')}
+                className="w-full luxury-button-hover"
+              >
+                Return to Home
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -1107,7 +1270,7 @@ const Booking = () => {
                     {/* Staff Mode - Show Staff List and Services side by side */}
                     {bookingMode === 'stylist' && (
                       <div className="flex flex-col md:flex-row gap-6">
-                        <div className="flex-1">
+                        <div className="flex-1" ref={staffSelectionRef}>
                           <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT YOUR STAFF</label>
                           <div className="bg-black border border-white/30 rounded max-h-[400px] overflow-y-auto">
                             {staff.length > 0 ? (
@@ -1136,7 +1299,7 @@ const Booking = () => {
                           </div>
                         </div>
 
-                        <div className="flex-1">
+                        <div className="flex-1" ref={serviceSelectionRef}>
                           <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT SERVICES (choose multiple)</label>
                           <div className={`bg-black border border-white/30 rounded max-h-[400px] overflow-y-auto ${!selectedStaff ? 'opacity-50 pointer-events-none' : ''}`}>
                             {services.length > 0 ? (
@@ -1176,7 +1339,7 @@ const Booking = () => {
 
                     {/* Service Mode - Show Services List (Multiple Selection) */}
                     {bookingMode === 'service' && (
-                      <div>
+                      <div ref={serviceSelectionRef}>
                         <label className="text-sm text-white/70 mb-2 block tracking-wider">SELECT SERVICES (choose multiple)</label>
                         <div className="bg-black border border-white/30 rounded max-h-[400px] overflow-y-auto">
                           {services.length > 0 ? (
@@ -1353,7 +1516,7 @@ const Booking = () => {
                   </>
                 )}
 
-                <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-4 border-t border-white/10">
+                <div ref={nextButtonRef} className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-4 border-t border-white/10">
                   <Button type="button" onClick={prevStep} disabled={currentStep === 0} variant="outline" className="opacity-50 cursor-not-allowed w-full sm:w-auto">
                     <ChevronLeft className="h-4 w-4 mr-2" /> Previous
                   </Button>
@@ -1386,7 +1549,7 @@ const Booking = () => {
                 {/* Horizontal layout: Calendar on left, Time slots on right */}
                 <div className="flex flex-col lg:flex-row gap-6">
                   {/* Calendar Section */}
-                  <div className="w-full lg:w-[55%] lg:max-w-[500px]">
+                  <div ref={calendarRef} className="w-full lg:w-[55%] lg:max-w-[500px]">
                     <div className="bg-black border border-white/30 rounded-lg p-3 sm:p-4 md:p-5 w-full">
                       <Calendar
                         mode="single"
@@ -1409,7 +1572,7 @@ const Booking = () => {
                   </div>
 
                   {/* Time Slots Section */}
-                  <div className="flex-1 min-w-0 lg:min-w-[280px] space-y-3">
+                  <div ref={timeSlotsRef} className="flex-1 min-w-0 lg:min-w-[280px] space-y-3">
                     <div className="flex items-center gap-2 text-sm text-white">
                       <Clock className="h-4 w-4" />
                       <span>Available Times</span>
@@ -1576,26 +1739,49 @@ const Booking = () => {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className="frosted-glass border border-white/10 rounded-lg p-4 md:p-6 space-y-4"
+                className="space-y-6"
               >
-                <div className="text-center md:text-left">
+                <div className="text-center">
                   <motion.h3
-                    className="text-xl md:text-2xl font-serif luxury-glow mb-4"
+                    className="text-xl md:text-2xl font-serif luxury-glow mb-2"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    {bookingMode === 'group' ? 'Group Booking Summary' : 'Booking Summary'}
+                    {bookingMode === 'group' ? 'Review & Pay' : 'Review & Pay'}
                   </motion.h3>
+                  <p className="text-white/60 text-sm">Please review your booking details and complete payment</p>
                 </div>
 
-                {/* Horizontal layout for review */}
-                <div className="flex flex-col md:flex-row gap-6">
-                  {bookingMode === 'group' ? (
-                    // Group Booking Summary - Left side
-                    <div className="flex-1 space-y-3">
-                      {/* Group Members */}
-                      <div className="space-y-2">
+                {/* Two-column layout: Summary on left, Payment on right */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Left Column - Booking Summary */}
+                  <div className="frosted-glass border border-white/10 rounded-lg p-6 space-y-4">
+                    <h4 className="text-white font-semibold text-lg flex items-center justify-between">
+                      Booking Summary
+                    </h4>
+
+                    {bookingMode === 'group' ? (
+                      // Group Booking Summary
+                      <div className="space-y-4">
+                        {/* Services & Group Members with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Group Services</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(0);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
                         {groupMembers.filter(m => m.services.length > 0).map((member, index) => {
                           const memberServices = member.services.map(sid => services.find(s => s.id === sid)).filter(Boolean);
                           const staffMember = !autoStaffSelection && groupStaffSelections[member.id]
@@ -1626,29 +1812,100 @@ const Booking = () => {
                           );
                         })}
                       </div>
+                        </div>
 
-                      {/* Date & Time */}
-                      <div className="flex justify-between items-center py-2 border-b border-white/10">
-                        <span className="text-white">Date:</span>
-                        <span className="text-white">{date ? date.toLocaleDateString() : 'Not selected'}</span>
+                        {/* Date & Time with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Date & Time</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(1);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
+                          <div className="space-y-1 text-white text-sm">
+                            <div className="flex justify-between">
+                              <span>Date:</span>
+                              <span>{date ? date.toLocaleDateString() : 'Not selected'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Time:</span>
+                              <span>{selectedTime || 'Not selected'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Contact Info with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Contact Information</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(2);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
+                          <div className="space-y-1 text-white text-sm">
+                            <div className="flex justify-between">
+                              <span>Name:</span>
+                              <span>{fullName || user?.user_metadata?.full_name || 'Not provided'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phone:</span>
+                              <span>{phone || 'Not provided'}</span>
+                            </div>
+                            {user?.email && (
+                              <div className="flex justify-between">
+                                <span>Email:</span>
+                                <span className="text-xs">{user.email}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Group Scheduling Info */}
+                        <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-lg p-3">
+                          <p className="text-yellow-400 text-sm flex items-center gap-2">
+                            <Zap className="h-4 w-4" />
+                            All services happen simultaneously for fastest experience
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-white/10">
-                        <span className="text-white">Time:</span>
-                        <span className="text-white">{selectedTime || 'Not selected'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-white/10">
-                        <span className="text-white">Scheduling:</span>
-                        <span className="text-yellow-400 flex items-center gap-1">
-                          <Zap className="h-3 w-3" /> All services simultaneous
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    // Individual Booking Summary - Left side
-                    <div className="flex-1 space-y-3">
-                      {/* Services List */}
-                      <div className="py-2 border-b border-white/10">
-                        <span className="text-white/70 block mb-2">Services:</span>
+                    ) : (
+                      // Individual Booking Summary
+                      <div className="space-y-4">
+                        {/* Services List with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Services</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(0);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
                         {selectedServices.length > 0 ? (
                           <div className="space-y-1">
                             {selectedServices.map(serviceId => {
@@ -1662,80 +1919,205 @@ const Booking = () => {
                             })}
                           </div>
                         ) : (
-                          <span className="text-white">Not selected</span>
+                          <span className="text-white text-sm">Not selected</span>
                         )}
-                      </div>
-                      {bookingMode === 'stylist' && selectedStaff && (
-                        <div className="flex justify-between items-center py-2 border-b border-white/10">
-                          <span className="text-white/70">Staff:</span>
-                          <span className="text-white">{staff.find(s => s.id === selectedStaff)?.name || 'Not selected'}</span>
                         </div>
-                      )}
-                      <div className="flex justify-between items-center py-2 border-b border-white/10">
-                        <span className="text-white/70">Date:</span>
-                        <span className="text-white">{date ? date.toLocaleDateString() : 'Not selected'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-white/10">
-                        <span className="text-white/70">Time:</span>
-                        <span className="text-white">{selectedTime || 'Not selected'}</span>
-                      </div>
-                    </div>
-                  )}
 
-                  {/* Right side - Totals and Actions */}
-                  <div className="flex-1 space-y-4">
+                        {/* Staff (if stylist mode) */}
+                        {bookingMode === 'stylist' && selectedStaff && (
+                          <div className="py-3 border-b border-white/10">
+                            <div className="flex items-center justify-between">
+                              <span className="text-white/70 text-sm font-medium">Stylist:</span>
+                              <span className="text-white text-sm">{staff.find(s => s.id === selectedStaff)?.name || 'Not selected'}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Date & Time with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Date & Time</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(1);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
+                          <div className="space-y-1 text-white text-sm">
+                            <div className="flex justify-between">
+                              <span>Date:</span>
+                              <span>{date ? date.toLocaleDateString() : 'Not selected'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Time:</span>
+                              <span>{selectedTime || 'Not selected'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Contact Info with Edit */}
+                        <div className="py-3 border-b border-white/10">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white/70 text-sm font-medium">Contact Information</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentStep(2);
+                                scrollToTop();
+                              }}
+                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                            >
+                              <Edit className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
+                          <div className="space-y-1 text-white text-sm">
+                            <div className="flex justify-between">
+                              <span>Name:</span>
+                              <span>{fullName || user?.user_metadata?.full_name || 'Not provided'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phone:</span>
+                              <span>{phone || 'Not provided'}</span>
+                            </div>
+                            {user?.email && (
+                              <div className="flex justify-between">
+                                <span>Email:</span>
+                                <span className="text-xs">{user.email}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column - Payment */}
+                  <div className="frosted-glass border border-white/10 rounded-lg p-6 space-y-4">
+                    <h4 className="text-white font-semibold text-lg flex items-center gap-2">
+                      <CreditCard className="h-5 w-5" />
+                      Secure Payment
+                    </h4>
+
+                    {/* Price Summary */}
                     {bookingMode === 'group' ? (
                       (() => {
                         const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
+                        const depositAmount = total * 0.5;
                         return (
-                          <div className="bg-white/5 rounded-lg p-4">
-                            <div className="flex justify-between text-white text-sm mb-1">
+                          <div className="bg-white/5 rounded-lg p-4 space-y-2">
+                            <div className="flex justify-between text-white text-sm">
                               <span>Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
                               <span>${subtotal.toFixed(2)}</span>
                             </div>
                             {discountPercent > 0 && (
-                              <div className="flex justify-between text-green-400 text-sm mb-1">
+                              <div className="flex justify-between text-green-400 text-sm">
                                 <span>Group Discount ({discountPercent}%)</span>
                                 <span>-${discount.toFixed(2)}</span>
                               </div>
                             )}
-                            <div className="flex justify-between text-white font-medium text-lg pt-2 border-t border-white/10">
-                              <span>Total</span>
+                            <Separator className="bg-white/10 my-2" />
+                            <div className="flex justify-between text-white text-sm">
+                              <span>Total Price:</span>
                               <span>${total.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-white text-sm">
+                              <span>Deposit (50%):</span>
+                              <span>${depositAmount.toFixed(2)}</span>
+                            </div>
+                            <Separator className="bg-white/10 my-2" />
+                            <div className="flex justify-between text-white font-semibold text-lg">
+                              <span>Due Today:</span>
+                              <span className="text-green-400">${depositAmount.toFixed(2)}</span>
                             </div>
                           </div>
                         );
                       })()
                     ) : (
-                      <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                        <div className="flex justify-between items-center text-white">
-                          <span className="text-white/70">Total Duration:</span>
-                          <span>{calculateServicesDuration()} min</span>
-                        </div>
-                        <div className="flex justify-between items-center text-white font-medium text-lg pt-2 border-t border-white/10">
-                          <span>Total Price:</span>
-                          <span>${calculateServicesTotal().toFixed(2)}</span>
-                        </div>
+                      (() => {
+                        const totalPrice = calculateServicesTotal();
+                        const depositAmount = totalPrice * 0.5;
+                        return (
+                          <div className="bg-white/5 rounded-lg p-4 space-y-2">
+                            <div className="flex justify-between text-white text-sm">
+                              <span>Service Price:</span>
+                              <span>${totalPrice.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-white text-sm">
+                              <span>Duration:</span>
+                              <span>{calculateServicesDuration()} min</span>
+                            </div>
+                            <div className="flex justify-between text-white text-sm">
+                              <span>Deposit (50%):</span>
+                              <span>${depositAmount.toFixed(2)}</span>
+                            </div>
+                            <Separator className="bg-white/10 my-2" />
+                            <div className="flex justify-between text-white font-semibold text-lg">
+                              <span>Due Today:</span>
+                              <span className="text-green-400">${depositAmount.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        );
+                      })()
+                    )}
+
+                    {/* Payment Note */}
+                    <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-3">
+                      <p className="text-violet-300 text-xs">
+                        💳 You'll pay a 50% deposit now. The remaining balance will be collected at your appointment.
+                      </p>
+                    </div>
+
+                    {/* Square Payment Form */}
+                    {(() => {
+                      const amount = bookingMode === 'group' ? calculateGroupTotal().total * 0.5 : calculateServicesTotal() * 0.5;
+                      if (!amount || amount <= 0) {
+                        return (
+                          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400 text-sm">
+                            ⚠️ Invalid payment amount. Please ensure services are selected.
+                          </div>
+                        );
+                      }
+                      return (
+                        <SquarePaymentForm
+                          amount={amount}
+                          onPaymentSuccess={handlePaymentSuccess}
+                          onPaymentError={handlePaymentError}
+                          description={bookingMode === 'group' ? 'Group booking deposit' : 'Appointment deposit'}
+                          customerId={user?.id}
+                          allowGuestCheckout={true}
+                        />
+                      );
+                    })()}
+
+                    {isProcessing && (
+                      <div className="flex items-center justify-center p-4 bg-white/5 rounded-lg">
+                        <Loader2 className="h-6 w-6 animate-spin text-white mr-2" />
+                        <span className="text-white">Processing your booking...</span>
                       </div>
                     )}
 
+                    {/* Back Button */}
                     <div className="pt-4">
-                      <Button type="submit" className="w-full bg-white text-black hover:bg-white/90">
-                        {bookingMode === 'group' ? 'Proceed to Group Checkout' : 'Complete Booking'}
+                      <Button
+                        type="button"
+                        onClick={prevStep}
+                        variant="outline"
+                        className="w-full border-white/20 text-white hover:bg-white/10"
+                        disabled={isProcessing}
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-2" /> Back to Contact Info
                       </Button>
-                      <div className="text-center text-white/60 text-sm mt-4">
-                        {bookingMode === 'group'
-                          ? '50% deposit required to confirm group booking'
-                          : 'Your booking will be confirmed shortly'}
-                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 pt-4 border-t border-white/10">
-                  <Button type="button" onClick={prevStep} variant="outline" className="luxury-button-hover w-full sm:w-auto">
-                    <ChevronLeft className="h-4 w-4 mr-2" /> Previous
-                  </Button>
                 </div>
               </motion.div>
             )}
