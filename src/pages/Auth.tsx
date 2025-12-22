@@ -9,6 +9,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
+// Get base URL for OAuth redirects (absolute URLs required for production)
+const getBaseUrl = () => {
+  // In production, use the configured app URL
+  if (import.meta.env.VITE_APP_URL) {
+    return import.meta.env.VITE_APP_URL;
+  }
+  // In development, use window.location.origin
+  return window.location.origin;
+};
+
 // Custom Sign In Form Component
 const CustomSignInForm = ({ appearance }: { appearance: any }) => {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -47,10 +57,11 @@ const CustomSignInForm = ({ appearance }: { appearance: any }) => {
   const handleGoogleSignIn = async () => {
     if (!isLoaded) return;
     try {
+      const baseUrl = getBaseUrl();
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: '/auth/sso-callback',
-        redirectUrlComplete: '/onboarding',
+        redirectUrl: `${baseUrl}/auth/sso-callback`,
+        redirectUrlComplete: `${baseUrl}/onboarding`,
       });
     } catch (err: any) {
       setError(err.errors?.[0]?.message || 'Failed to sign in with Google.');
@@ -60,10 +71,11 @@ const CustomSignInForm = ({ appearance }: { appearance: any }) => {
   const handleAppleSignIn = async () => {
     if (!isLoaded) return;
     try {
+      const baseUrl = getBaseUrl();
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_apple',
-        redirectUrl: '/auth/sso-callback',
-        redirectUrlComplete: '/onboarding',
+        redirectUrl: `${baseUrl}/auth/sso-callback`,
+        redirectUrlComplete: `${baseUrl}/onboarding`,
       });
     } catch (err: any) {
       setError(err.errors?.[0]?.message || 'Failed to sign in with Apple.');
@@ -73,10 +85,11 @@ const CustomSignInForm = ({ appearance }: { appearance: any }) => {
   const handleFacebookSignIn = async () => {
     if (!isLoaded) return;
     try {
+      const baseUrl = getBaseUrl();
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_facebook',
-        redirectUrl: '/auth/sso-callback',
-        redirectUrlComplete: '/onboarding',
+        redirectUrl: `${baseUrl}/auth/sso-callback`,
+        redirectUrlComplete: `${baseUrl}/onboarding`,
       });
     } catch (err: any) {
       setError(err.errors?.[0]?.message || 'Failed to sign in with Facebook.');
@@ -267,10 +280,11 @@ const CustomSignUpForm = ({ appearance }: { appearance: any }) => {
   const handleGoogleSignUp = async () => {
     if (!isLoaded) return;
     try {
+      const baseUrl = getBaseUrl();
       await signUp.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: '/auth/sso-callback',
-        redirectUrlComplete: '/onboarding',
+        redirectUrl: `${baseUrl}/auth/sso-callback`,
+        redirectUrlComplete: `${baseUrl}/onboarding`,
       });
     } catch (err: any) {
       setError(err.errors?.[0]?.message || 'Failed to sign up with Google.');
@@ -347,10 +361,11 @@ const CustomSignUpForm = ({ appearance }: { appearance: any }) => {
           onClick={async () => {
             if (!isLoaded) return;
             try {
+              const baseUrl = getBaseUrl();
               await signUp.authenticateWithRedirect({
                 strategy: 'oauth_apple',
-                redirectUrl: '/auth/sso-callback',
-                redirectUrlComplete: '/onboarding',
+                redirectUrl: `${baseUrl}/auth/sso-callback`,
+                redirectUrlComplete: `${baseUrl}/onboarding`,
               });
             } catch (err: any) {
               setError(err.errors?.[0]?.message || 'Failed to sign up with Apple.');
@@ -372,10 +387,11 @@ const CustomSignUpForm = ({ appearance }: { appearance: any }) => {
           onClick={async () => {
             if (!isLoaded) return;
             try {
+              const baseUrl = getBaseUrl();
               await signUp.authenticateWithRedirect({
                 strategy: 'oauth_facebook',
-                redirectUrl: '/auth/sso-callback',
-                redirectUrlComplete: '/onboarding',
+                redirectUrl: `${baseUrl}/auth/sso-callback`,
+                redirectUrlComplete: `${baseUrl}/onboarding`,
               });
             } catch (err: any) {
               setError(err.errors?.[0]?.message || 'Failed to sign up with Facebook.');

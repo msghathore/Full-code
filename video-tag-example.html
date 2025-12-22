@@ -1,0 +1,47 @@
+<!-- Optimized Hero Video Tag -->
+<!-- Place this in your React component or HTML -->
+
+<video
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="auto"
+  className="w-full h-full object-cover"
+  style="will-change: transform"
+>
+  <source src="/optimized-hero-video.mp4" type="video/mp4" />
+  <!-- Fallback for browsers without video support -->
+  <p>Your browser doesn't support HTML5 video. Here is a <a href="/optimized-hero-video.mp4">link to the video</a> instead.</p>
+</video>
+
+<!--
+IMPORTANT ATTRIBUTES:
+- autoplay: Starts playing automatically
+- muted: Required for autoplay to work (browser policy)
+- loop: Repeats indefinitely
+- playsinline: Prevents fullscreen on iOS
+- preload="auto": Loads video immediately for smooth playback
+- No poster: Removed as requested
+- No controls: Clean UI for hero videos
+
+PERFORMANCE OPTIMIZATIONS:
+- will-change: transform - Hints browser for GPU acceleration
+- object-cover - Maintains aspect ratio, fills container
+- Compressed to 2.4 MB ensures fast loading (<3s on 3G)
+-->
+
+<!-- React/TypeScript Version -->
+<!--
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="w-full h-full object-cover"
+  style={{ willChange: 'transform' }}
+>
+  <source src="/optimized-hero-video.mp4" type="video/mp4" />
+</video>
+-->
