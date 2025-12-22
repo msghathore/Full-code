@@ -257,7 +257,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
           <X size={20} className="md:w-6 md:h-6" />
         </button>
         <div
-          className="flex flex-col justify-center h-full px-4 py-20 md:px-16 md:py-0 space-y-3 md:space-y-8"
+          className="flex flex-col justify-center h-full px-1.5 pr-0.5 py-20 md:px-16 md:py-0 space-y-3 md:space-y-8"
           onMouseEnter={() => setHoveredItem(null)}
         >
           {menuItems.map((item, index) => {
@@ -278,7 +278,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
               >
                 <Link
                   to={item.href}
-                  className={`block py-1 md:py-0 px-0.5 sm:px-3 md:px-0 rounded-md md:rounded-none transition-all duration-300 ${
+                  className={`block py-1 md:py-0 px-2 sm:px-3 md:px-0 rounded-md md:rounded-none transition-all duration-300 ${
                     isMobile && isSelected
                       ? 'bg-white text-black'
                       : ''
