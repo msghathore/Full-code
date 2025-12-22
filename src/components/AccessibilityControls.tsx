@@ -1,19 +1,39 @@
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useTheme } from "@/hooks/use-theme"
 import { useLanguage } from "@/hooks/use-language"
 import { useFontSize } from "@/hooks/use-font-size"
-import { Lightbulb, Languages, Type, Sun, Moon } from "lucide-react"
+import { Lightbulb, Languages, Type, Sun, Moon, Accessibility } from "lucide-react"
 
 // Wheelchair Ramp Accessibility Icon
 const AnimatedAccessibilityIcon = ({ className = "", isLight = false }: { className?: string; isLight?: boolean }) => {
+  const [videoError, setVideoError] = useState(false);
+
+  // Fallback to SVG icon if video fails to load
+  if (videoError) {
+    return (
+      <Accessibility
+        className={className}
+        style={{
+          filter: isLight
+            ? 'grayscale(1) brightness(0.2)'
+            : 'drop-shadow(0 0 4px rgba(255,255,255,0.9)) drop-shadow(0 0 8px rgba(255,255,255,0.7))'
+        }}
+      />
+    );
+  }
+
   return (
     <video
       autoPlay
       loop
       muted
       playsInline
+      preload="none"
+      aria-hidden="true"
+      onError={() => setVideoError(true)}
       className={className}
       style={{
         filter: isLight
@@ -76,8 +96,12 @@ export function AccessibilityControls() {
   const isLight = theme === "light"
 
   const triggerButtonClass = isLight
-    ? "fixed top-1/2 -translate-y-1/2 right-2 sm:right-4 z-[1000] border-black/30 hover:bg-black/10 transition-all duration-300 cursor-hover bg-white text-black hover:text-black shadow-md"
-    : "fixed top-1/2 -translate-y-1/2 right-2 sm:right-4 z-[1000] border-white/30 hover:bg-white/10 transition-all duration-300 cursor-hover bg-black/80 text-white hover:text-white"
+    ? "fixed top-1/2 -translate-y-1/2 right-2 sm:right-4 z-[1000] border-black/40 hover:bg-black/10 transition-all duration-300 cursor-hover bg-white text-black hover:text-black"
+    : "fixed top-1/2 -translate-y-1/2 right-2 sm:right-4 z-[1000] border-white/40 hover:bg-white/10 transition-all duration-300 cursor-hover bg-black hover:bg-black/90 text-white hover:text-white"
+
+  const triggerButtonStyle = isLight
+    ? { boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)' }
+    : { boxShadow: '0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.2)' }
 
   const popoverClass = isLight
     ? "w-[70vw] sm:w-80 max-w-sm bg-white/95 backdrop-blur-sm border-black/20 text-black z-[1001] shadow-lg"
@@ -93,10 +117,11 @@ export function AccessibilityControls() {
         <Button
           variant="outline"
           size="icon"
-          className={triggerButtonClass}
+          className={`${triggerButtonClass} w-16 h-16 rounded-full`}
+          style={triggerButtonStyle}
           aria-label="Accessibility controls"
         >
-          <AnimatedAccessibilityIcon className="h-5 w-5 sm:h-6 sm:w-6" isLight={isLight} />
+          <AnimatedAccessibilityIcon className="h-8 w-8" isLight={isLight} />
           <span className="sr-only">Open accessibility controls</span>
         </Button>
       </PopoverTrigger>
