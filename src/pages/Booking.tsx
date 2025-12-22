@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -708,19 +708,18 @@ const Booking = () => {
   }, [selectedServices, currentStep, bookingMode]);
 
   // Scroll to next button when time is selected (step 2)
-  useEffect(() => {
+  // Using useLayoutEffect to run synchronously after DOM updates but before paint
+  useLayoutEffect(() => {
     if (currentStep === 1 && selectedTime) {
-      // Add delay to ensure time slot rendering is complete before scrolling
-      setTimeout(() => {
+      // Use requestAnimationFrame to ensure scroll happens after browser paint
+      requestAnimationFrame(() => {
         if (nextButtonRef.current) {
-          const elementTop = nextButtonRef.current.getBoundingClientRect().top;
-          const offsetPosition = elementTop + window.pageYOffset - 150;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
+          nextButtonRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
           });
         }
-      }, 400);
+      });
     }
   }, [selectedTime, currentStep]);
 
