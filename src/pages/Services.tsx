@@ -234,13 +234,13 @@ const Services = () => {
 
       {/* Sticky Category Tabs - Full Width */}
       <div className="sticky top-14 z-40 bg-black/95 backdrop-blur-lg border-b border-white/10">
-        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 py-3 sm:py-4 overflow-x-auto scrollbar-hide">
+        <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 md:gap-2.5 py-2.5 sm:py-3">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => scrollToCategory(category)}
-                className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-base md:text-lg font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium whitespace-nowrap transition-all duration-300 ${
                   activeCategory === category
                     ? 'bg-white text-black shadow-lg'
                     : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
@@ -255,7 +255,7 @@ const Services = () => {
 
       <div className="container mx-auto px-4 md:px-8 py-6">
         {/* Search Bar - Responsive Width */}
-        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 sm:mb-8">
+        <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto mb-6">
           <div className="relative">
             <Input
               id="service-search"
@@ -265,9 +265,9 @@ const Services = () => {
               placeholder={t('searchServicesPlaceholder') || 'Search services...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 pl-10 sm:pl-12 md:pl-14 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg rounded-full"
+              className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 pl-9 sm:pl-10 py-2.5 sm:py-3 text-sm sm:text-base rounded-full"
             />
-            <Search className="absolute left-3 sm:left-4 md:left-5 top-1/2 transform -translate-y-1/2 text-white/40 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-white/40 h-4 w-4 sm:h-5 sm:w-5" />
           </div>
         </div>
 
