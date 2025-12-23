@@ -150,8 +150,10 @@ const Services = () => {
     }
   }, [dbServices]);
 
-  // Get unique categories
-  const categories = ['ALL', ...new Set(dbServices.map((s: any) => s.category))];
+  // Get categories in specific order
+  const categoryOrder = ['ALL', 'Hair', 'Nails', 'Tattoo', 'Massage', 'Skin', 'Sugaring', 'Waxing', 'Eyebrow', 'Lash', 'Piercing'];
+  const dbCategories = new Set(dbServices.map((s: any) => s.category));
+  const categories = categoryOrder.filter(cat => cat === 'ALL' || dbCategories.has(cat));
 
   // Organize services by parent-child relationship
   const organizeServices = (services: any[]) => {
