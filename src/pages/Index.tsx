@@ -382,7 +382,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
             </motion.div>
 
             <motion.div
-              className="text-center mt-12 space-y-4 space-x-4"
+              className="text-center mt-[43px] md:mt-12 space-y-4 space-x-4"
               initial={{ opacity: 0, y: 30 }}
               animate={servicesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ delay: 0.8, duration: 0.6 }}
