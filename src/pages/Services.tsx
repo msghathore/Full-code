@@ -65,42 +65,9 @@ const services = [
   },
 ];
 
-// Category mapping - subcategories to main categories
-const categoryGroups: { [key: string]: string } = {
-  // Hair subcategories
-  'Haircuts': 'Hair',
-  'Hair Color': 'Hair',
-  'Hair Styling': 'Hair',
-  'Hair Treatments': 'Hair',
-  'Hair Extensions': 'Hair',
-
-  // Nails subcategories
-  'Manicure': 'Nails',
-  'Pedicure': 'Nails',
-  'Nail Enhancements': 'Nails',
-  'Nail Art': 'Nails',
-
-  // Skin subcategories
-  'Facials': 'Skin',
-  'Advanced Skin Treatments': 'Skin',
-
-  // Waxing subcategories
-  'Facial Waxing': 'Waxing',
-  'Body Waxing': 'Waxing',
-
-  // Keep as-is categories
-  'Massage': 'Massage',
-  'Eyebrow': 'Eyebrow',
-  'Lash': 'Lash',
-  'Piercing': 'Piercing',
-  'Tattoo': 'Tattoo',
-  'Sugaring': 'Sugaring',
-};
-
 const Services = () => {
   const servicesRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [dbServices, setDbServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -154,17 +121,8 @@ const Services = () => {
     return acc;
   }, {});
 
-  // Get unique main categories for filter buttons in the exact order specified
-  const mainCategories = ['ALL', 'Hair', 'Nails', 'Tattoo', 'Massage', 'Waxing', 'Sugaring', 'Skin', 'Eyebrow', 'Lash', 'Piercing'];
-
-  // Filter services based on search and category
+  // Filter services based on search
   const filteredServices = Object.keys(groupedServices).reduce((acc: any, category: string) => {
-    // Check if this category matches the selected main category
-    const mainCategory = categoryGroups[category] || category;
-    const matchesCategory = selectedCategory === 'ALL' || mainCategory === selectedCategory;
-
-    if (!matchesCategory) return acc;
-
     const filtered = groupedServices[category].filter((service: any) =>
       service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -181,28 +139,9 @@ const Services = () => {
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-center mb-6 luxury-glow">
           SERVICES
         </h1>
-        <p className="text-center text-muted-foreground mb-8 md:mb-12 tracking-wider text-base md:text-lg">
+        <p className="text-center text-muted-foreground mb-12 md:mb-20 tracking-wider text-base md:text-lg">
           Indulge in our curated selection of luxury treatments
         </p>
-
-        {/* Category Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-12">
-          {mainCategories.map((category) => (
-            <Button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              variant={selectedCategory === category ? "default" : "outline"}
-              className={`
-                font-serif tracking-wider px-4 md:px-6 py-2 transition-all
-                ${selectedCategory === category
-                  ? 'bg-white text-black hover:bg-white/90'
-                  : 'border-white/30 text-white hover:bg-white/10'}
-              `}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
 
         {/* Search Bar with AI capability */}
         <div className="max-w-2xl mx-auto mb-12 md:mb-16">
