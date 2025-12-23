@@ -185,7 +185,7 @@ export const GlenAssistant = () => {
   useEffect(() => {
     const handleScroll = () => {
       const isMobile = window.innerWidth < 513;
-      const scrolledPastHero = window.scrollY > window.innerHeight * 0.8; // 80% of viewport height
+      const scrolledPastHero = window.scrollY > window.innerHeight * 0.5; // 50% of viewport height
 
       if (isMobile) {
         setShowOnMobile(scrolledPastHero);
