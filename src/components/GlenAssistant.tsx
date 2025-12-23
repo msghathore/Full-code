@@ -134,6 +134,24 @@ const pulseVariants = {
   },
 };
 
+// Slide-up animation for chat button on mobile
+const slideUpVariants = {
+  hidden: {
+    y: 100,
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+      delay: 0.5,
+    },
+  },
+};
+
 export const GlenAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
@@ -178,11 +196,11 @@ export const GlenAssistant = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('https://stppkvkcjsyusxwtbaej.supabase.co/functions/v1/glen-chat', {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/glen-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cHBrdmtjanN5dXN4d3RiYWVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjk4MTUsImV4cCI6MjA3ODgwNTgxNX0.sH9es8xu2tZlkhQrfaPcaYTAC8t6CjrI7LL9BKfT-v0'
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
         },
         body: JSON.stringify({
           message: textToSend,
@@ -484,7 +502,7 @@ export const GlenAssistant = () => {
                               <motion.button
                                 key={index}
                                 onClick={() => handleQuickAction(action.action)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black/50"
                                 style={{
                                   color: 'rgba(255, 255, 255, 0.8)',
                                   background: 'rgba(255, 255, 255, 0.08)',
@@ -563,7 +581,7 @@ export const GlenAssistant = () => {
                         <motion.button
                           key={index}
                           onClick={() => handleSend(question)}
-                          className="text-left px-4 py-3 text-xs text-white/70 hover:text-white rounded-xl transition-all duration-200"
+                          className="text-left px-4 py-3 text-xs text-white/70 hover:text-white rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black/50"
                           style={{
                             background: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.08)'
@@ -627,13 +645,19 @@ export const GlenAssistant = () => {
       </AnimatePresence>
 
       {/* Chat Button - White with glow */}
+      {/* Hide on mobile < 513px, slide up gradually on larger screens */}
       <motion.div
-        className="fixed bottom-6 right-6 z-[9999]"
-        variants={buttonVariants}
-        initial="rest"
-        whileHover="hover"
-        whileTap="tap"
+        className="fixed bottom-6 right-6 z-[9999] hidden min-[513px]:block"
+        variants={slideUpVariants}
+        initial="hidden"
+        animate="visible"
       >
+        <motion.div
+          variants={buttonVariants}
+          initial="rest"
+          whileHover="hover"
+          whileTap="tap"
+        >
         {/* White outer glow ring effect */}
         {!isOpen && (
           <motion.div
@@ -688,6 +712,7 @@ export const GlenAssistant = () => {
             )}
           </AnimatePresence>
         </Button>
+        </motion.div>
       </motion.div>
     </>
   );
