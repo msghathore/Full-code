@@ -156,6 +156,7 @@ export const GlenAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [showOnMobile, setShowOnMobile] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -179,6 +180,32 @@ export const GlenAssistant = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  // Show chat icon on mobile after scrolling past hero section
+  useEffect(() => {
+    const handleScroll = () => {
+      const isMobile = window.innerWidth < 513;
+      const scrolledPastHero = window.scrollY > window.innerHeight * 0.8; // 80% of viewport height
+
+      if (isMobile) {
+        setShowOnMobile(scrolledPastHero);
+      } else {
+        setShowOnMobile(true); // Always show on desktop
+      }
+    };
+
+    // Initial check
+    handleScroll();
+
+    // Listen to scroll events
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
 
   const handleSend = async (messageText?: string) => {
     const textToSend = messageText || input;
@@ -645,13 +672,15 @@ export const GlenAssistant = () => {
       </AnimatePresence>
 
       {/* Chat Button - White with glow */}
-      {/* Slide up gradually on all screen sizes */}
-      <motion.div
-        className="fixed bottom-6 right-6 z-[9999]"
-        variants={slideUpVariants}
-        initial="hidden"
-        animate="visible"
-      >
+      {/* Hidden on mobile until scrolled past hero, always visible on desktop */}
+      {showOnMobile && (
+        <motion.div
+          className="fixed bottom-6 right-6 z-[9999]"
+          variants={slideUpVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+        >
         <motion.div
           variants={buttonVariants}
           initial="rest"
@@ -714,6 +743,7 @@ export const GlenAssistant = () => {
         </Button>
         </motion.div>
       </motion.div>
+      )}
     </>
   );
 };
