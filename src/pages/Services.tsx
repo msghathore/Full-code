@@ -217,44 +217,17 @@ const Services = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black" />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: 'url(/images/services-menu.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(2px)'
-          }}
-        />
-        <div className="container mx-auto px-4 md:px-8 relative z-10">
+      <section className="relative pt-20 pb-6">
+        <div className="container mx-auto px-4 md:px-8">
           <motion.div
             className="text-center pt-6 md:pt-10"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-3 luxury-glow">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif luxury-glow">
               {t('servicesTitle') || 'OUR SERVICES'}
             </h1>
-            <p className="text-white/70 text-sm md:text-base tracking-wider max-w-xl mx-auto mb-4">
-              {t('servicesSubtitle') || 'Indulge in our curated selection of luxury treatments'}
-            </p>
-            <div className="flex items-center justify-center gap-4 text-xs text-white/50">
-              <span className="flex items-center gap-1">
-                <Sparkles className="h-3 w-3" />
-                {dbServices.length}+ Services
-              </span>
-              <span className="flex items-center gap-1">
-                <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                5.0 Rating
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                Open Daily
-              </span>
-            </div>
           </motion.div>
         </div>
       </section>
