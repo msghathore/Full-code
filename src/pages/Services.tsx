@@ -348,7 +348,7 @@ const Services = () => {
                         {/* Price & Actions */}
                         {!item.is_parent && (
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="text-lg md:text-xl luxury-glow transition-all">
+                            <div className="text-lg md:text-xl text-emerald-400 transition-all" style={{ textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)' }}>
                               ${item.price}
                             </div>
                             <Button
@@ -387,7 +387,7 @@ const Services = () => {
 
                               {/* Variant Price & Actions */}
                               <div className="flex items-center gap-2 flex-shrink-0">
-                                <div className="text-base md:text-lg luxury-glow transition-all">
+                                <div className="text-base md:text-lg text-emerald-400 transition-all" style={{ textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)' }}>
                                   ${variant.price}
                                 </div>
                                 <Button
