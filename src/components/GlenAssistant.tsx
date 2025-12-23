@@ -645,9 +645,9 @@ export const GlenAssistant = () => {
       </AnimatePresence>
 
       {/* Chat Button - White with glow */}
-      {/* Hide on mobile < 513px, slide up gradually on larger screens */}
+      {/* Slide up gradually on all screen sizes */}
       <motion.div
-        className="fixed bottom-6 right-6 z-[9999] hidden min-[513px]:block"
+        className="fixed bottom-6 right-6 z-[9999]"
         variants={slideUpVariants}
         initial="hidden"
         animate="visible"
