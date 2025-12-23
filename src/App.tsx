@@ -26,6 +26,7 @@ import CookieConsent from "./components/CookieConsent";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import OAuthCallback from "./pages/OAuthCallback";
 import { SmoothScrollProvider } from "./components/animations";
+import { MaintenanceMode, isMaintenanceBypassed } from "./components/MaintenanceMode";
 // import { performanceTracker } from "./lib/performance";
 
 // Lazy load pages for code splitting
@@ -145,6 +146,17 @@ const App = () => {
 
   // Track popup state for navbar hiding
   const [showSecretDeals, setShowSecretDeals] = useState(false);
+
+  // Maintenance mode state
+  const [maintenanceBypassed, setMaintenanceBypassed] = useState(isMaintenanceBypassed());
+
+  // Check if maintenance mode is enabled via environment variable
+  const isMaintenanceModeEnabled = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+
+  // If maintenance mode is enabled and not bypassed, show maintenance page
+  if (isMaintenanceModeEnabled && !maintenanceBypassed) {
+    return <MaintenanceMode onAuthenticated={() => setMaintenanceBypassed(true)} />;
+  }
 
   return (
     <HelmetProvider>
