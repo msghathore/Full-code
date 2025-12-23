@@ -117,6 +117,38 @@ export const useAppointments = () => {
     fetchAppointments();
   }, [isStaffMember]);
 
+  // Realtime subscription for appointments
+  useEffect(() => {
+    if (!isStaffMember) return;
+
+    console.log('🔴 Setting up realtime subscription for appointments...');
+
+    const channel = supabase
+      .channel('appointments-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'appointments'
+        },
+        (payload) => {
+          console.log('🟢 Realtime change detected:', payload);
+          // Refetch appointments when any change occurs
+          fetchAppointments();
+        }
+      )
+      .subscribe((status) => {
+        console.log('📡 Realtime subscription status:', status);
+      });
+
+    // Cleanup subscription on unmount
+    return () => {
+      console.log('🔴 Unsubscribing from realtime...');
+      channel.unsubscribe();
+    };
+  }, [isStaffMember]);
+
   return {
     appointments,
     loading,

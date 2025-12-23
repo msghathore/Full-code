@@ -15,6 +15,7 @@ This file contains all the rules and guidelines Claude must follow when working 
 ## Project Overview
 
 **Zavira** is a modern salon booking and management system with:
+- **Production Domain:** https://zavira.ca
 - Public customer-facing website (booking, shop, blog)
 - Staff portal for managing appointments and checkout
 - Admin panel for staff management
