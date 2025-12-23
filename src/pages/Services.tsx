@@ -122,7 +122,9 @@ const Services = () => {
     const { data, error } = await supabase
       .from('services')
       .select('*')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .order('category', { ascending: true })
+      .order('display_order', { ascending: true });
 
     if (!error && data) {
       setDbServices(data);
@@ -156,14 +158,36 @@ const Services = () => {
   // Get unique categories
   const categories = ['ALL', ...new Set(dbServices.map((s: any) => s.category))];
 
-  // Group services by category
+  // Organize services by parent-child relationship
+  const organizeServices = (services: any[]) => {
+    const parentServices = services.filter(s => s.is_parent || !s.parent_service_id);
+    const childServices = services.filter(s => s.parent_service_id && !s.is_parent);
+
+    return parentServices.map(parent => ({
+      ...parent,
+      variants: childServices.filter(child => child.parent_service_id === parent.id)
+    }));
+  };
+
+  // Group services by category with parent-child structure
   const groupedServices = dbServices.reduce((acc: any, service: any) => {
     if (!acc[service.category]) {
       acc[service.category] = [];
     }
-    acc[service.category].push(service);
+    // Only add parent services and standalone services (not child variants)
+    if (service.is_parent || !service.parent_service_id) {
+      acc[service.category].push(service);
+    }
     return acc;
   }, {});
+
+  // Attach variants to parent services
+  Object.keys(groupedServices).forEach(category => {
+    groupedServices[category] = organizeServices([
+      ...groupedServices[category],
+      ...dbServices.filter(s => s.category === category && s.parent_service_id)
+    ]);
+  });
 
   // Filter services based on search and active category
   const filteredServices = Object.keys(groupedServices).reduce((acc: any, category: string) => {
@@ -304,29 +328,21 @@ const Services = () => {
               {featuredServices.map((service: any) => (
                 <motion.div
                   key={service.id}
-                  className="group relative rounded-lg overflow-hidden cursor-pointer"
+                  className="group relative rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer transition-all duration-300 p-3"
                   whileHover={{ scale: 1.02 }}
                   onClick={() => navigate(`/booking?service=${service.id}`)}
                 >
-                  <div className="aspect-[4/3] relative">
-                    <img
-                      src={`/images/${service.category.toLowerCase()}-service.jpg`}
-                      alt={service.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute top-1.5 right-1.5 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
                       POPULAR
                     </div>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                    <h3 className="text-white font-medium text-xs mb-0.5 group-hover:luxury-glow transition-all line-clamp-1">
-                      {service.name}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/70 text-[10px]">{service.duration_minutes} min</span>
-                      <span className="text-white font-serif text-sm">${service.price}</span>
-                    </div>
+                  <h3 className="text-white font-medium text-sm mb-2 group-hover:luxury-glow transition-all">
+                    {service.name}
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/70 text-xs">{service.duration_minutes} min</span>
+                    <span className="text-white font-serif text-lg">${service.price}</span>
                   </div>
                 </motion.div>
               ))}
@@ -377,90 +393,131 @@ const Services = () => {
                   viewport={{ once: true, margin: "-30px" }}
                 >
                   {filteredServices[category].map((item: any) => (
-                    <motion.div
-                      key={item.id}
-                      className="group flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 rounded-lg transition-all duration-300"
-                      variants={itemVariants}
-                    >
-                      {/* Service Image */}
-                      <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <img
-                          src={`/images/${item.category.toLowerCase()}-service.jpg`}
-                          alt={item.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        {isPopularService(item.name) && (
-                          <div className="absolute top-0.5 left-0.5 bg-yellow-500 text-black text-[8px] font-bold px-1 py-0.5 rounded">
-                            HOT
+                    <div key={item.id}>
+                      {/* Parent Service or Standalone Service */}
+                      <motion.div
+                        className={`group flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 rounded-lg transition-all duration-300 ${item.is_parent ? 'mb-2' : ''}`}
+                        variants={itemVariants}
+                      >
+                        {/* Service Info */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm md:text-base font-serif group-hover:luxury-glow transition-all truncate">
+                            {item.name}
+                          </h3>
+                          {item.description && !item.is_parent && (
+                            <p className="text-xs text-white/50 line-clamp-1">{item.description}</p>
+                          )}
+                          {!item.is_parent && (
+                            <div className="flex items-center gap-2 text-xs text-white/50 mt-1">
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {item.duration_minutes} {t('minutes') || 'min'}
+                              </span>
+                            </div>
+                          )}
+                          {item.is_parent && item.variants && item.variants.length > 0 && (
+                            <p className="text-xs text-white/50 mt-0.5">
+                              {item.variants.length} {item.variants.length === 1 ? 'option' : 'options'} available
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Price & Actions */}
+                        {!item.is_parent && (
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="text-lg md:text-xl font-serif group-hover:luxury-glow transition-all">
+                              ${item.price}
+                            </div>
+                            <div className="flex gap-1.5">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="hidden md:flex h-8 w-8 p-0 border border-white/20 text-white hover:bg-white/10"
+                                  >
+                                    <Eye className="h-3.5 w-3.5" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl w-[95vw] bg-black/95 border-white/20">
+                                  <div className="space-y-4 p-2">
+                                    <div className="text-center">
+                                      <h3 className="text-xl font-serif luxury-glow mb-1">{item.name}</h3>
+                                      <p className="text-white/70 text-sm">{item.description || t('seeTransformation') || 'Experience luxury treatment'}</p>
+                                    </div>
+                                    <ImageComparisonSlider
+                                      beforeImage={`/images/${item.category.toLowerCase()}-service.jpg`}
+                                      afterImage={`/images/${item.category.toLowerCase()}-service.jpg`}
+                                      beforeLabel={t('beforeTreatment') || 'Before'}
+                                      afterLabel={t('afterTreatment') || 'After'}
+                                      className="w-full h-48 md:h-56"
+                                    />
+                                    <div className="flex justify-center">
+                                      <Button
+                                        onClick={() => navigate(`/booking?service=${item.id}`)}
+                                        className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-6 luxury-button-hover"
+                                      >
+                                        <Calendar className="h-4 w-4 mr-2" />
+                                        {t('bookThisService') || 'Book This Service'}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                              <Button
+                                onClick={() => navigate(`/booking?service=${item.id}`)}
+                                size="sm"
+                                className="h-8 bg-white text-black hover:bg-white/90 font-medium px-3 text-xs"
+                              >
+                                <span className="hidden sm:inline">{t('bookNow') || 'Book'}</span>
+                                <ChevronRight className="h-3.5 w-3.5 sm:ml-1" />
+                              </Button>
+                            </div>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
 
-                      {/* Service Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm md:text-base font-serif group-hover:luxury-glow transition-all truncate">
-                          {item.name}
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-white/50">
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {item.duration_minutes} {t('minutes') || 'min'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Price & Actions */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <div className="text-lg md:text-xl font-serif group-hover:luxury-glow transition-all">
-                          ${item.price}
-                        </div>
-                        <div className="flex gap-1.5">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="hidden md:flex h-8 w-8 p-0 border border-white/20 text-white hover:bg-white/10"
-                              >
-                                <Eye className="h-3.5 w-3.5" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-3xl w-[95vw] bg-black/95 border-white/20">
-                              <div className="space-y-4 p-2">
-                                <div className="text-center">
-                                  <h3 className="text-xl font-serif luxury-glow mb-1">{item.name}</h3>
-                                  <p className="text-white/70 text-sm">{item.description || t('seeTransformation') || 'Experience luxury treatment'}</p>
-                                </div>
-                                <ImageComparisonSlider
-                                  beforeImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                  afterImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                  beforeLabel={t('beforeTreatment') || 'Before'}
-                                  afterLabel={t('afterTreatment') || 'After'}
-                                  className="w-full h-48 md:h-56"
-                                />
-                                <div className="flex justify-center">
-                                  <Button
-                                    onClick={() => navigate(`/booking?service=${item.id}`)}
-                                    className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-6 luxury-button-hover"
-                                  >
-                                    <Calendar className="h-4 w-4 mr-2" />
-                                    {t('bookThisService') || 'Book This Service'}
-                                  </Button>
+                      {/* Variants (if this is a parent service) */}
+                      {item.is_parent && item.variants && item.variants.length > 0 && (
+                        <div className="ml-8 md:ml-12 space-y-2 mb-3">
+                          {item.variants.map((variant: any) => (
+                            <motion.div
+                              key={variant.id}
+                              className="group flex items-center gap-3 p-2.5 bg-white/3 hover:bg-white/8 border border-white/5 hover:border-white/10 rounded-lg transition-all duration-300"
+                              variants={itemVariants}
+                            >
+                              {/* Variant Info */}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-medium group-hover:text-white/90 transition-all">
+                                  {variant.name}
+                                </h4>
+                                <div className="flex items-center gap-2 text-xs text-white/40 mt-0.5">
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {variant.duration_minutes} min
+                                  </span>
                                 </div>
                               </div>
-                            </DialogContent>
-                          </Dialog>
-                          <Button
-                            onClick={() => navigate(`/booking?service=${item.id}`)}
-                            size="sm"
-                            className="h-8 bg-white text-black hover:bg-white/90 font-medium px-3 text-xs"
-                          >
-                            <span className="hidden sm:inline">{t('bookNow') || 'Book'}</span>
-                            <ChevronRight className="h-3.5 w-3.5 sm:ml-1" />
-                          </Button>
+
+                              {/* Variant Price & Actions */}
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <div className="text-base md:text-lg font-serif group-hover:luxury-glow transition-all">
+                                  ${variant.price}
+                                </div>
+                                <Button
+                                  onClick={() => navigate(`/booking?service=${variant.id}`)}
+                                  size="sm"
+                                  className="h-7 bg-white/90 text-black hover:bg-white font-medium px-2.5 text-xs"
+                                >
+                                  <span className="hidden sm:inline">Book</span>
+                                  <ChevronRight className="h-3 w-3 sm:ml-1" />
+                                </Button>
+                              </div>
+                            </motion.div>
+                          ))}
                         </div>
-                      </div>
-                    </motion.div>
+                      )}
+                    </div>
                   ))}
                 </motion.div>
               </motion.div>
