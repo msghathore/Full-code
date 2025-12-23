@@ -7,11 +7,9 @@ import { Footer } from '@/components/Footer';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Search, Calendar, Eye, Star, Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { Search, Calendar, Star, Sparkles, Clock, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ImageComparisonSlider } from '@/components/ImageComparisonSlider';
 import { scrollIntoViewFast } from '@/lib/utils';
 import { useLanguage } from '@/hooks/use-language';
 
@@ -61,9 +59,6 @@ const categoryVariants = {
     }
   }
 };
-
-// Popular/featured service names
-const popularServiceNames = ['Haircut', 'Massage', 'Facial', 'Manicure', 'Color'];
 
 // Testimonials data
 const testimonials = [
@@ -205,11 +200,6 @@ const Services = () => {
     return acc;
   }, {});
 
-  // Get featured/popular services
-  const featuredServices = dbServices.filter((s: any) =>
-    popularServiceNames.some(name => s.name.toLowerCase().includes(name.toLowerCase()))
-  ).slice(0, 4);
-
   const scrollToCategory = (category: string) => {
     setActiveCategory(category);
     if (category !== 'ALL') {
@@ -220,10 +210,6 @@ const Services = () => {
         }
       }, 100);
     }
-  };
-
-  const isPopularService = (name: string) => {
-    return popularServiceNames.some(popular => name.toLowerCase().includes(popular.toLowerCase()));
   };
 
   return (
@@ -312,44 +298,6 @@ const Services = () => {
           </div>
         </div>
 
-        {/* Featured Services Section */}
-        {!searchQuery && activeCategory === 'ALL' && featuredServices.length > 0 && (
-          <motion.section
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-4 w-4 text-yellow-500" />
-              <h2 className="text-lg font-serif luxury-glow">Popular Services</h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-              {featuredServices.map((service: any) => (
-                <motion.div
-                  key={service.id}
-                  className="group relative rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer transition-all duration-300 p-3"
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => navigate(`/booking?service=${service.id}`)}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
-                      POPULAR
-                    </div>
-                  </div>
-                  <h3 className="text-white font-medium text-sm mb-2 group-hover:luxury-glow transition-all">
-                    {service.name}
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/70 text-xs">{service.duration_minutes} min</span>
-                    <span className="text-white font-serif text-lg">${service.price}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-        )}
-
         {/* Services List */}
         <div ref={servicesRef} className="space-y-6">
           {loading ? (
@@ -425,54 +373,17 @@ const Services = () => {
                         {/* Price & Actions */}
                         {!item.is_parent && (
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="text-lg md:text-xl font-serif group-hover:luxury-glow transition-all">
+                            <div className="text-lg md:text-xl luxury-glow transition-all">
                               ${item.price}
                             </div>
-                            <div className="flex gap-1.5">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="hidden md:flex h-8 w-8 p-0 border border-white/20 text-white hover:bg-white/10"
-                                  >
-                                    <Eye className="h-3.5 w-3.5" />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-3xl w-[95vw] bg-black/95 border-white/20">
-                                  <div className="space-y-4 p-2">
-                                    <div className="text-center">
-                                      <h3 className="text-xl font-serif luxury-glow mb-1">{item.name}</h3>
-                                      <p className="text-white/70 text-sm">{item.description || t('seeTransformation') || 'Experience luxury treatment'}</p>
-                                    </div>
-                                    <ImageComparisonSlider
-                                      beforeImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                      afterImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                      beforeLabel={t('beforeTreatment') || 'Before'}
-                                      afterLabel={t('afterTreatment') || 'After'}
-                                      className="w-full h-48 md:h-56"
-                                    />
-                                    <div className="flex justify-center">
-                                      <Button
-                                        onClick={() => navigate(`/booking?service=${item.id}`)}
-                                        className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-6 luxury-button-hover"
-                                      >
-                                        <Calendar className="h-4 w-4 mr-2" />
-                                        {t('bookThisService') || 'Book This Service'}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                              <Button
-                                onClick={() => navigate(`/booking?service=${item.id}`)}
-                                size="sm"
-                                className="h-8 bg-white text-black hover:bg-white/90 font-medium px-3 text-xs"
-                              >
-                                <span className="hidden sm:inline">{t('bookNow') || 'Book'}</span>
-                                <ChevronRight className="h-3.5 w-3.5 sm:ml-1" />
-                              </Button>
-                            </div>
+                            <Button
+                              onClick={() => navigate(`/booking?service=${item.id}`)}
+                              size="sm"
+                              className="h-8 bg-white text-black hover:bg-white/90 font-medium px-3 text-xs"
+                            >
+                              <span className="hidden sm:inline">{t('bookNow') || 'Book'}</span>
+                              <ChevronRight className="h-3.5 w-3.5 sm:ml-1" />
+                            </Button>
                           </div>
                         )}
                       </motion.div>
@@ -501,7 +412,7 @@ const Services = () => {
 
                               {/* Variant Price & Actions */}
                               <div className="flex items-center gap-2 flex-shrink-0">
-                                <div className="text-base md:text-lg font-serif group-hover:luxury-glow transition-all">
+                                <div className="text-base md:text-lg luxury-glow transition-all">
                                   ${variant.price}
                                 </div>
                                 <Button
