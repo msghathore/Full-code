@@ -65,28 +65,34 @@ text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0
 ### Color Palette
 | Purpose | Color | Hex |
 |---------|-------|-----|
-| Primary | Deep Purple | `#7c3aed` (violet-600) |
-| Secondary | Rose Gold | `#f43f5e` (rose-500) |
-| Accent | Emerald | `#10b981` (emerald-500) |
+| Primary | Black | `#000000` or `#020617` (slate-950) |
+| Secondary | White | `#ffffff` |
+| Accent | Emerald Green | `#10b981` (emerald-500) |
 | Public Site BG | Black | `#000000` or `#020617` (slate-950) |
-| Admin BG | White | `#ffffff` |
-| Public Text | White Glow | `#ffffff` with text-shadow |
-| Admin Text | Black | `#0f172a` (slate-900) |
+| Public Site Text | White Glow | `#ffffff` with text-shadow |
+| Admin/Staff BG | White | `#ffffff` |
+| Admin/Staff Text | Black | `#0f172a` (slate-900) |
 
 ### ⚠️ CRITICAL: Brand Colors ONLY
 
-**DO NOT USE any colors outside of the brand color palette above.**
+**Simple Color Rule: Black and White ONLY**
+
+**PRIMARY DESIGN:**
+- Dark mode (public site): Black background + White text
+- Light mode (staff/admin): White background + Black text
+- Accent color for success/actions: Green (`emerald-*` or `green-*`)
 
 **FORBIDDEN COLORS (Never use these):**
-- ❌ Blue (`blue-*`, `sky-*`, `cyan-*`) - Use `violet-*` instead
-- ❌ Teal (`teal-*`) - Use `emerald-*` instead
-- ❌ Any non-brand colors
+- ❌ Purple (`purple-*`, `violet-*`) - Brand color removed
+- ❌ Rose/Pink (`rose-*`, `pink-*`) - Brand color removed
+- ❌ Blue (`blue-*`, `sky-*`, `cyan-*`)
+- ❌ Any colorful primary/secondary colors
 
 **ALLOWED COLOR FAMILIES:**
-- ✅ `violet-*` (primary brand color)
-- ✅ `purple-*` (primary family)
-- ✅ `rose-*` (secondary brand color)
-- ✅ `emerald-*` / `green-*` (accent color)
+- ✅ `black` / `slate-950` (dark backgrounds)
+- ✅ `white` / `slate-50` (light backgrounds)
+- ✅ `slate-*` / `gray-*` (neutral tones)
+- ✅ `emerald-*` / `green-*` (accent for success/actions only)
 - ✅ `amber-*` / `yellow-*` (status: requested)
 - ✅ `gray-*` / `slate-*` (neutral)
 - ✅ `white` / `black` (backgrounds)

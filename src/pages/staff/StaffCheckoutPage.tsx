@@ -1147,7 +1147,7 @@ const StaffCheckoutPage = () => {
                 )}
               </div>
               <Button
-                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium"
+                className="w-full bg-black hover:bg-slate-800 text-white font-medium border border-white/20"
                 disabled={cartItems.length === 0 || isSendingToTablet}
                 onClick={handleSendToCustomerTablet}
               >
