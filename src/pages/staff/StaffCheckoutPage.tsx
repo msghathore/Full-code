@@ -711,25 +711,24 @@ const StaffCheckoutPage = () => {
       // Generate a unique session code
       const sessionCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-      // Prepare checkout data for the tablet
+      // Prepare checkout data for the tablet (column names match pending_checkout table)
       const checkoutData = {
         session_code: sessionCode,
-        items: cartItems.map(item => ({
+        cart_items: cartItems.map(item => ({
           name: item.name,
           quantity: item.quantity,
           price: item.price,
           discount: item.discount || 0,
+          item_type: item.itemType || 'service',
           staff_name: staffList.find(s => s.id === item.serviceProviderId)?.name || 'Staff'
         })),
         subtotal: totals.subtotal,
-        tax: totals.tax,
-        total: totals.amountDue,
+        tax_amount: totals.tax,
+        total_amount: totals.amountDue,
         tip_amount: tipAmount,
         customer_name: currentCustomer.name,
         staff_name: staffList.find(s => s.id === cartItems[0]?.serviceProviderId)?.name || 'Staff',
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minute expiry
+        status: 'pending'
       };
 
       // Insert into pending_checkout table
