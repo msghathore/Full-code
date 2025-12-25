@@ -53,7 +53,9 @@ const Services = () => {
       .order('display_order', { ascending: true });
 
     if (!error && data) {
-      setDbServices(data as Service[]);
+      // Filter out PMU services
+      const filteredData = (data as Service[]).filter(s => s.category !== 'PMU');
+      setDbServices(filteredData);
     }
     setLoading(false);
   };
@@ -82,7 +84,7 @@ const Services = () => {
   }, [dbServices, loading, selectedCategory, searchQuery]);
 
   // Define priority order for main service categories
-  const categoryPriority = ['Hair', 'Nails', 'Tattoo', 'Massage', 'Skin', 'Waxing', 'Eyebrow', 'Lash', 'PMU', 'Piercing'];
+  const categoryPriority = ['Hair', 'Nails', 'Tattoo', 'Massage', 'Skin', 'Waxing', 'Lash', 'Eyebrow', 'Piercing'];
 
   // Get unique main categories from database and sort by priority
   const uniqueCategories = Array.from(new Set(dbServices.map(s => s.category)));
