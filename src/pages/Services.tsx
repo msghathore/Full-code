@@ -158,7 +158,7 @@ const Services = () => {
   const groupedServices = groupServicesByCategory();
 
   return (
-    <div className="pt-24 pb-16 px-4 md:px-8">
+    <div className="min-h-screen bg-black pt-24 pb-16 px-4 md:px-8">
       <div className="container mx-auto max-w-7xl">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow">
           SERVICES
