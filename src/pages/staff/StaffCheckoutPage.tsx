@@ -81,10 +81,8 @@ const StaffCheckoutPage = () => {
     pairNewDevice,
   } = useSquareTerminal();
 
-  // Load terminal devices on mount
-  useEffect(() => {
-    loadTerminalDevices();
-  }, [loadTerminalDevices]);
+  // Note: Terminal devices are loaded manually via "Manage" button
+  // Primary payment method is now the customer tablet (Flutter app)
 
   // Handle terminal checkout completion
   useEffect(() => {
