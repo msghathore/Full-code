@@ -217,7 +217,7 @@ const ScheduleSidebar: React.FC<ScheduleSidebarProps> = ({
   };
 
   return (
-    <div className="h-full bg-gray-50 p-4 space-y-6 overflow-y-auto">
+    <div className="h-full bg-white p-4 space-y-6 overflow-y-auto">
       {/* Mini Calendar */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Calendar</h3>
