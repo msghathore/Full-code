@@ -118,6 +118,8 @@ class CheckoutService extends ChangeNotifier {
   /// Fetch the latest pending checkout from Supabase
   Future<void> _fetchLatestPendingCheckout() async {
     try {
+      debugPrint('🔍 Fetching latest pending checkout from table: ${SupabaseConfig.pendingCheckoutTable}');
+
       final response = await _supabase
           .from(SupabaseConfig.pendingCheckoutTable)
           .select()
@@ -126,24 +128,39 @@ class CheckoutService extends ChangeNotifier {
           .limit(1)
           .maybeSingle();
 
+      debugPrint('📦 Supabase response: ${response != null ? "data received" : "null/no data"}');
+
       if (response != null) {
+        debugPrint('📋 Parsing checkout session data...');
+        debugPrint('   - ID: ${response['id']}');
+        debugPrint('   - Session Code: ${response['session_code']}');
+        debugPrint('   - Customer: ${response['customer_name']}');
+        debugPrint('   - Total: \$${response['total_amount']}');
+
         final newSession = CheckoutSession.fromJson(response);
 
         // Only update if it's a different session or status changed
         if (_currentSession?.id != newSession.id ||
             _currentSession?.status != newSession.status) {
+          debugPrint('✅ New checkout session detected!');
           _currentSession = newSession;
           _error = null;
           notifyListeners();
+        } else {
+          debugPrint('ℹ️ Session unchanged, no update needed');
         }
       } else if (_currentSession != null &&
           _currentSession!.status == 'pending') {
+        debugPrint('🔄 Current session no longer pending, refreshing status...');
         // Session was completed or cancelled
         _refreshCurrentSession();
+      } else {
+        debugPrint('⏳ No pending checkouts found');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('❌ Error fetching pending checkout: $e');
-      _error = 'Failed to fetch checkout data';
+      debugPrint('📚 Stack trace: $stackTrace');
+      _error = 'Failed to fetch checkout data: $e';
       // Don't clear session on error - keep showing last known state
     }
   }

@@ -490,17 +490,20 @@ const StaffCheckoutPage = () => {
       console.log('👤 Staff name:', staffName);
       console.log('👥 Customer name:', appointmentData?.customerName || currentCustomer.name);
 
-      // Prepare checkout data for the tablet - use pending_checkouts table (matches Flutter app)
+      // Prepare checkout data for the tablet - use pending_checkout table (matches Flutter app)
       const checkoutData = {
-        services: cartItems.map(item => ({
+        cart_items: cartItems.map(item => ({
+          item_id: item.item_id,
           name: item.name,
-          price: item.price * item.quantity
+          price: item.price,
+          quantity: item.quantity,
+          item_type: item.item_type
         })),
         subtotal: totals.subtotal,
         tax_amount: totals.tax,
         total_amount: totals.amountDue,
         tip_amount: tipAmount,
-        client_name: appointmentData?.customerName || currentCustomer.name,
+        customer_name: appointmentData?.customerName || currentCustomer.name,
         staff_name: staffName,
         appointment_id: appointmentData?.appointmentId || null,
         status: 'pending'
@@ -508,9 +511,9 @@ const StaffCheckoutPage = () => {
 
       console.log('📋 Checkout data to insert:', JSON.stringify(checkoutData, null, 2));
 
-      // Insert into pending_checkouts table (matches Flutter app)
-      const { data, error } = await supabase
-        .from('pending_checkouts')
+      // Insert into pending_checkout table (singular - matches migration and Flutter app)
+      const { data, error} = await supabase
+        .from('pending_checkout')
         .insert(checkoutData)
         .select();
 
