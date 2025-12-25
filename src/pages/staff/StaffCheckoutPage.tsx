@@ -467,7 +467,12 @@ const StaffCheckoutPage = () => {
   // Handler for sending checkout to customer tablet (Square Reader)
   // This is now the MAIN payment action - sends directly to tablet
   const handleSendToCustomerTablet = async () => {
+    console.log('🚀 handleSendToCustomerTablet called');
+    console.log('📦 Cart items:', cartItems);
+    console.log('💰 Totals:', totals);
+
     if (cartItems.length === 0) {
+      console.warn('⚠️ No items in cart');
       toast({
         title: "No items in cart",
         description: "Please add items before completing payment.",
@@ -481,6 +486,9 @@ const StaffCheckoutPage = () => {
       // Get staff name
       const staffName = staffList.find(s => s.id === cartItems[0]?.provider_id)?.name ||
                        appointmentData?.staffName || 'Staff';
+
+      console.log('👤 Staff name:', staffName);
+      console.log('👥 Customer name:', appointmentData?.customerName || currentCustomer.name);
 
       // Prepare checkout data for the tablet - use pending_checkouts table (matches Flutter app)
       const checkoutData = {
@@ -498,12 +506,20 @@ const StaffCheckoutPage = () => {
         status: 'pending'
       };
 
-      // Insert into pending_checkouts table (matches Flutter app)
-      const { error } = await supabase
-        .from('pending_checkouts')
-        .insert(checkoutData);
+      console.log('📋 Checkout data to insert:', JSON.stringify(checkoutData, null, 2));
 
-      if (error) throw error;
+      // Insert into pending_checkouts table (matches Flutter app)
+      const { data, error } = await supabase
+        .from('pending_checkouts')
+        .insert(checkoutData)
+        .select();
+
+      if (error) {
+        console.error('❌ Supabase insert error:', error);
+        throw error;
+      }
+
+      console.log('✅ Successfully inserted checkout:', data);
 
       toast({
         title: "✅ Sent to Customer Tablet",
@@ -512,19 +528,28 @@ const StaffCheckoutPage = () => {
       });
 
       // Clear cart after sending
+      console.log('🧹 Clearing cart...');
       setCartItems([]);
       setPaymentMethods([]);
       setTipAmount(0);
+      console.log('✅ Cart cleared successfully');
 
-    } catch (error) {
-      console.error('Error sending to tablet:', error);
+    } catch (error: any) {
+      console.error('❌ Error sending to tablet:', error);
+      console.error('Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       toast({
         title: "Failed to send",
-        description: "Could not send checkout to tablet. Please try again.",
+        description: error.message || "Could not send checkout to tablet. Please try again.",
         variant: "destructive"
       });
     } finally {
       setIsSendingToTablet(false);
+      console.log('🏁 handleSendToCustomerTablet completed');
     }
   };
 
