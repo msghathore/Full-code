@@ -77,7 +77,6 @@ const CheckoutPage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isSendingToTablet, setIsSendingToTablet] = useState(false);
-  const [sentToTabletCode, setSentToTabletCode] = useState<string | null>(null);
 
   // Fetch real data and check authentication
   useEffect(() => {
@@ -486,43 +485,38 @@ const CheckoutPage = () => {
       const taxAmount = taxableAmount * 0.05; // 5% GST Manitoba
       const totalAmount = taxableAmount + taxAmount;
 
-      // Create pending checkout record
+      // Create pending checkout record - use pending_checkouts table (matches Flutter app)
       const { data, error } = await supabase
-        .from('pending_checkout')
+        .from('pending_checkouts')
         .insert({
-          cart_items: cartItems.map(item => ({
-            item_id: item.item_id,
+          services: cartItems.map(item => ({
             name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            item_type: item.item_type,
-            discount: item.discount || 0
+            price: item.price * item.quantity
           })),
           subtotal: subtotal,
-          discount: discount,
-          tax_rate: 0.05,
           tax_amount: taxAmount,
-          total_amount: totalAmount,
-          customer_name: appointmentData?.customerName || currentCustomer.name,
-          customer_email: appointmentData?.customerEmail || '',
-          customer_phone: appointmentData?.customerPhone || '',
+          total_amount: totalAmount + tipAmount,
+          tip_amount: tipAmount,
+          client_name: appointmentData?.customerName || currentCustomer.name,
           appointment_id: appointmentData?.appointmentId || null,
-          staff_id: staffId,
           staff_name: staffName,
           status: 'pending'
         })
-        .select('session_code')
+        .select('id')
         .single();
 
       if (error) throw error;
 
-      setSentToTabletCode(data.session_code);
-
       toast({
         title: "✅ Sent to Customer Tablet",
-        description: `Session code: ${data.session_code} - Customer can now pay via Square Reader`,
-        duration: 10000,
+        description: "Customer can now review and pay on the tablet",
+        duration: 5000,
       });
+
+      // Clear cart after sending
+      setCartItems([]);
+      setPaymentMethods([]);
+      setTipAmount(0);
 
     } catch (error: any) {
       console.error('Error sending to customer tablet:', error);
@@ -814,61 +808,30 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Send to Customer Tablet Button (Square Reader) */}
-            <div className="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-700">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Tablet className="h-5 w-5 text-white" />
-                  <span className="text-white font-medium text-sm">Customer Tablet Payment</span>
-                </div>
-                {sentToTabletCode && (
-                  <Badge className="bg-emerald-500 text-white text-xs">
-                    Code: {sentToTabletCode}
-                  </Badge>
-                )}
-              </div>
-              <Button
-                className="w-full bg-black hover:bg-slate-800 text-white font-medium border border-white/20"
-                disabled={cartItems.length === 0 || isSendingToTablet}
-                onClick={handleSendToCustomerTablet}
-              >
-                {isSendingToTablet ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Send to Customer Tablet (Square Reader)
-                  </>
-                )}
-              </Button>
-              <p className="text-slate-400 text-xs mt-2 text-center">
-                Customer pays via tap/insert card on their tablet
-              </p>
-            </div>
-
-            <Separator className="my-4" />
-
-            {/* Manual Checkout Button */}
+            {/* Complete Payment Button - Sends to Customer Tablet */}
             <Button
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-              disabled={totals.amountPaid < totals.amountDue || isProcessing}
-              onClick={handleFinalizeTransaction}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-14 text-lg font-semibold"
+              disabled={cartItems.length === 0 || isSendingToTablet}
+              onClick={handleSendToCustomerTablet}
             >
-              {isProcessing ? (
+              {isSendingToTablet ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Processing...
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Sending to Tablet...
                 </>
               ) : (
                 <>
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Manual Pay {formatCurrency(totals.amountDue)}
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  Complete Payment
                 </>
               )}
             </Button>
+            <p className="text-gray-500 text-xs mt-2 text-center">
+              Cash, Check, or Gift Certificate
+            </p>
+            <p className="text-gray-400 text-xs text-center">
+              Split payment available
+            </p>
           </div>
         </div>
       </div>

@@ -15,9 +15,11 @@ dependencies:
   # Supabase for real-time database sync
   supabase_flutter: ^2.3.0
 
-  # Square Mobile Payments SDK (official Flutter plugin)
-  # This is the successor to the retired Reader SDK
-  square_mobile_payments: ^1.0.0
+  # Square Mobile Payments SDK
+  # NOTE: Square SDK must be added manually following Square's documentation
+  # Visit: https://developer.squareup.com/docs/mobile-payments-sdk
+  # The SDK is not available on pub.dev and requires manual integration
+  # square_in_app_payments: ^1.7.0  # Alternative: In-App Payments SDK
 
   # State management
   provider: ^6.1.1
@@ -48,33 +50,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Fonts for offline use (matching website)
-  fonts:
-    - family: CormorantGaramond
-      fonts:
-        - asset: assets/fonts/CormorantGaramond-Regular.ttf
-        - asset: assets/fonts/CormorantGaramond-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/CormorantGaramond-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/CormorantGaramond-Light.ttf
-          weight: 300
-
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-        - asset: assets/fonts/Inter-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700
-
-    - family: PlayfairDisplay
-      fonts:
-        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
-        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
-          weight: 700
-
-  assets:
-    - assets/fonts/
+  # NOTE: Using google_fonts package for fonts (downloads at runtime)
+  # Remove local font assets to simplify build

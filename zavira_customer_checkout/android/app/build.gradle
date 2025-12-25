@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.zavira.customer_checkout"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -45,7 +45,7 @@ android {
         // Samsung Galaxy Tab S7 runs Android 11-13 (API 30-33)
         // Setting minSdk to 24 for Square Mobile Payments SDK compatibility
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
@@ -58,10 +58,10 @@ android {
             // Signing config for release builds
             signingConfig signingConfigs.debug
 
-            // Enable minification for smaller APK
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Disable minification to avoid R8 issues (APK will be larger)
+            minifyEnabled false
+            shrinkResources false
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             // Debug builds
@@ -80,12 +80,13 @@ flutter {
 }
 
 dependencies {
-    // Square Mobile Payments SDK
-    implementation 'com.squareup.sdk:mobile-payments:2.0.0'
+    // Square Mobile Payments SDK - Must be added manually
+    // See: https://developer.squareup.com/docs/mobile-payments-sdk
+    // implementation 'com.squareup.sdk:mobile-payments:2.0.0'
 
     // Multidex support
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    // Bluetooth for Square Reader
-    implementation 'androidx.bluetooth:bluetooth:1.0.0-alpha02'
+    // Bluetooth for Square Reader (will be needed for Square SDK)
+    // implementation 'androidx.bluetooth:bluetooth:1.0.0-alpha02'
 }

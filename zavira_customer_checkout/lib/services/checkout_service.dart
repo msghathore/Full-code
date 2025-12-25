@@ -24,7 +24,7 @@ class CheckoutService extends ChangeNotifier {
   Timer? _pollingTimer;
 
   // Connectivity subscription
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   CheckoutSession? get currentSession => _currentSession;
   bool get isLoading => _isLoading;
@@ -40,9 +40,9 @@ class CheckoutService extends ChangeNotifier {
   /// Initialize connectivity listener
   void _initConnectivityListener() {
     _connectivitySubscription =
-        Connectivity().onConnectivityChanged.listen((results) {
+        Connectivity().onConnectivityChanged.listen((result) {
       final wasConnected = _isConnected;
-      _isConnected = results.any((r) => r != ConnectivityResult.none);
+      _isConnected = result != ConnectivityResult.none;
 
       if (!wasConnected && _isConnected) {
         // Reconnected - refresh data
