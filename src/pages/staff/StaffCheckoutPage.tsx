@@ -24,7 +24,9 @@ import {
   Calendar,
   Smartphone,
   Wifi,
-  WifiOff
+  WifiOff,
+  Tablet,
+  Send
 } from 'lucide-react';
 import { useSquareTerminal } from '@/hooks/useSquareTerminal';
 import { calculateTotals, formatCurrency, parseCurrency, CartItem, PaymentMethod } from '@/lib/posCalculations';
@@ -74,6 +76,10 @@ const StaffCheckoutPage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [showTerminalSelector, setShowTerminalSelector] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Customer Tablet (Square Reader) state
+  const [isSendingToTablet, setIsSendingToTablet] = useState(false);
+  const [sentToTabletCode, setSentToTabletCode] = useState<string | null>(null);
 
   // Square Terminal hook
   const {
@@ -689,6 +695,67 @@ const StaffCheckoutPage = () => {
     navigate('/staff');
   };
 
+  // Handler for sending checkout to customer tablet (Square Reader)
+  const handleSendToCustomerTablet = async () => {
+    if (cartItems.length === 0) {
+      toast({
+        title: "No items in cart",
+        description: "Please add items before sending to tablet.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSendingToTablet(true);
+    try {
+      // Generate a unique session code
+      const sessionCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      // Prepare checkout data for the tablet
+      const checkoutData = {
+        session_code: sessionCode,
+        items: cartItems.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          discount: item.discount || 0,
+          staff_name: staffList.find(s => s.id === item.serviceProviderId)?.name || 'Staff'
+        })),
+        subtotal: totals.subtotal,
+        tax: totals.tax,
+        total: totals.amountDue,
+        tip_amount: tipAmount,
+        customer_name: currentCustomer.name,
+        staff_name: staffList.find(s => s.id === cartItems[0]?.serviceProviderId)?.name || 'Staff',
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minute expiry
+      };
+
+      // Insert into pending_checkout table
+      const { error } = await supabase
+        .from('pending_checkout')
+        .insert(checkoutData);
+
+      if (error) throw error;
+
+      setSentToTabletCode(sessionCode);
+      toast({
+        title: "✅ Sent to Customer Tablet",
+        description: `Session Code: ${sessionCode} - Customer can now pay via Square Reader`,
+      });
+    } catch (error) {
+      console.error('Error sending to tablet:', error);
+      toast({
+        title: "Failed to send",
+        description: "Could not send checkout to tablet. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSendingToTablet(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       {/* Appointment Header - Show when coming from completed service */}
@@ -1064,6 +1131,41 @@ const StaffCheckoutPage = () => {
               </p>
               <p className="text-xs text-gray-400 mt-1">
                 Split payment available
+              </p>
+            </div>
+
+            {/* Send to Customer Tablet Button (Square Reader) */}
+            <div className="mt-6 p-4 bg-slate-900 rounded-lg border border-slate-700">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Tablet className="h-5 w-5 text-white" />
+                  <span className="text-white font-medium text-sm">Customer Tablet Payment</span>
+                </div>
+                {sentToTabletCode && (
+                  <Badge className="bg-emerald-500 text-white text-xs">
+                    Code: {sentToTabletCode}
+                  </Badge>
+                )}
+              </div>
+              <Button
+                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium"
+                disabled={cartItems.length === 0 || isSendingToTablet}
+                onClick={handleSendToCustomerTablet}
+              >
+                {isSendingToTablet ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send to Customer Tablet (Square Reader)
+                  </>
+                )}
+              </Button>
+              <p className="text-slate-400 text-xs mt-2 text-center">
+                Customer pays via tap/insert card on their tablet
               </p>
             </div>
           </div>
