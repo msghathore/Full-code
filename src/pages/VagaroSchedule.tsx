@@ -266,7 +266,7 @@ const VagaroSchedule = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-white">
+        <div className="flex h-[calc(100vh-64px)] bg-white">
             {/* Left Sidebar */}
             <div className="w-[300px] flex-shrink-0 border-r bg-gray-50 overflow-y-auto">
                 <ScheduleSidebar

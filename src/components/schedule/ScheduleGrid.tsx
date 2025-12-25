@@ -1264,7 +1264,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
       </div>
 
       {/* Schedule Grid with Fixed Header - 4 columns visible by default with horizontal scroll */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Fixed Header Row - Always visible, with padding for scrollbar */}
         <div className="flex-shrink-0 border-b border-gray-200 bg-white overflow-x-auto scrollbar-hide" style={{ zIndex: 60, paddingRight: '17px' }}>
           <div style={{
