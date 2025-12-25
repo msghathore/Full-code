@@ -149,8 +149,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ currentDate, onDateChange }
             className={`
               text-xs p-1 h-8 w-8 rounded-md transition-colors
               ${day === null ? '' : 'hover:bg-gray-100'}
-              ${isSelected(day) ? 'bg-violet-500 text-white' : ''}
-              ${!isSelected(day) && isToday(day) ? 'bg-violet-100 text-violet-600 font-semibold' : ''}
+              ${isSelected(day) ? 'bg-slate-800 text-white' : ''}
+              ${!isSelected(day) && isToday(day) ? 'bg-slate-50 text-black font-semibold' : ''}
               ${!isSelected(day) && !isToday(day) ? 'text-gray-700' : ''}
             `}
           >

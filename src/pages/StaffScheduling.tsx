@@ -195,7 +195,7 @@ const StaffScheduling = () => {
   const getEfficiencyColor = (efficiency: string) => {
     switch (efficiency) {
       case 'High': return 'bg-green-500/20 text-green-400';
-      case 'Good': return 'bg-violet-500/20 text-violet-400';
+      case 'Good': return 'bg-slate-800/20 text-slate-700';
       case 'Low': return 'bg-red-500/20 text-red-400';
       default: return 'bg-muted text-muted-foreground';
     }
@@ -216,7 +216,7 @@ const StaffScheduling = () => {
         <Navigation />
         <div className="pt-24 px-4 md:px-8 flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-violet-400" />
+            <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-slate-700" />
             <h2 className="text-xl font-semibold mb-2">Loading Staff Scheduling Data</h2>
             <p className="text-muted-foreground">Fetching real-time data from the database...</p>
           </div>
@@ -287,7 +287,7 @@ const StaffScheduling = () => {
                     </p>
                     <p className="text-xs text-green-400">Target: 75-85%</p>
                   </div>
-                  <Activity className="h-8 w-8 text-violet-400" />
+                  <Activity className="h-8 w-8 text-slate-700" />
                 </div>
               </CardContent>
             </Card>
@@ -391,7 +391,7 @@ const StaffScheduling = () => {
                       {optimalStaffing.length > 0 ? optimalStaffing.map((day, index) => (
                         <div key={day.day} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-violet-500/20 rounded-full flex items-center justify-center text-sm font-medium">
+                            <div className="w-8 h-8 bg-slate-800/20 rounded-full flex items-center justify-center text-sm font-medium">
                               {index + 1}
                             </div>
                             <div>
@@ -600,7 +600,7 @@ const StaffScheduling = () => {
                   <Card key={staff.id} className="frosted-glass border-white/10">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-violet-500/20 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-slate-800/20 rounded-full flex items-center justify-center">
                           <span className="text-sm font-medium">{staff.name.split(' ').map(n => n[0]).join('')}</span>
                         </div>
                         <div>
@@ -792,7 +792,7 @@ const StaffScheduling = () => {
                             <div
                               key={hour}
                               className={`h-12 rounded border-2 cursor-pointer transition-all ${hasStaff
-                                  ? 'bg-violet-500/20 border-violet-500/50'
+                                  ? 'bg-slate-800/20 border-gray-500/50'
                                   : demand > 50
                                     ? 'bg-red-500/10 border-red-500/30 border-dashed'
                                     : 'bg-white/5 border-white/20 border-dashed'
@@ -814,7 +814,7 @@ const StaffScheduling = () => {
 
                     <div className="flex gap-4 pt-4 border-t border-white/10">
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-violet-500/20 border border-violet-500/50 rounded"></div>
+                        <div className="w-4 h-4 bg-slate-800/20 border border-gray-500/50 rounded"></div>
                         <span className="text-sm">Staff Assigned</span>
                       </div>
                       <div className="flex items-center gap-2">

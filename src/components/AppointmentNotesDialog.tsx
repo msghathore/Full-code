@@ -86,7 +86,7 @@ const AppointmentNotesDialog: React.FC<AppointmentNotesDialogProps> = ({
       <DialogContent className="bg-white border-gray-200 max-w-lg w-[95vw] rounded-xl shadow-2xl">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-black text-lg font-semibold">
-            <FileText className="h-5 w-5 text-violet-600" />
+            <FileText className="h-5 w-5 text-black" />
             Appointment Notes
           </DialogTitle>
           <DialogDescription className="text-gray-600 text-sm leading-relaxed">
@@ -117,7 +117,7 @@ const AppointmentNotesDialog: React.FC<AppointmentNotesDialogProps> = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add notes about this appointment, special requests, allergies, preferences..."
-              className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg text-sm resize-none focus:border-violet-500 focus:ring-violet-500 bg-white text-black placeholder:text-gray-500"
+              className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg text-sm resize-none focus:border-gray-500 focus:ring-slate-500 bg-white text-black placeholder:text-gray-500"
               disabled={isLoading}
             />
             <div className="mt-2 text-xs text-gray-500">
@@ -138,7 +138,7 @@ const AppointmentNotesDialog: React.FC<AppointmentNotesDialogProps> = ({
           </Button>
           <Button
             onClick={handleSave}
-            className="flex-1 h-10 text-sm bg-violet-600 hover:bg-violet-700 text-white"
+            className="flex-1 h-10 text-sm bg-black hover:bg-slate-800 text-white"
             disabled={isLoading}
           >
             {isLoading ? (

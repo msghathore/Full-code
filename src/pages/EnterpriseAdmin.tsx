@@ -662,7 +662,7 @@ const CRMPanel: React.FC = () => {
                   <TableRow key={customer.id} className="border-gray-700">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white font-medium">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-white font-medium">
                           {customer.first_name?.[0]}{customer.last_name?.[0]}
                         </div>
                         <div>
@@ -784,8 +784,8 @@ const PerformancePanel: React.FC = () => {
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-violet-500/20 rounded-lg">
-                <Clock className="h-6 w-6 text-violet-400" />
+              <div className="p-3 bg-slate-800/20 rounded-lg">
+                <Clock className="h-6 w-6 text-slate-700" />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Utilization</p>
@@ -1138,7 +1138,7 @@ const MarketingPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-violet-400">{campaigns.reduce((s, c) => s + (c.sent_count || 0), 0).toLocaleString()}</p>
+            <p className="text-4xl font-bold text-slate-700">{campaigns.reduce((s, c) => s + (c.sent_count || 0), 0).toLocaleString()}</p>
             <p className="text-sm text-gray-400">Messages Sent</p>
           </CardContent>
         </Card>

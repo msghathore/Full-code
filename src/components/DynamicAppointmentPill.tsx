@@ -77,12 +77,12 @@ const STATUS_COLOR_MAP = STATUS_COLORS;
 
 // Attribute icon mapping
 const ATTRIBUTE_ICONS = {
-  'recurring': { icon: Repeat, color: 'text-violet-600' },
+  'recurring': { icon: Repeat, color: 'text-black' },
   'house_call': { icon: Home, color: 'text-green-600' },
   'has_note': { icon: FileText, color: 'text-yellow-600' },
   'deposit_paid': { icon: DollarSign, color: 'text-green-600' },
   'form_required': { icon: FileText, color: 'text-orange-600' },
-  'is_bundle': { icon: CheckCircle, color: 'text-purple-600' }
+  'is_bundle': { icon: CheckCircle, color: 'text-black' }
 };
 
 // Status icon mapping
@@ -156,7 +156,7 @@ export const DynamicAppointmentPill: React.FC<DynamicAppointmentPillProps> = ({
         relative overflow-hidden border rounded-sm cursor-move
         transition-all duration-150 hover:shadow-sm
         ${statusStyle.bgClass} ${statusStyle.borderClass} ${statusStyle.textClass}
-        ${isDragging ? 'opacity-75 shadow-xl ring-2 ring-violet-400 ring-offset-1' : ''}
+        ${isDragging ? 'opacity-75 shadow-xl ring-2 ring-slate-400 ring-offset-1' : ''}
       `}
       style={{
         height: `${calculatedHeight}px`,

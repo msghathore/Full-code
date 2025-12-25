@@ -169,8 +169,8 @@ const LeftNav: React.FC<LeftNavProps> = ({
                 className={`
                   h-8 w-8 p-0 text-sm rounded-md transition-all
                   ${!isCurrentMonth(date) ? 'text-gray-300' : ''}
-                  ${isTodayDate(date) ? 'bg-violet-600 text-white font-semibold' : ''}
-                  ${isSelected(date) && !isTodayDate(date) ? 'bg-violet-100 text-violet-800 font-semibold border-2 border-violet-300' : ''}
+                  ${isTodayDate(date) ? 'bg-black text-white font-semibold' : ''}
+                  ${isSelected(date) && !isTodayDate(date) ? 'bg-slate-50 text-slate-800 font-semibold border-2 border-slate-300' : ''}
                   ${!isCurrentMonth(date) || isTodayDate(date) ? '' : 'hover:bg-gray-200'}
                 `}
                 onClick={() => onDateChange(date)}
@@ -230,7 +230,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
                   id={`staff-${member.id}`}
                   checked={selectedStaff.includes(member.id)}
                   onCheckedChange={() => onStaffToggle(member.id)}
-                  className="data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+                  className="data-[state=checked]:bg-black data-[state=checked]:border-gray-600"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
@@ -279,7 +279,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
                   id={`resource-${resource.id}`}
                   checked={selectedResources.includes(resource.id)}
                   onCheckedChange={() => handleResourceToggle(resource.id)}
-                  className="data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+                  className="data-[state=checked]:bg-black data-[state=checked]:border-gray-600"
                 />
                 <div className="flex-1 min-w-0">
                   <label
@@ -327,7 +327,7 @@ const LeftNav: React.FC<LeftNavProps> = ({
             {format(selectedDate, 'MMM d, yyyy')}
           </span>
           {isToday(selectedDate) && (
-            <Badge variant="secondary" className="text-xs bg-violet-100 text-violet-800">
+            <Badge variant="secondary" className="text-xs bg-slate-50 text-slate-800">
               Today
             </Badge>
           )}

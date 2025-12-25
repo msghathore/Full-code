@@ -1,0 +1,91 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.zavira.customer_checkout"
+    compileSdk 34
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.zavira.customer_checkout"
+        // Samsung Galaxy Tab S7 runs Android 11-13 (API 30-33)
+        // Setting minSdk to 24 for Square Mobile Payments SDK compatibility
+        minSdk 24
+        targetSdk 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+
+        // Enable multidex for large apps
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            // Signing config for release builds
+            signingConfig signingConfigs.debug
+
+            // Enable minification for smaller APK
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            // Debug builds
+            debuggable true
+        }
+    }
+
+    // Optimize for tablet
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    // Square Mobile Payments SDK
+    implementation 'com.squareup.sdk:mobile-payments:2.0.0'
+
+    // Multidex support
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Bluetooth for Square Reader
+    implementation 'androidx.bluetooth:bluetooth:1.0.0-alpha02'
+}

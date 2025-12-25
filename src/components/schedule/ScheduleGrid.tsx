@@ -436,7 +436,7 @@ const StaffColumnDropZone: React.FC<{
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`flex-1 border-r last:border-r-0 relative transition-colors duration-150 ${
-        isOver ? 'bg-violet-50/50' : ''
+        isOver ? 'bg-slate-50/50' : ''
       }`}
       style={{
         // Highlight the entire column when dragging over
@@ -455,15 +455,15 @@ const StaffColumnDropZone: React.FC<{
         >
           {/* Time indicator pill - positioned ABOVE the drop zone */}
           <div className="absolute -top-5 left-0 flex items-center gap-1">
-            <div className="bg-violet-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
+            <div className="bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
               {dropPreviewTime}
             </div>
           </div>
           {/* Top line showing exact drop position */}
-          <div className="h-[2px] bg-violet-500 rounded shadow-lg" />
+          <div className="h-[2px] bg-slate-800 rounded shadow-lg" />
           {/* Preview outline showing where pill will be placed - starts exactly at dropPreviewY */}
           <div
-            className="border-2 border-dashed border-violet-400 rounded bg-violet-100/30"
+            className="border-2 border-dashed border-gray-400 rounded bg-slate-50/30"
             style={{
               height: `${(window as any).__dragPillHeight || 60}px`,
             }}
@@ -1227,7 +1227,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <Badge variant="outline" className="text-xs bg-violet-50 text-violet-700 border-violet-200">
+          <Badge variant="outline" className="text-xs bg-slate-50 text-slate-700 border-slate-200">
             {dayAppointments.length} appointments
           </Badge>
         </div>
@@ -1255,7 +1255,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                 onCreateAppointment(selectedStaff[0], '09:00');
               }
             }}
-            className="h-8 text-xs bg-violet-600 hover:bg-violet-700"
+            className="h-8 text-xs bg-black hover:bg-slate-800"
           >
             <Plus className="h-3 w-3 mr-1" />
             New

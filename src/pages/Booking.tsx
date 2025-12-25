@@ -1904,7 +1904,7 @@ const Booking = () => {
                                 setCurrentStep(0);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-7 px-2"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -1954,7 +1954,7 @@ const Booking = () => {
                                 setCurrentStep(1);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-7 px-2"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -1983,7 +1983,7 @@ const Booking = () => {
                                 setCurrentStep(2);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 px-2"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-7 px-2"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -2030,7 +2030,7 @@ const Booking = () => {
                                 setCurrentStep(0);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -2074,7 +2074,7 @@ const Booking = () => {
                                 setCurrentStep(1);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -2103,7 +2103,7 @@ const Booking = () => {
                                 setCurrentStep(2);
                                 scrollToTop();
                               }}
-                              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
+                              className="text-slate-700 hover:text-white hover:bg-slate-700/10 h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
                             >
                               <Edit className="h-3 w-3 mr-1" /> Edit
                             </Button>
@@ -2199,8 +2199,8 @@ const Booking = () => {
                     )}
 
                     {/* Payment Note */}
-                    <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-2 sm:p-2.5 md:p-3">
-                      <p className="text-violet-300 text-[10px] sm:text-xs leading-tight sm:leading-normal break-words">
+                    <div className="bg-slate-800/10 border border-gray-500/20 rounded-lg p-2 sm:p-2.5 md:p-3">
+                      <p className="text-white text-[10px] sm:text-xs leading-tight sm:leading-normal break-words">
                         💳 50% deposit now. Balance at appointment.
                       </p>
                     </div>

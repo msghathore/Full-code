@@ -135,8 +135,8 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
     { label: 'Show', action: 'status-show', color: 'bg-emerald-500' },
     { label: 'No-Show', action: 'status-no-show', color: 'bg-slate-500' },
     { label: 'Ready to Start Service', action: 'status-ready', color: 'bg-emerald-500' },
-    { label: 'Service in Progress', action: 'status-progress', color: 'bg-violet-500' },
-    { label: 'Cancel', action: 'status-cancel', color: 'bg-rose-500' }
+    { label: 'Service in Progress', action: 'status-progress', color: 'bg-slate-800' },
+    { label: 'Cancel', action: 'status-cancel', color: 'bg-red-500' }
   ];
 
   // Handle clicks outside the menu
@@ -378,7 +378,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
                   <span className="text-sm font-medium">{item.label}</span>
                 </div>
                 {item.hasSubmenu && (
-                  <ChevronRight className={`h-4 w-4 transition-colors ${showStatusSubmenu ? 'text-violet-500' : 'text-gray-400'}`} />
+                  <ChevronRight className={`h-4 w-4 transition-colors ${showStatusSubmenu ? 'text-slate-900' : 'text-gray-400'}`} />
                 )}
               </button>
             );
@@ -424,7 +424,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
                 return (
                   <button
                     key={statusItem.action}
-                    className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-violet-50 transition-colors text-gray-800"
+                    className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-slate-50 transition-colors text-gray-800"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -481,7 +481,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 placeholder="Enter admin password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-slate-500"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleAdminPasswordVerify();
@@ -505,7 +505,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
               <button
                 onClick={handleAdminPasswordVerify}
                 disabled={isVerifyingPassword || !adminPassword.trim()}
-                className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 bg-black text-white rounded-md hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {isVerifyingPassword ? (
                   <>

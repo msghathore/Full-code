@@ -188,7 +188,7 @@ export const InstagramFeed = () => {
             href="https://instagram.com/zavira_beauty"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-rose-500 to-amber-600 text-white rounded-full hover:from-rose-600 hover:to-amber-700 transition-all transform hover:scale-105"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-amber-600 text-white rounded-full hover:from-red-600 hover:to-amber-700 transition-all transform hover:scale-105"
           >
             Follow @zavira_beauty
           </a>

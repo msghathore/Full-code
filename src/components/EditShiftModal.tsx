@@ -155,7 +155,7 @@ export const EditShiftModal: React.FC<EditShiftModalProps> = ({
       <DialogContent className="bg-white border-gray-200 max-w-md w-[95vw] mx-auto rounded-xl shadow-2xl p-6">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-black text-lg font-medium">
-            <div className="w-6 h-6 bg-violet-500 rounded flex items-center justify-center flex-shrink-0">
+            <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center flex-shrink-0">
               <Settings className="h-3 w-3 text-white" />
             </div>
             Edit Working Hours
@@ -193,7 +193,7 @@ export const EditShiftModal: React.FC<EditShiftModalProps> = ({
                     onValueChange={(value) => setFormData(prev => ({ ...prev, startTime: value }))}
                     disabled={isSubmitting || isLoading}
                   >
-                    <SelectTrigger className="pl-10 h-10 bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500">
+                    <SelectTrigger className="pl-10 h-10 bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-gray-200 max-h-48">
@@ -219,7 +219,7 @@ export const EditShiftModal: React.FC<EditShiftModalProps> = ({
                     onValueChange={(value) => setFormData(prev => ({ ...prev, endTime: value }))}
                     disabled={isSubmitting || isLoading}
                   >
-                    <SelectTrigger className="pl-10 h-10 bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500">
+                    <SelectTrigger className="pl-10 h-10 bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-gray-200 max-h-48">
@@ -234,10 +234,10 @@ export const EditShiftModal: React.FC<EditShiftModalProps> = ({
               </div>
 
               {/* Duration Display */}
-              <div className="p-3 bg-violet-50 rounded-lg">
+              <div className="p-3 bg-slate-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-violet-500" />
-                  <span className="text-sm font-medium text-violet-700">
+                  <Calendar className="h-4 w-4 text-slate-900" />
+                  <span className="text-sm font-medium text-slate-700">
                     Total Duration: {calculateDuration()}
                   </span>
                 </div>
@@ -335,7 +335,7 @@ export const EditShiftModal: React.FC<EditShiftModalProps> = ({
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-10 text-sm bg-violet-500 hover:bg-violet-600 text-white"
+              className="flex-1 h-10 text-sm bg-slate-800 hover:bg-black text-white"
               disabled={isSubmitting || isLoading}
             >
               {isSubmitting ? (

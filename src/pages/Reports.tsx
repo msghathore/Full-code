@@ -126,7 +126,7 @@ const Reports: React.FC = () => {
           const Icon = metric.icon;
           const colorClasses = {
             green: 'bg-green-100 text-green-600',
-            blue: 'bg-violet-100 text-violet-600',
+            blue: 'bg-slate-50 text-black',
             amber: 'bg-amber-100 text-amber-600',
             orange: 'bg-orange-100 text-orange-600'
           };

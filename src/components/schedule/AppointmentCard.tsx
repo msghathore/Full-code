@@ -66,7 +66,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       case 'pending':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'completed':
-        return 'bg-violet-100 text-violet-800 border-violet-200';
+        return 'bg-slate-50 text-slate-800 border-slate-200';
       case 'cancelled':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'no_show':
@@ -169,7 +169,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
               <Clock className="h-3 w-3" />
               <span>{formatTime(startTime)}</span>
               {appointment.is_recurring && (
-                <Repeat className="h-3 w-3 text-violet-500" />
+                <Repeat className="h-3 w-3 text-slate-900" />
               )}
             </div>
             

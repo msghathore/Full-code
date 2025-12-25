@@ -966,8 +966,8 @@ const AdminPanel: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-white p-4 text-black" data-theme="light" style={{ colorScheme: 'light', backgroundColor: 'white' }}>
         <Card className="w-full max-w-md border-gray-200 shadow-lg bg-white" style={{ backgroundColor: 'white', color: 'black' }}>
           <CardHeader className="text-center">
-            <div className="mx-auto bg-violet-100 p-3 rounded-full w-fit mb-4">
-              <Shield className="h-8 w-8 text-violet-600" />
+            <div className="mx-auto bg-slate-50 p-3 rounded-full w-fit mb-4">
+              <Shield className="h-8 w-8 text-black" />
             </div>
             <CardTitle className="text-2xl text-black font-bold" style={{ color: 'black' }}>Admin Access</CardTitle>
             <CardDescription className="text-gray-600" style={{ color: '#4B5563' }}>
@@ -996,7 +996,7 @@ const AdminPanel: React.FC = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                className="w-full bg-black hover:bg-slate-800 text-white"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn ? 'Verifying...' : 'Access Admin Panel'}
@@ -1016,7 +1016,7 @@ const AdminPanel: React.FC = () => {
         <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Shield className="h-8 w-8 text-violet-600" />
+              <Shield className="h-8 w-8 text-black" />
               <div>
                 <h1 className="text-xl font-bold text-black">Admin Panel</h1>
                 <p className="text-sm text-gray-500">Staff Management System</p>
@@ -1046,7 +1046,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('overview')}
                 className={`px-6 py-3 font-medium transition-colors ${
                   activeTab === 'overview'
-                    ? 'text-violet-600 border-b-2 border-violet-600 bg-white'
+                    ? 'text-black border-b-2 border-gray-600 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1057,7 +1057,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('customers')}
                 className={`px-6 py-3 font-medium transition-colors ${
                   activeTab === 'customers'
-                    ? 'text-violet-600 border-b-2 border-violet-600 bg-white'
+                    ? 'text-black border-b-2 border-gray-600 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1068,7 +1068,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('revenue')}
                 className={`px-6 py-3 font-medium transition-colors ${
                   activeTab === 'revenue'
-                    ? 'text-violet-600 border-b-2 border-violet-600 bg-white'
+                    ? 'text-black border-b-2 border-gray-600 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1079,7 +1079,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('staff')}
                 className={`px-6 py-3 font-medium transition-colors ${
                   activeTab === 'staff'
-                    ? 'text-violet-600 border-b-2 border-violet-600 bg-white'
+                    ? 'text-black border-b-2 border-gray-600 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1090,7 +1090,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('audit')}
                 className={`px-6 py-3 font-medium transition-colors ${
                   activeTab === 'audit'
-                    ? 'text-violet-600 border-b-2 border-violet-600 bg-white'
+                    ? 'text-black border-b-2 border-gray-600 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1220,7 +1220,7 @@ const AdminPanel: React.FC = () => {
         <main className="container mx-auto px-4 py-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <RefreshCw className="h-8 w-8 animate-spin text-violet-600" />
+              <RefreshCw className="h-8 w-8 animate-spin text-black" />
             </div>
           ) : activeTab === 'overview' ? (
             <>
@@ -1258,10 +1258,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Total Bookings</p>
                         <p className="text-2xl font-bold text-black">{totalBookings}</p>
-                        <p className="text-xs text-violet-600">Non-cancelled appointments</p>
+                        <p className="text-xs text-black">Non-cancelled appointments</p>
                       </div>
-                      <div className="h-12 w-12 bg-violet-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-violet-600" />
+                      <div className="h-12 w-12 bg-slate-50 rounded-full flex items-center justify-center">
+                        <Calendar className="h-6 w-6 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -1314,8 +1314,8 @@ const AdminPanel: React.FC = () => {
                       recentBookings.map((booking) => (
                         <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 bg-violet-100 rounded-full flex items-center justify-center">
-                              <Calendar className="h-4 w-4 text-violet-600" />
+                            <div className="h-8 w-8 bg-slate-50 rounded-full flex items-center justify-center">
+                              <Calendar className="h-4 w-4 text-black" />
                             </div>
                             <div>
                               <p className="font-medium text-sm text-black">{booking.service}</p>
@@ -1442,7 +1442,7 @@ const AdminPanel: React.FC = () => {
                         onClick={() => setCustomerFilter(filter)}
                         className={`px-3 py-1 text-sm rounded transition-colors ${
                           customerFilter === filter
-                            ? 'bg-white text-violet-600 shadow-sm'
+                            ? 'bg-white text-black shadow-sm'
                             : 'text-gray-600 hover:text-gray-900'
                         }`}
                       >
@@ -1487,7 +1487,7 @@ const AdminPanel: React.FC = () => {
                     {customersLoading ? (
                       <TableRow className="bg-white hover:bg-white">
                         <TableCell colSpan={6} className="text-center py-12 bg-white">
-                          <RefreshCw className="h-8 w-8 animate-spin text-violet-600 mx-auto" />
+                          <RefreshCw className="h-8 w-8 animate-spin text-black mx-auto" />
                         </TableCell>
                       </TableRow>
                     ) : customers
@@ -1521,7 +1521,7 @@ const AdminPanel: React.FC = () => {
                           <TableRow key={customer.id} className="bg-white hover:bg-gray-50">
                             <TableCell>
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-medium">
+                                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-black font-medium">
                                   {customer.name?.[0]?.toUpperCase() || 'C'}
                                 </div>
                                 <span className="font-medium text-black">{customer.name || 'Unknown'}</span>
@@ -1589,10 +1589,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">This Week</p>
                         <p className="text-2xl font-bold text-black">{formatCurrency(revenueByPeriod.thisWeek)}</p>
-                        <p className="text-xs text-violet-600">Last 7 days</p>
+                        <p className="text-xs text-black">Last 7 days</p>
                       </div>
-                      <div className="h-12 w-12 bg-violet-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-violet-600" />
+                      <div className="h-12 w-12 bg-slate-50 rounded-full flex items-center justify-center">
+                        <Calendar className="h-6 w-6 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -1632,7 +1632,7 @@ const AdminPanel: React.FC = () => {
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
                               index === 0 ? 'bg-yellow-500' :
                               index === 1 ? 'bg-gray-400' :
-                              index === 2 ? 'bg-amber-600' : 'bg-violet-500'
+                              index === 2 ? 'bg-amber-600' : 'bg-slate-800'
                             }`}>
                               {index + 1}
                             </div>
@@ -1677,7 +1677,7 @@ const AdminPanel: React.FC = () => {
                 </div>
                 <Button
                   onClick={() => setShowAddModal(true)}
-                  className="bg-violet-600 hover:bg-violet-700 text-white"
+                  className="bg-black hover:bg-slate-800 text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add New Staff
@@ -1792,7 +1792,7 @@ const AdminPanel: React.FC = () => {
                               staffMember.role === 'admin'
                                 ? 'bg-amber-100 text-amber-700 border-amber-300'
                                 : staffMember.role === 'senior'
-                                ? 'bg-violet-100 text-violet-700 border-violet-300'
+                                ? 'bg-slate-50 text-slate-700 border-slate-300'
                                 : 'bg-gray-100 text-gray-700 border-gray-300'
                             }
                           >
@@ -1817,7 +1817,7 @@ const AdminPanel: React.FC = () => {
                           <Tooltip>
                             <TooltipTrigger>
                               <button className="p-1 hover:bg-gray-100 rounded">
-                                <Info className="h-4 w-4 text-violet-600" />
+                                <Info className="h-4 w-4 text-black" />
                               </button>
                             </TooltipTrigger>
                             <TooltipContent className="bg-gray-900 text-white p-3 max-w-xs">
@@ -1904,7 +1904,7 @@ const AdminPanel: React.FC = () => {
                                   ? 'bg-gray-100 text-gray-700 border-gray-300'
                                   : entry.action_type === 'permission_denied'
                                   ? 'bg-red-100 text-red-700 border-red-300'
-                                  : 'bg-violet-100 text-violet-700 border-violet-300'
+                                  : 'bg-slate-50 text-slate-700 border-slate-300'
                               }
                             >
                               {entry.action_type}
@@ -1954,8 +1954,8 @@ const AdminPanel: React.FC = () => {
                         <p className="text-sm text-gray-600">Total Profiles</p>
                         <p className="text-2xl font-bold text-black">{enterpriseStats.totalProfiles}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Users className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <Users className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2020,7 +2020,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : crmProfiles.length === 0 ? (
@@ -2034,7 +2034,7 @@ const AdminPanel: React.FC = () => {
                         <TableRow key={profile.id} className="hover:bg-gray-50">
                           <TableCell className="font-medium text-black">{profile.customer_id}</TableCell>
                           <TableCell>
-                            <Badge className="bg-violet-100 text-violet-700">{profile.lifecycle_stage_id || 'New'}</Badge>
+                            <Badge className="bg-slate-50 text-slate-700">{profile.lifecycle_stage_id || 'New'}</Badge>
                           </TableCell>
                           <TableCell>
                             <Badge className={
@@ -2105,8 +2105,8 @@ const AdminPanel: React.FC = () => {
                         <p className="text-sm text-gray-600">Avg Performance</p>
                         <p className="text-2xl font-bold text-black">{enterpriseStats.avgPerformance}%</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <Target className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2168,7 +2168,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : staffMetrics.length === 0 ? (
@@ -2195,7 +2195,7 @@ const AdminPanel: React.FC = () => {
                             <div className="flex items-center gap-2">
                               <div className="w-20 bg-gray-200 rounded-full h-2">
                                 <div
-                                  className="bg-violet-600 h-2 rounded-full"
+                                  className="bg-black h-2 rounded-full"
                                   style={{ width: `${metric.utilization_rate || 0}%` }}
                                 />
                               </div>
@@ -2276,10 +2276,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Active Forecasts</p>
-                        <p className="text-2xl font-bold text-violet-600">{forecasts.length}</p>
+                        <p className="text-2xl font-bold text-black">{forecasts.length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <TrendingUp className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <TrendingUp className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2317,7 +2317,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : forecasts.length === 0 ? (
@@ -2333,7 +2333,7 @@ const AdminPanel: React.FC = () => {
                             {new Date(forecast.forecast_date).toLocaleDateString()}
                           </TableCell>
                           <TableCell>
-                            <Badge className="bg-violet-100 text-violet-700">{forecast.service_category}</Badge>
+                            <Badge className="bg-slate-50 text-slate-700">{forecast.service_category}</Badge>
                           </TableCell>
                           <TableCell>{forecast.predicted_appointments || 0}</TableCell>
                           <TableCell className="text-green-600 font-semibold">
@@ -2395,8 +2395,8 @@ const AdminPanel: React.FC = () => {
                         <p className="text-sm text-gray-600">Total Reviews</p>
                         <p className="text-2xl font-bold text-black">{customerReviews.length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <MessageSquare className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <MessageSquare className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2465,7 +2465,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : customerReviews.length === 0 ? (
@@ -2567,12 +2567,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Total Sent</p>
-                        <p className="text-2xl font-bold text-violet-600">
+                        <p className="text-2xl font-bold text-black">
                           {campaigns.reduce((sum, c) => sum + (c.sent_count || 0), 0)}
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Send className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <Send className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2630,7 +2630,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : campaigns.length === 0 ? (
@@ -2644,7 +2644,7 @@ const AdminPanel: React.FC = () => {
                         <TableRow key={campaign.id} className="hover:bg-gray-50">
                           <TableCell className="font-medium text-black">{campaign.name}</TableCell>
                           <TableCell>
-                            <Badge className="bg-violet-100 text-violet-700">{campaign.campaign_type}</Badge>
+                            <Badge className="bg-slate-50 text-slate-700">{campaign.campaign_type}</Badge>
                           </TableCell>
                           <TableCell>
                             <Badge className={
@@ -2707,8 +2707,8 @@ const AdminPanel: React.FC = () => {
                         <p className="text-sm text-gray-600">Total Items</p>
                         <p className="text-2xl font-bold text-black">{inventoryItems.length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Package className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <Package className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2775,7 +2775,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : inventoryItems.length === 0 ? (
@@ -2889,14 +2889,14 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Avg Confidence</p>
-                        <p className="text-2xl font-bold text-violet-600">
+                        <p className="text-2xl font-bold text-black">
                           {recommendations.length > 0
                             ? (recommendations.reduce((sum, r) => sum + (r.confidence_score || 0), 0) / recommendations.length * 100).toFixed(1)
                             : '0'}%
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-violet-600" />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <Target className="h-5 w-5 text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -2920,7 +2920,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : recommendations.length === 0 ? (
@@ -2938,7 +2938,7 @@ const AdminPanel: React.FC = () => {
                             <Badge className={
                               rec.recommendation_type === 'personalized' ? 'bg-amber-100 text-amber-700' :
                               rec.recommendation_type === 'upsell' ? 'bg-green-100 text-green-700' :
-                              'bg-violet-100 text-violet-700'
+                              'bg-slate-50 text-slate-700'
                             }>
                               {rec.recommendation_type}
                             </Badge>
@@ -3047,10 +3047,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Pending Sync</p>
-                        <p className="text-2xl font-bold text-violet-600">{syncStatus.pending}</p>
+                        <p className="text-2xl font-bold text-black">{syncStatus.pending}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
-                        <RefreshCw className={`h-5 w-5 text-violet-600 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
+                      <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center">
+                        <RefreshCw className={`h-5 w-5 text-black ${syncStatus.syncing ? 'animate-spin' : ''}`} />
                       </div>
                     </div>
                   </CardContent>
@@ -3088,7 +3088,7 @@ const AdminPanel: React.FC = () => {
                     {enterpriseLoading ? (
                       <TableRow>
                         <TableCell colSpan={4} className="text-center py-8">
-                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-violet-600" />
+                          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-black" />
                         </TableCell>
                       </TableRow>
                     ) : schedulePresence.length === 0 ? (
@@ -3237,7 +3237,7 @@ const AdminPanel: React.FC = () => {
               </Button>
               <Button
                 onClick={handleAddStaff}
-                className="bg-violet-600 hover:bg-violet-700 text-white"
+                className="bg-black hover:bg-slate-800 text-white"
               >
                 Add Staff
               </Button>
@@ -3376,7 +3376,7 @@ const AdminPanel: React.FC = () => {
               </Button>
               <Button
                 onClick={handleEditStaff}
-                className="bg-violet-600 hover:bg-violet-700 text-white"
+                className="bg-black hover:bg-slate-800 text-white"
               >
                 Save Changes
               </Button>

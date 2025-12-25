@@ -480,19 +480,19 @@ export const SquarePaymentForm = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-violet-950/50 border border-violet-500/30 rounded-lg p-4"
+            className="bg-black/50 border border-gray-500/30 rounded-lg p-4"
           >
-            <div className="flex items-center gap-2 text-violet-300 mb-2">
-              <Star className="h-5 w-5 fill-violet-400" />
+            <div className="flex items-center gap-2 text-white mb-2">
+              <Star className="h-5 w-5 fill-slate-400" />
               <span className="font-bold text-base">Demo Mode Active</span>
             </div>
-            <p className="text-sm text-violet-200 mb-3">
+            <p className="text-sm text-slate-200 mb-3">
               You are in simulation mode. No real charges will be made.
             </p>
             <Button
               onClick={handleDemoPayment}
               disabled={isProcessing}
-              className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold h-12"
+              className="w-full bg-black hover:bg-slate-800 text-white font-bold h-12"
             >
               {isProcessing ? (
                 <>

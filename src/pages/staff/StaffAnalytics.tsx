@@ -25,7 +25,7 @@ const StaffAnalytics: React.FC = () => {
               <CardTitle>Appointments</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-violet-600">156</p>
+              <p className="text-2xl font-bold text-black">156</p>
             </CardContent>
           </Card>
 

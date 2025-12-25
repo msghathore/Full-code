@@ -88,7 +88,7 @@ const DroppableTimeSlot: React.FC<DroppableTimeSlotProps> = ({
       ref={drop}
       className={`
         flex-1 min-w-[140px] border-l-2 border-gray-200 p-1 relative bg-white transition-colors duration-200
-        ${isOver && canDrop ? 'bg-violet-50 border-violet-300' : ''}
+        ${isOver && canDrop ? 'bg-slate-50 border-slate-300' : ''}
       `}
       onMouseEnter={() => handleSlotHover(staffMember.id, timeSlot.time)}
       onMouseLeave={handleSlotLeave}
@@ -177,7 +177,7 @@ const DroppableTimeSlot: React.FC<DroppableTimeSlotProps> = ({
               : ''
             }
             ${selectedSlot?.staffId === staffMember.id && selectedSlot?.time === timeSlot.time
-              ? 'border-violet-400 bg-violet-50'
+              ? 'border-gray-400 bg-slate-50'
               : ''
             }
           `}

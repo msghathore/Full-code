@@ -296,7 +296,7 @@ const MoveAppointmentDialog: React.FC<MoveAppointmentDialogProps> = ({
             </Button>
             <Button
               onClick={handleMove}
-              className="flex-1 h-10 text-sm bg-violet-600 hover:bg-violet-700 text-white"
+              className="flex-1 h-10 text-sm bg-black hover:bg-slate-800 text-white"
               disabled={isMoving || !selectedDate || !selectedTime || !selectedStaffId}
             >
               {isMoving ? (

@@ -48,8 +48,8 @@ export const StatusLegendPopover: React.FC<StatusLegendPopoverProps> = ({ classN
                 {LEGEND_CONFIG.attributeIcons.map(({ attribute, label, icon: IconComponent }) => (
                   <div key={attribute} className="flex items-center gap-2">
                     <div className="flex-shrink-0">
-                      <div className="w-6 h-6 bg-violet-100 rounded flex items-center justify-center">
-                        <IconComponent className="h-3 w-3 text-violet-600" />
+                      <div className="w-6 h-6 bg-slate-50 rounded flex items-center justify-center">
+                        <IconComponent className="h-3 w-3 text-black" />
                       </div>
                     </div>
                     <div>
@@ -90,9 +90,9 @@ export const StatusLegendPopover: React.FC<StatusLegendPopoverProps> = ({ classN
           <div className="flex items-center justify-center text-xs text-gray-500 gap-4">
             <span>Calendar appointments display these visual cues</span>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-violet-500"></div>
+              <div className="w-3 h-3 rounded-full bg-slate-800"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+              <div className="w-3 h-3 rounded-full bg-slate-800"></div>
             </div>
           </div>
         </div>

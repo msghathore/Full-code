@@ -18,14 +18,14 @@ const StaffDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="flex items-center">
-              <div className="p-2 bg-violet-100 rounded-lg">
-                <svg className="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-2 bg-slate-50 rounded-lg">
+                <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-semibold text-gray-900">Today's Appointments</h3>
-                <p className="text-2xl font-bold text-violet-600">12</p>
+                <p className="text-2xl font-bold text-black">12</p>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@ const StaffDashboard: React.FC = () => {
                 onClick={() => setActiveTab('overview')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'overview'
-                    ? 'border-violet-500 text-violet-600'
+                    ? 'border-gray-500 text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -90,7 +90,7 @@ const StaffDashboard: React.FC = () => {
                 onClick={() => setActiveTab('appointments')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'appointments'
-                    ? 'border-violet-500 text-violet-600'
+                    ? 'border-gray-500 text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -100,7 +100,7 @@ const StaffDashboard: React.FC = () => {
                 onClick={() => setActiveTab('clients')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'clients'
-                    ? 'border-violet-500 text-violet-600'
+                    ? 'border-gray-500 text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -110,7 +110,7 @@ const StaffDashboard: React.FC = () => {
                 onClick={() => setActiveTab('services')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'services'
-                    ? 'border-violet-500 text-violet-600'
+                    ? 'border-gray-500 text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -124,9 +124,9 @@ const StaffDashboard: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Dashboard Overview</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-violet-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-violet-900">Recent Activity</h4>
-                    <p className="text-sm text-violet-700 mt-2">No recent activity to display</p>
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-black">Recent Activity</h4>
+                    <p className="text-sm text-slate-700 mt-2">No recent activity to display</p>
                   </div>
                   <div className="bg-green-50 p-4 rounded-lg">
                     <h4 className="font-medium text-green-900">Quick Actions</h4>
@@ -134,7 +134,7 @@ const StaffDashboard: React.FC = () => {
                       <button className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
                         Schedule Appointment
                       </button>
-                      <button className="text-sm bg-violet-600 text-white px-3 py-1 rounded hover:bg-violet-700 ml-2">
+                      <button className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-slate-800 ml-2">
                         Add Client
                       </button>
                     </div>

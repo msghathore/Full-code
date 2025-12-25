@@ -178,7 +178,7 @@ export function ServiceRecommendations({
 
   const getMatchTypeColor = (type: string) => {
     switch (type) {
-      case 'complementary': return 'bg-violet-500/20 text-violet-300';
+      case 'complementary': return 'bg-slate-800/20 text-white';
       case 'popular': return 'bg-green-500/20 text-green-300';
       case 'seasonal': return 'bg-orange-500/20 text-orange-300';
       case 'personalized': return 'bg-amber-500/20 text-amber-300';

@@ -918,7 +918,7 @@ const CheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'SERVICE' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'SERVICE' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'SERVICE' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('SERVICE')}
               >
                 <Scissors className="h-5 w-5 mr-2" />
@@ -927,7 +927,7 @@ const CheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'PRODUCT' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'PRODUCT' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'PRODUCT' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('PRODUCT')}
               >
                 <Package className="h-5 w-5 mr-2" />
@@ -936,7 +936,7 @@ const CheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'GIFT' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'GIFT' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'GIFT' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('GIFT')}
               >
                 <Gift className="h-5 w-5 mr-2" />
@@ -945,7 +945,7 @@ const CheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'PACKAGE' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'PACKAGE' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'PACKAGE' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('PACKAGE')}
               >
                 <Calculator className="h-5 w-5 mr-2" />

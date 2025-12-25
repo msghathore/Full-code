@@ -112,8 +112,8 @@ const Settings: React.FC = () => {
       <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-2 bg-violet-100 rounded-lg">
-          <SettingsIcon className="h-6 w-6 text-violet-600" />
+        <div className="p-2 bg-slate-50 rounded-lg">
+          <SettingsIcon className="h-6 w-6 text-black" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
@@ -283,7 +283,7 @@ const Settings: React.FC = () => {
                   variant={calendarResolution === 5 ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCalendarResolution(5)}
-                  className={calendarResolution === 5 ? "text-xs bg-violet-600 text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
+                  className={calendarResolution === 5 ? "text-xs bg-black text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
                 >
                   <ZoomIn className="h-3 w-3 mr-1" />
                   Detailed
@@ -292,7 +292,7 @@ const Settings: React.FC = () => {
                   variant={calendarResolution === 10 ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCalendarResolution(10)}
-                  className={calendarResolution === 10 ? "text-xs bg-violet-600 text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
+                  className={calendarResolution === 10 ? "text-xs bg-black text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
                 >
                   Balanced
                 </Button>
@@ -300,7 +300,7 @@ const Settings: React.FC = () => {
                   variant={calendarResolution === 15 ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCalendarResolution(15)}
-                  className={calendarResolution === 15 ? "text-xs bg-violet-600 text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
+                  className={calendarResolution === 15 ? "text-xs bg-black text-white" : "text-xs border-gray-300 text-black hover:bg-gray-100"}
                 >
                   <ZoomOut className="h-3 w-3 mr-1" />
                   Compact
@@ -379,7 +379,7 @@ const Settings: React.FC = () => {
         </Button>
         <Button
           onClick={handleSaveSettings}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+          className="flex items-center gap-2 bg-black hover:bg-slate-800 text-white"
           type="button"
         >
           <Save className="h-4 w-4" />

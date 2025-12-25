@@ -165,7 +165,7 @@ const CustomerFeedback = () => {
         <div className="pt-24 px-4 md:px-8 flex items-center justify-center min-h-[60vh]">
           <Card className="frosted-glass border-white/10 max-w-md">
             <CardContent className="p-8 text-center">
-              <Shield className="h-12 w-12 text-violet-400 mx-auto mb-4" />
+              <Shield className="h-12 w-12 text-slate-700 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">Authentication Required</h2>
               <p className="text-muted-foreground mb-4">
                 Please sign in to access customer feedback analytics.
@@ -244,7 +244,7 @@ const CustomerFeedback = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">Based on {totalFeedback} responses</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-violet-400" />
+                  <TrendingUp className="h-8 w-8 text-slate-700" />
                 </div>
               </CardContent>
             </Card>
@@ -581,8 +581,8 @@ const CustomerFeedback = () => {
                       <p className="text-sm text-muted-foreground mb-2">Detractors</p>
                       <p className="text-xs">Score 0-6</p>
                     </div>
-                    <div className="text-center p-4 bg-violet-500/10 rounded-lg">
-                      <p className="text-2xl font-bold text-violet-400 mb-2">
+                    <div className="text-center p-4 bg-slate-800/10 rounded-lg">
+                      <p className="text-2xl font-bold text-slate-700 mb-2">
                         {summaryLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : totalFeedback}
                       </p>
                       <p className="text-sm text-muted-foreground mb-2">Total Responses</p>
@@ -788,8 +788,8 @@ const CustomerFeedback = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-violet-500/10 rounded-lg">
-                      <h4 className="font-semibold text-violet-400 mb-2">Immediate Actions (0-30 days)</h4>
+                    <div className="p-4 bg-slate-800/10 rounded-lg">
+                      <h4 className="font-semibold text-slate-700 mb-2">Immediate Actions (0-30 days)</h4>
                       <ul className="text-sm space-y-1 text-muted-foreground">
                         <li>• Implement appointment reminder system</li>
                         <li>• Train staff on customer communication</li>

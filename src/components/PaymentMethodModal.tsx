@@ -131,9 +131,9 @@ const PaymentMethodButton: React.FC<{
     className={`
       relative flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-colors
       ${primary
-        ? 'bg-gradient-to-br from-violet-500 to-violet-600 border-violet-400 text-white shadow-lg shadow-violet-500/25'
+        ? 'bg-gradient-to-br from-slate-500 to-slate-600 border-gray-400 text-white shadow-lg shadow-slate-500/25'
         : selected
-          ? 'bg-gray-50 border-violet-500 text-gray-900'
+          ? 'bg-gray-50 border-gray-500 text-gray-900'
           : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
       }
       ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -146,13 +146,13 @@ const PaymentMethodButton: React.FC<{
         animate={{ scale: 1 }}
         className="absolute top-2 right-2"
       >
-        <CheckCircle className="h-5 w-5 text-violet-500" />
+        <CheckCircle className="h-5 w-5 text-slate-900" />
       </motion.div>
     )}
     <div className={`mb-2 ${primary ? 'text-white' : ''}`}>{icon}</div>
     <span className={`font-medium text-sm ${primary ? 'text-white' : ''}`}>{label}</span>
     {description && (
-      <span className={`text-xs mt-1 ${primary ? 'text-violet-100' : 'text-gray-500'}`}>{description}</span>
+      <span className={`text-xs mt-1 ${primary ? 'text-slate-100' : 'text-gray-500'}`}>{description}</span>
     )}
   </motion.button>
 );
@@ -761,7 +761,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                         </Button>
                         <Button
                           onClick={initializeSplitByPerson}
-                          className="flex-1 bg-violet-600 hover:bg-violet-700"
+                          className="flex-1 bg-black hover:bg-slate-800"
                         >
                           <ArrowRight className="h-4 w-4 mr-2" />
                           Continue
@@ -795,7 +795,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                                   onClick={() => setPayments(prev => prev.map(p =>
                                     p.id === payment.id ? { ...p, type: type as PaymentType } : p
                                   ))}
-                                  className={payment.type === type ? 'bg-violet-600' : ''}
+                                  className={payment.type === type ? 'bg-black' : ''}
                                 >
                                   {type === 'CASH' && <Banknote className="h-3 w-3 mr-1" />}
                                   {type === 'CHECK' && <FileText className="h-3 w-3 mr-1" />}
@@ -873,7 +873,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                   className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
                 >
                   <div className="text-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-violet-600 mx-auto mb-3" />
+                    <Loader2 className="h-8 w-8 animate-spin text-black mx-auto mb-3" />
                     <p className="text-sm text-gray-600">
                       {terminalProcessing ? 'Waiting for customer...' : 'Processing payment...'}
                     </p>

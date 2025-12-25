@@ -248,7 +248,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
               {/* Email Receipt */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Mail className="h-5 w-5 text-violet-600" />
+                  <Mail className="h-5 w-5 text-black" />
                   <span className="font-medium text-gray-900">Email Receipt</span>
                 </div>
                 
@@ -259,13 +259,13 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                       placeholder="customer@email.com"
                       value={emailForm.email}
                       onChange={(e) => setEmailForm(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-violet-500 focus:ring-violet-500"
+                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-gray-500 focus:ring-slate-500"
                       disabled={emailForm.isSubmitting}
                     />
                     <Button
                       onClick={handleEmailReceipt}
                       disabled={emailForm.isSubmitting || !emailForm.email.trim()}
-                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                      className="w-full bg-black hover:bg-slate-800 text-white"
                     >
                       {emailForm.isSubmitting ? (
                         <>

@@ -155,7 +155,7 @@ const ResizeHandle: React.FC<{
 
   return (
     <div
-      className={`absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize transition-colors ${isResizing ? 'bg-violet-500' : 'hover:bg-violet-300'
+      className={`absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize transition-colors ${isResizing ? 'bg-slate-800' : 'hover:bg-slate-200'
         } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
       onMouseDown={disabled ? undefined : handleMouseDown}
       style={{
@@ -404,7 +404,7 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
           relative overflow-hidden border rounded-sm cursor-move select-none
           transition-all duration-150 hover:shadow-sm group
           ${statusStyle.bgClass} ${statusStyle.borderClass} ${statusStyle.textClass}
-          ${isDragging ? 'shadow-xl ring-2 ring-violet-400 ring-offset-1' : ''}
+          ${isDragging ? 'shadow-xl ring-2 ring-slate-400 ring-offset-1' : ''}
         `}
         style={{
           height: '100%', // Fill parent container - height controlled by ScheduleGrid

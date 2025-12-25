@@ -200,8 +200,8 @@ const StaffLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <Card className="w-full max-w-md border-gray-200 shadow-lg bg-white" style={{ backgroundColor: 'white', color: 'black' }}>
         <CardHeader className="text-center">
-          <div className="mx-auto bg-violet-100 p-3 rounded-full w-fit mb-4">
-            <Lock className="h-6 w-6 text-violet-600" />
+          <div className="mx-auto bg-slate-50 p-3 rounded-full w-fit mb-4">
+            <Lock className="h-6 w-6 text-black" />
           </div>
           <CardTitle className="text-2xl text-gray-900 font-bold" style={{ color: 'black' }}>Staff Access</CardTitle>
           <CardDescription className="text-gray-600" style={{ color: '#4B5563' }}>
@@ -241,7 +241,7 @@ const StaffLogin = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+              className="w-full bg-black hover:bg-slate-800 text-white"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}

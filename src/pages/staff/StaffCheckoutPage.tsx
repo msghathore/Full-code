@@ -953,7 +953,7 @@ const StaffCheckoutPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-1 text-xs text-violet-600 hover:text-violet-700"
+                  className="h-auto p-1 text-xs text-black hover:text-slate-700"
                   onClick={() => setShowTerminalSelector(!showTerminalSelector)}
                 >
                   {showTerminalSelector ? 'Hide' : 'Manage'}
@@ -974,7 +974,7 @@ const StaffCheckoutPage = () => {
                       No terminals found.{' '}
                       <button
                         onClick={() => pairNewDevice()}
-                        className="text-violet-600 hover:underline"
+                        className="text-black hover:underline"
                       >
                         Pair device
                       </button>
@@ -986,7 +986,7 @@ const StaffCheckoutPage = () => {
                           key={device.id}
                           className={`w-full flex items-center gap-2 p-2 rounded text-sm transition-colors ${
                             selectedTerminal?.id === device.id
-                              ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                              ? 'bg-slate-50 text-slate-700 border border-slate-200'
                               : 'hover:bg-gray-100 text-gray-700'
                           }`}
                           onClick={() => {
@@ -997,7 +997,7 @@ const StaffCheckoutPage = () => {
                           <Smartphone className="h-4 w-4" />
                           <span className="flex-1 text-left">{device.name || 'Square Terminal'}</span>
                           {selectedTerminal?.id === device.id && (
-                            <CheckCircle className="h-4 w-4 text-violet-600" />
+                            <CheckCircle className="h-4 w-4 text-black" />
                           )}
                         </button>
                       ))}
@@ -1018,17 +1018,17 @@ const StaffCheckoutPage = () => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-4 bg-violet-50 rounded-xl border border-violet-200"
+                className="mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-violet-800">
+                    <div className="text-sm font-medium text-slate-800">
                       {terminalCheckout.status === 'PENDING' && '⏳ Waiting for customer...'}
                       {terminalCheckout.status === 'IN_PROGRESS' && '💳 Customer is paying...'}
                       {terminalCheckout.status === 'COMPLETED' && '✅ Payment complete!'}
                       {terminalCheckout.status === 'CANCELED' && '❌ Payment canceled'}
                     </div>
-                    <div className="text-xs text-violet-600 mt-1">
+                    <div className="text-xs text-black mt-1">
                       Amount: {formatCurrency(terminalCheckout.amount)}
                       {terminalCheckout.tipAmount && terminalCheckout.tipAmount > 0 && (
                         <> + {formatCurrency(terminalCheckout.tipAmount)} tip</>
@@ -1216,7 +1216,7 @@ const StaffCheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'SERVICE' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'SERVICE' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'SERVICE' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('SERVICE')}
               >
                 <Scissors className="h-5 w-5 mr-2" />
@@ -1225,7 +1225,7 @@ const StaffCheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'PRODUCT' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'PRODUCT' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'PRODUCT' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('PRODUCT')}
               >
                 <Package className="h-5 w-5 mr-2" />
@@ -1234,7 +1234,7 @@ const StaffCheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'GIFT' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'GIFT' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'GIFT' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('GIFT')}
               >
                 <Gift className="h-5 w-5 mr-2" />
@@ -1243,7 +1243,7 @@ const StaffCheckoutPage = () => {
               <Button
                 variant={selectedCategory === 'PACKAGE' ? 'default' : 'outline'}
                 size="sm"
-                className={`h-12 px-4 ${selectedCategory === 'PACKAGE' ? 'bg-violet-600 hover:bg-violet-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
+                className={`h-12 px-4 ${selectedCategory === 'PACKAGE' ? 'bg-black hover:bg-slate-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-200'}`}
                 onClick={() => handleCategoryClick('PACKAGE')}
               >
                 <Calculator className="h-5 w-5 mr-2" />

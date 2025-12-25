@@ -88,12 +88,12 @@ export const MaintenanceMode = ({ onAuthenticated }: MaintenanceModeProps) => {
                 />
 
                 {error && (
-                  <p className="text-rose-400 text-sm">{error}</p>
+                  <p className="text-red-400 text-sm">{error}</p>
                 )}
 
                 <Button
                   type="submit"
-                  className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                  className="w-full bg-black hover:bg-slate-800 text-white"
                 >
                   Access Site
                 </Button>

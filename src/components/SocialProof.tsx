@@ -64,7 +64,7 @@ export const SocialProof = () => {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'booking':
-        return <Calendar className="w-4 h-4 text-violet-400" />;
+        return <Calendar className="w-4 h-4 text-slate-700" />;
       case 'review':
         return <Star className="w-4 h-4 text-yellow-400" />;
       case 'signup':
@@ -93,7 +93,7 @@ export const SocialProof = () => {
           <Card className="frosted-glass border-white/10 text-center">
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <Calendar className="w-8 h-8 text-violet-400 mr-2" />
+                <Calendar className="w-8 h-8 text-slate-700 mr-2" />
                 <span className="text-3xl font-bold text-white">
                   {isLoading ? '...' : formatNumber(bookingCount)}
                 </span>

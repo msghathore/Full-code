@@ -20,7 +20,7 @@ const GROUP_TYPES = [
   { value: 'bridal_party', label: 'Bridal Party', icon: Heart, color: 'bg-pink-100 text-pink-600 border-pink-200' },
   { value: 'birthday', label: 'Birthday Party', icon: Gift, color: 'bg-amber-100 text-amber-600 border-amber-200' },
   { value: 'girls_day', label: "Girls' Day Out", icon: Sparkles, color: 'bg-amber-100 text-amber-600 border-amber-200' },
-  { value: 'corporate', label: 'Corporate Event', icon: Users, color: 'bg-violet-100 text-violet-600 border-violet-200' },
+  { value: 'corporate', label: 'Corporate Event', icon: Users, color: 'bg-slate-50 text-black border-slate-200' },
   { value: 'other', label: 'Other Group', icon: PartyPopper, color: 'bg-green-100 text-green-600 border-green-200' },
 ];
 
@@ -937,10 +937,10 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
               {/* Individual Booking Option */}
               <button
                 onClick={() => setBookingType('individual')}
-                className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-violet-500 hover:bg-violet-50 transition-all group"
+                className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-gray-500 hover:bg-slate-50 transition-all group"
               >
-                <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mb-4 group-hover:bg-violet-200 transition-colors">
-                  <UserPlus className="w-8 h-8 text-violet-600" />
+                <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4 group-hover:bg-slate-100 transition-colors">
+                  <UserPlus className="w-8 h-8 text-black" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">Individual</h3>
                 <p className="text-sm text-gray-500 text-center">Single client appointment</p>
@@ -1208,7 +1208,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 onValueChange={handleServiceChange}
                 disabled={isLoadingServices}
               >
-                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.service_id ? 'border-red-500' : ''
+                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.service_id ? 'border-red-500' : ''
                   }`}>
                   <SelectValue placeholder={isLoadingServices ? "Loading services..." : "Select service & staff"} />
                 </SelectTrigger>
@@ -1234,7 +1234,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder="Any special requests, allergies, preferences..."
-                className="bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 resize-none"
+                className="bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 resize-none"
                 rows={2}
               />
             </div>
@@ -1251,11 +1251,11 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                   value={customerSearchTerm}
                   onChange={(e) => setCustomerSearchTerm(e.target.value)}
                   placeholder="Type to search by name or email..."
-                  className="bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500"
+                  className="bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500"
                 />
                 {isSearching && (
                   <div className="absolute right-3 top-9">
-                    <div className="animate-spin h-4 w-4 border-2 border-violet-500 border-t-transparent rounded-full"></div>
+                    <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
                   </div>
                 )}
 
@@ -1268,7 +1268,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                           <button
                             key={customer.id}
                             type="button"
-                            className="w-full px-3 py-2 text-left hover:bg-violet-50 border-b last:border-b-0 text-black transition-colors"
+                            className="w-full px-3 py-2 text-left hover:bg-slate-50 border-b last:border-b-0 text-black transition-colors"
                             onClick={() => handleSelectCustomer(customer)}
                           >
                             <div className="font-medium text-gray-900">{customer.name}</div>
@@ -1342,7 +1342,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                     value={formData.first_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
                     placeholder="First name"
-                    className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.first_name ? 'border-red-500' : ''}`}
+                    className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.first_name ? 'border-red-500' : ''}`}
                   />
                   {errors.first_name && <p className="mt-1 text-xs text-red-600">{errors.first_name}</p>}
                 </div>
@@ -1352,7 +1352,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                     value={formData.last_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                     placeholder="Last name"
-                    className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.last_name ? 'border-red-500' : ''}`}
+                    className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.last_name ? 'border-red-500' : ''}`}
                   />
                   {errors.last_name && <p className="mt-1 text-xs text-red-600">{errors.last_name}</p>}
                 </div>
@@ -1371,7 +1371,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 value={formData.appointment_date}
                 onChange={(e) => setFormData(prev => ({ ...prev, appointment_date: e.target.value }))}
                 type="date"
-                className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.appointment_date ? 'border-red-500' : ''
+                className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.appointment_date ? 'border-red-500' : ''
                   }`}
               />
               {errors.appointment_date && (
@@ -1385,7 +1385,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 Time *
               </label>
               <Select value={formData.appointment_time} onValueChange={(value) => setFormData(prev => ({ ...prev, appointment_time: value }))}>
-                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.appointment_time ? 'border-red-500' : ''
+                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.appointment_time ? 'border-red-500' : ''
                   }`}>
                   <SelectValue placeholder="Select time" />
                 </SelectTrigger>
@@ -1408,7 +1408,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 Staff Member *
               </label>
               <Select value={formData.staff_id} onValueChange={(value) => setFormData(prev => ({ ...prev, staff_id: value }))}>
-                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.staff_id ? 'border-red-500' : ''
+                <SelectTrigger className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.staff_id ? 'border-red-500' : ''
                   }`}>
                   <SelectValue placeholder="Select staff member" />
                 </SelectTrigger>
@@ -1440,7 +1440,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.total_amount ? 'border-red-500' : ''
+                className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.total_amount ? 'border-red-500' : ''
                   }`}
               />
               {errors.total_amount && (
@@ -1475,7 +1475,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 value={formData.status}
                 onValueChange={handleStatusChange}
               >
-                <SelectTrigger className="bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500">
+                <SelectTrigger className="bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200" style={{ zIndex: 99999 }}>
@@ -1503,7 +1503,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                className="bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500"
+                className="bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500"
               />
             </div>
 
@@ -1534,7 +1534,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                   size="sm"
                   onClick={() => setFormData(prev => ({ ...prev, repeat: option.value }))}
                   className={formData.repeat === option.value
-                    ? "bg-violet-600 text-white"
+                    ? "bg-black text-white"
                     : "border-gray-300 text-gray-700 hover:bg-gray-100"
                   }
                 >
@@ -1556,7 +1556,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 onChange={handlePhoneChange}
                 placeholder="(123) 456-7890"
                 maxLength={14}
-                className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.phone ? 'border-red-500' : ''
+                className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.phone ? 'border-red-500' : ''
                   }`}
               />
               {errors.phone && (
@@ -1574,7 +1574,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 placeholder="customer@email.com"
                 type="email"
-                className={`bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${errors.email ? 'border-red-500' : ''
+                className={`bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${errors.email ? 'border-red-500' : ''
                   }`}
               />
               {errors.email && (
@@ -1590,7 +1590,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
               multiple
               accept="image/*,.pdf"
               onChange={handleFileUpload}
-              className="bg-white text-black border-gray-300 focus:border-violet-500 focus:ring-violet-500 text-sm"
+              className="bg-white text-black border-gray-300 focus:border-gray-500 focus:ring-slate-500 text-sm"
             />
             {uploadedFiles.length > 0 && (
               <div className="space-y-1">
@@ -1634,7 +1634,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
             </Button>
             <Button
               onClick={handleSave}
-              className="px-6 h-10 bg-violet-600 hover:bg-violet-700 text-white"
+              className="px-6 h-10 bg-black hover:bg-slate-800 text-white"
               disabled={isLoading || isLoadingServices}
             >
               {isLoading ? (
@@ -1709,7 +1709,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
               <Button
                 onClick={handleAdminPasswordVerify}
                 disabled={isVerifyingPassword || !adminPassword.trim()}
-                className="bg-violet-600 hover:bg-violet-700 text-white"
+                className="bg-black hover:bg-slate-800 text-white"
               >
                 {isVerifyingPassword ? (
                   <>

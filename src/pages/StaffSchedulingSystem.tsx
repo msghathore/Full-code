@@ -233,7 +233,7 @@ const StaffSchedulingSystem: React.FC<StaffSchedulingSystemProps> = ({
 
               <Button 
                 onClick={authenticate}
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                className="w-full bg-black hover:bg-slate-800 text-white"
               >
                 Sign In
               </Button>
@@ -311,8 +311,8 @@ const StaffSchedulingSystem: React.FC<StaffSchedulingSystemProps> = ({
               return (
                 <div key={member.id} className="bg-white rounded-lg border border-gray-200 p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
-                      <User className="h-5 w-5 text-violet-600" />
+                    <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center">
+                      <User className="h-5 w-5 text-black" />
                     </div>
                     <div>
                       <h3 className="font-medium text-black">{member.name}</h3>
@@ -353,8 +353,8 @@ const StaffSchedulingSystem: React.FC<StaffSchedulingSystemProps> = ({
                     return (
                       <div key={appointment.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center">
-                            <Clock className="h-4 w-4 text-violet-600" />
+                          <div className="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center">
+                            <Clock className="h-4 w-4 text-black" />
                           </div>
                           <div>
                             <p className="font-medium text-black">{appointment.full_name}</p>

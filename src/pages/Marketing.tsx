@@ -78,8 +78,8 @@ const Marketing: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-violet-100 rounded-lg">
-                <Users className="h-5 w-5 text-violet-600" />
+              <div className="p-2 bg-slate-50 rounded-lg">
+                <Users className="h-5 w-5 text-black" />
               </div>
               <div>
                 <div className="text-2xl font-bold">1,234</div>
@@ -144,7 +144,7 @@ const Marketing: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-gray-100 rounded-lg">
                     {campaign.type === 'Email' ? (
-                      <Mail className="h-5 w-5 text-violet-600" />
+                      <Mail className="h-5 w-5 text-black" />
                     ) : (
                       <MessageSquare className="h-5 w-5 text-green-600" />
                     )}
@@ -201,7 +201,7 @@ const Marketing: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-6 text-center">
-            <Mail className="h-8 w-8 text-violet-600 mx-auto mb-3" />
+            <Mail className="h-8 w-8 text-black mx-auto mb-3" />
             <h3 className="font-medium mb-2">Email Campaign</h3>
             <p className="text-sm text-gray-500 mb-4">Send targeted emails to customer segments</p>
             <Button variant="outline" size="sm" onClick={handleCreateCampaign}>

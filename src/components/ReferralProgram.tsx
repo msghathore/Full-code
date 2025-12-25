@@ -183,7 +183,7 @@ export const ReferralProgram = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-green-500/20 text-green-400';
-      case 'rewarded': return 'bg-violet-500/20 text-violet-400';
+      case 'rewarded': return 'bg-slate-800/20 text-slate-700';
       case 'pending': return 'bg-yellow-500/20 text-yellow-400';
       default: return 'bg-gray-500/20 text-gray-400';
     }
@@ -258,7 +258,7 @@ export const ReferralProgram = () => {
 
               <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="w-full bg-gradient-to-r from-rose-500 to-amber-600 hover:from-rose-600 hover:to-amber-700">
+                  <Button className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700">
                     <Share2 className="w-4 h-4 mr-2" />
                     Send Invitation
                   </Button>
@@ -282,7 +282,7 @@ export const ReferralProgram = () => {
                     </div>
                     <Button
                       onClick={handleSendInvite}
-                      className="w-full bg-gradient-to-r from-rose-500 to-amber-600 hover:from-rose-600 hover:to-amber-700"
+                      className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700"
                     >
                       Send Invitation
                     </Button>
@@ -363,7 +363,7 @@ export const ReferralProgram = () => {
                       <Button
                         onClick={() => handleClaimReward(reward.id)}
                         disabled={availablePoints < reward.pointsRequired}
-                        className="w-full bg-gradient-to-r from-rose-500 to-amber-600 hover:from-rose-600 hover:to-amber-700 disabled:opacity-50"
+                        className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700 disabled:opacity-50"
                       >
                         {availablePoints >= reward.pointsRequired ? 'Claim Reward' : 'Not Enough Points'}
                       </Button>

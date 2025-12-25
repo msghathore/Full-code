@@ -30,7 +30,7 @@ import {
 // Status colors mapping - expanded with all requested statuses
 const STATUS_COLORS = {
   'requested': { bgClass: 'bg-yellow-400', label: 'New Request' },
-  'accepted': { bgClass: 'bg-violet-300', label: 'Accepted' },
+  'accepted': { bgClass: 'bg-slate-200', label: 'Accepted' },
   'awaiting_confirmation': { bgClass: 'bg-orange-300', label: 'Awaiting Confirmation' },
   'confirmed': { bgClass: 'bg-red-400', label: 'Confirmed' },
   'show': { bgClass: 'bg-green-400', label: 'Show' },
@@ -44,9 +44,9 @@ const STATUS_COLORS = {
 
 // Attribute icons mapping - comprehensive list as requested
 const ATTRIBUTE_ICONS = {
-  'recurring': { icon: Repeat, label: 'Recurring Appointment', color: 'text-violet-600' },
+  'recurring': { icon: Repeat, label: 'Recurring Appointment', color: 'text-black' },
   'stopped_recurring': { icon: X, label: 'Stopped Recurring', color: 'text-red-600' },
-  'bundle': { icon: Users, label: 'Bundle', color: 'text-purple-600' },
+  'bundle': { icon: Users, label: 'Bundle', color: 'text-black' },
   'house_call': { icon: Home, label: 'House Call', color: 'text-green-600' },
   'note': { icon: FileText, label: 'Note', color: 'text-yellow-600' },
   'popup_note': { icon: MessageSquare, label: 'Popup Note', color: 'text-orange-600' },
@@ -55,12 +55,12 @@ const ATTRIBUTE_ICONS = {
   'show_checked_in': { icon: CheckCircle, label: 'Show - Checked In', color: 'text-green-500' },
   'online_booking_blocked': { icon: XCircle, label: 'Online Booking Blocked', color: 'text-red-500' },
   'booked_instagram': { icon: Instagram, label: 'Booked on Instagram', color: 'text-pink-600' },
-  'booked_facebook': { icon: Facebook, label: 'Booked on Facebook', color: 'text-violet-700' },
+  'booked_facebook': { icon: Facebook, label: 'Booked on Facebook', color: 'text-slate-700' },
   'booked_yelp': { icon: MessageSquare, label: 'Booked on Yelp', color: 'text-red-600' },
   'membership': { icon: CreditCard, label: 'Membership', color: 'text-indigo-500' },
-  'package': { icon: Package, label: 'Package', color: 'text-purple-500' },
+  'package': { icon: Package, label: 'Package', color: 'text-slate-900' },
   'deposit_paid': { icon: DepositIcon, label: 'Deposit Paid', color: 'text-green-600' },
-  'new_request': { icon: UserPlus, label: 'New Request (NR)', color: 'text-violet-500' },
+  'new_request': { icon: UserPlus, label: 'New Request (NR)', color: 'text-slate-900' },
   'return_request': { icon: RotateCcw, label: 'Return Request (RR)', color: 'text-green-500' },
   'return_non_request': { icon: RotateCw, label: 'Return Non Request (RNR)', color: 'text-yellow-500' },
   'new_non_request': { icon: UserCheck, label: 'New Non Request (NNR)', color: 'text-orange-500' }
@@ -91,7 +91,7 @@ const AppointmentLegend: React.FC<AppointmentLegendProps> = ({
           Legend
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[600px] p-0 bg-gradient-to-br from-purple-50 via-violet-50 to-pink-50 border-4 border-transparent rounded-2xl shadow-2xl"
+      <PopoverContent className="w-[600px] p-0 bg-gradient-to-br from-slate-50 via-slate-50 to-slate-50 border-4 border-transparent rounded-2xl shadow-2xl"
                      style={{
                        backgroundImage: `linear-gradient(white, white), linear-gradient(45deg, #ff6b6b, #feca57, #7c3aed, #ff9ff3, #a78bfa, #5f27cd)`,
                        backgroundOrigin: 'border-box',

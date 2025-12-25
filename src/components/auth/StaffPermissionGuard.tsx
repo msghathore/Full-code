@@ -199,7 +199,7 @@ export const StaffPermissionGuard: React.FC<StaffPermissionGuardProps> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
       </div>
     );
   }
@@ -224,7 +224,7 @@ export const StaffPermissionGuard: React.FC<StaffPermissionGuardProps> = ({
           <AlertDialogFooter className="flex justify-center">
             <Button
               onClick={handleDismiss}
-              className="bg-violet-600 hover:bg-violet-700 text-white"
+              className="bg-black hover:bg-slate-800 text-white"
             >
               Go Back
             </Button>

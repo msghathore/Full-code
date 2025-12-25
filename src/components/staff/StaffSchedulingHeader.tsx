@@ -84,7 +84,7 @@ const StaffSchedulingHeader: React.FC<StaffSchedulingHeaderProps> = ({
                   onClick={() => onStaffToggle(member.id)}
                   className={`px-2 py-1 text-xs rounded-full border transition-colors ${
                     selectedStaff.includes(member.id)
-                      ? 'bg-violet-100 text-violet-800 border-violet-300'
+                      ? 'bg-slate-50 text-slate-800 border-slate-300'
                       : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
                   }`}
                 >

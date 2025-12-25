@@ -56,7 +56,7 @@ const StaffNavigation: React.FC<StaffNavigationProps> = ({ children }) => {
                                     className={`
                   flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors
                   ${active
-                                            ? 'text-violet-600 border-b-2 border-violet-600'
+                                            ? 'text-black border-b-2 border-gray-600'
                                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                                         }
                 `}
@@ -80,7 +80,7 @@ const StaffNavigation: React.FC<StaffNavigationProps> = ({ children }) => {
                                 <p className="text-xs text-gray-500">Logged In</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-medium border border-violet-200">
+                                <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-700 font-medium border border-slate-200">
                                     {getInitials(staffName)}
                                 </div>
                                 <button

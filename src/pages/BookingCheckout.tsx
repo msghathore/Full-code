@@ -200,7 +200,6 @@ const BookingCheckout = () => {
 
       // Send confirmation email
       try {
-
         if (customerEmail) {
           const emailResult = await EmailService.sendAppointmentConfirmation({
             customerEmail,
@@ -217,6 +216,38 @@ const BookingCheckout = () => {
         }
       } catch (emailError) {
         console.warn('⚠️ Email sending failed (non-critical):', emailError);
+      }
+
+      // Send staff notification
+      try {
+        if (appointmentData.staff_id) {
+          const { data: staffData } = await supabase
+            .from('staff')
+            .select('email, full_name')
+            .eq('id', appointmentData.staff_id)
+            .single();
+
+          if (staffData?.email) {
+            const staffNotificationResult = await EmailService.sendStaffNotification({
+              staffEmail: staffData.email,
+              staffName: staffData.full_name,
+              customerName: customerName || 'Customer',
+              customerEmail: customerEmail,
+              customerPhone: appointmentData.phone,
+              serviceName: bookingDetails.service_name,
+              appointmentDate: bookingDetails.appointment_date,
+              appointmentTime: bookingDetails.appointment_time,
+              notes: appointmentData.notes,
+              isGroupBooking: false
+            });
+
+            if (staffNotificationResult.success) {
+              console.log('📧 Staff notification sent to:', staffData.email);
+            }
+          }
+        }
+      } catch (staffEmailError) {
+        console.warn('⚠️ Staff notification failed (non-critical):', staffEmailError);
       }
 
       setPaymentCompleted(true);
@@ -399,8 +430,8 @@ const BookingCheckout = () => {
                   </div>
                 </div>
 
-                <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-3">
-                  <p className="text-violet-300 text-sm">
+                <div className="bg-slate-800/10 border border-gray-500/20 rounded-lg p-3">
+                  <p className="text-white text-sm">
                     💳 You'll pay a 50% deposit today. The remaining balance will be collected at your appointment.
                   </p>
                 </div>

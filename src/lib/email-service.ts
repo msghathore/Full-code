@@ -49,6 +49,40 @@ export interface ReceiptData {
   customerName?: string;
 }
 
+export interface StaffNotificationData {
+  staffEmail: string;
+  staffName?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  serviceName: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  notes?: string;
+  isGroupBooking?: boolean;
+  groupName?: string;
+}
+
+export interface AppointmentReminderData {
+  customerEmail: string;
+  customerName?: string;
+  serviceName: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  staffName?: string;
+}
+
+export interface StatusChangeNotificationData {
+  customerEmail: string;
+  customerName?: string;
+  serviceName: string;
+  appointmentDate?: string;
+  appointmentTime?: string;
+  oldStatus?: string;
+  newStatus: string;
+  staffName?: string;
+}
+
 export class EmailService {
   private static async callBrevoService(action: string, data: any): Promise<EmailResponse> {
     try {
@@ -251,6 +285,61 @@ export class EmailService {
       email,
       subject,
       templateData
+    });
+
+    return result;
+  }
+
+  /**
+   * Send staff notification email when customer books
+   */
+  static async sendStaffNotification(data: StaffNotificationData): Promise<EmailResponse> {
+    const result = await this.callBrevoService('sendStaffNotification', {
+      staffEmail: data.staffEmail,
+      staffName: data.staffName,
+      customerName: data.customerName,
+      customerEmail: data.customerEmail,
+      customerPhone: data.customerPhone,
+      serviceName: data.serviceName,
+      appointmentDate: data.appointmentDate,
+      appointmentTime: data.appointmentTime,
+      notes: data.notes,
+      isGroupBooking: data.isGroupBooking,
+      groupName: data.groupName
+    });
+
+    return result;
+  }
+
+  /**
+   * Send 24-hour appointment reminder
+   */
+  static async sendAppointmentReminder(data: AppointmentReminderData): Promise<EmailResponse> {
+    const result = await this.callBrevoService('sendAppointmentReminder', {
+      customerEmail: data.customerEmail,
+      customerName: data.customerName,
+      serviceName: data.serviceName,
+      appointmentDate: data.appointmentDate,
+      appointmentTime: data.appointmentTime,
+      staffName: data.staffName
+    });
+
+    return result;
+  }
+
+  /**
+   * Send status change notification
+   */
+  static async sendStatusChangeNotification(data: StatusChangeNotificationData): Promise<EmailResponse> {
+    const result = await this.callBrevoService('sendStatusChangeNotification', {
+      customerEmail: data.customerEmail,
+      customerName: data.customerName,
+      serviceName: data.serviceName,
+      appointmentDate: data.appointmentDate,
+      appointmentTime: data.appointmentTime,
+      oldStatus: data.oldStatus,
+      newStatus: data.newStatus,
+      staffName: data.staffName
     });
 
     return result;

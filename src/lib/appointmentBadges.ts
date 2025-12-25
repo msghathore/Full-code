@@ -7,9 +7,9 @@ export const RETENTION_BADGES = {
   RR: {
     label: 'RR',
     tooltip: 'Return Request - Returning client requesting specific provider',
-    bgColor: 'bg-purple-500',
+    bgColor: 'bg-slate-800',
     textColor: 'text-white',
-    borderColor: 'border-purple-600'
+    borderColor: 'border-gray-600'
   },
   RNR: {
     label: 'RNR',
@@ -28,21 +28,21 @@ export const RETENTION_BADGES = {
   NNR: {
     label: 'NNR',
     tooltip: 'New Non-Request - New client NOT requesting specific provider',
-    bgColor: 'bg-violet-400',
+    bgColor: 'bg-slate-700',
     textColor: 'text-white',
-    borderColor: 'border-violet-500'
+    borderColor: 'border-gray-500'
   }
 };
 
 export const PAYMENT_ICONS = {
   paid: { icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-100', tooltip: 'Paid in full' },
   deposit: { icon: CreditCard, color: 'text-orange-600', bgColor: 'bg-orange-100', tooltip: 'Deposit placed' },
-  package: { icon: Package, color: 'text-purple-600', bgColor: 'bg-purple-100', tooltip: 'Paid with package' },
-  membership: { icon: Users, color: 'text-violet-600', bgColor: 'bg-violet-100', tooltip: 'Paid with membership' },
+  package: { icon: Package, color: 'text-black', bgColor: 'bg-slate-50', tooltip: 'Paid with package' },
+  membership: { icon: Users, color: 'text-black', bgColor: 'bg-slate-50', tooltip: 'Paid with membership' },
   pending: { icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-100', tooltip: 'Payment pending' }
 };
 
 export const ATTRIBUTE_ICONS = {
-  recurring: { icon: Repeat, color: 'text-violet-600', tooltip: 'Recurring appointment' },
+  recurring: { icon: Repeat, color: 'text-black', tooltip: 'Recurring appointment' },
   has_note: { icon: FileText, color: 'text-yellow-600', tooltip: 'Has notes' }
 };

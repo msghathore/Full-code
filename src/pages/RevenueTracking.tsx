@@ -233,7 +233,7 @@ const RevenueTracking = () => {
                     <p className="text-2xl font-bold luxury-glow">{kpis?.profitMargin || 0}%</p>
                     <p className="text-xs text-muted-foreground">Industry avg: 35%</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-violet-400" />
+                  <TrendingUp className="h-8 w-8 text-slate-700" />
                 </div>
               </CardContent>
             </Card>
@@ -591,8 +591,8 @@ const RevenueTracking = () => {
                         <p className="text-lg font-bold text-green-400">4</p>
                         <p className="text-xs text-muted-foreground">Months Over Budget</p>
                       </div>
-                      <div className="text-center p-3 bg-violet-500/10 rounded-lg">
-                        <p className="text-lg font-bold text-violet-400">2</p>
+                      <div className="text-center p-3 bg-slate-800/10 rounded-lg">
+                        <p className="text-lg font-bold text-slate-700">2</p>
                         <p className="text-xs text-muted-foreground">Months Under Budget</p>
                       </div>
                     </div>
@@ -684,7 +684,7 @@ const RevenueTracking = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Target className="h-8 w-8 text-violet-400" />
+                      <Target className="h-8 w-8 text-slate-700" />
                       <div>
                         <h3 className="text-lg font-semibold">Moderate Growth</h3>
                         <p className="text-sm text-muted-foreground">15% monthly growth</p>

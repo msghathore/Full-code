@@ -7,8 +7,8 @@
 export const STAFF_COLORS = {
   blue: '#3B82F6',      // Tailwind blue-500
   emerald: '#10B981',   // Tailwind emerald-500
-  purple: '#8B5CF6',    // Tailwind purple-500
-  pink: '#EC4899',      // Tailwind pink-500
+  purple: '#6B7280',    // Changed from violet to gray
+  pink: '#6B7280',      // Changed from pink to gray
   orange: '#F97316',    // Tailwind orange-500
   red: '#EF4444',       // Tailwind red-500
   teal: '#14B8A6',      // Tailwind teal-500
@@ -69,10 +69,10 @@ export const STATUS_COLORS = {
     hex: '#06B6D4' // emerald-500 - Bright teal
   },
   in_progress: {
-    bgClass: 'bg-violet-500',
-    borderClass: 'border-violet-600',
+    bgClass: 'bg-slate-800',
+    borderClass: 'border-gray-600',
     textClass: 'text-white',
-    hex: '#8B5CF6' // violet-500 - Bold purple
+    hex: '#1E293B' // slate-800 - Dark gray
   },
   completed: {
     bgClass: 'bg-indigo-500',
@@ -81,10 +81,10 @@ export const STATUS_COLORS = {
     hex: '#6366F1' // indigo-500 - Deep blue-purple
   },
   cancelled: {
-    bgClass: 'bg-rose-500',
-    borderClass: 'border-rose-600',
+    bgClass: 'bg-red-500',
+    borderClass: 'border-red-600',
     textClass: 'text-white',
-    hex: '#F43F5E' // rose-500 - Vibrant red-pink
+    hex: '#EF4444' // red-500 - Vibrant red
   },
   pending: {
     bgClass: 'bg-orange-500',
@@ -152,7 +152,7 @@ export const getPaymentStatusColors = (status: string) => {
 export const BADGE_COLORS = {
   high: 'bg-red-100 text-red-800',
   medium: 'bg-yellow-100 text-yellow-800',
-  low: 'bg-violet-100 text-violet-800',
+  low: 'bg-slate-50 text-slate-800',
   default: 'bg-gray-100 text-gray-800',
 } as const;
 

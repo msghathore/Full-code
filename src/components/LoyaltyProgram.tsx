@@ -114,7 +114,7 @@ export const LoyaltyProgram = () => {
       Bronze: { min: 0, max: 499, color: 'bg-amber-600' },
       Silver: { min: 500, max: 999, color: 'bg-gray-400' },
       Gold: { min: 1000, max: 1999, color: 'bg-yellow-500' },
-      Platinum: { min: 2000, max: Infinity, color: 'bg-rose-500' }
+      Platinum: { min: 2000, max: Infinity, color: 'bg-red-500' }
     };
     return tiers[tier as keyof typeof tiers];
   };
@@ -235,7 +235,7 @@ export const LoyaltyProgram = () => {
       <Card className="frosted-glass border-white/10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
+            <Zap className="w-6 h-6 text-slate-700" />
             How to Earn Points
           </CardTitle>
         </CardHeader>
@@ -243,8 +243,8 @@ export const LoyaltyProgram = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-violet-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-violet-400 font-bold">1</span>
+                <div className="w-8 h-8 bg-slate-800/20 rounded-full flex items-center justify-center">
+                  <span className="text-slate-700 font-bold">1</span>
                 </div>
                 <div>
                   <p className="font-medium">Book a Service</p>
@@ -252,8 +252,8 @@ export const LoyaltyProgram = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-violet-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-violet-400 font-bold">2</span>
+                <div className="w-8 h-8 bg-slate-800/20 rounded-full flex items-center justify-center">
+                  <span className="text-slate-700 font-bold">2</span>
                 </div>
                 <div>
                   <p className="font-medium">Leave a Review</p>
@@ -263,8 +263,8 @@ export const LoyaltyProgram = () => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-violet-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-violet-400 font-bold">3</span>
+                <div className="w-8 h-8 bg-slate-800/20 rounded-full flex items-center justify-center">
+                  <span className="text-slate-700 font-bold">3</span>
                 </div>
                 <div>
                   <p className="font-medium">Refer a Friend</p>
@@ -272,8 +272,8 @@ export const LoyaltyProgram = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-violet-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-violet-400 font-bold">4</span>
+                <div className="w-8 h-8 bg-slate-800/20 rounded-full flex items-center justify-center">
+                  <span className="text-slate-700 font-bold">4</span>
                 </div>
                 <div>
                   <p className="font-medium">Birthday Special</p>
@@ -369,8 +369,8 @@ export const LoyaltyProgram = () => {
               <p className="text-xs text-muted-foreground">Exclusive discounts</p>
             </div>
             <div className="text-center p-4">
-              <div className="w-12 h-12 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-rose-400 font-bold">P</span>
+              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-red-400 font-bold">P</span>
               </div>
               <h3 className="font-medium mb-1">Platinum</h3>
               <p className="text-xs text-muted-foreground">VIP experiences</p>

@@ -188,7 +188,7 @@ const CustomersManagement = () => {
       case 'vip':
         return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
       case 'regular':
-        return 'bg-violet-500/20 text-violet-400 border-violet-500/30';
+        return 'bg-slate-800/20 text-slate-700 border-gray-500/30';
       case 'new':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'inactive':
@@ -233,7 +233,7 @@ const CustomersManagement = () => {
             <p className="text-xs text-muted-foreground">Total Spent</p>
           </div>
           <div className="text-center p-3 bg-white/5 rounded-lg">
-            <Calendar className="h-5 w-5 mx-auto mb-1 text-violet-400" />
+            <Calendar className="h-5 w-5 mx-auto mb-1 text-slate-700" />
             <p className="text-lg font-bold luxury-glow">{customer.totalBookings}</p>
             <p className="text-xs text-muted-foreground">Bookings</p>
           </div>

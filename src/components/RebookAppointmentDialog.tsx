@@ -232,7 +232,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
           <DialogDescription className="text-gray-600">
             Create a new appointment for {appointment.full_name} • {appointment.service_name}
             <br />
-            <span className="text-sm text-violet-600 mt-1 block">
+            <span className="text-sm text-black mt-1 block">
               Original appointment was on {new Date(appointment.appointment_date).toLocaleDateString()} at {appointment.appointment_time}
             </span>
           </DialogDescription>
@@ -255,7 +255,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   value={formData.full_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
                   placeholder="Enter customer name"
-                  className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.full_name ? 'border-red-500' : ''
                   }`}
                 />
@@ -270,7 +270,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   Service *
                 </label>
                 <Select value={formData.service_name} onValueChange={handleServiceChange}>
-                  <SelectTrigger className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  <SelectTrigger className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.service_name ? 'border-red-500' : ''
                   }`}>
                     <SelectValue placeholder="Select service" />
@@ -300,7 +300,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   onChange={handlePhoneChange}
                   placeholder="(123) 456-7890"
                   maxLength={14}
-                  className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.phone ? 'border-red-500' : ''
                   }`}
                 />
@@ -319,7 +319,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="customer@email.com"
                   type="email"
-                  className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.email ? 'border-red-500' : ''
                   }`}
                 />
@@ -346,7 +346,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   value={formData.appointment_date}
                   onChange={(e) => setFormData(prev => ({ ...prev, appointment_date: e.target.value }))}
                   type="date"
-                  className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.appointment_date ? 'border-red-500' : ''
                   }`}
                 />
@@ -361,7 +361,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   Time *
                 </label>
                 <Select value={formData.appointment_time} onValueChange={(value) => setFormData(prev => ({ ...prev, appointment_time: value }))}>
-                  <SelectTrigger className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  <SelectTrigger className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.appointment_time ? 'border-red-500' : ''
                   }`}>
                     <SelectValue placeholder="Select time" />
@@ -385,7 +385,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   Staff Member *
                 </label>
                 <Select value={formData.staff_id} onValueChange={(value) => setFormData(prev => ({ ...prev, staff_id: value }))}>
-                  <SelectTrigger className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  <SelectTrigger className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.staff_id ? 'border-red-500' : ''
                   }`}>
                     <SelectValue placeholder="Select staff member" />
@@ -410,7 +410,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   Status
                 </label>
                 <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
-                  <SelectTrigger className="bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500">
+                  <SelectTrigger className="bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-gray-200">
@@ -433,7 +433,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                   min="0"
                   step="0.01"
                   placeholder="0.00"
-                  className={`bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 ${
+                  className={`bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 ${
                     errors.total_amount ? 'border-red-500' : ''
                   }`}
                 />
@@ -459,7 +459,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder="Any special requests, allergies, preferences..."
-                className="bg-white border-gray-300 focus:border-violet-500 focus:ring-violet-500 resize-none"
+                className="bg-white border-gray-300 focus:border-gray-500 focus:ring-slate-500 resize-none"
                 rows={3}
               />
             </div>
@@ -478,7 +478,7 @@ const RebookAppointmentDialog: React.FC<RebookAppointmentDialogProps> = ({
           </Button>
           <Button
             onClick={handleRebook}
-            className="flex-1 h-10 bg-violet-600 hover:bg-violet-700 text-white"
+            className="flex-1 h-10 bg-black hover:bg-slate-800 text-white"
             disabled={isLoading}
           >
             {isLoading ? (

@@ -176,8 +176,8 @@ const ClientFormsDialog: React.FC<ClientFormsDialogProps> = ({
         {/* Client Information Header */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="h-6 w-6 text-violet-600" />
+            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <User className="h-6 w-6 text-black" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-black text-lg">{appointment.full_name}</h3>
@@ -215,9 +215,9 @@ const ClientFormsDialog: React.FC<ClientFormsDialogProps> = ({
 
         {/* Forms Summary */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-violet-50 border border-violet-200 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-violet-600">{forms.length}</div>
-            <div className="text-sm text-violet-800 font-medium">Total Forms</div>
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-black">{forms.length}</div>
+            <div className="text-sm text-slate-800 font-medium">Total Forms</div>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
             <div className="text-2xl font-bold text-green-600">{completedForms}</div>
@@ -285,7 +285,7 @@ const ClientFormsDialog: React.FC<ClientFormsDialogProps> = ({
                     {form.status === 'pending' && (
                       <Button
                         size="sm"
-                        className="text-xs px-3 py-1 h-auto bg-violet-600 hover:bg-violet-700 text-white"
+                        className="text-xs px-3 py-1 h-auto bg-black hover:bg-slate-800 text-white"
                         onClick={() => {
                           // In a real app, this would allow form completion
                           console.log('Complete form:', form.id);

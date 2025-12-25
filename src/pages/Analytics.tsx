@@ -238,9 +238,9 @@ const Analytics = () => {
                     <p className="text-lg md:text-2xl font-bold luxury-glow">
                       {revenueMetrics.reduce((sum, r) => sum + r.bookings, 0) || 0}
                     </p>
-                    <p className="text-xs text-violet-400">+8.2% from last month</p>
+                    <p className="text-xs text-slate-700">+8.2% from last month</p>
                   </div>
-                  <Calendar className="h-6 w-6 md:h-8 md:w-8 text-violet-400" />
+                  <Calendar className="h-6 w-6 md:h-8 md:w-8 text-slate-700" />
                 </div>
               </CardContent>
             </Card>

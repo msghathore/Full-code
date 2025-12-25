@@ -78,7 +78,7 @@ const AuthFlowTest: React.FC = () => {
               {testResults.map((result, index) => (
                 <div key={index} className={`mb-1 ${
                   result.includes('✅') ? 'text-green-400' : 
-                  result.includes('🛡️') ? 'text-violet-400' : 
+                  result.includes('🛡️') ? 'text-slate-700' : 
                   result.includes('❌') ? 'text-red-400' : 'text-gray-300'
                 }`}>
                   {result}

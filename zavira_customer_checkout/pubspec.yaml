@@ -1,0 +1,80 @@
+name: zavira_customer_checkout
+description: Zavira Salon & Spa - Customer Checkout App for Samsung Tab S7 with Square Reader integration
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Supabase for real-time database sync
+  supabase_flutter: ^2.3.0
+
+  # Square Mobile Payments SDK (official Flutter plugin)
+  # This is the successor to the retired Reader SDK
+  square_mobile_payments: ^1.0.0
+
+  # State management
+  provider: ^6.1.1
+
+  # UI/UX
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.3.0
+  shimmer: ^3.0.0
+
+  # Icons
+  lucide_icons: ^0.257.0
+
+  # Utils
+  intl: ^0.18.1
+  uuid: ^4.2.2
+
+  # Permissions (for Bluetooth - Square Reader)
+  permission_handler: ^11.1.0
+
+  # Connectivity check for fallback polling
+  connectivity_plus: ^5.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  # Fonts for offline use (matching website)
+  fonts:
+    - family: CormorantGaramond
+      fonts:
+        - asset: assets/fonts/CormorantGaramond-Regular.ttf
+        - asset: assets/fonts/CormorantGaramond-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/CormorantGaramond-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/CormorantGaramond-Light.ttf
+          weight: 300
+
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
+          weight: 700
+
+  assets:
+    - assets/fonts/

@@ -328,7 +328,7 @@ const AdvancedSchedulingGrid = () => {
     switch (status?.toLowerCase()) {
       case 'confirmed':
         return {
-          bgColor: 'bg-violet-100 border-violet-300 text-violet-800',
+          bgColor: 'bg-slate-50 border-slate-300 text-slate-800',
           icon: CheckCircle,
           label: 'Confirmed'
         };
@@ -346,7 +346,7 @@ const AdvancedSchedulingGrid = () => {
         };
       case 'completed':
         return {
-          bgColor: 'bg-purple-100 border-purple-300 text-purple-800',
+          bgColor: 'bg-slate-50 border-slate-300 text-slate-800',
           icon: CheckCircle,
           label: 'Completed'
         };
@@ -574,7 +574,7 @@ const AdvancedSchedulingGrid = () => {
             {weekDays.map(day => (
               <div key={day.toString()} className="text-center">
                 <p className="text-xs text-gray-500">{format(day, 'EEE')}</p>
-                <p className={`font-semibold text-lg ${isSameDay(day, selectedDate) ? 'text-violet-600' : ''}`}>
+                <p className={`font-semibold text-lg ${isSameDay(day, selectedDate) ? 'text-black' : ''}`}>
                   {format(day, 'd')}
                 </p>
               </div>
@@ -608,7 +608,7 @@ const AdvancedSchedulingGrid = () => {
                       {staffMember.avatar ? (
                         <img src={staffMember.avatar} alt={staffMember.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-violet-100 text-violet-600 font-bold text-xl">
+                        <div className="w-full h-full flex items-center justify-center bg-slate-50 text-black font-bold text-xl">
                           {staffMember.name.charAt(0)}
                         </div>
                       )}
@@ -643,7 +643,7 @@ const AdvancedSchedulingGrid = () => {
                         onDragStart={(e) => handleDragStart(e, appointment)}
                         onClick={() => setSelectedAppointment(appointment)}
                         style={{ top: `${top}px`, height: `${height}px` }}
-                        className="absolute left-2 right-2 p-2 rounded-lg shadow-md cursor-pointer text-white bg-violet-600 hover:bg-violet-700 transition-colors z-20 overflow-hidden"
+                        className="absolute left-2 right-2 p-2 rounded-lg shadow-md cursor-pointer text-white bg-black hover:bg-slate-800 transition-colors z-20 overflow-hidden"
                       >
                         <p className="font-semibold text-sm truncate">{appointment.full_name}</p>
                         <p className="text-xs truncate opacity-90">{appointment.services?.name}</p>

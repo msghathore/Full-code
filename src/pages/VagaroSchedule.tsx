@@ -265,7 +265,7 @@ const VagaroSchedule = () => {
             <div className="flex-1 flex flex-col min-w-0 bg-white">
                 {loading && (
                     <div className="absolute inset-0 bg-white/50 z-50 flex items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
+                        <Loader2 className="h-8 w-8 animate-spin text-black" />
                     </div>
                 )}
 

@@ -128,7 +128,7 @@ const EmailCampaigns = () => {
       case 'completed':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'sent':
-        return 'bg-violet-500/20 text-violet-400 border-violet-500/30';
+        return 'bg-slate-800/20 text-slate-700 border-gray-500/30';
       case 'scheduled':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'draft':
@@ -250,7 +250,7 @@ const EmailCampaigns = () => {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="flex items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-slate-700" />
           <p className="text-lg">Loading email campaigns...</p>
         </div>
       </div>
@@ -397,7 +397,7 @@ const EmailCampaigns = () => {
                     <p className="text-sm text-muted-foreground">Total Campaigns</p>
                     <p className="text-2xl font-bold luxury-glow">{campaignStats.total || 0}</p>
                   </div>
-                  <Mail className="h-8 w-8 text-violet-400" />
+                  <Mail className="h-8 w-8 text-slate-700" />
                 </div>
               </CardContent>
             </Card>
@@ -597,7 +597,7 @@ const EmailCampaigns = () => {
                   <Card key={index} className="frosted-glass border-white/10 hover:border-white/20 transition-all cursor-hover">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <Mail className="h-8 w-8 text-violet-400" />
+                        <Mail className="h-8 w-8 text-slate-700" />
                         <div>
                           <h3 className="font-semibold">{template.name}</h3>
                           <p className="text-sm text-muted-foreground capitalize">{template.type}</p>
@@ -722,8 +722,8 @@ const EmailCampaigns = () => {
                   ].map((workflow, index) => (
                     <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 bg-violet-500/20 rounded-full flex items-center justify-center">
-                          <Mail className="h-5 w-5 text-violet-400" />
+                        <div className="h-10 w-10 bg-slate-800/20 rounded-full flex items-center justify-center">
+                          <Mail className="h-5 w-5 text-slate-700" />
                         </div>
                         <div>
                           <h3 className="font-medium">{workflow.name}</h3>

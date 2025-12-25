@@ -127,15 +127,15 @@ const Customers: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-100 rounded-lg">
-            <Users className="h-6 w-6 text-violet-600" />
+          <div className="p-2 bg-slate-50 rounded-lg">
+            <Users className="h-6 w-6 text-black" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
             <p className="text-gray-600">Manage your customer database</p>
           </div>
         </div>
-        <Button onClick={handleAddCustomer} className="bg-violet-600 hover:bg-violet-700">
+        <Button onClick={handleAddCustomer} className="bg-black hover:bg-slate-800">
           <Plus className="h-4 w-4 mr-2" />
           Add Customer
         </Button>
@@ -289,7 +289,7 @@ const Customers: React.FC = () => {
             <p className="text-gray-500 mb-4">
               {searchQuery ? 'Try adjusting your search criteria' : 'Get started by adding your first customer'}
             </p>
-            <Button onClick={handleAddCustomer} className="bg-violet-600 hover:bg-violet-700">
+            <Button onClick={handleAddCustomer} className="bg-black hover:bg-slate-800">
               <Plus className="h-4 w-4 mr-2" />
               Add Customer
             </Button>

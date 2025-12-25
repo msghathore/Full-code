@@ -16,7 +16,7 @@ export const ClientClerkProvider: React.FC<ClientClerkProviderProps> = ({ childr
       publishableKey={publishableKey}
       appearance={{
         elements: {
-          formButtonPrimary: 'bg-violet-600 hover:bg-violet-700',
+          formButtonPrimary: 'bg-black hover:bg-slate-800',
         }
       }}
     >

@@ -102,7 +102,7 @@ export function CalendarSync({
             onClick={() => handleCalendarSync('outlook')}
             disabled={!!syncing}
             variant="outline"
-            className="justify-start bg-violet-500/10 border-violet-500/20 text-violet-300 hover:bg-violet-500/20"
+            className="justify-start bg-slate-800/10 border-gray-500/20 text-white hover:bg-slate-800/20"
           >
             <ExternalLink className="h-4 w-4 mr-2" />
             {syncing === 'outlook' ? 'Opening...' : 'Add to Outlook'}

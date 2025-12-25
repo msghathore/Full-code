@@ -768,7 +768,7 @@ export default function GroupBookingsManagement() {
                                   size="icon"
                                   onClick={() => updateMemberStatus(member.id, 'checked_in')}
                                 >
-                                  <CheckCircle className="w-4 h-4 text-violet-500" />
+                                  <CheckCircle className="w-4 h-4 text-slate-900" />
                                 </Button>
                               )}
                               {!member.is_lead && (

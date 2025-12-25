@@ -7,6 +7,8 @@ import {
   GROUP_TYPE_ICONS,
   PAYMENT_STATUS_LABELS,
 } from '@/types/groupBooking';
+import { supabase } from '@/integrations/supabase/client';
+import EmailService from '@/lib/email-service';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -63,6 +65,47 @@ export default function GroupBookingCheckout() {
 
       // Update status to confirmed
       await updateGroupStatus(booking.id, 'confirmed');
+
+      // Send staff notifications for group booking
+      try {
+        const { data: groupMembers } = await supabase
+          .from('group_members')
+          .select(`
+            *,
+            services (name),
+            staff (email, full_name)
+          `)
+          .eq('group_booking_id', booking.id);
+
+        if (groupMembers && groupMembers.length > 0) {
+          const notificationPromises = groupMembers
+            .filter(member => member.staff?.email)
+            .map(async (member) => {
+              try {
+                await EmailService.sendStaffNotification({
+                  staffEmail: member.staff.email,
+                  staffName: member.staff.full_name,
+                  customerName: member.member_name,
+                  customerEmail: member.member_email || '',
+                  customerPhone: member.member_phone || '',
+                  serviceName: member.services?.name || 'Service',
+                  appointmentDate: booking.booking_date,
+                  appointmentTime: member.scheduled_time || booking.start_time,
+                  isGroupBooking: true,
+                  groupName: booking.group_name
+                });
+                console.log(`📧 Staff notification sent to: ${member.staff.email}`);
+              } catch (emailError) {
+                console.warn(`⚠️ Failed to notify staff ${member.staff.email}:`, emailError);
+              }
+            });
+
+          await Promise.allSettled(notificationPromises);
+          console.log(`✅ Staff notifications sent for ${groupMembers.length} group members`);
+        }
+      } catch (staffNotifyError) {
+        console.warn('⚠️ Staff notifications failed (non-critical):', staffNotifyError);
+      }
 
       setPaymentSuccess(true);
       toast.success('Payment successful! Your group booking is confirmed.');

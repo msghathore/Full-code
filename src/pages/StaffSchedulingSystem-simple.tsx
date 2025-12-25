@@ -25,7 +25,7 @@ const StaffSchedulingSystem: React.FC = () => {
         />
         <button
           onClick={authenticate}
-          className="w-full bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded"
+          className="w-full bg-black hover:bg-slate-800 text-white px-4 py-2 rounded"
         >
           Sign In
         </button>
