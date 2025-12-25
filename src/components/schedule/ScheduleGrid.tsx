@@ -1318,8 +1318,8 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         </div>
 
         {/* Scrollable Content Area - Horizontal scroll for more than 4 staff */}
-        <div className="flex-1 overflow-auto">
-          <div style={{
+        <div className="flex-1 overflow-auto bg-white">
+          <div className="bg-white" style={{
             display: 'grid',
             gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(120px, 1fr)').join(' ')}`
           }}>
@@ -1353,7 +1353,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                 onCreateAppointment={onCreateAppointment}
               >
                 <div
-                  className="relative border-r border-gray-200 overflow-hidden"
+                  className="relative border-r border-gray-200 overflow-hidden bg-white"
                   data-grid-content="true"
                 >
                   {/* Time Slots */}
