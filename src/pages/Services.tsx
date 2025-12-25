@@ -81,8 +81,26 @@ const Services = () => {
     }
   }, [dbServices, loading, selectedCategory, searchQuery]);
 
-  // Get unique main categories from database
-  const categories = ['ALL', ...Array.from(new Set(dbServices.map(s => s.category))).sort()];
+  // Define priority order for main service categories
+  const categoryPriority = ['Hair', 'Nails', 'Tattoo', 'Massage', 'Skin', 'Waxing', 'Eyebrow', 'Lash', 'PMU', 'Piercing'];
+
+  // Get unique main categories from database and sort by priority
+  const uniqueCategories = Array.from(new Set(dbServices.map(s => s.category)));
+  const sortedCategories = uniqueCategories.sort((a, b) => {
+    const indexA = categoryPriority.indexOf(a);
+    const indexB = categoryPriority.indexOf(b);
+
+    // If both in priority list, sort by priority order
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    // If only A in priority, it comes first
+    if (indexA !== -1) return -1;
+    // If only B in priority, it comes first
+    if (indexB !== -1) return 1;
+    // If neither in priority, sort alphabetically
+    return a.localeCompare(b);
+  });
+
+  const categories = ['ALL', ...sortedCategories];
 
   // Group services by category and parent-child relationships
   const groupServicesByCategory = (): { [category: string]: ServiceGroup[] } => {
@@ -203,7 +221,14 @@ const Services = () => {
               </div>
             ))
           ) : Object.keys(groupedServices).length > 0 ? (
-            Object.keys(groupedServices).sort().map((category) => (
+            Object.keys(groupedServices).sort((a, b) => {
+              const indexA = categoryPriority.indexOf(a);
+              const indexB = categoryPriority.indexOf(b);
+              if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+              if (indexA !== -1) return -1;
+              if (indexB !== -1) return 1;
+              return a.localeCompare(b);
+            }).map((category) => (
               <div key={category} className="service-category">
                 <h2 className="text-2xl md:text-3xl font-serif mb-6 pb-3 border-b border-white/10 luxury-glow">
                   {category.toUpperCase()}
