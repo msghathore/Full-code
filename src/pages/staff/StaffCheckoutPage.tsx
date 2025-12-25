@@ -14,10 +14,8 @@ import {
   Calculator,
   CheckCircle,
   Loader2,
-  Smartphone,
   Tablet
 } from 'lucide-react';
-import { useSquareTerminal } from '@/hooks/useSquareTerminal';
 import { calculateTotals, formatCurrency, parseCurrency, CartItem, PaymentMethod } from '@/lib/posCalculations';
 import { supabase } from '@/integrations/supabase/client';
 import { ReceiptConfirmationModal } from '@/components/ReceiptConfirmationModal';
@@ -62,63 +60,11 @@ const StaffCheckoutPage = () => {
   const [transactionResult, setTransactionResult] = useState<any>(null);
   const [services, setServices] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [showTerminalSelector, setShowTerminalSelector] = useState(false);
 
   // Customer Tablet (Square Reader) state
   const [isSendingToTablet, setIsSendingToTablet] = useState(false);
 
-  // Square Terminal hook
-  const {
-    devices: terminalDevices,
-    selectedDevice: selectedTerminal,
-    isLoading: terminalLoading,
-    isProcessing: terminalProcessing,
-    currentCheckout: terminalCheckout,
-    loadDevices: loadTerminalDevices,
-    selectDevice: selectTerminalDevice,
-    createCheckout: createTerminalCheckout,
-    cancelCheckout: cancelTerminalCheckout,
-    pairNewDevice,
-  } = useSquareTerminal();
-
-  // Note: Terminal devices are loaded manually via "Manage" button
-  // Primary payment method is now the customer tablet (Flutter app)
-
-  // Handle terminal checkout completion
-  useEffect(() => {
-    if (terminalCheckout?.status === 'COMPLETED') {
-      // Terminal payment completed - finalize the transaction
-      const finalizeTerminalPayment = async () => {
-        setIsProcessing(true);
-        try {
-          // Add terminal payment to payment methods
-          const terminalPaymentAmount = terminalCheckout.amount + (terminalCheckout.tipAmount || 0);
-          setPaymentMethods([{ method: 'CREDIT', amount: terminalPaymentAmount }]);
-          setTipAmount(terminalCheckout.tipAmount || 0);
-
-          // Transaction is already created by webhook, just show success
-          setTransactionResult({
-            success: true,
-            transaction_id: `terminal_${terminalCheckout.checkoutId}`,
-            total_amount: terminalPaymentAmount,
-            cart_items: [...cartItems],
-            customer_name: currentCustomer.name
-          });
-
-          setShowReceiptModal(true);
-          setCartItems([]);
-          setPaymentMethods([]);
-          setTipAmount(0);
-        } finally {
-          setIsProcessing(false);
-        }
-      };
-
-      finalizeTerminalPayment();
-    }
-  }, [terminalCheckout?.status, terminalCheckout?.amount, terminalCheckout?.tipAmount, terminalCheckout?.checkoutId, cartItems, currentCustomer.name]);
-
-  // Add default demo items for testing
+  // Fetch services, products, and staff on mount
   useEffect(() => {
     const fetchData = async () => {
       // Fetch real services and products from database
@@ -504,58 +450,6 @@ const StaffCheckoutPage = () => {
     }
   };
 
-  // Handler for footer checkout button
-  const handleCheckoutClick = () => {
-    handleFinalizeTransaction();
-  };
-
-  // Handler for Square Terminal payment
-  const handleTerminalPayment = async () => {
-    if (cartItems.length === 0) {
-      toast({
-        title: "No items in cart",
-        description: "Please add items to cart before processing payment.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!selectedTerminal) {
-      setShowTerminalSelector(true);
-      toast({
-        title: "Select Terminal",
-        description: "Please select a Square Terminal device.",
-      });
-      return;
-    }
-
-    // Get staff ID for the transaction
-    let staffId = appointmentData?.staffId;
-    if (!staffId && cartItems.length > 0) {
-      const firstServiceItem = cartItems.find(item => item.provider_id);
-      staffId = firstServiceItem?.provider_id;
-    }
-    if (!staffId) {
-      staffId = staffList[0]?.id;
-    }
-
-    // Create checkout on terminal
-    const checkout = await createTerminalCheckout({
-      amount: totals.amountDue,
-      referenceId: appointmentData?.appointmentId || `pos_${Date.now()}`,
-      note: cartItems.map(item => item.name).join(', '),
-      appointmentId: appointmentData?.appointmentId,
-      customerId: currentCustomer.id || undefined,
-      staffId: staffId,
-      cartItems: cartItems,
-    });
-
-    if (checkout) {
-      console.log('Terminal checkout created:', checkout);
-      // The useSquareTerminal hook will handle status polling and completion
-    }
-  };
-
   // Handler for rebooking service
   const handleRebookService = () => {
     setShowReceiptModal(false);
@@ -810,123 +704,6 @@ const StaffCheckoutPage = () => {
         <div className="w-96 bg-white border-l border-gray-200">
           <div className="p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-6 border-b pb-2 border-gray-200">Payment</h3>
-
-            {/* Terminal Status Indicator - Compact */}
-            <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {selectedTerminal ? (
-                    <>
-                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-sm text-green-700 font-medium">
-                        {selectedTerminal.name || 'Terminal Connected'}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-2 h-2 rounded-full bg-gray-400" />
-                      <span className="text-sm text-gray-500">No terminal connected</span>
-                    </>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-1 text-xs text-black hover:text-slate-700"
-                  onClick={() => setShowTerminalSelector(!showTerminalSelector)}
-                >
-                  {showTerminalSelector ? 'Hide' : 'Manage'}
-                </Button>
-              </div>
-
-              {/* Terminal Device Selector */}
-              {showTerminalSelector && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
-                  <div className="text-xs font-medium text-gray-500 mb-2">Available Devices</div>
-                  {terminalLoading ? (
-                    <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      Loading...
-                    </div>
-                  ) : terminalDevices.length === 0 ? (
-                    <div className="text-xs text-gray-500">
-                      No terminals found.{' '}
-                      <button
-                        onClick={() => pairNewDevice()}
-                        className="text-black hover:underline"
-                      >
-                        Pair device
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      {terminalDevices.map(device => (
-                        <button
-                          key={device.id}
-                          className={`w-full flex items-center gap-2 p-2 rounded text-sm transition-colors ${
-                            selectedTerminal?.id === device.id
-                              ? 'bg-slate-50 text-slate-700 border border-slate-200'
-                              : 'hover:bg-gray-100 text-gray-700'
-                          }`}
-                          onClick={() => {
-                            selectTerminalDevice(device);
-                            setShowTerminalSelector(false);
-                          }}
-                        >
-                          <Smartphone className="h-4 w-4" />
-                          <span className="flex-1 text-left">{device.name || 'Square Terminal'}</span>
-                          {selectedTerminal?.id === device.id && (
-                            <CheckCircle className="h-4 w-4 text-black" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <button
-                    onClick={() => loadTerminalDevices()}
-                    className="w-full mt-2 text-xs text-gray-500 hover:text-gray-700"
-                  >
-                    Refresh
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Active Terminal Checkout Status */}
-            {terminalCheckout && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-medium text-slate-800">
-                      {terminalCheckout.status === 'PENDING' && '⏳ Waiting for customer...'}
-                      {terminalCheckout.status === 'IN_PROGRESS' && '💳 Customer is paying...'}
-                      {terminalCheckout.status === 'COMPLETED' && '✅ Payment complete!'}
-                      {terminalCheckout.status === 'CANCELED' && '❌ Payment canceled'}
-                    </div>
-                    <div className="text-xs text-black mt-1">
-                      Amount: {formatCurrency(terminalCheckout.amount)}
-                      {terminalCheckout.tipAmount && terminalCheckout.tipAmount > 0 && (
-                        <> + {formatCurrency(terminalCheckout.tipAmount)} tip</>
-                      )}
-                    </div>
-                  </div>
-                  {terminalCheckout.status === 'PENDING' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      onClick={cancelTerminalCheckout}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </motion.div>
-            )}
 
             {/* Order Summary */}
             <div className="mb-6">
