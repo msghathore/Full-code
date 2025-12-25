@@ -6,69 +6,37 @@ import { Footer } from '@/components/Footer';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Search, Calendar, Eye, X } from 'lucide-react';
+import { Search, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ImageComparisonSlider } from '@/components/ImageComparisonSlider';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const services = [
-  {
-    category: 'HAIR',
-    items: [
-      { name: 'Haircut & Styling', price: 120, duration: '60 min' },
-      { name: 'Color Treatment', price: 200, duration: '120 min' },
-      { name: 'Hair Treatment', price: 150, duration: '90 min' },
-    ]
-  },
-  {
-    category: 'NAILS',
-    items: [
-      { name: 'Manicure', price: 80, duration: '45 min' },
-      { name: 'Pedicure', price: 90, duration: '60 min' },
-      { name: 'Nail Art', price: 120, duration: '90 min' },
-    ]
-  },
-  {
-    category: 'SKIN',
-    items: [
-      { name: 'Facial Treatment', price: 180, duration: '75 min' },
-      { name: 'Deep Cleansing', price: 150, duration: '60 min' },
-      { name: 'Anti-Aging Treatment', price: 250, duration: '90 min' },
-    ]
-  },
-  {
-    category: 'MASSAGE',
-    items: [
-      { name: 'Swedish Massage', price: 200, duration: '90 min' },
-      { name: 'Deep Tissue', price: 220, duration: '90 min' },
-      { name: 'Hot Stone', price: 240, duration: '120 min' },
-    ]
-  },
-  {
-    category: 'TATTOO',
-    items: [
-      { name: 'Small Tattoo', price: 150, duration: '60 min' },
-      { name: 'Medium Tattoo', price: 300, duration: '120 min' },
-      { name: 'Large Tattoo', price: 500, duration: '180+ min' },
-    ]
-  },
-  {
-    category: 'PIERCING',
-    items: [
-      { name: 'Ear Piercing', price: 50, duration: '15 min' },
-      { name: 'Nose Piercing', price: 80, duration: '20 min' },
-      { name: 'Body Piercing', price: 100, duration: '30 min' },
-    ]
-  },
-];
+// Service type from database
+interface Service {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  duration_minutes: number;
+  category: string;
+  is_active: boolean;
+  parent_service_id: string | null;
+  is_parent: boolean;
+  display_order: number;
+}
+
+// Grouped service structure
+interface ServiceGroup {
+  parent: Service;
+  variants: Service[];
+}
 
 const Services = () => {
   const servicesRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [dbServices, setDbServices] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [dbServices, setDbServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -81,185 +49,264 @@ const Services = () => {
     const { data, error } = await supabase
       .from('services')
       .select('*')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
 
     if (!error && data) {
-      setDbServices(data);
+      setDbServices(data as Service[]);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (servicesRef.current) {
+    if (servicesRef.current && !loading) {
       const categories = servicesRef.current.querySelectorAll('.service-category');
-      
+
       categories.forEach((category) => {
         gsap.fromTo(
           category,
-          { opacity: 0, x: -50 },
+          { opacity: 0, y: 20 },
           {
             opacity: 1,
-            x: 0,
-            duration: 0.8,
+            y: 0,
+            duration: 0.6,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: category,
-              start: 'top 75%',
+              start: 'top 80%',
             }
           }
         );
       });
     }
-  }, [dbServices]);
+  }, [dbServices, loading, selectedCategory, searchQuery]);
 
-  // Group services by category
-  const groupedServices = dbServices.reduce((acc: any, service: any) => {
-    if (!acc[service.category]) {
-      acc[service.category] = [];
-    }
-    acc[service.category].push(service);
-    return acc;
-  }, {});
+  // Get unique main categories from database
+  const categories = ['ALL', ...Array.from(new Set(dbServices.map(s => s.category))).sort()];
 
-  // Filter services based on search
-  const filteredServices = Object.keys(groupedServices).reduce((acc: any, category: string) => {
-    const filtered = groupedServices[category].filter((service: any) =>
+  // Group services by category and parent-child relationships
+  const groupServicesByCategory = (): { [category: string]: ServiceGroup[] } => {
+    const grouped: { [category: string]: ServiceGroup[] } = {};
+
+    // Filter by selected category
+    const filteredByCategory = selectedCategory === 'ALL'
+      ? dbServices
+      : dbServices.filter(s => s.category === selectedCategory);
+
+    // Filter by search query
+    const filteredServices = filteredByCategory.filter(service =>
       service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.toLowerCase().includes(searchQuery.toLowerCase())
+      service.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (service.description && service.description.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-    if (filtered.length > 0) {
-      acc[category] = filtered;
-    }
-    return acc;
-  }, {});
+
+    // Group by category
+    filteredServices.forEach(service => {
+      if (!grouped[service.category]) {
+        grouped[service.category] = [];
+      }
+    });
+
+    // For each category, organize into parent-child groups
+    Object.keys(grouped).forEach(category => {
+      const categoryServices = filteredServices.filter(s => s.category === category);
+
+      // Find all parent services
+      const parents = categoryServices.filter(s => s.is_parent);
+
+      // Find all standalone services (no parent, not a parent)
+      const standalone = categoryServices.filter(s => !s.is_parent && !s.parent_service_id);
+
+      // Create groups for parents with their variants
+      parents.forEach(parent => {
+        const variants = categoryServices.filter(s => s.parent_service_id === parent.id);
+        grouped[category].push({ parent, variants });
+      });
+
+      // Add standalone services as single-item groups
+      standalone.forEach(service => {
+        grouped[category].push({
+          parent: service,
+          variants: []
+        });
+      });
+    });
+
+    return grouped;
+  };
+
+  const groupedServices = groupServicesByCategory();
 
   return (
-    <div className="pt-32 pb-24 px-4 md:px-8">
-      <div className="container mx-auto">
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-center mb-6 luxury-glow">
+    <div className="pt-24 pb-16 px-4 md:px-8">
+      <div className="container mx-auto max-w-7xl">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow">
           SERVICES
         </h1>
-        <p className="text-center text-muted-foreground mb-12 md:mb-20 tracking-wider text-base md:text-lg">
+        <p className="text-center text-white/70 mb-8 tracking-wider text-sm md:text-base">
           Indulge in our curated selection of luxury treatments
         </p>
 
-        {/* Search Bar with AI capability */}
-        <div className="max-w-2xl mx-auto mb-12 md:mb-16">
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {categories.map((category) => (
+            <Button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              variant={selectedCategory === category ? "default" : "outline"}
+              className={`
+                font-serif tracking-wider px-4 md:px-6 py-2 text-sm transition-all
+                ${selectedCategory === category
+                  ? 'bg-white text-black hover:bg-white/90'
+                  : 'border-white/30 text-white hover:bg-white/10'}
+              `}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-12">
           <div className="relative">
             <Input
               type="text"
-              placeholder="Search services... (e.g., 'relaxing massage' or 'hair color')"
+              placeholder="Search services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-black/50 border-white/20 text-white placeholder:text-white/30 pl-12 py-4 md:py-6 text-base md:text-lg"
+              className="w-full bg-black/50 border-white/20 text-white placeholder:text-white/40 pl-12 py-5 text-base"
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 h-5 w-5" />
           </div>
         </div>
 
-        <div ref={servicesRef} className="space-y-16 md:space-y-20">
+        <div ref={servicesRef} className="space-y-12">
           {loading ? (
             // Skeleton loading state
             Array.from({ length: 3 }).map((_, categoryIndex) => (
               <div key={categoryIndex} className="service-category">
-                <Skeleton className="h-12 w-48 mb-8 bg-white/10" />
-                <div className="grid gap-4 md:gap-6">
+                <Skeleton className="h-10 w-48 mb-6 bg-white/10" />
+                <div className="grid gap-3">
                   {Array.from({ length: 3 }).map((_, itemIndex) => (
                     <div
                       key={itemIndex}
-                      className="group flex flex-col md:flex-row items-start md:items-center justify-between p-6 md:p-8 frosted-glass border border-white/10 rounded-xl"
+                      className="flex items-center justify-between p-5 frosted-glass border border-white/10 rounded-lg"
                     >
-                      <div className="mb-4 md:mb-0 flex-1">
-                        <Skeleton className="h-8 w-64 mb-2 bg-white/10" />
-                        <Skeleton className="h-4 w-32 mb-2 bg-white/10" />
-                        <Skeleton className="h-4 w-full max-w-md bg-white/10" />
+                      <div className="flex-1">
+                        <Skeleton className="h-6 w-64 mb-2 bg-white/10" />
+                        <Skeleton className="h-4 w-32 bg-white/10" />
                       </div>
-                      <Skeleton className="h-10 w-20 bg-white/10" />
+                      <Skeleton className="h-8 w-20 bg-white/10" />
                     </div>
                   ))}
                 </div>
               </div>
             ))
-          ) : Object.keys(filteredServices).length > 0 ? (
-            Object.keys(filteredServices).map((category) => (
+          ) : Object.keys(groupedServices).length > 0 ? (
+            Object.keys(groupedServices).sort().map((category) => (
               <div key={category} className="service-category">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-8 md:mb-12 pb-4 border-b border-white/10 luxury-glow">
+                <h2 className="text-2xl md:text-3xl font-serif mb-6 pb-3 border-b border-white/10 luxury-glow">
                   {category.toUpperCase()}
                 </h2>
-                
-                <div className="grid gap-4 md:gap-6">
-                  {filteredServices[category].map((item: any) => (
-                    <div
-                      key={item.id}
-                      className="group flex flex-col md:flex-row items-start md:items-center justify-between p-6 md:p-8 frosted-glass border border-white/10 micro-hover-lift micro-hover-glow cursor-hover rounded-xl"
-                    >
-                      <div className="mb-4 md:mb-0 flex-1">
-                        <img
-                          src={`/images/${item.category.toLowerCase()}-service.jpg`}
-                          alt={`${item.category} service`}
-                          className="w-12 h-12 md:w-16 md:h-16 rounded-lg mb-4 object-cover"
-                        />
-                        <h3 className="text-xl md:text-2xl font-serif mb-2 group-hover:luxury-glow transition-all">
-                          {item.name}
+
+                <div className="space-y-6">
+                  {groupedServices[category].map((group, groupIndex) => (
+                    <div key={groupIndex} className="space-y-2">
+                      {/* Parent/Subcategory Header (only if it has variants) */}
+                      {group.parent.is_parent && group.variants.length > 0 && (
+                        <h3 className="text-lg md:text-xl font-serif text-white/90 mb-3 pl-2">
+                          {group.parent.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground tracking-wider">
-                          {item.duration_minutes} minutes
-                        </p>
-                        {item.description && (
-                          <p className="text-sm text-white/60 mt-2 max-w-md">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex flex-col md:flex-row items-end md:items-center gap-4">
-                        <div className="text-2xl md:text-3xl font-serif group-hover:luxury-glow transition-all">
-                          ${item.price}
-                        </div>
-                        <div className="flex gap-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className="border-white/30 text-white hover:bg-white/10 font-serif tracking-wider px-4 py-2 flex items-center gap-2 micro-hover-scale"
-                              >
-                                <Eye className="h-4 w-4" />
-                                Preview
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl w-[95vw] md:w-[90vw] bg-black/95 border-white/20">
-                              <div className="space-y-4 md:space-y-6 p-2 md:p-0">
-                                <div className="text-center">
-                                  <h3 className="text-xl md:text-2xl font-serif luxury-glow mb-2">{item.name}</h3>
-                                  <p className="text-white/70 text-sm md:text-base">{item.description || 'See the transformation'}</p>
-                                </div>
-                                <ImageComparisonSlider
-                                  beforeImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                  afterImage={`/images/${item.category.toLowerCase()}-service.jpg`}
-                                  beforeLabel="Before Treatment"
-                                  afterLabel="After Treatment"
-                                  className="w-full h-48 md:h-64"
-                                />
-                                <div className="flex justify-center gap-2 md:gap-4">
-                                  <Button
-                                    onClick={() => navigate(`/booking?service=${item.id}`)}
-                                    className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-4 md:px-8 py-2 md:py-3 text-sm md:text-base luxury-button-hover"
-                                  >
-                                    <Calendar className="h-4 w-4 mr-2" />
-                                    Book This Service
-                                  </Button>
-                                </div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                          <Button
-                            onClick={() => navigate(`/booking?service=${item.id}`)}
-                            className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-6 py-2 flex items-center gap-2 luxury-button-hover"
+                      )}
+
+                      {/* Standalone service or variants */}
+                      {group.variants.length > 0 ? (
+                        // Show variants
+                        group.variants.map((variant) => (
+                          <div
+                            key={variant.id}
+                            className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-white/10 micro-hover-lift rounded-lg gap-4"
                           >
-                            <Calendar className="h-4 w-4" />
-                            Book Now
-                          </Button>
+                            <div className="flex-1">
+                              <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all">
+                                {variant.name}
+                              </h4>
+                              <p className="text-xs text-white/50 tracking-wider mb-1">
+                                {variant.duration_minutes} min
+                              </p>
+                              {variant.description && (
+                                <p className="text-xs text-white/60 mt-1 max-w-md line-clamp-2">
+                                  {variant.description}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                              {/* Green glowing price with normal font for numbers */}
+                              <div className="text-xl md:text-2xl font-serif">
+                                <span className="text-emerald-400" style={{
+                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+                                }}>
+                                  $
+                                </span>
+                                <span className="font-sans text-emerald-400" style={{
+                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+                                }}>
+                                  {variant.price.toFixed(0)}
+                                </span>
+                              </div>
+                              <Button
+                                onClick={() => navigate(`/booking?service=${variant.id}`)}
+                                className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                              >
+                                <Calendar className="h-4 w-4" />
+                                Book
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        // Show standalone service
+                        <div
+                          key={group.parent.id}
+                          className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-white/10 micro-hover-lift rounded-lg gap-4"
+                        >
+                          <div className="flex-1">
+                            <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all">
+                              {group.parent.name}
+                            </h4>
+                            <p className="text-xs text-white/50 tracking-wider mb-1">
+                              {group.parent.duration_minutes} min
+                            </p>
+                            {group.parent.description && (
+                              <p className="text-xs text-white/60 mt-1 max-w-md line-clamp-2">
+                                {group.parent.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            {/* Green glowing price with normal font for numbers */}
+                            <div className="text-xl md:text-2xl font-serif">
+                              <span className="text-emerald-400" style={{
+                                textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+                              }}>
+                                $
+                              </span>
+                              <span className="font-sans text-emerald-400" style={{
+                                textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+                              }}>
+                                {group.parent.price.toFixed(0)}
+                              </span>
+                            </div>
+                            <Button
+                              onClick={() => navigate(`/booking?service=${group.parent.id}`)}
+                              className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                            >
+                              <Calendar className="h-4 w-4" />
+                              Book
+                            </Button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -267,7 +314,7 @@ const Services = () => {
             ))
           ) : (
             <div className="text-center text-white/60 py-12">
-              <p className="text-lg md:text-xl">No services found matching "{searchQuery}"</p>
+              <p className="text-base md:text-lg">No services found matching "{searchQuery}"</p>
               <p className="text-sm mt-2">Try a different search term</p>
             </div>
           )}
