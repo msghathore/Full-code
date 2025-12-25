@@ -223,14 +223,14 @@ const BookingCheckout = () => {
         if (appointmentData.staff_id) {
           const { data: staffData } = await supabase
             .from('staff')
-            .select('email, full_name')
+            .select('email, name')
             .eq('id', appointmentData.staff_id)
             .single();
 
           if (staffData?.email) {
             const staffNotificationResult = await EmailService.sendStaffNotification({
               staffEmail: staffData.email,
-              staffName: staffData.full_name,
+              staffName: staffData.name,
               customerName: customerName || 'Customer',
               customerEmail: customerEmail,
               customerPhone: appointmentData.phone,

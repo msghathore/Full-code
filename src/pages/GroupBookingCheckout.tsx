@@ -73,7 +73,7 @@ export default function GroupBookingCheckout() {
           .select(`
             *,
             services (name),
-            staff (email, full_name)
+            staff (email, name)
           `)
           .eq('group_booking_id', booking.id);
 
@@ -84,7 +84,7 @@ export default function GroupBookingCheckout() {
               try {
                 await EmailService.sendStaffNotification({
                   staffEmail: member.staff.email,
-                  staffName: member.staff.full_name,
+                  staffName: member.staff.name,
                   customerName: member.member_name,
                   customerEmail: member.member_email || '',
                   customerPhone: member.member_phone || '',

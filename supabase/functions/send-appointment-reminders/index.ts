@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
         appointment_date,
         appointment_time,
         services (name),
-        staff (full_name)
+        staff (name)
       `)
       .eq('appointment_date', tomorrowDateStr)
       .in('status', ['confirmed', 'accepted'])
@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
               serviceName: apt.services?.name || 'Your appointment',
               appointmentDate: apt.appointment_date,
               appointmentTime: apt.appointment_time,
-              staffName: apt.staff?.full_name
+              staffName: apt.staff?.name
             }
           }
         });
