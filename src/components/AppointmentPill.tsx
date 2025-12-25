@@ -477,7 +477,7 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
               </div>
             )}
 
-            {appointment.payment_status && appointment.payment_status !== 'pending' && PAYMENT_ICONS[appointment.payment_status as PaymentStatus] && (
+            {appointment.payment_status && PAYMENT_ICONS[appointment.payment_status as PaymentStatus] && (
               <div
                 className={`p-0.5 rounded-full ${PAYMENT_ICONS[appointment.payment_status as PaymentStatus].bgColor}`}
                 title={PAYMENT_ICONS[appointment.payment_status as PaymentStatus].tooltip}

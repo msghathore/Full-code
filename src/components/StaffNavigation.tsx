@@ -31,7 +31,6 @@ const StaffNavigation: React.FC<StaffNavigationProps> = ({ children }) => {
 
     const tabs = [
         { name: 'Calendar', path: '/staff/calendar', icon: Calendar },
-        { name: 'Groups', path: '/staff/group-bookings', icon: Users },
         { name: 'Checkout', path: '/staff/checkout', icon: ShoppingCart },
         { name: 'Inventory', path: '/staff/inventory', icon: Package },
         { name: 'Settings', path: '/staff/settings', icon: Settings },
@@ -40,7 +39,7 @@ const StaffNavigation: React.FC<StaffNavigationProps> = ({ children }) => {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-white">
             {/* Navigation Tabs */}
             <nav className="bg-white border-b border-gray-200">
                 <div className="flex items-center justify-between px-4">

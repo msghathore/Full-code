@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Zavira Salon & Spa Theme Configuration
 /// Luxurious modern theme matching the website
@@ -30,109 +31,93 @@ class ZaviraTheme {
   // Card background
   static const Color cardBackground = Color(0xFF111111);
 
-  // Font Families (matching website)
-  static const String fontSerif = 'CormorantGaramond';
-  static const String fontSans = 'Inter';
-  static const String fontScript = 'PlayfairDisplay';
-
-  // Text Styles with Glow
-  static TextStyle get logoStyle => const TextStyle(
-        fontFamily: fontSerif,
+  // Text Styles with Glow - using GoogleFonts for proper web loading
+  static TextStyle get logoStyle => GoogleFonts.cormorantGaramond(
         fontSize: 48,
         fontWeight: FontWeight.w600,
         color: white,
         letterSpacing: 4,
-        shadows: [
+        shadows: const [
           Shadow(color: Color(0xCCFFFFFF), blurRadius: 10),
           Shadow(color: Color(0x99FFFFFF), blurRadius: 20),
           Shadow(color: Color(0x66FFFFFF), blurRadius: 30),
         ],
       );
 
-  static TextStyle get headingLarge => const TextStyle(
-        fontFamily: fontSerif,
+  static TextStyle get headingLarge => GoogleFonts.cormorantGaramond(
         fontSize: 36,
         fontWeight: FontWeight.w600,
         color: white,
         letterSpacing: 2,
-        shadows: [
+        shadows: const [
           Shadow(color: Color(0xAAFFFFFF), blurRadius: 8),
           Shadow(color: Color(0x66FFFFFF), blurRadius: 16),
         ],
       );
 
-  static TextStyle get headingMedium => const TextStyle(
-        fontFamily: fontSerif,
+  static TextStyle get headingMedium => GoogleFonts.cormorantGaramond(
         fontSize: 28,
         fontWeight: FontWeight.w600,
         color: white,
         letterSpacing: 1,
-        shadows: [
+        shadows: const [
           Shadow(color: Color(0x99FFFFFF), blurRadius: 6),
         ],
       );
 
-  static TextStyle get headingSmall => const TextStyle(
-        fontFamily: fontSerif,
+  static TextStyle get headingSmall => GoogleFonts.cormorantGaramond(
         fontSize: 22,
         fontWeight: FontWeight.w500,
         color: white,
         letterSpacing: 0.5,
       );
 
-  static TextStyle get bodyLarge => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get bodyLarge => GoogleFonts.inter(
         fontSize: 20,
         fontWeight: FontWeight.w400,
         color: white,
         height: 1.5,
       );
 
-  static TextStyle get bodyMedium => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get bodyMedium => GoogleFonts.inter(
         fontSize: 18,
         fontWeight: FontWeight.w400,
         color: white,
         height: 1.5,
       );
 
-  static TextStyle get bodySmall => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get bodySmall => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         color: textSecondary,
         height: 1.4,
       );
 
-  static TextStyle get priceLarge => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get priceLarge => GoogleFonts.inter(
         fontSize: 42,
         fontWeight: FontWeight.w700,
         color: emerald,
         letterSpacing: 1,
-        shadows: [
+        shadows: const [
           Shadow(color: Color(0x9910B981), blurRadius: 10),
           Shadow(color: Color(0x6610B981), blurRadius: 20),
         ],
       );
 
-  static TextStyle get priceSmall => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get priceSmall => GoogleFonts.inter(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: emerald,
       );
 
-  static TextStyle get buttonText => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get buttonText => GoogleFonts.inter(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: white,
         letterSpacing: 1,
       );
 
-  static TextStyle get labelText => const TextStyle(
-        fontFamily: fontSans,
+  static TextStyle get labelText => GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: textSecondary,
@@ -148,8 +133,7 @@ class ZaviraTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         elevation: 0,
-        textStyle: const TextStyle(
-          fontFamily: fontSans,
+        textStyle: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,
@@ -163,8 +147,7 @@ class ZaviraTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         side: const BorderSide(color: borderLight, width: 1),
-        textStyle: const TextStyle(
-          fontFamily: fontSans,
+        textStyle: GoogleFonts.inter(
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
@@ -210,6 +193,7 @@ class ZaviraTheme {
       );
 
   // ThemeData for MaterialApp
+  // Samsung/Impeller fix: Explicit text colors to ensure visibility
   static ThemeData get darkTheme => ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: black,
@@ -219,8 +203,21 @@ class ZaviraTheme {
           secondary: emerald,
           surface: cardBackground,
           error: rose,
+          onSurface: white, // Samsung fix: explicit text color
+          onPrimary: black,
+          onSecondary: white,
         ),
-        fontFamily: fontSans,
+        fontFamily: GoogleFonts.inter().fontFamily,
+        // Samsung/Impeller fix: Add explicit text selection and icon themes
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: white,
+          selectionColor: Color(0x44FFFFFF),
+          selectionHandleColor: white,
+        ),
+        iconTheme: const IconThemeData(
+          color: white,
+          opacity: 1.0, // Explicit opacity for Samsung
+        ),
         textTheme: TextTheme(
           displayLarge: headingLarge,
           displayMedium: headingMedium,
@@ -229,6 +226,12 @@ class ZaviraTheme {
           bodyMedium: bodyMedium,
           bodySmall: bodySmall,
           labelLarge: buttonText,
+          // Samsung fix: Explicit default text styles
+          titleLarge: headingMedium,
+          titleMedium: headingSmall,
+          titleSmall: bodyLarge,
+          labelMedium: labelText,
+          labelSmall: labelText,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: primaryButton,
@@ -240,6 +243,12 @@ class ZaviraTheme {
         dividerTheme: const DividerThemeData(
           color: borderColor,
           thickness: 1,
+        ),
+        // Samsung/Impeller fix: Ensure proper color usage
+        appBarTheme: const AppBarTheme(
+          backgroundColor: black,
+          foregroundColor: white,
+          iconTheme: IconThemeData(color: white),
         ),
       );
 }

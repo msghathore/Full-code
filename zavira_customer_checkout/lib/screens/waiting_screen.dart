@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../config/theme_config.dart';
 import '../services/checkout_service.dart';
 import '../widgets/glowing_text.dart';
-import 'invoice_screen.dart';
+import 'tip_selection_screen.dart';
 
 /// Waiting screen shown when no checkout is pending
 /// Displays Zavira logo with glow effect and "Waiting for checkout" message
@@ -34,7 +34,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const InvoiceScreen(),
+              const TipSelectionScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -58,43 +58,45 @@ class _WaitingScreenState extends State<WaitingScreen> {
           }
 
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo with glow
-                const ZaviraLogo(fontSize: 72, animated: true)
-                    .animate(onPlay: (controller) => controller.repeat())
-                    .shimmer(
-                      duration: const Duration(seconds: 3),
-                      color: ZaviraTheme.white.withOpacity(0.3),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo with glow
+                  const ZaviraLogo(fontSize: 72, animated: true)
+                      .animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(
+                        duration: const Duration(seconds: 3),
+                        color: ZaviraTheme.white.withOpacity(0.3),
+                      ),
+
+                  const SizedBox(height: 48),
+
+                  // Waiting message
+                  Text(
+                    'Welcome',
+                    style: ZaviraTheme.headingMedium,
+                  ).animate().fadeIn(duration: const Duration(milliseconds: 800)),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Your checkout will appear here',
+                    style: ZaviraTheme.bodyLarge.copyWith(
+                      color: ZaviraTheme.textSecondary,
                     ),
+                  ).animate().fadeIn(
+                        delay: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 800),
+                      ),
 
-                const SizedBox(height: 80),
+                  const SizedBox(height: 32),
 
-                // Waiting message
-                Text(
-                  'Welcome',
-                  style: ZaviraTheme.headingMedium,
-                ).animate().fadeIn(duration: const Duration(milliseconds: 800)),
+                  // Animated dots
+                  _WaitingIndicator(),
 
-                const SizedBox(height: 16),
-
-                Text(
-                  'Your checkout will appear here',
-                  style: ZaviraTheme.bodyLarge.copyWith(
-                    color: ZaviraTheme.textSecondary,
-                  ),
-                ).animate().fadeIn(
-                      delay: const Duration(milliseconds: 400),
-                      duration: const Duration(milliseconds: 800),
-                    ),
-
-                const SizedBox(height: 48),
-
-                // Animated dots
-                _WaitingIndicator(),
-
-                const SizedBox(height: 80),
+                  const SizedBox(height: 48),
 
                 // Connection status
                 Container(
@@ -140,7 +142,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 100),
+                const SizedBox(height: 48),
 
                 // Business info
                 Text(
@@ -156,7 +158,9 @@ class _WaitingScreenState extends State<WaitingScreen> {
                     color: ZaviraTheme.textMuted,
                   ),
                 ),
-              ],
+                const SizedBox(height: 24),
+                ],
+              ),
             ),
           );
         },

@@ -144,6 +144,64 @@ Claude has access to these MCP tools and MUST use them proactively:
 
 **⚠️ IMPORTANT:** After verification is complete, CLOSE the Chrome DevTools browser window.
 
+### 📱 Mobile Notifications (ntfy.sh)
+
+**ALWAYS USE to notify user when tasks complete:**
+
+The user has a smartphone notification system set up via ntfy.sh. When you complete background tasks, you MUST send a notification.
+
+**Topic:** `zavira-claude-notifications`
+
+**How to Send Notifications:**
+
+1. **Via curl (quickest):**
+```bash
+curl -X POST https://ntfy.sh/zavira-claude-notifications \
+  -H "Title: Task Complete" \
+  -H "Priority: high" \
+  -H "Tags: white_check_mark" \
+  -d "Your deployment is live!"
+```
+
+2. **From TypeScript/JavaScript:**
+```typescript
+import { notifySuccess, notifyError, notifyTaskComplete } from '@/lib/notifications';
+
+// After completing a task
+await notifyTaskComplete("Bug Fix", "Payment form is now working!");
+
+// On success
+await notifySuccess("Deploy Complete", "https://zavira.ca is updated");
+
+// On error
+await notifyError("Build Failed", "TypeScript errors found");
+```
+
+3. **Via Supabase Edge Function:**
+The `send-notification` function is already deployed and ready.
+
+**When to Send Notifications:**
+- ✅ After completing background tasks
+- ✅ When deployments finish
+- ✅ When long-running processes complete
+- ✅ When tests pass/fail
+- ✅ When builds complete
+
+**Priority Levels:**
+- `urgent` - Makes phone ring (use sparingly)
+- `high` - Strong notification (default for task completion)
+- `default` - Normal notification
+- `low` - Subtle notification
+
+**Example:**
+```bash
+# After deploying a fix
+curl -X POST https://ntfy.sh/zavira-claude-notifications \
+  -H "Title: ✅ Bug Fixed & Deployed" \
+  -H "Priority: high" \
+  -d "Payment form issue resolved and live on zavira.ca"
+```
+
 ### Playwright E2E Tests
 **Location:** `e2e/` folder
 **Run with:** `npx playwright test`

@@ -42,10 +42,14 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
     // Disable Lenis on mobile devices to prevent scroll issues
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-    if (isMobile) {
-      // On mobile, use native scrolling - no Lenis
+    // Disable Lenis on staff routes - they need normal scrolling
+    const isStaffRoute = window.location.pathname.startsWith('/staff');
+
+    if (isMobile || isStaffRoute) {
+      // On mobile or staff routes, use native scrolling - no Lenis
       if (import.meta.env.DEV) {
-        console.log('📱 Mobile detected - using native scrolling');
+        if (isMobile) console.log('📱 Mobile detected - using native scrolling');
+        if (isStaffRoute) console.log('🏢 Staff route detected - using native scrolling');
       }
       return;
     }

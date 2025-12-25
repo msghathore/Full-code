@@ -136,8 +136,11 @@ class CheckoutService extends ChangeNotifier {
         debugPrint('   - Session Code: ${response['session_code']}');
         debugPrint('   - Customer: ${response['customer_name']}');
         debugPrint('   - Total: \$${response['total_amount']}');
+        debugPrint('   - Cart Items Raw: ${response['cart_items']}');
+        debugPrint('   - Cart Items Type: ${response['cart_items']?.runtimeType}');
 
         final newSession = CheckoutSession.fromJson(response);
+        debugPrint('   - Parsed Cart Items Count: ${newSession.cartItems.length}');
 
         // Only update if it's a different session or status changed
         if (_currentSession?.id != newSession.id ||
@@ -243,6 +246,7 @@ class CheckoutService extends ChangeNotifier {
     if (_currentSession == null) return;
 
     try {
+      // Update pending_checkout table
       await _supabase.from(SupabaseConfig.pendingCheckoutTable).update({
         'status': 'completed',
         'payment_method': paymentMethod,
@@ -251,6 +255,15 @@ class CheckoutService extends ChangeNotifier {
         'total_amount': finalAmount,
         'completed_at': DateTime.now().toIso8601String(),
       }).eq('id', _currentSession!.id);
+
+      // Also update the appointment's payment_status to 'paid'
+      if (_currentSession!.appointmentId != null) {
+        debugPrint('💳 Updating appointment ${_currentSession!.appointmentId} payment_status to paid...');
+        await _supabase.from('appointments').update({
+          'payment_status': 'paid',
+        }).eq('id', _currentSession!.appointmentId!);
+        debugPrint('✅ Appointment payment status updated to paid');
+      }
 
       // Keep session for success screen
       _refreshCurrentSession();

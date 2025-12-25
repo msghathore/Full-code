@@ -74,5 +74,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- DISABLE IMPELLER - Fixes Samsung text rendering bug -->
+        <!-- Forces Skia renderer which handles shadows/opacity better on Samsung -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
+
     </application>
 </manifest>

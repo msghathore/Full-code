@@ -123,19 +123,29 @@ const VagaroSchedule = () => {
         fetchStaff();
     }, [fetchStaff]);
 
-    // Allow horizontal scroll on calendar page
+    // Fix scrolling and background on calendar page
     useEffect(() => {
-        // Remove overflow-x: hidden from body and html to allow horizontal scroll
+        // Store original styles
         const originalBodyOverflowX = document.body.style.overflowX;
         const originalHtmlOverflowX = document.documentElement.style.overflowX;
+        const originalHtmlHeight = document.documentElement.style.height;
+        const originalBodyHeight = document.body.style.height;
+        const originalBodyBg = document.body.style.backgroundColor;
 
+        // Enable scrolling and fix backgrounds
         document.body.style.overflowX = 'auto';
         document.documentElement.style.overflowX = 'auto';
+        document.documentElement.style.height = 'auto'; // Override height: 100% from index.css
+        document.body.style.height = 'auto'; // Allow body to expand
+        document.body.style.backgroundColor = 'white'; // White background for staff portal
 
         return () => {
-            // Restore original overflow on unmount
+            // Restore original styles on unmount
             document.body.style.overflowX = originalBodyOverflowX;
             document.documentElement.style.overflowX = originalHtmlOverflowX;
+            document.documentElement.style.height = originalHtmlHeight;
+            document.body.style.height = originalBodyHeight;
+            document.body.style.backgroundColor = originalBodyBg;
         };
     }, []);
 

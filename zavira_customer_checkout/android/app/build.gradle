@@ -51,6 +51,12 @@ android {
 
         // Enable multidex for large apps
         multiDexEnabled true
+
+        // Disable Impeller - fixes Samsung text rendering bug
+        // Forces Skia renderer which is more stable on Samsung devices
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     buildTypes {

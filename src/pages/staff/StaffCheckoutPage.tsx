@@ -524,6 +524,21 @@ const StaffCheckoutPage = () => {
 
       console.log('✅ Successfully inserted checkout:', data);
 
+      // Update appointment's payment_status to 'pending' if we have appointment data
+      if (appointmentData?.appointmentId) {
+        console.log('📋 Updating appointment payment_status to pending...');
+        const { error: appointmentUpdateError } = await supabase
+          .from('appointments')
+          .update({ payment_status: 'pending' })
+          .eq('id', appointmentData.appointmentId);
+
+        if (appointmentUpdateError) {
+          console.error('⚠️ Error updating appointment payment_status:', appointmentUpdateError);
+        } else {
+          console.log('✅ Appointment payment_status set to pending');
+        }
+      }
+
       toast({
         title: "✅ Sent to Customer Tablet",
         description: "Customer can now review and pay on the tablet",

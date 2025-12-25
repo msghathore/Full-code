@@ -87,11 +87,11 @@ class SquarePaymentService {
       //   debugPrint('✅ Reader paired: $_connectedReaderId');
       // }
 
-      // Simulate successful pairing for now
-      await Future.delayed(const Duration(seconds: 2));
-      _isReaderConnected = true;
-      _connectedReaderId = 'SIMULATED_READER';
-      debugPrint('✅ Reader paired (simulated)');
+      // For now, without the plugin, throw an error
+      throw PlatformException(
+        code: 'NO_SDK',
+        message: 'Square Mobile Payments SDK is not installed. Please add the square_mobile_payments plugin.',
+      );
     } catch (e) {
       debugPrint('❌ Failed to pair reader: $e');
       _isReaderConnected = false;
@@ -170,12 +170,11 @@ class SquarePaymentService {
       //   );
       // }
 
-      // Simulate payment for testing
-      await Future.delayed(const Duration(seconds: 3));
+      // For now, without the plugin, return an error
       return PaymentResult(
-        success: true,
-        paymentId: 'SIMULATED_${DateTime.now().millisecondsSinceEpoch}',
-        receiptUrl: null,
+        success: false,
+        errorMessage: 'Square Mobile Payments SDK is not installed. Please add the square_mobile_payments plugin to process real payments.',
+        errorCode: 'NO_SDK',
       );
     } on PlatformException catch (e) {
       debugPrint('❌ Payment platform error: ${e.message}');

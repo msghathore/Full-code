@@ -155,8 +155,13 @@ class SummaryRow extends StatelessWidget {
             ? ZaviraTheme.emerald
             : ZaviraTheme.textPrimary;
 
+    // Use simple bodyLarge style for total, just bigger and green (no fancy glow)
     final valueStyle = isTotal
-        ? ZaviraTheme.priceLarge
+        ? ZaviraTheme.bodyLarge.copyWith(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: ZaviraTheme.emerald,
+          )
         : isHighlighted
             ? ZaviraTheme.priceSmall
             : ZaviraTheme.bodyLarge;
