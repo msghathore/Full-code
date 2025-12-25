@@ -5,34 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import {
-  User,
-  History,
-  Plus,
-  Edit,
   ShoppingBag,
   Scan,
   Scissors,
   Package,
   Gift,
-  CreditCard,
   Calculator,
   CheckCircle,
-  XCircle,
   Loader2,
-  Calendar,
   Smartphone,
-  Wifi,
-  WifiOff,
-  Tablet,
-  Send
+  Tablet
 } from 'lucide-react';
 import { useSquareTerminal } from '@/hooks/useSquareTerminal';
 import { calculateTotals, formatCurrency, parseCurrency, CartItem, PaymentMethod } from '@/lib/posCalculations';
 import { supabase } from '@/integrations/supabase/client';
 import { ReceiptConfirmationModal } from '@/components/ReceiptConfirmationModal';
-import PaymentMethodModal from '@/components/PaymentMethodModal';
 import { useToast } from '@/hooks/use-toast';
 import EmailService from '@/lib/email-service';
 
@@ -75,11 +63,9 @@ const StaffCheckoutPage = () => {
   const [services, setServices] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [showTerminalSelector, setShowTerminalSelector] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // Customer Tablet (Square Reader) state
   const [isSendingToTablet, setIsSendingToTablet] = useState(false);
-  const [sentToTabletCode, setSentToTabletCode] = useState<string | null>(null);
 
   // Square Terminal hook
   const {
@@ -572,115 +558,6 @@ const StaffCheckoutPage = () => {
     }
   };
 
-  // Handler for manual payment from modal
-  const handleManualPaymentFromModal = async (payments: PaymentMethod[]) => {
-    setPaymentMethods(payments);
-    setShowPaymentModal(false);
-
-    // Process the payment directly
-    setIsProcessing(true);
-
-    try {
-      // Get the correct staff_id for the transaction
-      let staffId = appointmentData?.staffId;
-      if (!staffId && cartItems.length > 0) {
-        const firstServiceItem = cartItems.find(item => item.provider_id);
-        staffId = firstServiceItem?.provider_id;
-      }
-      if (!staffId) {
-        staffId = staffList[0]?.id;
-      }
-
-      const transactionData = {
-        customer_id: currentCustomer.id || null,
-        staff_id: staffId,
-        cart_items: cartItems,
-        payment_methods: payments.map(p => ({
-          ...p,
-          method: mapPaymentMethod(p.method),
-          status: 'completed'
-        })),
-        tip_amount: tipAmount
-      };
-
-      console.log('📤 Processing manual payment from modal:', transactionData);
-
-      const { data, error } = await (supabase as any).rpc('finalize_transaction', {
-        transaction_data: transactionData
-      });
-
-      if (error) {
-        console.error('❌ RPC Error:', error);
-        throw error;
-      }
-
-      if (data?.success) {
-        console.log('✅ Payment successful!');
-        setTransactionResult({
-          success: true,
-          transaction_id: data.transaction_id,
-          total_amount: totals.amountDue,
-          cart_items: [...cartItems],
-          customer_name: currentCustomer.name
-        });
-
-        // Update appointment status to 'completed' after successful checkout
-        const currentAppointmentData = appointmentDataRef.current;
-        if (currentAppointmentData?.appointmentId) {
-          try {
-            console.log('📝 Updating appointment status to completed');
-            await supabase
-              .from('appointments')
-              .update({ status: 'completed' })
-              .eq('id', currentAppointmentData.appointmentId);
-            console.log('✅ Appointment status updated to completed');
-          } catch (statusUpdateError) {
-            console.error('Error updating appointment status:', statusUpdateError);
-          }
-        }
-
-        // Send receipt email if available
-        if (appointmentData?.customerEmail && appointmentData.customerName) {
-          EmailService.sendReceiptEmail({
-            email: appointmentData.customerEmail,
-            transactionId: data.transaction_id,
-            totalAmount: totals.amountDue,
-            customerName: appointmentData.customerName,
-            cartItems: cartItems.map(item => ({
-              name: item.name,
-              quantity: item.quantity,
-              price: item.price
-            }))
-          }).catch(error => {
-            console.error('Failed to send receipt email:', error);
-          });
-        }
-
-        setShowReceiptModal(true);
-        setCartItems([]);
-        setPaymentMethods([]);
-        setTipAmount(0);
-      } else {
-        throw new Error(data?.error || 'Transaction failed');
-      }
-    } catch (error: any) {
-      console.error('Transaction error:', error);
-      toast({
-        title: "Transaction failed",
-        description: error.message || "There was an error processing the transaction.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Handler for terminal payment from modal
-  const handleTerminalPaymentFromModal = () => {
-    setShowPaymentModal(false);
-    handleTerminalPayment();
-  };
-
   // Handler for rebooking service
   const handleRebookService = () => {
     setShowReceiptModal(false);
@@ -696,11 +573,12 @@ const StaffCheckoutPage = () => {
   };
 
   // Handler for sending checkout to customer tablet (Square Reader)
+  // This is now the MAIN payment action - sends directly to tablet
   const handleSendToCustomerTablet = async () => {
     if (cartItems.length === 0) {
       toast({
         title: "No items in cart",
-        description: "Please add items before sending to tablet.",
+        description: "Please add items before completing payment.",
         variant: "destructive"
       });
       return;
@@ -708,41 +586,44 @@ const StaffCheckoutPage = () => {
 
     setIsSendingToTablet(true);
     try {
-      // Generate a unique session code
-      const sessionCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      // Get staff name
+      const staffName = staffList.find(s => s.id === cartItems[0]?.provider_id)?.name ||
+                       appointmentData?.staffName || 'Staff';
 
-      // Prepare checkout data for the tablet (column names match pending_checkout table)
+      // Prepare checkout data for the tablet - use pending_checkouts table (matches Flutter app)
       const checkoutData = {
-        session_code: sessionCode,
-        cart_items: cartItems.map(item => ({
+        services: cartItems.map(item => ({
           name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          discount: item.discount || 0,
-          item_type: item.itemType || 'service',
-          staff_name: staffList.find(s => s.id === item.serviceProviderId)?.name || 'Staff'
+          price: item.price * item.quantity
         })),
         subtotal: totals.subtotal,
         tax_amount: totals.tax,
         total_amount: totals.amountDue,
         tip_amount: tipAmount,
-        customer_name: currentCustomer.name,
-        staff_name: staffList.find(s => s.id === cartItems[0]?.serviceProviderId)?.name || 'Staff',
+        client_name: appointmentData?.customerName || currentCustomer.name,
+        staff_name: staffName,
+        appointment_id: appointmentData?.appointmentId || null,
         status: 'pending'
       };
 
-      // Insert into pending_checkout table
+      // Insert into pending_checkouts table (matches Flutter app)
       const { error } = await supabase
-        .from('pending_checkout')
+        .from('pending_checkouts')
         .insert(checkoutData);
 
       if (error) throw error;
 
-      setSentToTabletCode(sessionCode);
       toast({
         title: "✅ Sent to Customer Tablet",
-        description: `Session Code: ${sessionCode} - Customer can now pay via Square Reader`,
+        description: "Customer can now review and pay on the tablet",
+        duration: 5000,
       });
+
+      // Clear cart after sending
+      setCartItems([]);
+      setPaymentMethods([]);
+      setTipAmount(0);
+
     } catch (error) {
       console.error('Error sending to tablet:', error);
       toast({
@@ -1081,39 +962,24 @@ const StaffCheckoutPage = () => {
               </div>
             </div>
 
-            {/* Single Complete Payment Button */}
+            {/* Single Complete Payment Button - Sends directly to customer tablet */}
             <motion.div
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
             >
               <Button
                 className="w-full h-14 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold text-lg shadow-lg shadow-green-500/25 transition-all duration-200"
-                disabled={cartItems.length === 0 || isProcessing || !!terminalCheckout}
-                onClick={() => {
-                  if (cartItems.length === 0) {
-                    toast({
-                      title: "No items in cart",
-                      description: "Please add items to cart before processing payment.",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  setShowPaymentModal(true);
-                }}
+                disabled={cartItems.length === 0 || isSendingToTablet}
+                onClick={handleSendToCustomerTablet}
               >
-                {isProcessing ? (
+                {isSendingToTablet ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : terminalCheckout ? (
-                  <>
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Waiting for Customer...
+                    Sending to Tablet...
                   </>
                 ) : (
                   <>
-                    <CreditCard className="h-5 w-5 mr-2" />
+                    <Tablet className="h-5 w-5 mr-2" />
                     Complete Payment
                   </>
                 )}
@@ -1123,48 +989,7 @@ const StaffCheckoutPage = () => {
             {/* Quick info */}
             <div className="mt-4 text-center">
               <p className="text-xs text-gray-500">
-                {selectedTerminal
-                  ? 'Terminal, Cash, Check, or Gift Certificate'
-                  : 'Cash, Check, or Gift Certificate'
-                }
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                Split payment available
-              </p>
-            </div>
-
-            {/* Send to Customer Tablet Button (Square Reader) */}
-            <div className="mt-6 p-4 bg-slate-900 rounded-lg border border-slate-700">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Tablet className="h-5 w-5 text-white" />
-                  <span className="text-white font-medium text-sm">Customer Tablet Payment</span>
-                </div>
-                {sentToTabletCode && (
-                  <Badge className="bg-emerald-500 text-white text-xs">
-                    Code: {sentToTabletCode}
-                  </Badge>
-                )}
-              </div>
-              <Button
-                className="w-full bg-black hover:bg-slate-800 text-white font-medium border border-white/20"
-                disabled={cartItems.length === 0 || isSendingToTablet}
-                onClick={handleSendToCustomerTablet}
-              >
-                {isSendingToTablet ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Send to Customer Tablet (Square Reader)
-                  </>
-                )}
-              </Button>
-              <p className="text-slate-400 text-xs mt-2 text-center">
-                Customer pays via tap/insert card on their tablet
+                Sends checkout to customer tablet for payment
               </p>
             </div>
           </div>
@@ -1256,32 +1081,17 @@ const StaffCheckoutPage = () => {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white h-12 px-8 shadow-lg shadow-green-500/20"
-                  onClick={() => {
-                    if (cartItems.length === 0) {
-                      toast({
-                        title: "No items in cart",
-                        description: "Please add items to cart before processing payment.",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-                    setShowPaymentModal(true);
-                  }}
-                  disabled={cartItems.length === 0 || isProcessing || !!terminalCheckout}
+                  onClick={handleSendToCustomerTablet}
+                  disabled={cartItems.length === 0 || isSendingToTablet}
                 >
-                  {isProcessing ? (
+                  {isSendingToTablet ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : terminalCheckout ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Waiting...
+                      Sending...
                     </>
                   ) : (
                     <>
-                      <CreditCard className="h-4 w-4 mr-2" />
+                      <Tablet className="h-4 w-4 mr-2" />
                       Complete Payment {totals.amountDue > 0 && `- ${formatCurrency(totals.amountDue)}`}
                     </>
                   )}
@@ -1315,20 +1125,6 @@ const StaffCheckoutPage = () => {
           customerName={transactionResult.customer_name}
         />
       )}
-
-      {/* Payment Method Selection Modal */}
-      <PaymentMethodModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        amountDue={totals.amountDue}
-        terminalConnected={!!selectedTerminal}
-        terminalName={selectedTerminal?.name}
-        onTerminalPayment={handleTerminalPaymentFromModal}
-        onManualPayment={handleManualPaymentFromModal}
-        isProcessing={isProcessing}
-        terminalProcessing={terminalProcessing}
-      />
-
     </div>
   );
 };
