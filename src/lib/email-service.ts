@@ -83,6 +83,16 @@ export interface StatusChangeNotificationData {
   staffName?: string;
 }
 
+export interface ReviewReminderData {
+  customerEmail: string;
+  customerName?: string;
+  serviceName: string;
+  appointmentDate?: string;
+  staffName?: string;
+  googleReviewUrl?: string;
+  instagramHandle?: string;
+}
+
 export class EmailService {
   private static async callBrevoService(action: string, data: any): Promise<EmailResponse> {
     try {
@@ -340,6 +350,23 @@ export class EmailService {
       oldStatus: data.oldStatus,
       newStatus: data.newStatus,
       staffName: data.staffName
+    });
+
+    return result;
+  }
+
+  /**
+   * Send review reminder email (Hormozi-style)
+   */
+  static async sendReviewReminder(data: ReviewReminderData): Promise<EmailResponse> {
+    const result = await this.callBrevoService('sendReviewReminder', {
+      customerEmail: data.customerEmail,
+      customerName: data.customerName,
+      serviceName: data.serviceName,
+      appointmentDate: data.appointmentDate,
+      staffName: data.staffName,
+      googleReviewUrl: data.googleReviewUrl || 'https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review',
+      instagramHandle: data.instagramHandle || '@zavira'
     });
 
     return result;

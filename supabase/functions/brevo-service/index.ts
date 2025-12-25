@@ -50,6 +50,10 @@ Deno.serve(async (req) => {
                 result = await sendStatusChangeNotification(brevoApiKey, senderEmail, senderName, data);
                 break;
 
+            case 'sendReviewReminder':
+                result = await sendReviewReminder(brevoApiKey, senderEmail, senderName, data);
+                break;
+
             case 'sendCancellationEmail':
                 result = await sendCancellationEmail(brevoApiKey, senderEmail, senderName, data);
                 break;
@@ -1367,5 +1371,181 @@ async function sendStatusChangeNotification(apiKey: string, senderEmail: string,
         messageId: result.messageId,
         statusChangeEmail: customerEmail,
         newStatus: newStatus
+    };
+}
+
+/**
+ * Send review reminder - Hormozi-style direct copy
+ */
+async function sendReviewReminder(apiKey: string, senderEmail: string, senderName: string, data: any) {
+    const { customerEmail, customerName, serviceName, appointmentDate, staffName, googleReviewUrl, instagramHandle } = data;
+
+    if (!customerEmail || !serviceName) {
+        throw new Error('Missing required review reminder data');
+    }
+
+    // Simple, direct Hormozi-style copy
+    const emailHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>How was your experience?</title>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #000000;
+                color: #ffffff;
+                margin: 0;
+                padding: 20px;
+                line-height: 1.8;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #000000;
+                padding: 40px;
+            }
+            .logo {
+                text-align: center;
+                font-size: 2.5rem;
+                font-weight: 300;
+                color: #ffffff;
+                margin-bottom: 40px;
+                letter-spacing: 8px;
+            }
+            .content {
+                font-size: 1.1rem;
+                color: #ffffff;
+                line-height: 1.8;
+            }
+            .content p {
+                margin: 20px 0;
+            }
+            .cta-button {
+                display: block;
+                width: 100%;
+                max-width: 400px;
+                margin: 40px auto;
+                padding: 20px 40px;
+                background-color: #ffffff;
+                color: #000000;
+                text-align: center;
+                text-decoration: none;
+                font-size: 1.2rem;
+                font-weight: bold;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+            .cta-button:hover {
+                background-color: #e0e0e0;
+                transform: translateY(-2px);
+            }
+            .ps-section {
+                margin-top: 50px;
+                padding-top: 30px;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                font-size: 1rem;
+                color: #e0e0e0;
+            }
+            .ps-section p {
+                margin: 15px 0;
+            }
+            .instagram-tag {
+                color: #fbbf24;
+                font-weight: bold;
+            }
+            .signature {
+                margin-top: 40px;
+                font-size: 1rem;
+                color: #e0e0e0;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 50px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 0.85rem;
+                color: #888;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">ZAVIRA</div>
+
+            <div class="content">
+                <p>Hey ${customerName || 'there'},</p>
+
+                <p>Quick question...</p>
+
+                <p>How was your ${serviceName}${staffName ? ` with ${staffName}` : ''} two days ago?</p>
+
+                <p>I'm gonna be straight with you:</p>
+
+                <p><strong>We need your help.</strong></p>
+
+                <p>Most salon owners pay thousands for ads. We'd rather give you amazing service and let you tell people about it.</p>
+
+                <p>If you loved your experience (and we hope you did), could you leave us a Google review?</p>
+
+                <p>Takes 60 seconds. Helps us massively.</p>
+
+                <a href="${googleReviewUrl || 'https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review'}" class="cta-button">
+                    ⭐ Leave a Google Review
+                </a>
+
+                <div class="ps-section">
+                    <p><strong>PS:</strong> Love your new look?</p>
+
+                    <p>Snap a photo or video and tag us on Instagram <span class="instagram-tag">${instagramHandle || '@zavira'}</span></p>
+
+                    <p>We'll reshare it (with your permission) so other people can see what's possible.</p>
+
+                    <p>Win-win.</p>
+                </div>
+
+                <div class="signature">
+                    <p>Thanks for being awesome,</p>
+                    <p><strong>The ZAVIRA Team</strong></p>
+                    <p style="color: #888; font-size: 0.9rem;">283 Tache Avenue, Winnipeg</p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>This email was sent because you recently visited ZAVIRA Beauty.</p>
+                <p>We value your feedback and use it to serve you better.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    const emailData = {
+        to: [{ email: customerEmail, name: customerName || 'Valued Customer' }],
+        htmlContent: emailHtml,
+        subject: `Quick question about your ${serviceName}...`,
+        sender: { name: senderName, email: senderEmail }
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+            'api-key': apiKey,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailData)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || 'Failed to send review reminder');
+    }
+
+    return {
+        messageId: result.messageId,
+        reviewReminderEmail: customerEmail
     };
 }
