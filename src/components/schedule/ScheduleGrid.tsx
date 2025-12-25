@@ -1269,8 +1269,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         <div className="flex-shrink-0 border-b border-gray-200 bg-white overflow-x-auto scrollbar-hide" style={{ zIndex: 60, paddingRight: '17px' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(180px, 1fr)').join(' ')}`,
-            minWidth: `${64 + (selectedStaff.length * 180)}px`
+            gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(120px, 1fr)').join(' ')}`
           }}>
             {/* Time Column Header */}
             <div className="h-[48px] bg-gray-100 border-r sticky left-0 z-10"></div>
@@ -1284,8 +1283,8 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
               return (
                 <div
                   key={staffId}
-                  className="h-[48px] bg-white border-r flex items-center px-3 gap-2"
-                  style={{ minWidth: '180px' }}
+                  className="h-[48px] bg-white border-r flex items-center px-2 gap-2"
+                  style={{ minWidth: '120px' }}
                 >
                   <Avatar className="h-9 w-9 ring-2 ring-white shadow-sm flex-shrink-0">
                     <AvatarImage
@@ -1322,8 +1321,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         <div className="flex-1 overflow-auto">
           <div style={{
             display: 'grid',
-            gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(180px, 1fr)').join(' ')}`,
-            minWidth: `${64 + (selectedStaff.length * 180)}px`
+            gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(120px, 1fr)').join(' ')}`
           }}>
             {/* Time Column */}
             <div className="bg-gray-50 border-r">

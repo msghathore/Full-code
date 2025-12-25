@@ -123,6 +123,22 @@ const VagaroSchedule = () => {
         fetchStaff();
     }, [fetchStaff]);
 
+    // Allow horizontal scroll on calendar page
+    useEffect(() => {
+        // Remove overflow-x: hidden from body and html to allow horizontal scroll
+        const originalBodyOverflowX = document.body.style.overflowX;
+        const originalHtmlOverflowX = document.documentElement.style.overflowX;
+
+        document.body.style.overflowX = 'auto';
+        document.documentElement.style.overflowX = 'auto';
+
+        return () => {
+            // Restore original overflow on unmount
+            document.body.style.overflowX = originalBodyOverflowX;
+            document.documentElement.style.overflowX = originalHtmlOverflowX;
+        };
+    }, []);
+
     useEffect(() => {
         if (staff.length > 0) {
             fetchAppointments();
