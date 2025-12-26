@@ -66,6 +66,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS service_upsells_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER service_upsells_updated_at
   BEFORE UPDATE ON service_upsells
   FOR EACH ROW

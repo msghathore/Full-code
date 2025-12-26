@@ -1,7 +1,10 @@
--- Migration: Email Logs and Campaign Management
--- Description: Track all email sends, opens, and clicks for automated campaigns
--- Author: Claude
--- Date: 2025-12-26
+-- Migration: Email Logs and Campaign Management (Standalone)
+-- Apply only email_logs related schema
+
+-- Check if customers table exists before proceeding
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'customers') THEN
 
 -- =============================================
 -- EMAIL LOGS TABLE
@@ -237,18 +240,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_email_logs_timestamp ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_email_logs_timestamp
   BEFORE UPDATE ON email_logs
   FOR EACH ROW
   EXECUTE FUNCTION update_email_logs_timestamp();
 
 -- Update timestamp trigger for email_campaigns
+DROP TRIGGER IF EXISTS update_email_campaigns_timestamp ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_email_campaigns_timestamp
   BEFORE UPDATE ON email_campaigns
   FOR EACH ROW
   EXECUTE FUNCTION update_email_logs_timestamp();
 
 -- Update timestamp trigger for email_preferences
+DROP TRIGGER IF EXISTS update_email_preferences_timestamp ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_email_preferences_timestamp
   BEFORE UPDATE ON email_preferences
   FOR EACH ROW
@@ -270,6 +276,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS track_email_open ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER track_email_open
   BEFORE UPDATE ON email_logs
   FOR EACH ROW
@@ -291,6 +298,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS track_email_click ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER track_email_click
   BEFORE UPDATE ON email_logs
   FOR EACH ROW
@@ -392,3 +400,6 @@ COMMENT ON COLUMN email_logs.provider_message_id IS 'Unique ID from email servic
 
 COMMENT ON FUNCTION get_campaign_metrics IS 'Calculate engagement metrics for an email campaign';
 COMMENT ON FUNCTION is_subscribed_to_emails IS 'Check if customer is subscribed to specific email category';
+
+  END IF;
+END $$;

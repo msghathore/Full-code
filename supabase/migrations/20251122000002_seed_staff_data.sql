@@ -44,7 +44,7 @@ INSERT INTO public.staff (
     NOW()
 ),
 (
-    'c2ggdaabb-9c0b-4ef8-bb6d-6bb9bd380a33',
+    'c2ffccaa-9c0b-4ef8-bb6d-6bb9bd380a33',
     'Michael',
     'Chen',
     'EMP003',
@@ -58,7 +58,7 @@ INSERT INTO public.staff (
     NOW()
 ),
 (
-    'd3hhedbcc-9c0b-4ef8-bb6d-6bb9bd380a44',
+    'd3ffeebc-9c0b-4ef8-bb6d-6bb9bd380a44',
     'Jessica',
     'Wilson',
     'EMP004',

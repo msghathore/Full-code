@@ -25,6 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_lead_magnets_slug ON lead_magnets(slug);
 CREATE INDEX IF NOT EXISTS idx_lead_magnets_active ON lead_magnets(is_active) WHERE is_active = true;
 
 -- Updated timestamp trigger
+DROP TRIGGER IF EXISTS update_lead_magnets_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_lead_magnets_updated_at
   BEFORE UPDATE ON lead_magnets
   FOR EACH ROW

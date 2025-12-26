@@ -98,14 +98,17 @@ ALTER TABLE referral_programs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE referrals ENABLE ROW LEVEL SECURITY;
 
 -- Public can view active referral programs
+DROP POLICY IF EXISTS "Public can view active programs" ON referral_programs;
 CREATE POLICY "Public can view active programs" ON referral_programs
     FOR SELECT USING (is_active = TRUE);
 
 -- Admin can manage programs
+DROP POLICY IF EXISTS "Admin full access to programs" ON referral_programs;
 CREATE POLICY "Admin full access to programs" ON referral_programs
     FOR ALL USING (auth.jwt()->>'role' = 'admin');
 
 -- Users can view their own referrals
+DROP POLICY IF EXISTS "Users view own referrals" ON referrals;
 CREATE POLICY "Users view own referrals" ON referrals
     FOR SELECT USING (
         referrer_customer_id IN (
@@ -117,10 +120,12 @@ CREATE POLICY "Users view own referrals" ON referrals
     );
 
 -- Users can create referrals
+DROP POLICY IF EXISTS "Authenticated users can create referrals" ON referrals;
 CREATE POLICY "Authenticated users can create referrals" ON referrals
     FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Staff and admin can manage all referrals
+DROP POLICY IF EXISTS "Staff can manage referrals" ON referrals;
 CREATE POLICY "Staff can manage referrals" ON referrals
     FOR ALL USING (auth.jwt()->>'role' IN ('admin', 'staff'));
 

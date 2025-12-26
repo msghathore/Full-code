@@ -805,36 +805,45 @@ ALTER TABLE schedule_locks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE offline_sync_queue ENABLE ROW LEVEL SECURITY;
 
 -- Staff can view their own performance and customers
+DROP POLICY IF EXISTS "Staff can view own performance" ON staff_performance_metrics;
 CREATE POLICY "Staff can view own performance" ON staff_performance_metrics
     FOR SELECT USING (staff_id::text = auth.jwt()->>'staff_id' OR auth.jwt()->>'role' = 'admin');
 
+DROP POLICY IF EXISTS "Staff can view customer profiles" ON customer_profiles;
 CREATE POLICY "Staff can view customer profiles" ON customer_profiles
     FOR SELECT USING (auth.jwt()->>'role' IN ('admin', 'staff'));
 
+DROP POLICY IF EXISTS "Staff can manage customers" ON customer_profiles;
 CREATE POLICY "Staff can manage customers" ON customer_profiles
     FOR ALL USING (auth.jwt()->>'role' IN ('admin', 'staff'));
 
 -- Admin full access policies
+DROP POLICY IF EXISTS "Admin full access to campaigns" ON marketing_campaigns;
 CREATE POLICY "Admin full access to campaigns" ON marketing_campaigns
     FOR ALL USING (auth.jwt()->>'role' = 'admin');
 
+DROP POLICY IF EXISTS "Admin full access to inventory" ON inventory_items;
 CREATE POLICY "Admin full access to inventory" ON inventory_items
     FOR ALL USING (auth.jwt()->>'role' IN ('admin', 'staff'));
 
+DROP POLICY IF EXISTS "Admin full access to orders" ON purchase_orders;
 CREATE POLICY "Admin full access to orders" ON purchase_orders
     FOR ALL USING (auth.jwt()->>'role' = 'admin');
 
 -- Public can view published reviews
+DROP POLICY IF EXISTS "Public can view reviews" ON customer_reviews;
 CREATE POLICY "Public can view reviews" ON customer_reviews
     FOR SELECT USING (is_public = TRUE);
 
 -- Customers can view their own data
+DROP POLICY IF EXISTS "Customers view own recommendations" ON service_recommendations;
 CREATE POLICY "Customers view own recommendations" ON service_recommendations
     FOR SELECT USING (customer_id IN (
         SELECT id FROM customer_profiles WHERE user_id = auth.uid()
     ));
 
 -- Schedule presence for authenticated users
+DROP POLICY IF EXISTS "Authenticated users can manage presence" ON schedule_presence;
 CREATE POLICY "Authenticated users can manage presence" ON schedule_presence
     FOR ALL USING (auth.uid() IS NOT NULL);
 

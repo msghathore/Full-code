@@ -164,19 +164,24 @@ ALTER TABLE waitlists ENABLE ROW LEVEL SECURITY;
 -- RLS Policies
 
 -- Profiles policies
+DROP POLICY IF EXISTS "Users can view their own profile" ON profiles;
 CREATE POLICY "Users can view their own profile" ON profiles
     FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
 CREATE POLICY "Users can update their own profile" ON profiles
     FOR UPDATE USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert their own profile" ON profiles;
 CREATE POLICY "Users can insert their own profile" ON profiles
     FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Orders policies
+DROP POLICY IF EXISTS "Users can view their own orders" ON orders;
 CREATE POLICY "Users can view their own orders" ON orders
     FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Staff can view all orders" ON orders;
 CREATE POLICY "Staff can view all orders" ON orders
     FOR SELECT USING (
         EXISTS (
@@ -186,6 +191,7 @@ CREATE POLICY "Staff can view all orders" ON orders
     );
 
 -- Order items policies
+DROP POLICY IF EXISTS "Users can view their order items" ON order_items;
 CREATE POLICY "Users can view their order items" ON order_items
     FOR SELECT USING (
         EXISTS (
@@ -195,6 +201,7 @@ CREATE POLICY "Users can view their order items" ON order_items
         )
     );
 
+DROP POLICY IF EXISTS "Staff can view all order items" ON order_items;
 CREATE POLICY "Staff can view all order items" ON order_items
     FOR SELECT USING (
         EXISTS (
@@ -204,37 +211,46 @@ CREATE POLICY "Staff can view all order items" ON order_items
     );
 
 -- Loyalty transactions policies
+DROP POLICY IF EXISTS "Users can view their own loyalty transactions" ON loyalty_transactions;
 CREATE POLICY "Users can view their own loyalty transactions" ON loyalty_transactions
     FOR SELECT USING (auth.uid() = user_id);
 
 -- Gift cards policies
+DROP POLICY IF EXISTS "Users can view gift cards they purchased" ON gift_cards;
 CREATE POLICY "Users can view gift cards they purchased" ON gift_cards
     FOR SELECT USING (auth.uid() = purchaser_user_id);
 
+DROP POLICY IF EXISTS "Users can view gift cards they used" ON gift_cards;
 CREATE POLICY "Users can view gift cards they used" ON gift_cards
     FOR SELECT USING (auth.uid() = used_by_user_id);
 
 -- Blog posts policies (public read for published posts)
+DROP POLICY IF EXISTS "Anyone can view published blog posts" ON blog_posts;
 CREATE POLICY "Anyone can view published blog posts" ON blog_posts
     FOR SELECT USING (is_published = true);
 
 -- Products policies (public read)
+DROP POLICY IF EXISTS "Anyone can view active products" ON products;
 CREATE POLICY "Anyone can view active products" ON products
     FOR SELECT USING (is_active = true);
 
 -- Services policies (public read)
+DROP POLICY IF EXISTS "Anyone can view active services" ON services;
 CREATE POLICY "Anyone can view active services" ON services
     FOR SELECT USING (is_active = true);
 
 -- Staff policies (public read for active staff)
+DROP POLICY IF EXISTS "Anyone can view active staff" ON staff;
 CREATE POLICY "Anyone can view active staff" ON staff
     FOR SELECT USING (is_active = true);
 
 -- Staff availability policies (public read)
+DROP POLICY IF EXISTS "Anyone can view staff availability" ON staff_availability;
 CREATE POLICY "Anyone can view staff availability" ON staff_availability
     FOR SELECT USING (true);
 
 -- Waitlists policies (staff only)
+DROP POLICY IF EXISTS "Staff can view waitlists" ON waitlists;
 CREATE POLICY "Staff can view waitlists" ON waitlists
     FOR SELECT USING (
         EXISTS (
@@ -243,6 +259,7 @@ CREATE POLICY "Staff can view waitlists" ON waitlists
         )
     );
 
+DROP POLICY IF EXISTS "Staff can manage waitlists" ON waitlists;
 CREATE POLICY "Staff can manage waitlists" ON waitlists
     FOR ALL USING (
         EXISTS (

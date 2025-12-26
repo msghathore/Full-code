@@ -13,10 +13,12 @@ CREATE TABLE IF NOT EXISTS public.staff_working_hours (
 -- Enable RLS
 ALTER TABLE public.staff_working_hours ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "working_hours_select_all" ON public.staff_working_hours;
 CREATE POLICY "working_hours_select_all" ON public.staff_working_hours
   FOR SELECT TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "working_hours_modify_service_role" ON public.staff_working_hours;
 CREATE POLICY "working_hours_modify_service_role" ON public.staff_working_hours
   FOR ALL TO service_role
   USING (true) WITH CHECK (true);

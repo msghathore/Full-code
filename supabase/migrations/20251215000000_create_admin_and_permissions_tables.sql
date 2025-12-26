@@ -78,28 +78,33 @@ ALTER TABLE public.staff_permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.access_audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Admin credentials - very restricted (admin only through service role)
+DROP POLICY IF EXISTS "Enable all access for service role" ON public.admin_credentials;
 CREATE POLICY "Enable all access for service role" ON public.admin_credentials
     FOR ALL
     TO service_role
     USING (true);
 
 -- Staff permissions - readable by all authenticated, writable by admin
+DROP POLICY IF EXISTS "Enable read access for all" ON public.staff_permissions;
 CREATE POLICY "Enable read access for all" ON public.staff_permissions
     FOR SELECT
     TO anon, authenticated
     USING (true);
 
+DROP POLICY IF EXISTS "Enable write access for service role" ON public.staff_permissions;
 CREATE POLICY "Enable write access for service role" ON public.staff_permissions
     FOR ALL
     TO service_role
     USING (true);
 
 -- Access audit log - writable by all, readable by admin only
+DROP POLICY IF EXISTS "Enable insert for all" ON public.access_audit_log;
 CREATE POLICY "Enable insert for all" ON public.access_audit_log
     FOR INSERT
     TO anon, authenticated
     WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Enable read for service role" ON public.access_audit_log;
 CREATE POLICY "Enable read for service role" ON public.access_audit_log
     FOR SELECT
     TO service_role

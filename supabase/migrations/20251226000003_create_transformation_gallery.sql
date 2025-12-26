@@ -158,6 +158,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create trigger for auto-updating updated_at
+DROP TRIGGER IF EXISTS update_transformation_gallery_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_transformation_gallery_updated_at
 BEFORE UPDATE ON public.transformation_gallery
 FOR EACH ROW

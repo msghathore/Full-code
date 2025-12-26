@@ -6,6 +6,7 @@ DROP POLICY IF EXISTS "Enable update access for authenticated users" ON public.a
 DROP POLICY IF EXISTS "Enable update access for anon users" ON public.appointments;
 
 -- Create new update policy that allows both authenticated and anon users
+DROP POLICY IF EXISTS "Enable update access for all users" ON public.appointments;
 CREATE POLICY "Enable update access for all users" ON public.appointments
     FOR UPDATE
     USING (true)
@@ -15,6 +16,7 @@ CREATE POLICY "Enable update access for all users" ON public.appointments
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.appointments;
 DROP POLICY IF EXISTS "Enable read access for all users" ON public.appointments;
 
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.appointments;
 CREATE POLICY "Enable read access for all users" ON public.appointments
     FOR SELECT
     USING (true);
@@ -23,6 +25,7 @@ CREATE POLICY "Enable read access for all users" ON public.appointments
 DROP POLICY IF EXISTS "Enable insert access for authenticated users" ON public.appointments;
 DROP POLICY IF EXISTS "Enable insert access for all users" ON public.appointments;
 
+DROP POLICY IF EXISTS "Enable insert access for all users" ON public.appointments;
 CREATE POLICY "Enable insert access for all users" ON public.appointments
     FOR INSERT
     WITH CHECK (true);
@@ -31,6 +34,7 @@ CREATE POLICY "Enable insert access for all users" ON public.appointments
 -- Note: Hard delete still requires admin role
 DROP POLICY IF EXISTS "Enable delete access for admins" ON public.appointments;
 
+DROP POLICY IF EXISTS "Enable delete access for admins" ON public.appointments;
 CREATE POLICY "Enable delete access for admins" ON public.appointments
     FOR DELETE
     USING (true);

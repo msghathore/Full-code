@@ -53,106 +53,118 @@ ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies
 -- Transactions policies
+DROP POLICY IF EXISTS "Users can view their own transactions" ON transactions;
 CREATE POLICY "Users can view their own transactions" ON transactions
     FOR SELECT USING (auth.uid() = customer_id);
 
+DROP POLICY IF EXISTS "Staff can view all transactions" ON transactions;
 CREATE POLICY "Staff can view all transactions" ON transactions
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can create transactions" ON transactions;
 CREATE POLICY "Staff can create transactions" ON transactions
     FOR INSERT WITH CHECK (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can update transactions" ON transactions;
 CREATE POLICY "Staff can update transactions" ON transactions
     FOR UPDATE USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
 -- Transaction items policies
+DROP POLICY IF EXISTS "Users can view their transaction items" ON transaction_items;
 CREATE POLICY "Users can view their transaction items" ON transaction_items
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM transactions 
-            WHERE transactions.id = transaction_items.transaction_id 
+            SELECT 1 FROM transactions
+            WHERE transactions.id = transaction_items.transaction_id
             AND transactions.customer_id = auth.uid()
         )
     );
 
+DROP POLICY IF EXISTS "Staff can view all transaction items" ON transaction_items;
 CREATE POLICY "Staff can view all transaction items" ON transaction_items
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can create transaction items" ON transaction_items;
 CREATE POLICY "Staff can create transaction items" ON transaction_items
     FOR INSERT WITH CHECK (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can update transaction items" ON transaction_items;
 CREATE POLICY "Staff can update transaction items" ON transaction_items
     FOR UPDATE USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
 -- Payments policies
+DROP POLICY IF EXISTS "Users can view their payments" ON payments;
 CREATE POLICY "Users can view their payments" ON payments
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM transactions 
-            WHERE transactions.id = payments.transaction_id 
+            SELECT 1 FROM transactions
+            WHERE transactions.id = payments.transaction_id
             AND transactions.customer_id = auth.uid()
         )
     );
 
+DROP POLICY IF EXISTS "Staff can view all payments" ON payments;
 CREATE POLICY "Staff can view all payments" ON payments
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can create payments" ON payments;
 CREATE POLICY "Staff can create payments" ON payments
     FOR INSERT WITH CHECK (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );
 
+DROP POLICY IF EXISTS "Staff can update payments" ON payments;
 CREATE POLICY "Staff can update payments" ON payments
     FOR UPDATE USING (
         EXISTS (
-            SELECT 1 FROM staff 
-            WHERE staff.id = auth.uid() 
+            SELECT 1 FROM staff
+            WHERE staff.id = auth.uid()
             AND staff.role IN ('admin', 'manager', 'staff')
         )
     );

@@ -24,6 +24,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_exit_intent_claimed_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER trigger_exit_intent_claimed_at
   BEFORE UPDATE ON exit_intent_conversions
   FOR EACH ROW
@@ -33,11 +34,13 @@ CREATE TRIGGER trigger_exit_intent_claimed_at
 ALTER TABLE exit_intent_conversions ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow anonymous inserts (for tracking)
+DROP POLICY IF EXISTS "Allow anonymous insert for tracking" ON exit_intent_conversions;
 CREATE POLICY "Allow anonymous insert for tracking" ON exit_intent_conversions
   FOR INSERT
   WITH CHECK (true);
 
 -- Policy: Staff can view all conversions
+DROP POLICY IF EXISTS "Staff can view all conversions" ON exit_intent_conversions;
 CREATE POLICY "Staff can view all conversions" ON exit_intent_conversions
   FOR SELECT
   USING (

@@ -42,25 +42,32 @@ ALTER TABLE service_ratings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for user_preferences
+DROP POLICY IF EXISTS "Users can view their own preferences" ON user_preferences;
 CREATE POLICY "Users can view their own preferences" ON user_preferences
     FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own preferences" ON user_preferences;
 CREATE POLICY "Users can update their own preferences" ON user_preferences
     FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own preferences" ON user_preferences;
 CREATE POLICY "Users can insert their own preferences" ON user_preferences
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- RLS Policies for service_ratings
+DROP POLICY IF EXISTS "Users can view their own ratings" ON service_ratings;
 CREATE POLICY "Users can view their own ratings" ON service_ratings
     FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own ratings" ON service_ratings;
 CREATE POLICY "Users can insert their own ratings" ON service_ratings
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own ratings" ON service_ratings;
 CREATE POLICY "Users can update their own ratings" ON service_ratings
     FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Staff can view all ratings" ON service_ratings;
 CREATE POLICY "Staff can view all ratings" ON service_ratings
     FOR SELECT USING (
         EXISTS (
@@ -70,9 +77,11 @@ CREATE POLICY "Staff can view all ratings" ON service_ratings
     );
 
 -- RLS Policies for notifications
+DROP POLICY IF EXISTS "Users can view their own notifications" ON notifications;
 CREATE POLICY "Users can view their own notifications" ON notifications
     FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own notifications" ON notifications;
 CREATE POLICY "Users can update their own notifications" ON notifications
     FOR UPDATE USING (auth.uid() = user_id);
 
@@ -402,10 +411,12 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Create trigger for user_preferences updated_at
+DROP TRIGGER IF EXISTS update_user_preferences_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_user_preferences_updated_at
     BEFORE UPDATE ON user_preferences
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_service_ratings_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_service_ratings_updated_at
     BEFORE UPDATE ON service_ratings
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

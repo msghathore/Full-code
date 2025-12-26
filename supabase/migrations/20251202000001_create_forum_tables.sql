@@ -46,38 +46,49 @@ ALTER TABLE forum_replies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE forum_likes ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for forum_posts
+DROP POLICY IF EXISTS "Anyone can view published forum posts" ON forum_posts;
 CREATE POLICY "Anyone can view published forum posts" ON forum_posts
   FOR SELECT USING (is_published = TRUE);
 
+DROP POLICY IF EXISTS "Authenticated users can create forum posts" ON forum_posts;
 CREATE POLICY "Authenticated users can create forum posts" ON forum_posts
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Users can update their own posts" ON forum_posts;
 CREATE POLICY "Users can update their own posts" ON forum_posts
   FOR UPDATE USING (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Users can delete their own posts" ON forum_posts;
 CREATE POLICY "Users can delete their own posts" ON forum_posts
   FOR DELETE USING (auth.uid() = author_id);
 
 -- RLS Policies for forum_replies
+DROP POLICY IF EXISTS "Anyone can view forum replies" ON forum_replies;
 CREATE POLICY "Anyone can view forum replies" ON forum_replies
   FOR SELECT USING (TRUE);
 
+DROP POLICY IF EXISTS "Authenticated users can create forum replies" ON forum_replies;
 CREATE POLICY "Authenticated users can create forum replies" ON forum_replies
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Users can update their own replies" ON forum_replies;
 CREATE POLICY "Users can update their own replies" ON forum_replies
   FOR UPDATE USING (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Users can delete their own replies" ON forum_replies;
 CREATE POLICY "Users can delete their own replies" ON forum_replies
   FOR DELETE USING (auth.uid() = author_id);
 
 -- RLS Policies for forum_likes
+DROP POLICY IF EXISTS "Users can view their own likes" ON forum_likes;
 CREATE POLICY "Users can view their own likes" ON forum_likes
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Authenticated users can create likes" ON forum_likes;
 CREATE POLICY "Authenticated users can create likes" ON forum_likes
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own likes" ON forum_likes;
 CREATE POLICY "Users can delete their own likes" ON forum_likes
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -101,10 +112,12 @@ END;
 $$ language 'plpgsql';
 
 -- Triggers for updated_at
+DROP TRIGGER IF EXISTS update_forum_posts_updated_at ON forum_posts;
 CREATE TRIGGER update_forum_posts_updated_at
   BEFORE UPDATE ON forum_posts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_forum_replies_updated_at ON forum_replies;
 CREATE TRIGGER update_forum_replies_updated_at
   BEFORE UPDATE ON forum_replies
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

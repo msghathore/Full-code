@@ -29,30 +29,30 @@ BEGIN
     cart_items := transaction_data->'cart_items';
     payment_methods := transaction_data->'payment_methods';
     tip_amount_calc := COALESCE((transaction_data->>'tip_amount')::DECIMAL(10,2), 0);
-    
+
     -- Calculate totals from cart items
     FOR item IN SELECT * FROM jsonb_array_elements(cart_items)
     LOOP
-        total_amount_calc := total_amount_calc + 
+        total_amount_calc := total_amount_calc +
             ((item->>'price')::DECIMAL(10,2) * (item->>'quantity')::INTEGER);
-        discount_amount_calc := discount_amount_calc + 
+        discount_amount_calc := discount_amount_calc +
             COALESCE((item->>'discount')::DECIMAL(10,2), 0);
-        deposit_amount_calc := deposit_amount_calc + 
+        deposit_amount_calc := deposit_amount_calc +
             COALESCE((item->>'deposit_amount')::DECIMAL(10,2), 0);
     END LOOP;
-    
+
     -- Calculate tax (assuming 5% tax rate)
     tax_amount_calc := (total_amount_calc - discount_amount_calc) * 0.05;
-    
+
     -- Calculate total due amount
     final_due_amount_calc := total_amount_calc - discount_amount_calc + tax_amount_calc + tip_amount_calc - deposit_amount_calc;
-    
+
     -- Calculate total payment amount
     FOR payment IN SELECT * FROM jsonb_array_elements(payment_methods)
     LOOP
         payment_amount_calc := payment_amount_calc + (payment->>'amount')::DECIMAL(10,2);
     END LOOP;
-    
+
     -- Create the transaction
     INSERT INTO transactions (
         customer_id,
@@ -74,13 +74,13 @@ BEGIN
         tax_amount_calc,
         deposit_amount_calc,
         final_due_amount_calc,
-        CASE 
+        CASE
             WHEN payment_amount_calc >= final_due_amount_calc THEN 'PAID'
             ELSE 'PENDING'
         END,
         NOW()
     ) RETURNING id INTO transaction_id;
-    
+
     -- Insert transaction items
     FOR item IN SELECT * FROM jsonb_array_elements(cart_items)
     LOOP
@@ -96,17 +96,17 @@ BEGIN
             transaction_id,
             item->>'item_type',
             (item->>'item_id')::UUID,
-            CASE 
-                WHEN item ? 'service_provider_id' 
-                THEN (item->>'service_provider_id')::UUID 
-                ELSE NULL 
+            CASE
+                WHEN item ? 'service_provider_id'
+                THEN (item->>'service_provider_id')::UUID
+                ELSE NULL
             END,
             (item->>'quantity')::INTEGER,
             (item->>'price')::DECIMAL(10,2),
             COALESCE((item->>'discount')::DECIMAL(10,2), 0)
         );
     END LOOP;
-    
+
     -- Insert payments
     FOR payment IN SELECT * FROM jsonb_array_elements(payment_methods)
     LOOP
@@ -120,7 +120,7 @@ BEGIN
             (payment->>'amount')::DECIMAL(10,2)
         );
     END LOOP;
-    
+
     -- Return success result
     result := jsonb_build_object(
         'success', true,
@@ -132,14 +132,14 @@ BEGIN
         'deposit_amount', deposit_amount_calc,
         'final_due_amount', final_due_amount_calc,
         'payment_amount', payment_amount_calc,
-        'status', CASE 
+        'status', CASE
             WHEN payment_amount_calc >= final_due_amount_calc THEN 'PAID'
             ELSE 'PENDING'
         END
     );
-    
+
     RETURN result;
-    
+
 EXCEPTION
     WHEN OTHERS THEN
         -- Return error result

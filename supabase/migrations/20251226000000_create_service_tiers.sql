@@ -15,15 +15,12 @@ CREATE TABLE IF NOT EXISTS public.pricing_tiers (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Add RLS policies
 ALTER TABLE public.pricing_tiers ENABLE ROW LEVEL SECURITY;
-
 -- Public read access
 CREATE POLICY "Pricing tiers are viewable by everyone"
     ON public.pricing_tiers FOR SELECT
     USING (true);
-
 -- Admin write access (staff can insert/update/delete)
 CREATE POLICY "Pricing tiers are writable by staff"
     ON public.pricing_tiers FOR ALL
@@ -33,7 +30,6 @@ CREATE POLICY "Pricing tiers are writable by staff"
             WHERE staff.clerk_user_id = auth.jwt() ->> 'sub'
         )
     );
-
 -- Insert seed data for the three tiers
 INSERT INTO public.pricing_tiers (tier_name, tier_level, min_price, max_price, tagline, description, features, typical_services, upgrade_benefits, is_most_popular, display_order)
 VALUES
@@ -137,7 +133,6 @@ VALUES
         false,
         3
     );
-
 -- Create updated_at trigger
 CREATE OR REPLACE FUNCTION update_pricing_tiers_updated_at()
 RETURNS TRIGGER AS $$
@@ -146,11 +141,10 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS pricing_tiers_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER pricing_tiers_updated_at
     BEFORE UPDATE ON public.pricing_tiers
     FOR EACH ROW
     EXECUTE FUNCTION update_pricing_tiers_updated_at();
-
 -- Add helpful comment
 COMMENT ON TABLE public.pricing_tiers IS 'Pricing tier levels (Basic, Premium, Luxury) for transparent pricing and value communication';

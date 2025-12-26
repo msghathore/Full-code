@@ -62,16 +62,19 @@ CREATE INDEX idx_pending_checkout_staff_id ON pending_checkout(staff_id);
 ALTER TABLE pending_checkout ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow all operations for authenticated users (staff)
+DROP POLICY IF EXISTS "Staff can manage pending checkouts" ON pending_checkout;
 CREATE POLICY "Staff can manage pending checkouts" ON pending_checkout
     FOR ALL
     USING (true)
     WITH CHECK (true);
 
 -- Policy: Allow anon/public to read and update (for customer tablet app)
+DROP POLICY IF EXISTS "Customer tablet can read pending checkouts" ON pending_checkout;
 CREATE POLICY "Customer tablet can read pending checkouts" ON pending_checkout
     FOR SELECT
     USING (status IN ('pending', 'viewed', 'processing'));
 
+DROP POLICY IF EXISTS "Customer tablet can update pending checkouts" ON pending_checkout;
 CREATE POLICY "Customer tablet can update pending checkouts" ON pending_checkout
     FOR UPDATE
     USING (status IN ('pending', 'viewed', 'processing'))
@@ -112,6 +115,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_set_session_code ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER trigger_set_session_code
     BEFORE INSERT ON pending_checkout
     FOR EACH ROW
@@ -126,6 +130,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_pending_checkout_timestamp ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER trigger_update_pending_checkout_timestamp
     BEFORE UPDATE ON pending_checkout
     FOR EACH ROW

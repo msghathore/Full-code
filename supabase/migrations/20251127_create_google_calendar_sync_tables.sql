@@ -61,11 +61,13 @@ ON public.calendar_event_mappings FOR SELECT
 USING (staff_id = (auth.jwt() ->> 'staff_id')::UUID);
 
 -- Add updated_at triggers for new tables
+DROP TRIGGER IF EXISTS update_staff_google_calendar_integrations_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_staff_google_calendar_integrations_updated_at
 BEFORE UPDATE ON public.staff_google_calendar_integrations
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_calendar_event_mappings_updated_at ON table_name;  -- Note: will be applied for the actual table
 CREATE TRIGGER update_calendar_event_mappings_updated_at
 BEFORE UPDATE ON public.calendar_event_mappings
 FOR EACH ROW

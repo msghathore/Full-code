@@ -41,23 +41,29 @@ CREATE INDEX IF NOT EXISTS idx_products_featured ON products(featured);
 ALTER TABLE product_reviews ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for product_reviews
+DROP POLICY IF EXISTS "Anyone can view approved reviews" ON product_reviews;
 CREATE POLICY "Anyone can view approved reviews" ON product_reviews
     FOR SELECT USING (is_approved = true);
 
+DROP POLICY IF EXISTS "Anyone can insert reviews" ON product_reviews;
 CREATE POLICY "Anyone can insert reviews" ON product_reviews
     FOR INSERT WITH CHECK (true);
 
 -- Update products RLS to allow staff management
 DROP POLICY IF EXISTS "Anyone can view active products" ON products;
+DROP POLICY IF EXISTS "Anyone can view products" ON products;
 CREATE POLICY "Anyone can view products" ON products
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Staff can insert products" ON products;
 CREATE POLICY "Staff can insert products" ON products
     FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Staff can update products" ON products;
 CREATE POLICY "Staff can update products" ON products
     FOR UPDATE USING (true);
 
+DROP POLICY IF EXISTS "Staff can delete products" ON products;
 CREATE POLICY "Staff can delete products" ON products
     FOR DELETE USING (true);
 

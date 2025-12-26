@@ -8,22 +8,26 @@ DROP POLICY IF EXISTS "Enable insert access for admins" ON public.staff;
 DROP POLICY IF EXISTS "Enable delete access for admins" ON public.staff;
 
 -- Create new policies that allow anon access (admin panel uses custom auth)
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.staff;
 CREATE POLICY "Enable read access for all users" ON public.staff
     FOR SELECT
     TO anon, authenticated
     USING (true);
 
+DROP POLICY IF EXISTS "Enable insert access for all users" ON public.staff;
 CREATE POLICY "Enable insert access for all users" ON public.staff
     FOR INSERT
     TO anon, authenticated
     WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Enable update access for all users" ON public.staff;
 CREATE POLICY "Enable update access for all users" ON public.staff
     FOR UPDATE
     TO anon, authenticated
     USING (true)
     WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Enable delete access for all users" ON public.staff;
 CREATE POLICY "Enable delete access for all users" ON public.staff
     FOR DELETE
     TO anon, authenticated
@@ -32,6 +36,7 @@ CREATE POLICY "Enable delete access for all users" ON public.staff
 -- Also fix staff_permissions policies to allow anon write access
 DROP POLICY IF EXISTS "Enable write access for service role" ON public.staff_permissions;
 
+DROP POLICY IF EXISTS "Enable write access for all users" ON public.staff_permissions;
 CREATE POLICY "Enable write access for all users" ON public.staff_permissions
     FOR ALL
     TO anon, authenticated

@@ -36,28 +36,36 @@ ALTER TABLE public.instagram_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.instagram_stories ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for instagram_posts
+DROP POLICY IF EXISTS "Anyone can view published instagram posts" ON public.instagram_posts;
 CREATE POLICY "Anyone can view published instagram posts" ON public.instagram_posts
     FOR SELECT USING (is_published = true);
 
+DROP POLICY IF EXISTS "Authenticated users can insert instagram posts" ON public.instagram_posts;
 CREATE POLICY "Authenticated users can insert instagram posts" ON public.instagram_posts
     FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Users can update their own instagram posts" ON public.instagram_posts;
 CREATE POLICY "Users can update their own instagram posts" ON public.instagram_posts
     FOR UPDATE USING (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Users can delete their own instagram posts" ON public.instagram_posts;
 CREATE POLICY "Users can delete their own instagram posts" ON public.instagram_posts
     FOR DELETE USING (auth.uid() = created_by);
 
 -- Create RLS policies for instagram_stories
+DROP POLICY IF EXISTS "Anyone can view active instagram stories" ON public.instagram_stories;
 CREATE POLICY "Anyone can view active instagram stories" ON public.instagram_stories
     FOR SELECT USING (is_active = true AND expires_at > NOW());
 
+DROP POLICY IF EXISTS "Authenticated users can insert instagram stories" ON public.instagram_stories;
 CREATE POLICY "Authenticated users can insert instagram stories" ON public.instagram_stories
     FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Users can update their own instagram stories" ON public.instagram_stories;
 CREATE POLICY "Users can update their own instagram stories" ON public.instagram_stories
     FOR UPDATE USING (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Users can delete their own instagram stories" ON public.instagram_stories;
 CREATE POLICY "Users can delete their own instagram stories" ON public.instagram_stories
     FOR DELETE USING (auth.uid() = created_by);
 

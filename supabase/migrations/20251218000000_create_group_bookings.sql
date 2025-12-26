@@ -214,42 +214,54 @@ ALTER TABLE group_packages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE group_package_services ENABLE ROW LEVEL SECURITY;
 
 -- Public can view active packages and pricing
+DROP POLICY IF EXISTS "Anyone can view active group packages" ON group_packages;
 CREATE POLICY "Anyone can view active group packages" ON group_packages
   FOR SELECT USING (is_active = TRUE);
 
+DROP POLICY IF EXISTS "Anyone can view active pricing tiers" ON group_pricing_tiers;
 CREATE POLICY "Anyone can view active pricing tiers" ON group_pricing_tiers
   FOR SELECT USING (is_active = TRUE);
 
+DROP POLICY IF EXISTS "Anyone can view package services" ON group_package_services;
 CREATE POLICY "Anyone can view package services" ON group_package_services
   FOR SELECT USING (TRUE);
 
 -- Public can create group bookings
+DROP POLICY IF EXISTS "Anyone can create group bookings" ON group_bookings;
 CREATE POLICY "Anyone can create group bookings" ON group_bookings
   FOR INSERT WITH CHECK (TRUE);
 
+DROP POLICY IF EXISTS "Anyone can view their own group bookings" ON group_bookings;
 CREATE POLICY "Anyone can view their own group bookings" ON group_bookings
   FOR SELECT USING (TRUE);
 
+DROP POLICY IF EXISTS "Anyone can update group bookings" ON group_bookings;
 CREATE POLICY "Anyone can update group bookings" ON group_bookings
   FOR UPDATE USING (TRUE);
 
 -- Group members policies
+DROP POLICY IF EXISTS "Anyone can create group members" ON group_members;
 CREATE POLICY "Anyone can create group members" ON group_members
   FOR INSERT WITH CHECK (TRUE);
 
+DROP POLICY IF EXISTS "Anyone can view group members" ON group_members;
 CREATE POLICY "Anyone can view group members" ON group_members
   FOR SELECT USING (TRUE);
 
+DROP POLICY IF EXISTS "Anyone can update group members" ON group_members;
 CREATE POLICY "Anyone can update group members" ON group_members
   FOR UPDATE USING (TRUE);
 
+DROP POLICY IF EXISTS "Anyone can delete group members" ON group_members;
 CREATE POLICY "Anyone can delete group members" ON group_members
   FOR DELETE USING (TRUE);
 
 -- Staff full access policies
+DROP POLICY IF EXISTS "Staff can manage group packages" ON group_packages;
 CREATE POLICY "Staff can manage group packages" ON group_packages
   FOR ALL USING (TRUE);
 
+DROP POLICY IF EXISTS "Staff can manage pricing tiers" ON group_pricing_tiers;
 CREATE POLICY "Staff can manage pricing tiers" ON group_pricing_tiers
   FOR ALL USING (TRUE);
 

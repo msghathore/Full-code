@@ -54,14 +54,17 @@ ALTER TABLE public.video_tutorials ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for Row Level Security
 -- Allow everyone to view published beauty tips
+DROP POLICY IF EXISTS "Allow everyone to view published beauty tips" ON public.beauty_tips;
 CREATE POLICY "Allow everyone to view published beauty tips" ON public.beauty_tips
     FOR SELECT USING (is_published = true);
 
 -- Allow authenticated users to insert beauty tips
+DROP POLICY IF EXISTS "Allow authenticated users to create beauty tips" ON public.beauty_tips;
 CREATE POLICY "Allow authenticated users to create beauty tips" ON public.beauty_tips
     FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- Allow authenticated users to update beauty tips they created or all if admin
+DROP POLICY IF EXISTS "Allow authenticated users to update beauty tips" ON public.beauty_tips;
 CREATE POLICY "Allow authenticated users to update beauty tips" ON public.beauty_tips
     FOR UPDATE USING (
         auth.role() = 'authenticated' AND (
@@ -71,6 +74,7 @@ CREATE POLICY "Allow authenticated users to update beauty tips" ON public.beauty
     );
 
 -- Allow authenticated users to delete beauty tips they created or all if admin
+DROP POLICY IF EXISTS "Allow authenticated users to delete beauty tips" ON public.beauty_tips;
 CREATE POLICY "Allow authenticated users to delete beauty tips" ON public.beauty_tips
     FOR DELETE USING (
         auth.role() = 'authenticated' AND (
@@ -80,14 +84,17 @@ CREATE POLICY "Allow authenticated users to delete beauty tips" ON public.beauty
     );
 
 -- Allow everyone to view published video tutorials
+DROP POLICY IF EXISTS "Allow everyone to view published video tutorials" ON public.video_tutorials;
 CREATE POLICY "Allow everyone to view published video tutorials" ON public.video_tutorials
     FOR SELECT USING (is_published = true);
 
 -- Allow authenticated users to insert video tutorials
+DROP POLICY IF EXISTS "Allow authenticated users to create video tutorials" ON public.video_tutorials;
 CREATE POLICY "Allow authenticated users to create video tutorials" ON public.video_tutorials
     FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- Allow authenticated users to update video tutorials they created or all if admin
+DROP POLICY IF EXISTS "Allow authenticated users to update video tutorials" ON public.video_tutorials;
 CREATE POLICY "Allow authenticated users to update video tutorials" ON public.video_tutorials
     FOR UPDATE USING (
         auth.role() = 'authenticated' AND (
@@ -97,6 +104,7 @@ CREATE POLICY "Allow authenticated users to update video tutorials" ON public.vi
     );
 
 -- Allow authenticated users to delete video tutorials they created or all if admin
+DROP POLICY IF EXISTS "Allow authenticated users to delete video tutorials" ON public.video_tutorials;
 CREATE POLICY "Allow authenticated users to delete video tutorials" ON public.video_tutorials
     FOR DELETE USING (
         auth.role() = 'authenticated' AND (
@@ -106,11 +114,13 @@ CREATE POLICY "Allow authenticated users to delete video tutorials" ON public.vi
     );
 
 -- Create triggers to automatically update updated_at
+DROP TRIGGER IF EXISTS update_beauty_tips_updated_at ON public.beauty_tips;
 CREATE TRIGGER update_beauty_tips_updated_at
     BEFORE UPDATE ON public.beauty_tips
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_video_tutorials_updated_at ON public.video_tutorials;
 CREATE TRIGGER update_video_tutorials_updated_at
     BEFORE UPDATE ON public.video_tutorials
     FOR EACH ROW

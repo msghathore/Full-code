@@ -8,6 +8,7 @@ DROP POLICY IF EXISTS "Enable update access for all users" ON public.staff;
 DROP POLICY IF EXISTS "Enable delete access for all users" ON public.staff;
 
 -- Staff can read their own data and admins can read all
+DROP POLICY IF EXISTS "Staff can read own data" ON public.staff;
 CREATE POLICY "Staff can read own data" ON public.staff
     FOR SELECT
     TO authenticated
@@ -21,6 +22,7 @@ CREATE POLICY "Staff can read own data" ON public.staff
     );
 
 -- Only admins can insert new staff
+DROP POLICY IF EXISTS "Only admins can create staff" ON public.staff;
 CREATE POLICY "Only admins can create staff" ON public.staff
     FOR INSERT
     TO authenticated
@@ -33,6 +35,7 @@ CREATE POLICY "Only admins can create staff" ON public.staff
     );
 
 -- Staff can update their own profile, admins can update anyone
+DROP POLICY IF EXISTS "Staff can update own data" ON public.staff;
 CREATE POLICY "Staff can update own data" ON public.staff
     FOR UPDATE
     TO authenticated
@@ -54,6 +57,7 @@ CREATE POLICY "Staff can update own data" ON public.staff
     );
 
 -- Only admins can delete staff
+DROP POLICY IF EXISTS "Only admins can delete staff" ON public.staff;
 CREATE POLICY "Only admins can delete staff" ON public.staff
     FOR DELETE
     TO authenticated
@@ -70,18 +74,21 @@ DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.app
 DROP POLICY IF EXISTS "Authenticated users can insert appointments" ON public.appointments;
 
 -- Public can read appointments (for booking calendar)
+DROP POLICY IF EXISTS "Public can view appointment times" ON public.appointments;
 CREATE POLICY "Public can view appointment times" ON public.appointments
     FOR SELECT
     TO anon, authenticated
     USING (true);
 
 -- Authenticated users can create appointments
+DROP POLICY IF EXISTS "Authenticated can create appointments" ON public.appointments;
 CREATE POLICY "Authenticated can create appointments" ON public.appointments
     FOR INSERT
     TO anon, authenticated
     WITH CHECK (true);
 
 -- Only assigned staff or admins can update appointments
+DROP POLICY IF EXISTS "Staff can update assigned appointments" ON public.appointments;
 CREATE POLICY "Staff can update assigned appointments" ON public.appointments
     FOR UPDATE
     TO authenticated
@@ -97,11 +104,13 @@ CREATE POLICY "Staff can update assigned appointments" ON public.appointments
 -- Services: Public read, admin write
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.services;
 
+DROP POLICY IF EXISTS "Public can view services" ON public.services;
 CREATE POLICY "Public can view services" ON public.services
     FOR SELECT
     TO anon, authenticated
     USING (true);
 
+DROP POLICY IF EXISTS "Only admins can modify services" ON public.services;
 CREATE POLICY "Only admins can modify services" ON public.services
     FOR ALL
     TO authenticated
@@ -114,6 +123,7 @@ CREATE POLICY "Only admins can modify services" ON public.services
     );
 
 -- Customers: Staff can read customers they've served, admins can read all
+DROP POLICY IF EXISTS "Staff can view their customers" ON public.customers;
 CREATE POLICY "Staff can view their customers" ON public.customers
     FOR SELECT
     TO authenticated
@@ -137,12 +147,14 @@ DROP POLICY IF EXISTS "Anyone can insert audit logs" ON public.access_audit_log;
 DROP POLICY IF EXISTS "Admins can view audit logs" ON public.access_audit_log;
 
 -- Anyone can insert audit logs (for tracking)
+DROP POLICY IF EXISTS "Insert audit logs" ON public.access_audit_log;
 CREATE POLICY "Insert audit logs" ON public.access_audit_log
     FOR INSERT
     TO anon, authenticated
     WITH CHECK (true);
 
 -- Only admins can view audit logs
+DROP POLICY IF EXISTS "Admins view audit logs" ON public.access_audit_log;
 CREATE POLICY "Admins view audit logs" ON public.access_audit_log
     FOR SELECT
     TO authenticated
