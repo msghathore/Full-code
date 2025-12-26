@@ -106,8 +106,8 @@ const Marketing: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-amber-600" />
+              <div className="p-2 bg-white/10 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               </div>
               <div>
                 <div className="text-2xl font-bold">12.5%</div>
@@ -120,8 +120,8 @@ const Marketing: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Target className="h-5 w-5 text-orange-600" />
+              <div className="p-2 bg-white/10 rounded-lg">
+                <Target className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               </div>
               <div>
                 <div className="text-2xl font-bold">3</div>
@@ -223,7 +223,7 @@ const Marketing: React.FC = () => {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-6 text-center">
-            <Calendar className="h-8 w-8 text-amber-600 mx-auto mb-3" />
+            <Calendar className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mx-auto mb-3" />
             <h3 className="font-medium mb-2">Loyalty Program</h3>
             <p className="text-sm text-gray-500 mb-4">Set up automated loyalty rewards</p>
             <Button variant="outline" size="sm" onClick={() => toast({title: "Coming Soon", description: "Loyalty program features coming soon"})}>

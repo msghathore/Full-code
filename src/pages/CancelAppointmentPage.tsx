@@ -273,9 +273,9 @@ export default function CancelAppointmentPage() {
               </div>
 
               {appointment.deposit_amount > 0 && (
-                <Alert className="bg-amber-900/20 border-amber-500">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <AlertDescription className="text-amber-200">
+                <Alert className="bg-white/10/20 border-white/30">
+                  <AlertTriangle className="h-4 w-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                  <AlertDescription className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                     <strong>Deposit Paid:</strong> ${appointment.deposit_amount.toFixed(2)}
                     <br />
                     <span className="text-sm">Refunds are subject to our cancellation policy</span>
@@ -316,7 +316,7 @@ export default function CancelAppointmentPage() {
             </CardHeader>
             <CardContent className="text-sm text-gray-300 space-y-2">
               <p>• Cancellations made 24+ hours before appointment: <strong className="text-white">Full refund</strong></p>
-              <p>• Cancellations made 12-24 hours before: <strong className="text-amber-400">50% refund</strong></p>
+              <p>• Cancellations made 12-24 hours before: <strong className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">50% refund</strong></p>
               <p>• Cancellations made less than 12 hours before: <strong className="text-red-400">No refund</strong></p>
               <p className="text-xs text-gray-400 mt-4">
                 Refunds are processed within 5-7 business days

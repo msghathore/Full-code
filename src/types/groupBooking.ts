@@ -225,7 +225,7 @@ export const GROUP_STATUS_COLORS: Record<GroupStatus, string> = {
   in_progress: 'bg-slate-50 text-slate-800',
   completed: 'bg-gray-100 text-gray-800',
   cancelled: 'bg-red-100 text-red-800',
-  no_show: 'bg-orange-100 text-orange-800',
+  no_show: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
 };
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {

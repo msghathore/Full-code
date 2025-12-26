@@ -264,7 +264,7 @@ export const BookingUpsells = ({
       case 'bundle':
         return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
       case 'addon':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/50';
+        return 'bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30/50';
       case 'upgrade':
         return 'bg-violet-500/20 text-violet-400 border-violet-500/50';
       case 'complementary':

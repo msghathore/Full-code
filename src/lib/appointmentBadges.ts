@@ -36,7 +36,7 @@ export const RETENTION_BADGES = {
 
 export const PAYMENT_ICONS = {
   paid: { icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-100', tooltip: 'Paid in full' },
-  deposit: { icon: CreditCard, color: 'text-orange-600', bgColor: 'bg-orange-100', tooltip: 'Deposit placed' },
+  deposit: { icon: CreditCard, color: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]', bgColor: 'bg-white/10', tooltip: 'Deposit placed' },
   package: { icon: Package, color: 'text-black', bgColor: 'bg-slate-50', tooltip: 'Paid with package' },
   membership: { icon: Users, color: 'text-black', bgColor: 'bg-slate-50', tooltip: 'Paid with membership' },
   pending: { icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-100', tooltip: 'Payment pending' }

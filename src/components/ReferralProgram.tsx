@@ -224,7 +224,7 @@ export const ReferralProgram = () => {
 
         <Card className="bg-black/50 border-white/10">
           <CardContent className="p-6 text-center">
-            <Gift className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+            <Gift className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mx-auto mb-2" />
             <div className="text-2xl font-bold text-white">{availablePoints}</div>
             <div className="text-sm text-gray-400">Available Points</div>
           </CardContent>
@@ -258,7 +258,7 @@ export const ReferralProgram = () => {
 
               <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700">
+                  <Button className="w-full bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30">
                     <Share2 className="w-4 h-4 mr-2" />
                     Send Invitation
                   </Button>
@@ -282,7 +282,7 @@ export const ReferralProgram = () => {
                     </div>
                     <Button
                       onClick={handleSendInvite}
-                      className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700"
+                      className="w-full bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30"
                     >
                       Send Invitation
                     </Button>
@@ -363,7 +363,7 @@ export const ReferralProgram = () => {
                       <Button
                         onClick={() => handleClaimReward(reward.id)}
                         disabled={availablePoints < reward.pointsRequired}
-                        className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700 disabled:opacity-50"
+                        className="w-full bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30 disabled:opacity-50"
                       >
                         {availablePoints >= reward.pointsRequired ? 'Claim Reward' : 'Not Enough Points'}
                       </Button>

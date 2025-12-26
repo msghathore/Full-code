@@ -204,14 +204,18 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-black border-2 border-emerald-500 rounded-lg shadow-2xl relative overflow-hidden">
+            <div className="bg-black border-2 border-white rounded-lg shadow-2xl relative overflow-hidden"
+              style={{
+                boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1)'
+              }}
+            >
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-emerald-500/20 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 pointer-events-none" />
 
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors z-10"
+                className="absolute top-4 right-4 text-white hover:text-white/80 transition-colors z-10 bg-black/50 hover:bg-black/70 rounded-full p-2"
                 aria-label="Close popup"
               >
                 <X className="w-6 h-6" />
@@ -221,8 +225,8 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                 {/* Icon */}
                 <div className="flex justify-center mb-4">
                   <div className="relative">
-                    <Gift className="w-16 h-16 text-emerald-500" />
-                    <Sparkles className="w-6 h-6 text-emerald-400 absolute -top-2 -right-2 animate-pulse" />
+                    <Gift className="w-16 h-16 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    <Sparkles className="w-6 h-6 text-white absolute -top-2 -right-2 animate-pulse drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                   </div>
                 </div>
 
@@ -236,26 +240,26 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                   WAIT! Don't Miss This
                 </h2>
                 <h3
-                  className="text-2xl md:text-3xl font-serif font-bold text-center mb-6 text-emerald-500"
+                  className="text-2xl md:text-3xl font-serif font-bold text-center mb-6 text-white"
                   style={{
-                    textShadow: '0 0 10px rgba(16,185,129,0.6), 0 0 20px rgba(16,185,129,0.4)'
+                    textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)'
                   }}
                 >
                   Special Offer
                 </h3>
 
                 {/* Offer details */}
-                <div className="bg-slate-950 border border-emerald-500/30 rounded-lg p-6 mb-6">
+                <div className="bg-slate-950 border border-white/30 rounded-lg p-6 mb-6">
                   <p className="text-white text-center text-lg mb-4">
-                    Get <span className="text-emerald-500 font-bold text-2xl">20% OFF</span> your first booking
+                    Get <span className="font-bold text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">20% OFF</span> your first booking
                   </p>
                   <p className="text-white/80 text-center text-sm">
-                    OR choose a <span className="text-emerald-400 font-semibold">FREE upgrade</span> to premium services
+                    OR choose a <span className="text-white font-semibold drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">FREE upgrade</span> to premium services
                   </p>
                 </div>
 
                 {/* Countdown timer */}
-                <div className="flex items-center justify-center gap-2 mb-6 text-amber-500">
+                <div className="flex items-center justify-center gap-2 mb-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                   <Clock className="w-5 h-5 animate-pulse" />
                   <span className="font-mono text-xl font-bold">
                     Offer expires in {formatTime(timeRemaining)}
@@ -270,7 +274,7 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-slate-950 border-emerald-500/50 text-white placeholder:text-white/40 focus:border-emerald-500 h-12 text-center"
+                      className="bg-slate-950 border-white/50 text-white placeholder:text-white/40 focus:border-white focus:ring-2 focus:ring-white/50 h-12 text-center"
                       required
                       disabled={isSubmitting}
                     />
@@ -278,7 +282,10 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
 
                   <Button
                     type="submit"
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold h-12 text-lg transition-all transform hover:scale-105"
+                    className="w-full bg-white hover:bg-white/90 text-black font-bold h-12 text-lg transition-all transform hover:scale-105"
+                    style={{
+                      boxShadow: '0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)'
+                    }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Claiming Offer...' : 'Claim My Exclusive Offer'}

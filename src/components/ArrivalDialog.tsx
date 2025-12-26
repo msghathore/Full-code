@@ -72,13 +72,13 @@ export function ArrivalDialog({
       };
     } else if (minutesLate <= 5) {
       return {
-        icon: <Clock className="w-5 h-5 text-amber-500" />,
+        icon: <Clock className="w-5 h-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />,
         message: 'Slightly late, but should be fine.',
         variant: 'default' as const
       };
     } else if (minutesLate <= 15) {
       return {
-        icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
+        icon: <AlertTriangle className="w-5 h-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />,
         message: 'Moderately late. Service may be shortened.',
         variant: 'destructive' as const
       };
@@ -140,7 +140,7 @@ export function ArrivalDialog({
               variant="outline"
               size="sm"
               onClick={() => setMinutesLate(5)}
-              className={minutesLate === 5 ? 'bg-amber-100 border-amber-500' : ''}
+              className={minutesLate === 5 ? 'bg-white/10 border-white/30' : ''}
             >
               5 min
             </Button>
@@ -149,7 +149,7 @@ export function ArrivalDialog({
               variant="outline"
               size="sm"
               onClick={() => setMinutesLate(10)}
-              className={minutesLate === 10 ? 'bg-amber-100 border-amber-500' : ''}
+              className={minutesLate === 10 ? 'bg-white/10 border-white/30' : ''}
             >
               10 min
             </Button>

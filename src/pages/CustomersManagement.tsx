@@ -186,7 +186,7 @@ const CustomersManagement = () => {
   const getSegmentColor = (segment: string) => {
     switch (segment.toLowerCase()) {
       case 'vip':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+        return 'bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30/30';
       case 'regular':
         return 'bg-slate-800/20 text-slate-700 border-gray-500/30';
       case 'new':
@@ -238,7 +238,7 @@ const CustomersManagement = () => {
             <p className="text-xs text-muted-foreground">Bookings</p>
           </div>
           <div className="text-center p-3 bg-white/5 rounded-lg">
-            <Award className="h-5 w-5 mx-auto mb-1 text-amber-400" />
+            <Award className="h-5 w-5 mx-auto mb-1 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
             <p className="text-lg font-bold luxury-glow">{customer.loyalty_points || 0}</p>
             <p className="text-xs text-muted-foreground">Points</p>
           </div>

@@ -317,7 +317,7 @@ const StaffScheduling = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">Industry avg: 12min</p>
                   </div>
-                  <Clock className="h-8 w-8 text-amber-400" />
+                  <Clock className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                 </div>
               </CardContent>
             </Card>

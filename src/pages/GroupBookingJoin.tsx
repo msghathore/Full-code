@@ -277,7 +277,7 @@ export default function GroupBookingJoin() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5 text-amber-500" />
+                  <Users className="w-5 h-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                   <div>
                     <p className="text-sm text-gray-500">Group Size</p>
                     <p className="font-medium">
@@ -316,9 +316,9 @@ export default function GroupBookingJoin() {
 
           {/* Spots remaining warning */}
           {spotsRemaining <= 2 && spotsRemaining > 0 && (
-            <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-orange-600" />
-              <p className="text-orange-800">
+            <div className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+              <p className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                 Only {spotsRemaining} spot{spotsRemaining === 1 ? '' : 's'} remaining!
               </p>
             </div>

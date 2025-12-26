@@ -111,7 +111,7 @@ export const LoyaltyProgram = () => {
 
   const getTierInfo = (tier: string) => {
     const tiers = {
-      Bronze: { min: 0, max: 499, color: 'bg-amber-600' },
+      Bronze: { min: 0, max: 499, color: 'bg-white/10' },
       Silver: { min: 500, max: 999, color: 'bg-gray-400' },
       Gold: { min: 1000, max: 1999, color: 'bg-yellow-500' },
       Platinum: { min: 2000, max: Infinity, color: 'bg-red-500' }
@@ -341,15 +341,15 @@ export const LoyaltyProgram = () => {
       <Card className="frosted-glass border-white/10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-amber-400" />
+            <Trophy className="w-6 h-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
             Tier Benefits
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="text-center p-4">
-              <div className="w-12 h-12 bg-amber-600/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-amber-400 font-bold">B</span>
+              <div className="w-12 h-12 bg-white/10/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-bold">B</span>
               </div>
               <h3 className="font-medium mb-1">Bronze</h3>
               <p className="text-xs text-muted-foreground">Base benefits</p>

@@ -246,7 +246,7 @@ const RevenueTracking = () => {
                     <p className="text-2xl font-bold luxury-glow">{formatCurrency(kpis?.avgRevenuePerDay || 0)}</p>
                     <p className="text-xs text-muted-foreground">{(kpis?.avgBookingsPerDay || 0).toFixed(1)} bookings/day</p>
                   </div>
-                  <BarChart3 className="h-8 w-8 text-amber-400" />
+                  <BarChart3 className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                 </div>
               </CardContent>
             </Card>
@@ -702,7 +702,7 @@ const RevenueTracking = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <TrendingUp className="h-8 w-8 text-amber-400" />
+                      <TrendingUp className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       <div>
                         <h3 className="text-lg font-semibold">Aggressive Growth</h3>
                         <p className="text-sm text-muted-foreground">22% monthly growth</p>

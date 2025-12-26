@@ -193,7 +193,7 @@ export const UGCGallery = () => {
         {isSignedIn ? (
           <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700">
+              <Button className="bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30">
                 <Upload className="w-4 h-4 mr-2" />
                 Share Your Story
               </Button>
@@ -270,7 +270,7 @@ export const UGCGallery = () => {
               <Button
                 onClick={handleSubmitPost}
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -286,7 +286,7 @@ export const UGCGallery = () => {
         </Dialog>
         ) : (
           <Button
-            className="bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700"
+            className="bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30"
             onClick={() => {
               toast({
                 title: "Sign In Required",

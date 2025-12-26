@@ -100,8 +100,8 @@ const Reports: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-100 rounded-lg">
-            <BarChart3 className="h-6 w-6 text-orange-600" />
+          <div className="p-2 bg-white/10 rounded-lg">
+            <BarChart3 className="h-6 w-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
@@ -113,7 +113,7 @@ const Reports: React.FC = () => {
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button onClick={handleGenerateReport} className="bg-orange-600 hover:bg-orange-700">
+          <Button onClick={handleGenerateReport} className="bg-white/10 hover:bg-white/10">
             <BarChart3 className="h-4 w-4 mr-2" />
             Generate Report
           </Button>
@@ -127,8 +127,8 @@ const Reports: React.FC = () => {
           const colorClasses = {
             green: 'bg-green-100 text-green-600',
             blue: 'bg-slate-50 text-black',
-            amber: 'bg-amber-100 text-amber-600',
-            orange: 'bg-orange-100 text-orange-600'
+            amber: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
+            orange: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]'
           };
 
           return (

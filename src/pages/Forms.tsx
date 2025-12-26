@@ -62,15 +62,15 @@ const Forms: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-amber-100 rounded-lg">
-            <FileText className="h-6 w-6 text-amber-600" />
+          <div className="p-2 bg-white/10 rounded-lg">
+            <FileText className="h-6 w-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Forms</h1>
             <p className="text-gray-600">Create and manage digital forms</p>
           </div>
         </div>
-        <Button onClick={handleCreateForm} className="bg-amber-600 hover:bg-amber-700">
+        <Button onClick={handleCreateForm} className="bg-white/10 hover:bg-white/10">
           <Plus className="h-4 w-4 mr-2" />
           New Form
         </Button>

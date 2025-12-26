@@ -180,8 +180,8 @@ export function ServiceRecommendations({
     switch (type) {
       case 'complementary': return 'bg-slate-800/20 text-white';
       case 'popular': return 'bg-green-500/20 text-green-300';
-      case 'seasonal': return 'bg-orange-500/20 text-orange-300';
-      case 'personalized': return 'bg-amber-500/20 text-amber-300';
+      case 'seasonal': return 'bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]';
+      case 'personalized': return 'bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]';
       default: return 'bg-gray-500/20 text-gray-300';
     }
   };

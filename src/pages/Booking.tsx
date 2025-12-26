@@ -1107,24 +1107,24 @@ const Booking = () => {
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 className="mb-6 flex justify-center"
               >
-                <div className="bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-emerald-500/20 border border-emerald-500/30 rounded-xl px-6 py-4 flex items-center gap-4 backdrop-blur-sm">
+                <div className="bg-gradient-to-r from-white/10 via-white/5 to-white/10 border border-white/30 rounded-xl px-6 py-4 flex items-center gap-4 backdrop-blur-sm">
                   <motion.div
                     animate={{ rotate: [0, 10, -10, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
                   >
-                    <Sparkles className="w-5 h-5 text-emerald-400" />
+                    <Sparkles className="w-5 h-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                   </motion.div>
                   <div className="text-center">
-                    <p className="text-emerald-300 font-medium text-sm md:text-base">
+                    <p className="text-white font-medium text-sm md:text-base drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">
                       Welcome back! We've saved your booking progress.
                     </p>
-                    <p className="text-emerald-400/70 text-xs md:text-sm mt-0.5">
+                    <p className="text-white/70 text-xs md:text-sm mt-0.5">
                       Continue where you left off or start fresh
                     </p>
                   </div>
                   <button
                     onClick={() => setShowResumeBanner(false)}
-                    className="text-emerald-400/60 hover:text-emerald-300 transition-colors p-1"
+                    className="text-white/60 hover:text-white transition-colors p-1"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -2179,21 +2179,21 @@ const Booking = () => {
                         return (
                           <div className="space-y-3">
                             {/* Value Breakdown */}
-                            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-lg p-3">
+                            <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/30 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
-                                <TrendingUp className="w-4 h-4 text-emerald-400" />
-                                <span className="text-emerald-400 font-bold text-xs">MEMBER PRICING</span>
+                                <TrendingUp className="w-4 h-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                                <span className="text-white font-bold text-xs drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">MEMBER PRICING</span>
                               </div>
                               <div className="space-y-1 text-xs">
                                 <div className="flex justify-between text-white/60">
                                   <span>Regular Price:</span>
                                   <span className="line-through">${regularPrice.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-emerald-400 font-semibold">
+                                <div className="flex justify-between text-white font-semibold drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
                                   <span>Member Price:</span>
                                   <span>${subtotal.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-emerald-400 text-[10px]">
+                                <div className="flex justify-between text-white text-[10px] drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
                                   <span>You Save:</span>
                                   <span>${memberSavings.toFixed(2)} (23% OFF)</span>
                                 </div>
@@ -2207,7 +2207,7 @@ const Booking = () => {
                                 <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
                               </div>
                               {discountPercent > 0 && (
-                                <div className="flex justify-between text-emerald-400 text-[11px] sm:text-sm gap-2">
+                                <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
                                   <span className="truncate">Group Discount ({discountPercent}%)</span>
                                   <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
                                 </div>
@@ -2224,9 +2224,7 @@ const Booking = () => {
                               <Separator className="bg-white/10 my-1 sm:my-2" />
                               <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
                                 <span>Due Today:</span>
-                                <span className="text-emerald-400 whitespace-nowrap" style={{
-                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.6)'
-                                }}>${depositAmount.toFixed(2)}</span>
+                                <span className="text-white whitespace-nowrap drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">${depositAmount.toFixed(2)}</span>
                               </div>
                             </div>
                           </div>
@@ -2242,21 +2240,21 @@ const Booking = () => {
                         return (
                           <div className="space-y-3">
                             {/* Value Breakdown */}
-                            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-lg p-3">
+                            <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/30 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
-                                <Sparkles className="w-4 h-4 text-emerald-400" />
-                                <span className="text-emerald-400 font-bold text-xs">MEMBER PRICING</span>
+                                <Sparkles className="w-4 h-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                                <span className="text-white font-bold text-xs drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">MEMBER PRICING</span>
                               </div>
                               <div className="space-y-1 text-xs">
                                 <div className="flex justify-between text-white/60">
                                   <span>Regular Price:</span>
                                   <span className="line-through">${regularPrice.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-emerald-400 font-semibold">
+                                <div className="flex justify-between text-white font-semibold drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
                                   <span>Your Price:</span>
                                   <span>${totalPrice.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-emerald-400 text-[10px]">
+                                <div className="flex justify-between text-white text-[10px] drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
                                   <span>You Save:</span>
                                   <span>${memberSavings.toFixed(2)} (23% OFF)</span>
                                 </div>
@@ -2280,9 +2278,7 @@ const Booking = () => {
                               <Separator className="bg-white/10 my-1 sm:my-2" />
                               <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
                                 <span>Due Today:</span>
-                                <span className="text-emerald-400 whitespace-nowrap" style={{
-                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.6)'
-                                }}>${depositAmount.toFixed(2)}</span>
+                                <span className="text-white whitespace-nowrap drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">${depositAmount.toFixed(2)}</span>
                               </div>
                             </div>
                           </div>

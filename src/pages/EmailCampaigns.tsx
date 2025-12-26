@@ -421,7 +421,7 @@ const EmailCampaigns = () => {
                     <p className="text-sm text-muted-foreground">Avg Open Rate</p>
                     <p className="text-2xl font-bold luxury-glow">{campaignStats.avgOpenRate || 0}%</p>
                   </div>
-                  <Eye className="h-8 w-8 text-amber-400" />
+                  <Eye className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                 </div>
               </CardContent>
             </Card>

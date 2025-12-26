@@ -95,7 +95,7 @@ export const PriceAnchoring = ({
       {/* Limited Time Badge (Optional) */}
       {badgeText && (
         <div className="inline-flex items-center gap-2">
-          <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/50 rounded-full text-amber-400 font-bold text-xs uppercase tracking-wider animate-pulse">
+          <span className="px-3 py-1 bg-white/10 border border-white/30 rounded-full text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-bold text-xs uppercase tracking-wider animate-pulse">
             ⚡ {badgeText}
           </span>
         </div>

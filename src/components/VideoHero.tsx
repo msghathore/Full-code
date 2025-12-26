@@ -102,7 +102,7 @@ const VideoHero = React.memo(() => {
 
   if (videoError) {
     return (
-      <section className="fixed inset-0 w-full h-screen z-0 bg-gradient-to-br from-neutral-900 via-stone-800 to-amber-900 dark:from-neutral-900 dark:via-stone-800 dark:to-amber-900">
+      <section className="fixed inset-0 w-full h-screen z-0 bg-gradient-to-br from-neutral-900 via-stone-800 to-white/30 dark:from-neutral-900 dark:via-stone-800 dark:to-white/30">
         <div className="absolute inset-0 bg-black/30 dark:bg-black/30" />
         <div className="relative z-10 flex items-center justify-center h-full">
           <div className="text-center">

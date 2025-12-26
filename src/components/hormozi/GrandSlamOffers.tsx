@@ -196,14 +196,14 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
 
       {/* Bonus Items */}
       {pkg.bonus_items && pkg.bonus_items.length > 0 && (
-        <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-          <h4 className="text-amber-400 font-bold mb-3 flex items-center gap-2">
+        <div className="mb-6 p-4 bg-white/10/10 border border-white/30/30 rounded-lg">
+          <h4 className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-bold mb-3 flex items-center gap-2">
             <Gift className="w-5 h-5" />
             BONUS - You Also Get:
           </h4>
           <ul className="space-y-2">
             {pkg.bonus_items.map((bonus, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-amber-300">
+              <li key={idx} className="flex items-start gap-2 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                 <Gift className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{bonus}</span>
               </li>

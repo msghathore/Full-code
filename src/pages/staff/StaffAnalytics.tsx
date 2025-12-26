@@ -34,7 +34,7 @@ const StaffAnalytics: React.FC = () => {
               <CardTitle>Client Satisfaction</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-amber-600">4.8/5</p>
+              <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">4.8/5</p>
             </CardContent>
           </Card>
         </div>

@@ -130,7 +130,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
 
   // Status submenu items with color mappings - VIBRANT BOLD COLORS matching colorConstants.ts
   const statusSubmenuItems = [
-    { label: 'Accept', action: 'status-accept', color: 'bg-amber-500' },
+    { label: 'Accept', action: 'status-accept', color: 'bg-white/10' },
     { label: 'Deny', action: 'status-deny', color: 'bg-slate-500' },
     { label: 'Confirm', action: 'status-confirm', color: 'bg-emerald-500' },
     { label: 'Show', action: 'status-show', color: 'bg-emerald-500' },
@@ -466,7 +466,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
           }} />
           <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldAlert className="h-5 w-5 text-amber-500" />
+              <ShieldAlert className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               <h3 className="text-lg font-semibold text-gray-900">Admin Authorization Required</h3>
             </div>
             <p className="text-sm text-gray-600 mb-4">

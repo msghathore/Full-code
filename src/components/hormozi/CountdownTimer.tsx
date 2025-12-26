@@ -87,7 +87,7 @@ export const CountdownTimer = ({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {showLabel && (
-        <span className="text-amber-500 font-semibold mr-2">
+        <span className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-semibold mr-2">
           ⏰ OFFER EXPIRES:
         </span>
       )}

@@ -70,7 +70,7 @@ export const SocialProof = () => {
       case 'signup':
         return <Users className="w-4 h-4 text-green-400" />;
       default:
-        return <TrendingUp className="w-4 h-4 text-amber-400" />;
+        return <TrendingUp className="w-4 h-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />;
     }
   };
 
@@ -125,13 +125,13 @@ export const SocialProof = () => {
           <Card className="frosted-glass border-white/10 text-center">
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <Users className="w-8 h-8 text-amber-400 mr-2" />
+                <Users className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mr-2" />
                 <span className="text-3xl font-bold text-white">
                   {isLoading ? '...' : formatNumber(memberCount)}
                 </span>
               </div>
               <p className="text-muted-foreground">Loyal Members</p>
-              <Badge className="mt-2 bg-amber-500/20 text-amber-400">
+              <Badge className="mt-2 bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                 <Users className="w-3 h-3 mr-1" />
                 {memberCount > 0 ? 'Growing' : 'New community'}
               </Badge>

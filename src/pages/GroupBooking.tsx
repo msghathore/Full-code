@@ -67,10 +67,10 @@ const MAX_GROUP_MEMBERS = 20;
 
 const GROUP_TYPE_OPTIONS = [
   { type: 'bridal' as GroupType, icon: Heart, color: 'bg-pink-100 text-pink-700 border-pink-300', description: 'Perfect for brides and their party' },
-  { type: 'birthday' as GroupType, icon: Gift, color: 'bg-amber-100 text-amber-700 border-amber-300', description: 'Celebrate your special day' },
+  { type: 'birthday' as GroupType, icon: Gift, color: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30', description: 'Celebrate your special day' },
   { type: 'corporate' as GroupType, icon: Briefcase, color: 'bg-slate-50 text-slate-700 border-slate-300', description: 'Team building and corporate events' },
   { type: 'spa_day' as GroupType, icon: Sparkles, color: 'bg-teal-100 text-teal-700 border-teal-300', description: 'Relaxing spa experience' },
-  { type: 'friends' as GroupType, icon: Smile, color: 'bg-orange-100 text-orange-700 border-orange-300', description: 'Fun day out with friends' },
+  { type: 'friends' as GroupType, icon: Smile, color: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30', description: 'Fun day out with friends' },
   { type: 'custom' as GroupType, icon: Star, color: 'bg-gray-100 text-gray-700 border-gray-300', description: 'Create your own experience' },
 ];
 
@@ -558,8 +558,8 @@ export default function GroupBooking() {
 
                 {/* Member limit warning */}
                 {isAtMemberLimit && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <p className="text-amber-800 text-sm">
+                  <div className="bg-white/10 border border-white/30 rounded-lg p-4">
+                    <p className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] text-sm">
                       Maximum group size of {MAX_GROUP_MEMBERS} people reached.
                       Remove a member to add more.
                     </p>

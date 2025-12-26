@@ -9,7 +9,7 @@ export const STAFF_COLORS = {
   emerald: '#10B981',   // Tailwind emerald-500
   purple: '#6B7280',    // Changed from violet to gray
   pink: '#6B7280',      // Changed from pink to gray
-  orange: '#F97316',    // Tailwind orange-500
+  orange: '#FFFFFF',    // Changed to white for brand guidelines
   red: '#EF4444',       // Tailwind red-500
   teal: '#14B8A6',      // Tailwind teal-500
   indigo: '#6366F1',    // Tailwind indigo-500
@@ -39,16 +39,16 @@ export const getStaffColor = (colorName: string | undefined): string => {
 // Appointment Status Color Mappings - VIBRANT BOLD SATURATED COLORS
 export const STATUS_COLORS = {
   requested: {
-    bgClass: 'bg-amber-500',
-    borderClass: 'border-amber-600',
-    textClass: 'text-white',
-    hex: '#F59E0B' // amber-500 - Vibrant orange-yellow
+    bgClass: 'bg-white/10',
+    borderClass: 'border-white/30',
+    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
+    hex: '#FFFFFF' // White with glow for brand
   },
   accepted: {
-    bgClass: 'bg-amber-500',
-    borderClass: 'border-amber-600',
-    textClass: 'text-white',
-    hex: '#0EA5E9' // amber-500 - Bright blue
+    bgClass: 'bg-white/10',
+    borderClass: 'border-white/30',
+    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
+    hex: '#FFFFFF' // White with glow for brand
   },
   confirmed: {
     bgClass: 'bg-emerald-500',
@@ -87,10 +87,10 @@ export const STATUS_COLORS = {
     hex: '#EF4444' // red-500 - Vibrant red
   },
   pending: {
-    bgClass: 'bg-orange-500',
-    borderClass: 'border-orange-600',
-    textClass: 'text-white',
-    hex: '#F97316' // orange-500 - Bold orange
+    bgClass: 'bg-white/10',
+    borderClass: 'border-white/30',
+    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
+    hex: '#FFFFFF' // White with glow for brand
   },
   personal_task: {
     bgClass: 'bg-fuchsia-600',

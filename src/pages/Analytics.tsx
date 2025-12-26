@@ -253,9 +253,9 @@ const Analytics = () => {
                     <p className="text-lg md:text-2xl font-bold luxury-glow">
                       {nps}
                     </p>
-                    <p className="text-xs text-amber-400">Based on {analyticsData.feedback.length} reviews</p>
+                    <p className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">Based on {analyticsData.feedback.length} reviews</p>
                   </div>
-                  <Star className="h-6 w-6 md:h-8 md:w-8 text-amber-400" />
+                  <Star className="h-6 w-6 md:h-8 md:w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                 </div>
               </CardContent>
             </Card>

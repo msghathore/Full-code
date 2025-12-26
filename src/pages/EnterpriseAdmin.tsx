@@ -662,7 +662,7 @@ const CRMPanel: React.FC = () => {
                   <TableRow key={customer.id} className="border-gray-700">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-white font-medium">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-red-500 to-white/30 flex items-center justify-center text-white font-medium">
                           {customer.first_name?.[0]}{customer.last_name?.[0]}
                         </div>
                         <div>
@@ -824,7 +824,7 @@ const PerformancePanel: React.FC = () => {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
                     index === 0 ? 'bg-yellow-500 text-black' :
                     index === 1 ? 'bg-gray-300 text-black' :
-                    index === 2 ? 'bg-orange-400 text-black' :
+                    index === 2 ? 'bg-white/10 text-black' :
                     'bg-gray-600 text-white'
                   }`}>
                     {index + 1}
@@ -1031,7 +1031,7 @@ const ReviewsPanel: React.FC = () => {
 
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-orange-400">{dashboardData?.pendingResponses || 0}</p>
+            <p className="text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{dashboardData?.pendingResponses || 0}</p>
             <p className="text-sm text-gray-400">Awaiting Response</p>
           </CardContent>
         </Card>
@@ -1299,7 +1299,7 @@ const InventoryPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-orange-400">{stats?.pendingOrders || 0}</p>
+            <p className="text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{stats?.pendingOrders || 0}</p>
             <p className="text-sm text-gray-400">Pending Orders</p>
           </CardContent>
         </Card>

@@ -1108,7 +1108,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('crm')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'crm'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1119,7 +1119,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('performance')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'performance'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1130,7 +1130,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('forecast')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'forecast'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1141,7 +1141,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('reviews')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'reviews'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1152,7 +1152,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('marketing')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'marketing'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1163,7 +1163,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('inventory')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'inventory'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1174,7 +1174,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('recommendations')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'recommendations'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1185,7 +1185,7 @@ const AdminPanel: React.FC = () => {
                 onClick={() => setActiveTab('scheduling')}
                 className={`px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeTab === 'scheduling'
-                    ? 'text-amber-600 border-b-2 border-amber-600 bg-white'
+                    ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-b-2 border-white/30 bg-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -1288,10 +1288,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Net Promoter Score</p>
                         <p className="text-2xl font-bold text-black">{nps}</p>
-                        <p className="text-xs text-amber-600">Feedback system pending</p>
+                        <p className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">Feedback system pending</p>
                       </div>
-                      <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                        <Star className="h-6 w-6 text-amber-600" />
+                      <div className="h-12 w-12 bg-white/10 rounded-full flex items-center justify-center">
+                        <Star className="h-6 w-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -1604,10 +1604,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">This Month</p>
                         <p className="text-2xl font-bold text-black">{formatCurrency(revenueByPeriod.thisMonth)}</p>
-                        <p className="text-xs text-amber-600">Current month</p>
+                        <p className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">Current month</p>
                       </div>
-                      <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                        <BarChart3 className="h-6 w-6 text-amber-600" />
+                      <div className="h-12 w-12 bg-white/10 rounded-full flex items-center justify-center">
+                        <BarChart3 className="h-6 w-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -1632,7 +1632,7 @@ const AdminPanel: React.FC = () => {
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
                               index === 0 ? 'bg-yellow-500' :
                               index === 1 ? 'bg-gray-400' :
-                              index === 2 ? 'bg-amber-600' : 'bg-slate-800'
+                              index === 2 ? 'bg-white/10' : 'bg-slate-800'
                             }`}>
                               {index + 1}
                             </div>
@@ -1790,7 +1790,7 @@ const AdminPanel: React.FC = () => {
                           <Badge
                             className={
                               staffMember.role === 'admin'
-                                ? 'bg-amber-100 text-amber-700 border-amber-300'
+                                ? 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30'
                                 : staffMember.role === 'senior'
                                 ? 'bg-slate-50 text-slate-700 border-slate-300'
                                 : 'bg-gray-100 text-gray-700 border-gray-300'
@@ -1978,10 +1978,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">VIP Customers</p>
-                        <p className="text-2xl font-bold text-amber-600">{crmProfiles.filter(p => p.loyalty_tier === 'platinum').length}</p>
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{crmProfiles.filter(p => p.loyalty_tier === 'platinum').length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Award className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Award className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2038,10 +2038,10 @@ const AdminPanel: React.FC = () => {
                           </TableCell>
                           <TableCell>
                             <Badge className={
-                              profile.loyalty_tier === 'platinum' ? 'bg-amber-100 text-amber-700' :
+                              profile.loyalty_tier === 'platinum' ? 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]' :
                               profile.loyalty_tier === 'gold' ? 'bg-yellow-100 text-yellow-700' :
                               profile.loyalty_tier === 'silver' ? 'bg-gray-100 text-gray-700' :
-                              'bg-orange-100 text-orange-700'
+                              'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]'
                             }>
                               {profile.loyalty_tier || 'Bronze'}
                             </Badge>
@@ -2129,10 +2129,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Active Goals</p>
-                        <p className="text-2xl font-bold text-amber-600">{staffGoals.filter(g => g.status === 'active').length}</p>
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{staffGoals.filter(g => g.status === 'active').length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Zap className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Zap className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2232,7 +2232,7 @@ const AdminPanel: React.FC = () => {
                       }
                       setEnterpriseLoading(false);
                     }}
-                    className="bg-amber-600 hover:bg-amber-700 text-white"
+                    className="bg-white/10 hover:bg-white/10 text-white"
                   >
                     <Brain className="h-4 w-4 mr-2" />
                     Generate Forecast
@@ -2289,12 +2289,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Predicted Demand (7d)</p>
-                        <p className="text-2xl font-bold text-amber-600">
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                           {forecasts.reduce((sum, f) => sum + (f.predicted_appointments || 0), 0)}
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Calendar className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Calendar className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2436,12 +2436,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Pending Response</p>
-                        <p className="text-2xl font-bold text-orange-600">
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                           {customerReviews.filter(r => r.status === 'pending').length}
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                        <Clock className="h-5 w-5 text-orange-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2524,7 +2524,7 @@ const AdminPanel: React.FC = () => {
                   <p className="text-gray-600">Automated email campaigns and triggers</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                  <Button className="bg-white/10 hover:bg-white/10 text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     New Campaign
                   </Button>
@@ -2582,14 +2582,14 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Avg Open Rate</p>
-                        <p className="text-2xl font-bold text-amber-600">
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                           {campaigns.length > 0
                             ? (campaigns.reduce((sum, c) => sum + (c.open_rate || 0), 0) / campaigns.length).toFixed(1)
                             : '0'}%
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Eye className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Eye className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2599,14 +2599,14 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Avg Conversion</p>
-                        <p className="text-2xl font-bold text-orange-600">
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                           {campaigns.length > 0
                             ? (campaigns.reduce((sum, c) => sum + (c.conversion_rate || 0), 0) / campaigns.length).toFixed(1)
                             : '0'}%
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                        <ShoppingCart className="h-5 w-5 text-orange-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <ShoppingCart className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2675,7 +2675,7 @@ const AdminPanel: React.FC = () => {
                   <p className="text-gray-600">Stock levels and auto-reorder system</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                  <Button className="bg-white/10 hover:bg-white/10 text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Item
                   </Button>
@@ -2746,12 +2746,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Auto-Reorder Active</p>
-                        <p className="text-2xl font-bold text-amber-600">
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                           {inventoryItems.filter(i => i.auto_reorder_enabled).length}
                         </p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Zap className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Zap className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2859,10 +2859,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Pending Recommendations</p>
-                        <p className="text-2xl font-bold text-amber-600">{enterpriseStats.pendingRecommendations}</p>
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{enterpriseStats.pendingRecommendations}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <Brain className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <Brain className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>
@@ -2936,7 +2936,7 @@ const AdminPanel: React.FC = () => {
                           <TableCell>{rec.service_id}</TableCell>
                           <TableCell>
                             <Badge className={
-                              rec.recommendation_type === 'personalized' ? 'bg-amber-100 text-amber-700' :
+                              rec.recommendation_type === 'personalized' ? 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]' :
                               rec.recommendation_type === 'upsell' ? 'bg-green-100 text-green-700' :
                               'bg-slate-50 text-slate-700'
                             }>
@@ -2947,7 +2947,7 @@ const AdminPanel: React.FC = () => {
                             <div className="flex items-center gap-2">
                               <div className="w-16 bg-gray-200 rounded-full h-2">
                                 <div
-                                  className="bg-amber-600 h-2 rounded-full"
+                                  className="bg-white/10 h-2 rounded-full"
                                   style={{ width: `${(rec.confidence_score || 0) * 100}%` }}
                                 />
                               </div>
@@ -3060,10 +3060,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Conflicts Resolved</p>
-                        <p className="text-2xl font-bold text-amber-600">0</p>
+                        <p className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">0</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <CheckCircle className="h-5 w-5 text-amber-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <CheckCircle className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                       </div>
                     </div>
                   </CardContent>

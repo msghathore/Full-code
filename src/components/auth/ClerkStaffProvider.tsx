@@ -76,7 +76,7 @@ const ClerkStaffProvider: React.FC<ClerkStaffProviderProps> = ({
                 </p>
                 <button
                   onClick={() => window.location.href = '/auth/staff-login'}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  className="bg-white/10 hover:bg-white/10 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   Sign In to Staff Portal
                 </button>

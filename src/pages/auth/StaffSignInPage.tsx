@@ -41,10 +41,10 @@ const StaffSignInPage = () => {
                 colorInputText: '#000000'
               },
               elements: {
-                formButtonPrimary: 'w-full bg-amber-600 text-white hover:bg-amber-700 rounded-md py-3 text-lg font-medium',
+                formButtonPrimary: 'w-full bg-white/10 text-white hover:bg-white/10 rounded-md py-3 text-lg font-medium',
                 formField: 'mb-6',
                 formFieldLabel: 'text-black text-lg font-medium mb-2',
-                formFieldInput: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:ring-amber-500 focus:border-amber-500 text-lg py-3',
+                formFieldInput: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:ring-white/50 focus:border-white/30 text-lg py-3',
                 footer: 'hidden',
                 card: 'bg-white shadow-none p-0',
                 headerTitle: 'text-black text-xl font-bold',

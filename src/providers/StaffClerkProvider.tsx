@@ -17,7 +17,7 @@ export const StaffClerkProvider: React.FC<StaffClerkProviderProps> = ({ children
       publishableKey={publishableKey}
       appearance={{
         elements: {
-          formButtonPrimary: 'bg-amber-600 hover:bg-amber-700',
+          formButtonPrimary: 'bg-white/10 hover:bg-white/10',
         }
       }}
     >

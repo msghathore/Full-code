@@ -18,8 +18,8 @@ type BookingType = 'select' | 'individual' | 'group';
 // Group type options
 const GROUP_TYPES = [
   { value: 'bridal_party', label: 'Bridal Party', icon: Heart, color: 'bg-pink-100 text-pink-600 border-pink-200' },
-  { value: 'birthday', label: 'Birthday Party', icon: Gift, color: 'bg-amber-100 text-amber-600 border-amber-200' },
-  { value: 'girls_day', label: "Girls' Day Out", icon: Sparkles, color: 'bg-amber-100 text-amber-600 border-amber-200' },
+  { value: 'birthday', label: 'Birthday Party', icon: Gift, color: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30' },
+  { value: 'girls_day', label: "Girls' Day Out", icon: Sparkles, color: 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30' },
   { value: 'corporate', label: 'Corporate Event', icon: Users, color: 'bg-slate-50 text-black border-slate-200' },
   { value: 'other', label: 'Other Group', icon: PartyPopper, color: 'bg-green-100 text-green-600 border-green-200' },
 ];
@@ -1465,7 +1465,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
               <label className="text-sm font-medium text-gray-700 block mb-1">
                 Status
                 {originalStatus === 'completed' && userRole !== 'admin' && (
-                  <span className="text-xs text-amber-600 ml-2">
+                  <span className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] ml-2">
                     <ShieldAlert className="h-3 w-3 inline mr-1" />
                     Requires admin password to change
                   </span>
@@ -1666,7 +1666,7 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
         <DialogContent className="sm:max-w-md bg-white" style={{ zIndex: 100000 }}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-900">
-              <ShieldAlert className="h-5 w-5 text-amber-500" />
+              <ShieldAlert className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               Admin Authorization Required
             </DialogTitle>
             <DialogDescription className="text-gray-600">

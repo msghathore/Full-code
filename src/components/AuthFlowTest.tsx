@@ -89,7 +89,7 @@ const AuthFlowTest: React.FC = () => {
 
           {/* Control Panel */}
           <div className="bg-gray-900 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 text-amber-400">🎮 Controls</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">🎮 Controls</h2>
             
             <div className="space-y-4">
               {isSignedIn ? (
@@ -115,7 +115,7 @@ const AuthFlowTest: React.FC = () => {
                   
                   <a
                     href="/auth/staff-login"
-                    className="block w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded text-center transition-colors"
+                    className="block w-full bg-white/10 hover:bg-white/10 text-white px-4 py-2 rounded text-center transition-colors"
                   >
                     Go to Staff Login
                   </a>

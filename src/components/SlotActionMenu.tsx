@@ -111,7 +111,7 @@ export const SlotActionMenu: React.FC<SlotActionMenuProps> = ({
               }}
               className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md transition-colors text-left border-b border-gray-100 last:border-b-0"
             >
-              <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
+              <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center flex-shrink-0">
                 <Timer className="h-3 w-3 text-white" />
               </div>
               <div>

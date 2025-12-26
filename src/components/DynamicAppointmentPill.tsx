@@ -81,7 +81,7 @@ const ATTRIBUTE_ICONS = {
   'house_call': { icon: Home, color: 'text-green-600' },
   'has_note': { icon: FileText, color: 'text-yellow-600' },
   'deposit_paid': { icon: DollarSign, color: 'text-green-600' },
-  'form_required': { icon: FileText, color: 'text-orange-600' },
+  'form_required': { icon: FileText, color: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]' },
   'is_bundle': { icon: CheckCircle, color: 'text-black' }
 };
 

@@ -217,7 +217,7 @@ export const CommunityForum = () => {
 
         <Dialog open={isNewPostDialogOpen} onOpenChange={setIsNewPostDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700">
+            <Button className="bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30">
               <Plus className="w-4 h-4 mr-2" />
               New Discussion
             </Button>
@@ -282,7 +282,7 @@ export const CommunityForum = () => {
               <Button
                 onClick={handleCreatePost}
                 disabled={submitting}
-                className="w-full bg-gradient-to-r from-red-500 to-amber-600 hover:from-red-600 hover:to-amber-700"
+                className="w-full bg-gradient-to-r from-red-500 to-white/30 hover:from-red-600 hover:to-white/30"
               >
                 {submitting ? (
                   <>

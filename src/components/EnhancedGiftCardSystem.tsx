@@ -266,8 +266,8 @@ export function EnhancedGiftCardSystem() {
         </div>
 
         {/* Urgency */}
-        <div className="text-center bg-amber-900/20 border border-amber-500 rounded-lg p-6">
-          <p className="text-xl text-amber-400 flex items-center justify-center gap-2">
+        <div className="text-center bg-white/10/20 border border-white/30 rounded-lg p-6">
+          <p className="text-xl text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] flex items-center justify-center gap-2">
             <TrendingUp className="w-5 h-5" />
             ⚡ Limited Time: First 50 buyers get an EXTRA $25 bonus
           </p>

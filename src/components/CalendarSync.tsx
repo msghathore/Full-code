@@ -112,7 +112,7 @@ export function CalendarSync({
             onClick={() => handleCalendarSync('ical')}
             disabled={!!syncing}
             variant="outline"
-            className="justify-start bg-amber-500/10 border-amber-500/20 text-amber-300 hover:bg-amber-500/20"
+            className="justify-start bg-white/10/10 border-white/30/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] hover:bg-white/10/20"
           >
             <Download className="h-4 w-4 mr-2" />
             {syncing === 'ical' ? 'Downloading...' : 'Download .ics File'}

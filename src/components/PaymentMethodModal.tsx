@@ -381,12 +381,12 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
               {!terminalConnected && (
                 <motion.div
                   variants={itemVariants}
-                  className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3"
+                  className="mb-6 p-4 bg-white/10 border border-white/30 rounded-xl flex items-start gap-3"
                 >
-                  <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-amber-800">No Terminal Connected</p>
-                    <p className="text-xs text-amber-600 mt-1">
+                    <p className="text-sm font-medium text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">No Terminal Connected</p>
+                    <p className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mt-1">
                       Card payments are not available. Please use cash, check, or gift certificate.
                     </p>
                   </div>
@@ -398,11 +398,11 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl"
+                  className="mb-6 p-4 bg-white/10 border border-white/30 rounded-xl"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <Gift className="h-5 w-5 text-amber-600" />
-                    <span className="font-medium text-amber-900">Gift Certificate</span>
+                    <Gift className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    <span className="font-medium text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">Gift Certificate</span>
                   </div>
 
                   <div className="flex gap-2 mb-3">
@@ -417,7 +417,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                     <Button
                       onClick={checkGiftCardBalance}
                       disabled={isCheckingGiftCard || !giftCardInput.trim()}
-                      className="bg-amber-600 hover:bg-amber-700"
+                      className="bg-white/10 hover:bg-white/10"
                     >
                       {isCheckingGiftCard ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -431,11 +431,11 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="mt-3 p-3 bg-white rounded-lg border border-amber-200"
+                      className="mt-3 p-3 bg-white rounded-lg border border-white/30"
                     >
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm text-gray-600">Card Balance:</span>
-                        <span className="font-medium text-amber-700">{formatCurrency(giftCardBalance)}</span>
+                        <span className="font-medium text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">{formatCurrency(giftCardBalance)}</span>
                       </div>
                       <div className="flex justify-between items-center mb-3">
                         <span className="text-sm text-gray-600">Amount Due:</span>
@@ -443,8 +443,8 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                       </div>
 
                       {giftCardBalance < amountDue && (
-                        <div className="p-2 bg-amber-50 rounded-lg mb-3">
-                          <p className="text-xs text-amber-700">
+                        <div className="p-2 bg-white/10 rounded-lg mb-3">
+                          <p className="text-xs text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                             Gift card balance is less than amount due. You'll need to add another payment method for the remaining {formatCurrency(amountDue - giftCardBalance)}.
                           </p>
                         </div>
@@ -466,7 +466,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                         <Button
                           size="sm"
                           onClick={handleGiftCardPayment}
-                          className="flex-1 bg-amber-600 hover:bg-amber-700"
+                          className="flex-1 bg-white/10 hover:bg-white/10"
                         >
                           {giftCardBalance >= amountDue ? 'Pay Full Amount' : 'Use Balance & Continue'}
                         </Button>

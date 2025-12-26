@@ -105,7 +105,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
       <DialogContent className="bg-white border-gray-200 max-w-md w-[95vw] mx-auto rounded-xl shadow-2xl p-6">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-black text-lg font-medium">
-            <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
+            <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center flex-shrink-0">
               <Clock className="h-3 w-3 text-white" />
             </div>
             Add to Waitlist
@@ -129,7 +129,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
                 value={formData.customerName}
                 onChange={(e) => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
                 placeholder="Enter customer name"
-                className="pl-10 h-10 bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500 text-black placeholder:text-gray-500"
+                className="pl-10 h-10 bg-white border-gray-300 focus:border-white/30 focus:ring-white/50 text-black placeholder:text-gray-500"
                 required
                 disabled={isSubmitting}
               />
@@ -149,7 +149,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
                 value={formData.customerPhone}
                 onChange={(e) => setFormData(prev => ({ ...prev, customerPhone: e.target.value }))}
                 placeholder="(123) 456-7890"
-                className="pl-10 h-10 bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500 text-black placeholder:text-gray-500"
+                className="pl-10 h-10 bg-white border-gray-300 focus:border-white/30 focus:ring-white/50 text-black placeholder:text-gray-500"
                 required
                 disabled={isSubmitting}
               />
@@ -168,7 +168,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder="Any special requests or notes..."
-                className="pl-10 min-h-[80px] bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500 text-black placeholder:text-gray-500 resize-none"
+                className="pl-10 min-h-[80px] bg-white border-gray-300 focus:border-white/30 focus:ring-white/50 text-black placeholder:text-gray-500 resize-none"
                 rows={3}
                 disabled={isSubmitting}
               />
@@ -188,7 +188,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-10 text-sm bg-orange-500 hover:bg-orange-600 text-white"
+              className="flex-1 h-10 text-sm bg-white/10 hover:bg-white/10 text-white"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

@@ -56,18 +56,27 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
 
     let lenis: Lenis | null = null;
     let rafId: number | null = null;
+    let observer: ResizeObserver | null = null;
+    let initialResize: number | null = null;
+
+    const handleResize = () => {
+      if (lenis) {
+        lenis.resize();
+      }
+    };
 
     try {
       lenis = new Lenis({
-        duration: 0.6, // Faster scroll (was 1.2 - too slow)
+        duration: 1.0, // Smooth but not too slow
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
-        wheelMultiplier: 1.2, // Slightly faster wheel response (was 1)
+        wheelMultiplier: 1.0, // Standard wheel response
         touchMultiplier: 2,
         syncTouch: false, // Disabled to prevent stuck scroll on touch devices
         infinite: false, // Prevent infinite scroll issues
+        autoResize: true, // CRITICAL: Recalculate on content/window size changes
         prevent: (node) => {
           // Prevent Lenis from handling scroll inside Glen chat
           // This allows the chat to scroll normally
@@ -86,6 +95,24 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
 
       // Expose lenis to window for use by scroll helpers
       (window as any).lenis = lenis;
+
+      // Force resize recalculation on window resize and content changes
+      window.addEventListener('resize', handleResize);
+
+      // Watch for content changes that might affect scroll height
+      observer = new ResizeObserver(() => {
+        if (lenis) {
+          lenis.resize();
+        }
+      });
+      observer.observe(document.body);
+
+      // Force initial resize after a delay to catch lazy-loaded content
+      initialResize = window.setTimeout(() => {
+        if (lenis) {
+          lenis.resize();
+        }
+      }, 1000);
     } catch (error) {
       // Silently fail - native scrolling will be used as fallback
       if (import.meta.env.DEV) {
@@ -101,6 +128,13 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
         lenis.destroy();
       }
       delete (window as any).lenis;
+      window.removeEventListener('resize', handleResize);
+      if (observer) {
+        observer.disconnect();
+      }
+      if (initialResize) {
+        clearTimeout(initialResize);
+      }
     };
   }, []);
 

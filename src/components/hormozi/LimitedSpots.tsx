@@ -23,7 +23,7 @@ export const LimitedSpots = ({
       return 'bg-red-500/20 border-red-500/50 text-red-400';
     }
     if (isUrgent) {
-      return 'bg-amber-500/20 border-amber-500/50 text-amber-400';
+      return 'bg-white/10 border-white/30 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]';
     }
     return 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400';
   };
@@ -74,7 +74,7 @@ export const LimitedSpots = ({
               <div
                 className={cn(
                   "h-full transition-all duration-500",
-                  isCritical ? "bg-red-500" : isUrgent ? "bg-amber-500" : "bg-emerald-500"
+                  isCritical ? "bg-red-500" : isUrgent ? "bg-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-emerald-500"
                 )}
                 style={{ width: `${percentage}%` }}
               />

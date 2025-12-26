@@ -555,7 +555,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               transition={{ duration: 0.8 }}
               className="text-center mb-12"
             >
-              <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">
                 <Sparkles className="w-4 h-4" />
                 Real Results
               </div>
@@ -586,7 +586,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               <Button
                 variant="outline"
                 asChild
-                className="border-2 border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-white px-8 py-6 text-lg font-semibold transition-all rounded-full"
+                className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-6 text-lg font-semibold transition-all rounded-full drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
               >
                 <Link to="/gallery">
                   View Full Gallery

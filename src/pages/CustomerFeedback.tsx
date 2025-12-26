@@ -289,7 +289,7 @@ const CustomerFeedback = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">Feedback collection rate</p>
                   </div>
-                  <Users className="h-8 w-8 text-amber-400" />
+                  <Users className="h-8 w-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                 </div>
               </CardContent>
             </Card>
@@ -797,8 +797,8 @@ const CustomerFeedback = () => {
                         <li>• Enhance facility cleanliness protocols</li>
                       </ul>
                     </div>
-                    <div className="p-4 bg-amber-500/10 rounded-lg">
-                      <h4 className="font-semibold text-amber-400 mb-2">Long-term Strategy (30-90 days)</h4>
+                    <div className="p-4 bg-white/10/10 rounded-lg">
+                      <h4 className="font-semibold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] mb-2">Long-term Strategy (30-90 days)</h4>
                       <ul className="text-sm space-y-1 text-muted-foreground">
                         <li>• Develop loyalty program enhancements</li>
                         <li>• Invest in staff training and development</li>

@@ -351,19 +351,19 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
           </div>
 
           {/* Next Action Section */}
-          <div className="border-2 border-orange-200 rounded-lg p-4 bg-orange-50">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-orange-900">
+          <div className="border-2 border-white/30 rounded-lg p-4 bg-white/10">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
               <Calendar className="h-5 w-5" />
               Next Step - Book Another Appointment
             </h3>
             
             <div className="space-y-3">
-              <p className="text-sm text-orange-800">
+              <p className="text-sm text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                 Ready to schedule the next service or appointment?
               </p>
               <Button
                 onClick={handleRebookService}
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 text-lg font-semibold"
+                className="w-full bg-white/10 hover:bg-white/10 text-white h-12 text-lg font-semibold"
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 Book Next Appointment

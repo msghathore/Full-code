@@ -31,14 +31,14 @@ import {
 const STATUS_COLORS = {
   'requested': { bgClass: 'bg-yellow-400', label: 'New Request' },
   'accepted': { bgClass: 'bg-slate-200', label: 'Accepted' },
-  'awaiting_confirmation': { bgClass: 'bg-orange-300', label: 'Awaiting Confirmation' },
+  'awaiting_confirmation': { bgClass: 'bg-white/10', label: 'Awaiting Confirmation' },
   'confirmed': { bgClass: 'bg-red-400', label: 'Confirmed' },
   'show': { bgClass: 'bg-green-400', label: 'Show' },
   'no_show': { bgClass: 'bg-gray-400', label: 'No Show' },
   'ready_to_start': { bgClass: 'bg-teal-400', label: 'Ready to Start' },
   'in_progress': { bgClass: 'bg-green-500', label: 'In Progress' },
   'complete': { bgClass: 'bg-gray-600', label: 'Complete' },
-  'personal_task': { bgClass: 'bg-amber-700', label: 'Personal Task' },
+  'personal_task': { bgClass: 'bg-white/10', label: 'Personal Task' },
   'personal_task_blocked': { bgClass: 'bg-red-700', label: 'Personal Task Blocked' }
 };
 
@@ -49,7 +49,7 @@ const ATTRIBUTE_ICONS = {
   'bundle': { icon: Users, label: 'Bundle', color: 'text-black' },
   'house_call': { icon: Home, label: 'House Call', color: 'text-green-600' },
   'note': { icon: FileText, label: 'Note', color: 'text-yellow-600' },
-  'popup_note': { icon: MessageSquare, label: 'Popup Note', color: 'text-orange-600' },
+  'popup_note': { icon: MessageSquare, label: 'Popup Note', color: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]' },
   'form_required': { icon: Clipboard, label: 'Form Required', color: 'text-indigo-600' },
   'prepaid': { icon: DollarSign, label: 'Pre-paid Appointment', color: 'text-green-700' },
   'show_checked_in': { icon: CheckCircle, label: 'Show - Checked In', color: 'text-green-500' },
@@ -63,7 +63,7 @@ const ATTRIBUTE_ICONS = {
   'new_request': { icon: UserPlus, label: 'New Request (NR)', color: 'text-slate-900' },
   'return_request': { icon: RotateCcw, label: 'Return Request (RR)', color: 'text-green-500' },
   'return_non_request': { icon: RotateCw, label: 'Return Non Request (RNR)', color: 'text-yellow-500' },
-  'new_non_request': { icon: UserCheck, label: 'New Non Request (NNR)', color: 'text-orange-500' }
+  'new_non_request': { icon: UserCheck, label: 'New Non Request (NNR)', color: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]' }
 };
 
 interface AppointmentLegendProps {
