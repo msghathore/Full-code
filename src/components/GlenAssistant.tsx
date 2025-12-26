@@ -362,6 +362,7 @@ export const GlenAssistant = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
+            data-lenis-prevent
             className="fixed bottom-24 right-6 z-[9999] w-80 sm:w-96 h-[520px] rounded-3xl flex flex-col overflow-hidden"
             style={{
               background: 'rgba(10, 10, 10, 0.85)',

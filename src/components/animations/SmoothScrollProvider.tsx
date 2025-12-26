@@ -68,6 +68,11 @@ export const SmoothScrollProvider = ({ children }: SmoothScrollProviderProps) =>
         touchMultiplier: 2,
         syncTouch: false, // Disabled to prevent stuck scroll on touch devices
         infinite: false, // Prevent infinite scroll issues
+        prevent: (node) => {
+          // Prevent Lenis from handling scroll inside Glen chat
+          // This allows the chat to scroll normally
+          return node.closest('[data-lenis-prevent]') !== null;
+        },
       });
 
       function raf(time: number) {
