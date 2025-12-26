@@ -163,11 +163,8 @@ const App = () => {
   // Maintenance mode state
   const [maintenanceBypassed, setMaintenanceBypassed] = useState(isMaintenanceBypassed());
 
-  // Check if maintenance mode is enabled
-  // Option 1: Via environment variable (for easy toggle)
-  // Option 2: Auto-enable for production domain (no env var needed)
-  const isProductionDomain = window.location.hostname === 'zavira.ca';
-  const isMaintenanceModeEnabled = import.meta.env.VITE_MAINTENANCE_MODE === 'true' || isProductionDomain;
+  // Check if maintenance mode is enabled via environment variable
+  const isMaintenanceModeEnabled = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
   // If maintenance mode is enabled and not bypassed, show maintenance page
   if (isMaintenanceModeEnabled && !maintenanceBypassed) {
