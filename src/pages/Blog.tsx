@@ -108,7 +108,7 @@ const Blog = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <Navigation />
       <div className="pt-20 pb-12 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
@@ -129,7 +129,7 @@ const Blog = () => {
               </motion.h1>
             </FadeInUp>
             <FadeInUp delay={0.2}>
-              <p className="text-white/70 text-lg tracking-wider">
+              <p className="text-muted-foreground text-lg tracking-wider">
                 {t('blogSubtitle')}
               </p>
             </FadeInUp>
@@ -154,7 +154,7 @@ const Blog = () => {
                 <Button
                   onClick={() => setSelectedCategory(category)}
                   variant={selectedCategory === category ? "default" : "outline"}
-                  className={`text-sm ${selectedCategory === category ? 'bg-white text-black' : 'border-white/20 text-white hover:bg-white/10'}`}
+                  className={`text-sm ${selectedCategory === category ? 'bg-foreground text-background' : 'border-border text-foreground hover:bg-accent'}`}
                 >
                   {category}
                 </Button>
@@ -166,13 +166,13 @@ const Blog = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="border border-white/10 rounded-2xl overflow-hidden">
-                  <Skeleton className="aspect-[16/10] w-full bg-white/10" />
+                <div key={i} className="border border-border rounded-2xl overflow-hidden">
+                  <Skeleton className="aspect-[16/10] w-full bg-accent" />
                   <div className="p-6">
-                    <Skeleton className="h-4 w-24 mb-3 bg-white/10" />
-                    <Skeleton className="h-6 w-full mb-2 bg-white/10" />
-                    <Skeleton className="h-4 w-full mb-4 bg-white/10" />
-                    <Skeleton className="h-4 w-32 bg-white/10" />
+                    <Skeleton className="h-4 w-24 mb-3 bg-accent" />
+                    <Skeleton className="h-6 w-full mb-2 bg-accent" />
+                    <Skeleton className="h-4 w-full mb-4 bg-accent" />
+                    <Skeleton className="h-4 w-32 bg-accent" />
                   </div>
                 </div>
               ))}
@@ -183,7 +183,7 @@ const Blog = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <p className="text-white/60 text-lg">{t('noBlogPosts')}</p>
+              <p className="text-muted-foreground text-lg">{t('noBlogPosts')}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -203,7 +203,7 @@ const Blog = () => {
                   >
                     <Link
                       to={`/blog/${post.slug}`}
-                      className="group block border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all duration-500 cursor-hover bg-black/50"
+                      className="group block border border-border rounded-2xl overflow-hidden hover:border-foreground/30 transition-all duration-500 cursor-hover bg-accent/50"
                     >
                       <motion.div
                         whileHover={{
@@ -238,20 +238,20 @@ const Blog = () => {
                           <div className="flex items-center gap-3 mb-3">
                             {post.category && (
                               <motion.span
-                                className="text-xs bg-white/10 text-white px-2 py-1 rounded-full"
-                                whileHover={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                                className="text-xs bg-accent text-foreground px-2 py-1 rounded-full"
+                                whileHover={{ backgroundColor: 'rgba(0,0,0,0.1)' }}
                               >
                                 {post.category}
                               </motion.span>
                             )}
                             {post.read_time && (
-                              <span className="text-xs text-white/50">{post.read_time}</span>
+                              <span className="text-xs text-muted-foreground">{post.read_time}</span>
                             )}
                           </div>
 
                           {/* Title */}
                           <motion.h3
-                            className="text-xl font-serif text-white mb-2 transition-all"
+                            className="text-xl font-serif text-foreground mb-2 transition-all"
                             whileHover={{
                               textShadow: '0 0 20px rgba(255,255,255,0.5)'
                             }}
@@ -261,13 +261,13 @@ const Blog = () => {
 
                           {/* Excerpt */}
                           {post.excerpt && (
-                            <p className="text-white/60 text-sm mb-4 line-clamp-2">
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                               {post.excerpt}
                             </p>
                           )}
 
                           {/* Author & Date */}
-                          <div className="flex items-center text-white/50 text-xs">
+                          <div className="flex items-center text-muted-foreground text-xs">
                             <span>{formatDate(post.published_at || post.created_at)}</span>
                             <span className="mx-2">•</span>
                             <span>{t('byAuthor')} {post.author_name}</span>

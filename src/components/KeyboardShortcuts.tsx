@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 import { useTheme } from '@/hooks/use-theme';
-import { useFontSize } from '@/hooks/use-font-size';
 
 export function KeyboardShortcuts() {
   const { theme, setTheme } = useTheme();
-  const { fontSize, setFontSize } = useFontSize();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -19,14 +17,6 @@ export function KeyboardShortcuts() {
         event.preventDefault();
         if (theme === "dark") setTheme("light");
         else setTheme("dark");
-      }
-
-      // Alt + F: Toggle font size (small/medium/large)
-      if (event.altKey && event.key === 'f') {
-        event.preventDefault();
-        if (fontSize === "small") setFontSize("medium");
-        else if (fontSize === "medium") setFontSize("large");
-        else setFontSize("small");
       }
 
       // Alt + H: Go to home
@@ -50,7 +40,7 @@ export function KeyboardShortcuts() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [theme, setTheme, fontSize, setFontSize]);
+  }, [theme, setTheme]);
 
   return null; // This component doesn't render anything
 }

@@ -250,17 +250,17 @@ const Shop = () => {
 
   if (loading) {
     return (
-      <div className="pt-20 pb-12 px-2 sm:px-4 md:px-8 min-h-screen flex items-center justify-center">
+      <div className="pt-20 pb-12 px-2 sm:px-4 md:px-8 min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-white mx-auto mb-4" />
-          <p className="text-white/70">{t('loadingProducts')}</p>
+          <Loader2 className="h-12 w-12 animate-spin text-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">{t('loadingProducts')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-20 pb-12 px-2 sm:px-4 md:px-8">
+    <div className="pt-20 pb-12 px-2 sm:px-4 md:px-8 bg-background">
       <div className="container mx-auto max-w-none">
         <div className="text-center mb-8 md:mb-16">
           <FadeInUp>
@@ -322,12 +322,12 @@ const Shop = () => {
 
               {/* Smart Search Dropdown */}
               {showSearchDropdown && searchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-white/20 rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-sm">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-sm">
                   {searchSuggestions.map((product) => (
                     <div
                       key={product.id}
                       onClick={() => handleSearchSelect(product)}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5 last:border-b-0"
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-accent cursor-pointer transition-colors border-b border-border last:border-b-0"
                     >
                       <img
                         src={product.image_url || '/images/product-1.jpg'}
@@ -335,9 +335,9 @@ const Shop = () => {
                         className="w-10 h-10 object-cover rounded-md"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium truncate">{product.name}</p>
+                        <p className="text-foreground font-medium truncate">{product.name}</p>
                         <div className="flex items-center gap-2">
-                          <p className="text-white/50 text-sm">{product.category} • ${product.price}</p>
+                          <p className="text-muted-foreground text-sm">{product.category} • ${product.price}</p>
                           {product.average_rating && product.average_rating > 0 && (
                             <div className="flex items-center gap-1">
                               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
@@ -346,7 +346,7 @@ const Shop = () => {
                           )}
                         </div>
                       </div>
-                      <ShoppingCart className="w-4 h-4 text-white/30" />
+                      <ShoppingCart className="w-4 h-4 text-muted-foreground" />
                     </div>
                   ))}
                 </div>
@@ -354,8 +354,8 @@ const Shop = () => {
 
               {/* No results message */}
               {showSearchDropdown && searchQuery.length > 0 && searchSuggestions.length === 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-white/20 rounded-lg shadow-xl z-50 backdrop-blur-sm">
-                  <div className="px-4 py-3 text-white/50 text-center">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-lg shadow-xl z-50 backdrop-blur-sm">
+                  <div className="px-4 py-3 text-muted-foreground text-center">
                     {t('noProductsFoundFor', { query: searchQuery })}
                   </div>
                 </div>
@@ -364,13 +364,13 @@ const Shop = () => {
             <Button
               onClick={() => window.location.href = '/shop/checkout'}
               variant="outline"
-              className="relative bg-black/50 border-white/20 text-white hover:bg-white/10 px-3 sm:px-4 shrink-0"
+              className="relative bg-accent/50 border-border text-foreground hover:bg-accent px-3 sm:px-4 shrink-0"
               disabled={cart.length === 0}
             >
               <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5" />
               {cart.length > 0 && (
                 <motion.span
-                  className="absolute -top-2 -right-2 bg-white text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                  className="absolute -top-2 -right-2 bg-foreground text-background text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
                   animate={cartBounce ? { scale: [1, 1.4, 1], rotate: [0, 15, -15, 0] } : {}}
                   transition={{ duration: 0.3 }}
                 >
@@ -400,7 +400,7 @@ const Shop = () => {
               <Button
                 onClick={() => setSelectedCategory(category)}
                 variant={selectedCategory === category ? "default" : "outline"}
-                className={`text-xs sm:text-sm md:text-base px-2 sm:px-4 py-1.5 sm:py-2 transition-all duration-300 ${selectedCategory === category ? "bg-white text-black border-white hover:bg-white/90" : ""}`}
+                className={`text-xs sm:text-sm md:text-base px-2 sm:px-4 py-1.5 sm:py-2 transition-all duration-300 ${selectedCategory === category ? "bg-foreground text-background border-foreground hover:bg-foreground/90" : ""}`}
               >
                 {category}
               </Button>
@@ -415,9 +415,9 @@ const Shop = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <ShoppingBag className="h-16 w-16 text-white/30 mx-auto mb-4" />
-            <h3 className="text-xl text-white mb-2">{t('noProductsFound')}</h3>
-            <p className="text-white/50">{t('tryDifferentCategoryOrSearch')}</p>
+            <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl text-foreground mb-2">{t('noProductsFound')}</h3>
+            <p className="text-muted-foreground">{t('tryDifferentCategoryOrSearch')}</p>
           </motion.div>
         ) : (
           <motion.div
@@ -434,7 +434,7 @@ const Shop = () => {
                 layout
                 variants={cardVariants}
                 onClick={() => openProductModal(product)}
-                className="group frosted-glass border border-white/10 rounded-[10%] overflow-hidden hover:border-white/30 transition-all duration-500 cursor-hover hover:z-10"
+                className="group frosted-glass border border-border rounded-[10%] overflow-hidden hover:border-foreground/30 transition-all duration-500 cursor-hover hover:z-10"
                 style={{ transformStyle: 'preserve-3d' }}
                 whileHover={{
                   scale: 1.05,
@@ -481,10 +481,10 @@ const Shop = () => {
                 </div>
                 <div className="p-3 sm:p-4 md:p-6 text-center">
                   {product.brand && (
-                    <p className="text-xs text-white/40 mb-1">{product.brand}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{product.brand}</p>
                   )}
-                  <p className="text-xs sm:text-sm md:text-base text-white/60 tracking-wider mb-1.5 sm:mb-2 font-bold">{product.category}</p>
-                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif luxury-glow mb-2 font-bold leading-tight">{product.name}</h3>
+                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground tracking-wider mb-1.5 sm:mb-2 font-bold">{product.category}</p>
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif luxury-glow mb-2 font-bold leading-tight text-foreground">{product.name}</h3>
 
                   {/* Rating */}
                   {product.average_rating && product.average_rating > 0 && (
@@ -496,7 +496,7 @@ const Shop = () => {
 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg sm:text-xl md:text-2xl text-white font-bold">${product.price}</span>
+                      <span className="text-lg sm:text-xl md:text-2xl text-foreground font-bold">${product.price}</span>
                       {product.sale_price && (
                         <span className="text-sm text-red-400 line-through">${product.sale_price}</span>
                       )}
@@ -505,7 +505,7 @@ const Shop = () => {
                       <div className={`font-semibold ${(product.stock_quantity || 0) <= 5 ? 'text-red-400' : 'text-green-400'}`}>
                         {(product.stock_quantity || 0) <= 5 ? t('lowStock') : t('inStock')}
                       </div>
-                      <div className="text-white/60">{product.stock_quantity || 0} {t('leftInStock')}</div>
+                      <div className="text-muted-foreground">{product.stock_quantity || 0} {t('leftInStock')}</div>
                     </div>
                   </div>
                   <MagneticButton className="w-full">
@@ -535,11 +535,11 @@ const Shop = () => {
 
       {/* Product Details Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-3xl w-[95vw] md:w-[90vw] bg-black border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl w-[95vw] md:w-[90vw] bg-background border-border max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl md:text-2xl font-serif luxury-glow">{selectedProduct?.name}</DialogTitle>
-            <DialogDescription className="text-white/60 text-sm sm:text-base">
-              {selectedProduct?.brand && <span className="text-white/40">{selectedProduct.brand} • </span>}
+            <DialogTitle className="text-lg sm:text-xl md:text-2xl font-serif luxury-glow text-foreground">{selectedProduct?.name}</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm sm:text-base">
+              {selectedProduct?.brand && <span className="text-muted-foreground">{selectedProduct.brand} • </span>}
               {selectedProduct?.category}
             </DialogDescription>
           </DialogHeader>
@@ -553,28 +553,28 @@ const Shop = () => {
 
               {/* Product details */}
               {selectedProduct?.weight && (
-                <p className="text-white/50 text-sm mt-2">{t('sizeLabel')} {selectedProduct.weight}</p>
+                <p className="text-muted-foreground text-sm mt-2">{t('sizeLabel')} {selectedProduct.weight}</p>
               )}
               {selectedProduct?.sku && (
-                <p className="text-white/30 text-xs mt-1">{t('skuLabel')} {selectedProduct.sku}</p>
+                <p className="text-muted-foreground text-xs mt-1">{t('skuLabel')} {selectedProduct.sku}</p>
               )}
             </div>
             <div className="space-y-3 sm:space-y-4">
-              <p className="text-white/80 text-xs sm:text-sm md:text-base leading-relaxed">{selectedProduct?.description}</p>
+              <p className="text-foreground text-xs sm:text-sm md:text-base leading-relaxed">{selectedProduct?.description}</p>
 
               {/* Ingredients */}
               {selectedProduct?.ingredients && (
                 <div>
-                  <h4 className="text-white font-semibold text-sm mb-1">{t('ingredients')}</h4>
-                  <p className="text-white/60 text-xs">{selectedProduct.ingredients}</p>
+                  <h4 className="text-foreground font-semibold text-sm mb-1">{t('ingredients')}</h4>
+                  <p className="text-muted-foreground text-xs">{selectedProduct.ingredients}</p>
                 </div>
               )}
 
               {/* Usage Instructions */}
               {selectedProduct?.usage_instructions && (
                 <div>
-                  <h4 className="text-white font-semibold text-sm mb-1">{t('howToUse')}</h4>
-                  <p className="text-white/60 text-xs">{selectedProduct.usage_instructions}</p>
+                  <h4 className="text-foreground font-semibold text-sm mb-1">{t('howToUse')}</h4>
+                  <p className="text-muted-foreground text-xs">{selectedProduct.usage_instructions}</p>
                 </div>
               )}
 
@@ -583,12 +583,12 @@ const Shop = () => {
                 <div className="flex items-center gap-2">
                   {renderStars(Math.round(selectedProduct.average_rating))}
                   <span className="text-yellow-400">{selectedProduct.average_rating}</span>
-                  <span className="text-white/50">({selectedProduct.review_count} {t('reviews')})</span>
+                  <span className="text-muted-foreground">({selectedProduct.review_count} {t('reviews')})</span>
                 </div>
               )}
 
               <div className="flex items-center justify-between">
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white">${selectedProduct?.price}</span>
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">${selectedProduct?.price}</span>
                 <Button variant="cta" onClick={() => { if (selectedProduct) addToCart(selectedProduct); setShowModal(false); }} className="text-xs sm:text-sm px-3 sm:px-4 py-2">
                   <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                   {t('addToCart')}
@@ -598,19 +598,19 @@ const Shop = () => {
           </div>
 
           {/* Reviews Section */}
-          <div className="mt-6 border-t border-white/10 pt-4">
-            <h3 className="text-lg font-serif text-white mb-4">{t('customerReviews')}</h3>
+          <div className="mt-6 border-t border-border pt-4">
+            <h3 className="text-lg font-serif text-foreground mb-4">{t('customerReviews')}</h3>
             {reviewsLoading ? (
               <div className="flex items-center justify-center py-4">
-                <Loader2 className="h-6 w-6 animate-spin text-white/50" />
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : productReviews.length > 0 ? (
               <div className="space-y-4">
                 {productReviews.map(review => (
-                  <div key={review.id} className="bg-white/5 rounded-lg p-4">
+                  <div key={review.id} className="bg-accent rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{review.customer_name}</span>
+                        <span className="text-foreground font-medium">{review.customer_name}</span>
                         {review.is_verified_purchase && (
                           <span className="text-green-400 text-xs bg-green-400/10 px-2 py-0.5 rounded">{t('verified')}</span>
                         )}
@@ -618,10 +618,10 @@ const Shop = () => {
                       {renderStars(review.rating)}
                     </div>
                     {review.title && (
-                      <h4 className="text-white font-semibold text-sm mb-1">{review.title}</h4>
+                      <h4 className="text-foreground font-semibold text-sm mb-1">{review.title}</h4>
                     )}
-                    <p className="text-white/70 text-sm">{review.review_text}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-white/40">
+                    <p className="text-muted-foreground text-sm">{review.review_text}</p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                       <span>{new Date(review.created_at).toLocaleDateString()}</span>
                       {review.helpful_count > 0 && (
                         <span>{review.helpful_count} {t('foundHelpful')}</span>
@@ -631,7 +631,7 @@ const Shop = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-white/50 text-center py-4">{t('noReviewsYet')}</p>
+              <p className="text-muted-foreground text-center py-4">{t('noReviewsYet')}</p>
             )}
           </div>
         </DialogContent>

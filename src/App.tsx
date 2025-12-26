@@ -8,7 +8,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 // Removed ClerkProvider from here - it's handled in main.tsx
-import { AccessibilityControls } from "./components/AccessibilityControls";
 import { KeyboardShortcuts } from "./components/KeyboardShortcuts";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { GlenAssistant } from "./components/GlenAssistant";
@@ -16,7 +15,6 @@ import { LoadingScreen } from "./components/LoadingScreen";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PageTransition } from "./components/PageTransition";
 import { SecretDealsDialog } from "./components/SecretDealsDialog";
-import { FontSizeProvider } from "./hooks/use-font-size";
 import { useAppointmentNotifications } from "./hooks/use-appointment-notifications";
 import { Navigation } from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -79,7 +77,6 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
   return (
     <SmoothScrollProvider>
       <KeyboardShortcuts />
-      {location.pathname === '/' && <AccessibilityControls />}
       <ScrollToTop />
       {!hideNavigation && <GlenAssistant />}
       <PWAInstallPrompt />
@@ -165,7 +162,6 @@ const App = () => {
     <HelmetProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-        <FontSizeProvider>
           <DndProvider backend={HTML5Backend}>
             <TooltipProvider>
               <Toaster />
@@ -175,7 +171,6 @@ const App = () => {
               </BrowserRouter>
             </TooltipProvider>
           </DndProvider>
-        </FontSizeProvider>
       </QueryClientProvider>
       </ErrorBoundary>
       </HelmetProvider>

@@ -169,14 +169,14 @@ export default function Careers() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-background text-foreground">
         <div className="pt-20 pb-12 px-4 md:px-8">
           <div className="container mx-auto max-w-2xl text-center">
-            <div className="frosted-glass border border-white/10 rounded-2xl p-8 md:p-16">
-              <h1 className="text-3xl md:text-5xl font-serif luxury-glow mb-6">
+            <div className="frosted-glass border border-border rounded-2xl p-8 md:p-16">
+              <h1 className="text-3xl md:text-5xl font-serif luxury-glow mb-6 text-foreground">
                 Thank You for Applying!
               </h1>
-              <p className="text-lg md:text-xl text-white/80 mb-8">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8">
                 Your application has been successfully submitted. We'll review your resume and be in touch with you shortly.
               </p>
               <Button
@@ -194,7 +194,7 @@ export default function Careers() {
                     resume: null
                   });
                 }}
-                className="bg-white text-black hover:bg-gray-200 w-full md:w-auto"
+                className="bg-foreground text-background hover:bg-foreground/90 w-full md:w-auto"
               >
                 Apply for Another Position
               </Button>
@@ -207,7 +207,7 @@ export default function Careers() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <div className="min-h-screen bg-background text-foreground relative">
 
       {/* Page Title - CAREERS */}
       <div className="careers-title pt-24 pb-3 px-4 md:px-8 text-center">
@@ -231,57 +231,57 @@ export default function Careers() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-6 md:gap-6 mb-6">
             {/* Why Choose Zavira */}
-            <div className="frosted-glass border border-white/10 rounded-2xl p-5 md:p-5 hover:border-white/30 transition-all duration-500">
-              <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4">Why Choose Zavira?</h2>
+            <div className="frosted-glass border border-border rounded-2xl p-5 md:p-5 hover:border-foreground/30 transition-all duration-500">
+              <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4 text-foreground">Why Choose Zavira?</h2>
               <div className="space-y-4 md:space-y-5">
                 <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <DollarSign className="w-4 h-4 text-white drop-shadow-lg" />
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <DollarSign className="w-4 h-4 text-foreground drop-shadow-lg" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm md:text-base font-semibold leading-tight">Competitive Compensation</h3>
-                    <p className="text-white/70 text-xs leading-relaxed">Industry-leading pay with performance bonuses</p>
+                    <h3 className="text-sm md:text-base font-semibold leading-tight text-foreground">Competitive Compensation</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">Industry-leading pay with performance bonuses</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <GraduationCap className="w-4 h-4 text-white drop-shadow-lg" />
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <GraduationCap className="w-4 h-4 text-foreground drop-shadow-lg" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm md:text-base font-semibold leading-tight">Professional Development</h3>
-                    <p className="text-white/70 text-xs leading-relaxed">Ongoing training and certification programs</p>
+                    <h3 className="text-sm md:text-base font-semibold leading-tight text-foreground">Professional Development</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">Ongoing training and certification programs</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Award className="w-4 h-4 text-white drop-shadow-lg" />
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <Award className="w-4 h-4 text-foreground drop-shadow-lg" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm md:text-base font-semibold leading-tight">Luxury Environment</h3>
-                    <p className="text-white/70 text-xs leading-relaxed">State-of-the-art facility with premium equipment</p>
+                    <h3 className="text-sm md:text-base font-semibold leading-tight text-foreground">Luxury Environment</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">State-of-the-art facility with premium equipment</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-4 h-4 text-white drop-shadow-lg" />
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-4 h-4 text-foreground drop-shadow-lg" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm md:text-base font-semibold leading-tight">Work-Life Balance</h3>
-                    <p className="text-white/70 text-xs leading-relaxed">Flexible scheduling and benefits package</p>
+                    <h3 className="text-sm md:text-base font-semibold leading-tight text-foreground">Work-Life Balance</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">Flexible scheduling and benefits package</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Current Opportunities */}
-            <div id="openings" className="frosted-glass border border-white/10 rounded-2xl p-5 md:p-5 hover:border-white/30 transition-all duration-500 scroll-mt-24">
-              <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4">Current Opportunities</h2>
+            <div id="openings" className="frosted-glass border border-border rounded-2xl p-5 md:p-5 hover:border-foreground/30 transition-all duration-500 scroll-mt-24">
+              <h2 className="text-xl md:text-2xl font-serif luxury-glow mb-4 text-foreground">Current Opportunities</h2>
               <div className="space-y-3 md:space-y-1.5">
                 {availablePositions.map((position) => (
-                  <div key={position} className="flex items-center justify-between p-3 md:p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
+                  <div key={position} className="flex items-center justify-between p-3 md:p-2 bg-accent rounded-lg border border-border hover:bg-accent/70 transition-colors">
                     <div className="space-y-1">
-                      <h3 className="text-xs md:text-sm font-semibold leading-tight">{position}</h3>
-                      <p className="text-white/60 text-[10px] leading-relaxed">Part/Full Time</p>
+                      <h3 className="text-xs md:text-sm font-semibold leading-tight text-foreground">{position}</h3>
+                      <p className="text-muted-foreground text-[10px] leading-relaxed">Part/Full Time</p>
                     </div>
                     <Button
                       onClick={() => handleApplyClick(position)}
@@ -303,10 +303,10 @@ export default function Careers() {
             <div
               id="apply"
               ref={formRef}
-              className="frosted-glass border border-white/10 rounded-2xl p-3 md:p-5 max-w-4xl mx-auto mt-3 animate-fade-in scroll-mt-24"
+              className="frosted-glass border border-border rounded-2xl p-3 md:p-5 max-w-4xl mx-auto mt-3 animate-fade-in scroll-mt-24"
             >
               <div className="text-center mb-2 md:mb-3">
-                <h2 className="text-2xl md:text-3xl font-serif luxury-glow mb-1">
+                <h2 className="text-2xl md:text-3xl font-serif luxury-glow mb-1 text-foreground">
                   Apply for: {selectedJob}
                 </h2>
               </div>
@@ -314,24 +314,24 @@ export default function Careers() {
               <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
                 <div className="grid md:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-white/70 mb-1 block tracking-wider">FULL NAME</label>
+                    <label className="text-xs text-muted-foreground mb-1 block tracking-wider">FULL NAME</label>
                     <Input
                       type="text"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
                       placeholder="Your full name"
-                      className="bg-black/50 border-white/20 text-white placeholder:text-white/30 h-10 rounded-lg"
+                      className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground h-10 rounded-lg"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-white/70 mb-1 block tracking-wider">EMAIL ADDRESS</label>
+                    <label className="text-xs text-muted-foreground mb-1 block tracking-wider">EMAIL ADDRESS</label>
                     <Input
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="your@email.com"
-                      className="bg-black/50 border-white/20 text-white placeholder:text-white/30 h-10 rounded-lg"
+                      className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground h-10 rounded-lg"
                       required
                     />
                   </div>
@@ -339,18 +339,18 @@ export default function Careers() {
 
                 <div className="grid md:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-white/70 mb-1 block tracking-wider">PHONE NUMBER</label>
+                    <label className="text-xs text-muted-foreground mb-1 block tracking-wider">PHONE NUMBER</label>
                     <Input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       placeholder="+1 (555) 000-0000"
-                      className="bg-black/50 border-white/20 text-white placeholder:text-white/30 h-10 rounded-lg"
+                      className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground h-10 rounded-lg"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-white/70 mb-1 block tracking-wider">POSITION APPLYING FOR</label>
+                    <label className="text-xs text-muted-foreground mb-1 block tracking-wider">POSITION APPLYING FOR</label>
                     <Select
                       value={formData.position}
                       onValueChange={(value) => {
@@ -359,15 +359,15 @@ export default function Careers() {
                       }}
                       required
                     >
-                      <SelectTrigger className="bg-black/50 border-white/20 text-white h-10 rounded-lg">
+                      <SelectTrigger className="bg-accent/50 border-border text-foreground h-10 rounded-lg">
                         <SelectValue placeholder="Select position" />
                       </SelectTrigger>
-                      <SelectContent className="bg-black border-white/20 rounded-lg">
+                      <SelectContent className="bg-popover border-border rounded-lg">
                         {availablePositions.map((position) => (
                           <SelectItem
                             key={position}
                             value={position}
-                            className="text-white hover:bg-white/10 focus:bg-emerald-500/20 focus:text-white data-[state=checked]:bg-emerald-500/30 [&>span:first-child]:text-emerald-400"
+                            className="text-foreground hover:bg-accent focus:bg-emerald-500/20 focus:text-foreground data-[state=checked]:bg-emerald-500/30 [&>span:first-child]:text-emerald-400"
                           >
                             {position}
                           </SelectItem>
@@ -378,32 +378,32 @@ export default function Careers() {
                 </div>
 
                 <div>
-                  <label className="text-xs text-white/70 mb-1 block tracking-wider">YEARS OF EXPERIENCE</label>
+                  <label className="text-xs text-muted-foreground mb-1 block tracking-wider">YEARS OF EXPERIENCE</label>
                   <Select value={formData.experience} onValueChange={(value) => handleInputChange('experience', value)} required>
-                    <SelectTrigger className="bg-black/50 border-white/20 text-white h-10 rounded-lg">
+                    <SelectTrigger className="bg-accent/50 border-border text-foreground h-10 rounded-lg">
                       <SelectValue placeholder="Select experience level" />
                     </SelectTrigger>
-                    <SelectContent className="bg-black border-white/20 rounded-lg">
-                      <SelectItem value="entry" className="text-white">Entry Level (0-2 years)</SelectItem>
-                      <SelectItem value="intermediate" className="text-white">Intermediate (2-5 years)</SelectItem>
-                      <SelectItem value="experienced" className="text-white">Experienced (5-10 years)</SelectItem>
-                      <SelectItem value="expert" className="text-white">Expert (10+ years)</SelectItem>
+                    <SelectContent className="bg-popover border-border rounded-lg">
+                      <SelectItem value="entry" className="text-foreground">Entry Level (0-2 years)</SelectItem>
+                      <SelectItem value="intermediate" className="text-foreground">Intermediate (2-5 years)</SelectItem>
+                      <SelectItem value="experienced" className="text-foreground">Experienced (5-10 years)</SelectItem>
+                      <SelectItem value="expert" className="text-foreground">Expert (10+ years)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <label className="text-xs text-white/70 mb-1 block tracking-wider">COVER LETTER <span className="text-white/40">(Optional)</span></label>
+                  <label className="text-xs text-muted-foreground mb-1 block tracking-wider">COVER LETTER <span className="text-muted-foreground">(Optional)</span></label>
                   <Textarea
                     value={formData.coverLetter}
                     onChange={(e) => handleInputChange('coverLetter', e.target.value)}
                     placeholder="Tell us why you're interested in joining Zavira..."
-                    className="bg-black/50 border-white/20 text-white placeholder:text-white/30 min-h-[80px] rounded-lg"
+                    className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground min-h-[80px] rounded-lg"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-white/70 mb-1 block tracking-wider">RESUME / CV</label>
+                  <label className="text-xs text-muted-foreground mb-1 block tracking-wider">RESUME / CV</label>
                   <div className="relative">
                     <input
                       type="file"
@@ -412,12 +412,12 @@ export default function Careers() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       required
                     />
-                    <div key={formData.resume?.name || 'no-file'} className="bg-black/50 border border-white/20 rounded-lg p-4 text-center hover:border-white/40 transition-colors">
-                      <Upload className="w-6 h-6 mx-auto mb-2 text-white/60" />
-                      <p className="text-white/80 text-sm mb-1">
+                    <div key={formData.resume?.name || 'no-file'} className="bg-accent/50 border border-border rounded-lg p-4 text-center hover:border-foreground/40 transition-colors">
+                      <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-foreground text-sm mb-1">
                         {formData.resume ? `${formData.resume.name} (${(formData.resume.size / 1024 / 1024).toFixed(1)}MB)` : 'Click to upload your resume'}
                       </p>
-                      <p className="text-white/60 text-xs">PDF, DOC, DOCX up to 10MB</p>
+                      <p className="text-muted-foreground text-xs">PDF, DOC, DOCX up to 10MB</p>
                     </div>
                   </div>
                 </div>
@@ -426,7 +426,7 @@ export default function Careers() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-white text-black hover:bg-gray-200 px-6 md:px-10 py-2.5 text-sm md:text-base font-serif tracking-wider w-full md:w-auto rounded-lg"
+                    className="bg-foreground text-background hover:bg-foreground/90 px-6 md:px-10 py-2.5 text-sm md:text-base font-serif tracking-wider w-full md:w-auto rounded-lg"
                   >
                     {isSubmitting ? 'SUBMITTING...' : 'SUBMIT APPLICATION'}
                   </Button>

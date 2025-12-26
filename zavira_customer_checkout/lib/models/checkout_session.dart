@@ -138,7 +138,7 @@ class CheckoutSession {
     );
   }
 
-  /// Calculate total with tip
+  /// Calculate total with tip (tip can be adjusted by customer on tablet)
   double get grandTotal => totalAmount + tipAmount;
 
   /// Check if session is still valid (not expired)

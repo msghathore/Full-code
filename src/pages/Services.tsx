@@ -158,12 +158,12 @@ const Services = () => {
   const groupedServices = groupServicesByCategory();
 
   return (
-    <div className="min-h-screen bg-black pt-24 pb-16 px-4 md:px-8">
+    <div className="min-h-screen bg-background pt-24 pb-16 px-4 md:px-8">
       <div className="container mx-auto max-w-7xl">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow text-foreground">
           SERVICES
         </h1>
-        <p className="text-center text-white/70 mb-8 tracking-wider text-sm md:text-base">
+        <p className="text-center text-muted-foreground mb-8 tracking-wider text-sm md:text-base">
           Indulge in our curated selection of luxury treatments
         </p>
 
@@ -177,8 +177,8 @@ const Services = () => {
               className={`
                 font-serif tracking-wider px-4 md:px-6 py-2 text-sm transition-all
                 ${selectedCategory === category
-                  ? 'bg-white text-black hover:bg-white/90'
-                  : 'border-white/30 text-white hover:bg-white/10'}
+                  ? 'bg-foreground text-background hover:bg-foreground/90'
+                  : 'border-border text-foreground hover:bg-accent'}
               `}
             >
               {category}
@@ -194,9 +194,9 @@ const Services = () => {
               placeholder="Search services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-black/50 border-white/20 text-white placeholder:text-white/40 pl-12 py-5 text-base"
+              className="w-full bg-accent/50 border-border text-foreground placeholder:text-muted-foreground pl-12 py-5 text-base"
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 h-5 w-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
           </div>
         </div>
 
@@ -205,18 +205,18 @@ const Services = () => {
             // Skeleton loading state
             Array.from({ length: 3 }).map((_, categoryIndex) => (
               <div key={categoryIndex} className="service-category">
-                <Skeleton className="h-10 w-48 mb-6 bg-white/10" />
+                <Skeleton className="h-10 w-48 mb-6 bg-accent" />
                 <div className="grid gap-3">
                   {Array.from({ length: 3 }).map((_, itemIndex) => (
                     <div
                       key={itemIndex}
-                      className="flex items-center justify-between p-5 frosted-glass border border-white/10 rounded-lg"
+                      className="flex items-center justify-between p-5 frosted-glass border border-border rounded-lg"
                     >
                       <div className="flex-1">
-                        <Skeleton className="h-6 w-64 mb-2 bg-white/10" />
-                        <Skeleton className="h-4 w-32 bg-white/10" />
+                        <Skeleton className="h-6 w-64 mb-2 bg-accent" />
+                        <Skeleton className="h-4 w-32 bg-accent" />
                       </div>
-                      <Skeleton className="h-8 w-20 bg-white/10" />
+                      <Skeleton className="h-8 w-20 bg-accent" />
                     </div>
                   ))}
                 </div>
@@ -232,7 +232,7 @@ const Services = () => {
               return a.localeCompare(b);
             }).map((category) => (
               <div key={category} className="service-category">
-                <h2 className="text-2xl md:text-3xl font-serif mb-6 pb-3 border-b border-white/10 luxury-glow">
+                <h2 className="text-2xl md:text-3xl font-serif mb-6 pb-3 border-b border-border luxury-glow text-foreground">
                   {category.toUpperCase()}
                 </h2>
 
@@ -241,7 +241,7 @@ const Services = () => {
                     <div key={groupIndex} className="space-y-2">
                       {/* Parent/Subcategory Header (only if it has variants) */}
                       {group.parent.is_parent && group.variants.length > 0 && (
-                        <h3 className="text-lg md:text-xl font-serif text-white/90 mb-3 pl-2">
+                        <h3 className="text-lg md:text-xl font-serif text-foreground mb-3 pl-2">
                           {group.parent.name}
                         </h3>
                       )}
@@ -252,17 +252,17 @@ const Services = () => {
                         group.variants.map((variant) => (
                           <div
                             key={variant.id}
-                            className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-white/10 micro-hover-lift rounded-lg gap-4"
+                            className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-border micro-hover-lift rounded-lg gap-4"
                           >
                             <div className="flex-1">
-                              <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all">
+                              <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
                                 {variant.name}
                               </h4>
-                              <p className="text-xs text-white/50 tracking-wider mb-1">
+                              <p className="text-xs text-muted-foreground tracking-wider mb-1">
                                 {variant.duration_minutes} min
                               </p>
                               {variant.description && (
-                                <p className="text-xs text-white/60 mt-1 max-w-md line-clamp-2">
+                                <p className="text-xs text-muted-foreground mt-1 max-w-md line-clamp-2">
                                   {variant.description}
                                 </p>
                               )}
@@ -283,7 +283,7 @@ const Services = () => {
                               </div>
                               <Button
                                 onClick={() => navigate(`/booking?service=${variant.id}`)}
-                                className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
                               >
                                 <Calendar className="h-4 w-4" />
                                 Book
@@ -295,17 +295,17 @@ const Services = () => {
                         // Show standalone service
                         <div
                           key={group.parent.id}
-                          className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-white/10 micro-hover-lift rounded-lg gap-4"
+                          className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-border micro-hover-lift rounded-lg gap-4"
                         >
                           <div className="flex-1">
-                            <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all">
+                            <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
                               {group.parent.name}
                             </h4>
-                            <p className="text-xs text-white/50 tracking-wider mb-1">
+                            <p className="text-xs text-muted-foreground tracking-wider mb-1">
                               {group.parent.duration_minutes} min
                             </p>
                             {group.parent.description && (
-                              <p className="text-xs text-white/60 mt-1 max-w-md line-clamp-2">
+                              <p className="text-xs text-muted-foreground mt-1 max-w-md line-clamp-2">
                                 {group.parent.description}
                               </p>
                             )}
@@ -326,7 +326,7 @@ const Services = () => {
                             </div>
                             <Button
                               onClick={() => navigate(`/booking?service=${group.parent.id}`)}
-                              className="bg-white text-black hover:bg-white/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
                             >
                               <Calendar className="h-4 w-4" />
                               Book
@@ -340,7 +340,7 @@ const Services = () => {
               </div>
             ))
           ) : (
-            <div className="text-center text-white/60 py-12">
+            <div className="text-center text-muted-foreground py-12">
               <p className="text-base md:text-lg">No services found matching "{searchQuery}"</p>
               <p className="text-sm mt-2">Try a different search term</p>
             </div>

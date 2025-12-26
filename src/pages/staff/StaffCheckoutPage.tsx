@@ -491,6 +491,10 @@ const StaffCheckoutPage = () => {
       console.log('👥 Customer name:', appointmentData?.customerName || currentCustomer.name);
 
       // Prepare checkout data for the tablet - use pending_checkout table (matches Flutter app)
+      // total_amount should NOT include tip (tip can be adjusted on tablet)
+      // Flutter calculates: grandTotal = total_amount + tip_amount
+      const totalWithoutTip = totals.subtotal - totals.discount + totals.tax - totals.deposit;
+
       const checkoutData = {
         cart_items: cartItems.map(item => ({
           item_id: item.item_id,
@@ -501,8 +505,8 @@ const StaffCheckoutPage = () => {
         })),
         subtotal: totals.subtotal,
         tax_amount: totals.tax,
-        total_amount: totals.amountDue,
-        tip_amount: tipAmount,
+        total_amount: totalWithoutTip,  // WITHOUT tip - customer can adjust on tablet
+        tip_amount: tipAmount,  // Initial tip suggestion
         customer_name: appointmentData?.customerName || currentCustomer.name,
         staff_name: staffName,
         appointment_id: appointmentData?.appointmentId || null,
@@ -723,15 +727,87 @@ const StaffCheckoutPage = () => {
                   <span className="text-gray-600">GST (5%):</span>
                   <span className="text-gray-900">{formatCurrency(totals.tax)}</span>
                 </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-600">Tip:</span>
-                  <Input
-                    type="text"
-                    value={tipAmount ? tipAmount.toString() : ''}
-                    onChange={(e) => setTipAmount(parseCurrency(e.target.value))}
-                    className="bg-white border-gray-300 text-gray-900 h-8 w-20 text-right"
-                    placeholder="0.00"
-                  />
+                {/* Tip Selector Section */}
+                <div className="border-t border-gray-200 pt-3 mt-3">
+                  <div className="text-sm font-medium text-gray-700 mb-2">Tip</div>
+
+                  {/* Percentage Tip Buttons */}
+                  <div className="grid grid-cols-4 gap-2 mb-2">
+                    <Button
+                      type="button"
+                      variant={tipAmount === Math.round(totals.subtotal * 0.10 * 100) / 100 ? 'default' : 'outline'}
+                      size="sm"
+                      className={`h-9 text-xs ${tipAmount === Math.round(totals.subtotal * 0.10 * 100) / 100 ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                      onClick={() => setTipAmount(Math.round(totals.subtotal * 0.10 * 100) / 100)}
+                    >
+                      10%
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={tipAmount === Math.round(totals.subtotal * 0.15 * 100) / 100 ? 'default' : 'outline'}
+                      size="sm"
+                      className={`h-9 text-xs ${tipAmount === Math.round(totals.subtotal * 0.15 * 100) / 100 ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                      onClick={() => setTipAmount(Math.round(totals.subtotal * 0.15 * 100) / 100)}
+                    >
+                      15%
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={tipAmount === Math.round(totals.subtotal * 0.20 * 100) / 100 ? 'default' : 'outline'}
+                      size="sm"
+                      className={`h-9 text-xs ${tipAmount === Math.round(totals.subtotal * 0.20 * 100) / 100 ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                      onClick={() => setTipAmount(Math.round(totals.subtotal * 0.20 * 100) / 100)}
+                    >
+                      20%
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={tipAmount === 0 ? 'default' : 'outline'}
+                      size="sm"
+                      className={`h-9 text-xs ${tipAmount === 0 ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                      onClick={() => setTipAmount(0)}
+                    >
+                      No Tip
+                    </Button>
+                  </div>
+
+                  {/* Custom Tip Input */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600 whitespace-nowrap">Custom:</span>
+                    <div className="relative flex-1">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">$</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={tipAmount || ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            setTipAmount(0);
+                          } else {
+                            const parsed = parseFloat(value);
+                            if (!isNaN(parsed) && parsed >= 0) {
+                              setTipAmount(Math.round(parsed * 100) / 100);
+                            }
+                          }
+                        }}
+                        className="bg-white border-gray-300 text-gray-900 h-9 pl-7 pr-3 text-sm"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    {tipAmount > 0 && (
+                      <span className="text-xs text-gray-500">
+                        ({Math.round((tipAmount / totals.subtotal) * 100)}%)
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Tip Display */}
+                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-100">
+                    <span className="text-gray-600">Tip Amount:</span>
+                    <span className="text-gray-900 font-medium">{formatCurrency(tipAmount)}</span>
+                  </div>
                 </div>
                 <Separator className="bg-gray-200 my-2" />
                 <div className="flex justify-between font-bold text-lg">

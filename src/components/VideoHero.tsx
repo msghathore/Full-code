@@ -102,25 +102,25 @@ const VideoHero = React.memo(() => {
 
   if (videoError) {
     return (
-      <section className="fixed inset-0 w-full h-screen z-0 bg-gradient-to-br from-neutral-900 via-stone-800 to-amber-900">
-        <div className="absolute inset-0 bg-black/30" />
+      <section className="fixed inset-0 w-full h-screen z-0 bg-gradient-to-br from-neutral-900 via-stone-800 to-amber-900 dark:from-neutral-900 dark:via-stone-800 dark:to-amber-900">
+        <div className="absolute inset-0 bg-black/30 dark:bg-black/30" />
         <div className="relative z-10 flex items-center justify-center h-full">
           <div className="text-center">
-            <h1 className="text-6xl md:text-8xl font-bold text-white mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <h1 className="text-6xl md:text-8xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Zavira
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-md mx-auto">
+            <p className="text-xl md:text-2xl text-foreground/90 mb-12 max-w-md mx-auto">
               {t('professionalBeautyServices')}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button
                 onClick={handleBookNowClick}
-                className="bg-white text-black hover:bg-transparent hover:text-white border-2 border-white rounded-full px-12 py-5 font-semibold text-2xl md:text-3xl"
+                className="bg-foreground text-background hover:bg-transparent hover:text-foreground border-2 border-foreground rounded-full px-12 py-5 font-semibold text-2xl md:text-3xl"
                 style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.02em' }}
               >
                 {t('bookNow')}
               </Button>
-              <Button asChild className="bg-transparent text-white hover:bg-white hover:text-black border-2 border-white rounded-full px-12 py-5 font-semibold text-2xl md:text-3xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.02em' }}>
+              <Button asChild className="bg-transparent text-foreground hover:bg-foreground hover:text-background border-2 border-foreground rounded-full px-12 py-5 font-semibold text-2xl md:text-3xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.02em' }}>
                 <Link to="/services">{t('exploreServices')}</Link>
               </Button>
             </div>

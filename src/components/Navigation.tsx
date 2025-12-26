@@ -201,17 +201,9 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
         <nav
           className={`fixed top-0 left-0 right-0 z-[1000] py-2 transition-all duration-500 ${
             (isHomePage ? !isOnBanner : isScrolled)
-              ? 'bg-white/10 backdrop-blur-xl border-b border-white/20'
+              ? 'bg-white/10 dark:bg-white/10 backdrop-blur-xl border-b border-white/20 dark:border-white/20'
               : 'bg-transparent'
           }`}
-          style={{
-            background: (isHomePage ? !isOnBanner : isScrolled)
-              ? 'rgba(255, 255, 255, 0.1)'
-              : 'transparent',
-            backdropFilter: (isHomePage ? !isOnBanner : isScrolled) ? 'blur(20px)' : 'none',
-            WebkitBackdropFilter: (isHomePage ? !isOnBanner : isScrolled) ? 'blur(20px)' : 'none',
-            borderBottom: (isHomePage ? !isOnBanner : isScrolled) ? '1px solid rgba(255, 255, 255, 0.2)' : 'none'
-          }}
           role="navigation"
           aria-label="Main navigation"
         >
@@ -221,16 +213,15 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
              ref={hamburgerRef}
              onClick={toggleMenu}
              className="flex items-center space-x-1 md:space-x-2 cursor-hover group z-10"
-             style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 4px 8px rgba(0,0,0,0.5)) drop-shadow(0 6px 12px rgba(0,0,0,0.4))' }}
              aria-label="Toggle sidebar"
            >
              {/* Custom Hamburger Icon */}
              <div className="relative w-6 h-6 md:w-7 md:h-7">
-               <div className="hamburger-line absolute top-1.5 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-white group-hover:luxury-glow transition-all duration-300 origin-center"></div>
-               <div className="hamburger-line absolute top-2.75 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-white group-hover:luxury-glow transition-all duration-300 origin-center"></div>
-               <div className="hamburger-line absolute top-4 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-white group-hover:luxury-glow transition-all duration-300 origin-center"></div>
+               <div className="hamburger-line absolute top-1.5 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-foreground group-hover:luxury-glow transition-all duration-300 origin-center"></div>
+               <div className="hamburger-line absolute top-2.75 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-foreground group-hover:luxury-glow transition-all duration-300 origin-center"></div>
+               <div className="hamburger-line absolute top-4 left-0 w-5 h-0.5 md:w-6 md:h-0.5 bg-foreground group-hover:luxury-glow transition-all duration-300 origin-center"></div>
              </div>
-             <span className="hidden sm:inline text-white text-sm font-semibold group-hover:luxury-glow transition-all">Menu</span>
+             <span className="hidden sm:inline text-foreground text-sm font-semibold group-hover:luxury-glow transition-all">Menu</span>
            </button>
 
            {/* Logo - Centered (Always visible on all screen sizes) */}
@@ -247,9 +238,9 @@ const NavigationComponent = ({ hideWhenPopup = false }: NavigationProps) => {
                animate="animate"
                whileHover="hover"
              >
-               <div className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-white logo-main">
+               <div className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-foreground logo-main">
                    <motion.span
-                     className={`main-logo-text ${(isHomePage && isOnBanner) ? 'text-6xl sm:text-8xl md:text-[11rem]' : 'text-3xl sm:text-4xl md:text-5xl'} text-white luxury-glow animate-glow-pulse inline-block text-hover-shimmer max-w-[90vw]`}
+                     className={`main-logo-text ${(isHomePage && isOnBanner) ? 'text-6xl sm:text-8xl md:text-[11rem]' : 'text-3xl sm:text-4xl md:text-5xl'} text-foreground luxury-glow animate-glow-pulse inline-block text-hover-shimmer max-w-[90vw]`}
                      style={{
                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',

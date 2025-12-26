@@ -64,7 +64,7 @@ const Contact = () => {
   }, [location.hash]);
 
   return (
-    <div className="pt-20 pb-12 px-4 sm:px-8">
+    <div className="pt-20 pb-12 px-4 sm:px-8 bg-background">
       <div className="container mx-auto max-w-6xl">
         {/* Animated Header */}
         <div className="text-center mb-12 sm:mb-16">
@@ -107,11 +107,11 @@ const Contact = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}
               >
-                <label className="text-xs sm:text-sm text-white/70 mb-2 block tracking-wider">{t('nameLabel')}</label>
+                <label className="text-xs sm:text-sm text-muted-foreground mb-2 block tracking-wider">{t('nameLabel')}</label>
                 <motion.div whileFocus="focus" variants={inputVariants}>
                   <Input
                     placeholder={t('yourName')}
-                    className="bg-black/50 border-white/20 text-white placeholder:text-white/30 transition-all duration-300 focus:border-white/40 focus:bg-black/60"
+                    className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 focus:border-foreground/40 focus:bg-accent/60"
                   />
                 </motion.div>
               </motion.div>
@@ -122,11 +122,11 @@ const Contact = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.6 }}
               >
-                <label className="text-xs sm:text-sm text-white/70 mb-2 block tracking-wider">{t('email')}</label>
+                <label className="text-xs sm:text-sm text-muted-foreground mb-2 block tracking-wider">{t('email')}</label>
                 <Input
                   type="email"
                   placeholder={t('yourEmail')}
-                  className="bg-black/50 border-white/20 text-white placeholder:text-white/30 transition-all duration-300 focus:border-white/40 focus:bg-black/60"
+                  className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 focus:border-foreground/40 focus:bg-accent/60"
                 />
               </motion.div>
 
@@ -136,10 +136,10 @@ const Contact = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.7 }}
               >
-                <label className="text-xs sm:text-sm text-white/70 mb-2 block tracking-wider">{t('messageLabel')}</label>
+                <label className="text-xs sm:text-sm text-muted-foreground mb-2 block tracking-wider">{t('messageLabel')}</label>
                 <Textarea
                   placeholder={t('messagePlaceholder')}
-                  className="bg-black/50 border-white/20 text-white placeholder:text-white/30 min-h-[120px] sm:min-h-[150px] transition-all duration-300 focus:border-white/40 focus:bg-black/60"
+                  className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground min-h-[120px] sm:min-h-[150px] transition-all duration-300 focus:border-foreground/40 focus:bg-accent/60"
                 />
               </motion.div>
 
@@ -171,12 +171,12 @@ const Contact = () => {
           >
             {/* Address Card */}
             <motion.div
-              className="frosted-glass border border-white/10 rounded-lg p-4 sm:p-6"
+              className="frosted-glass border border-border rounded-lg p-4 sm:p-6"
               variants={cardVariants}
               whileHover={{
                 x: 10,
-                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.1)',
-                borderColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
               }}
             >
               <div className="flex items-start">
@@ -187,18 +187,18 @@ const Contact = () => {
                   }}
                   transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                 >
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white mr-3 sm:mr-4 mt-1 luxury-glow" />
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-foreground mr-3 sm:mr-4 mt-1 luxury-glow" />
                 </motion.div>
                 <div>
-                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('addressLabel')}</h4>
+                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2 text-foreground">{t('addressLabel')}</h4>
                   <a
                     href={`https://maps.google.com/?q=${encodeURIComponent(settings?.address_full || '283 Tache Avenue, Winnipeg, MB, Canada')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
                   >
                     {settingsLoading ? (
-                      <span className="text-white/50">Loading address...</span>
+                      <span className="text-muted-foreground">Loading address...</span>
                     ) : (
                       <>
                         {settings?.address_street || '283 Tache Avenue'}<br />
@@ -213,12 +213,12 @@ const Contact = () => {
             {/* Phone Card */}
             <motion.div
               id="phone"
-              className="frosted-glass border border-white/10 rounded-lg p-4 sm:p-6 scroll-mt-24"
+              className="frosted-glass border border-border rounded-lg p-4 sm:p-6 scroll-mt-24"
               variants={cardVariants}
               whileHover={{
                 x: 10,
-                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.1)',
-                borderColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
               }}
             >
               <div className="flex items-start">
@@ -228,16 +228,16 @@ const Contact = () => {
                   }}
                   transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
                 >
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white mr-3 sm:mr-4 mt-1 luxury-glow" />
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-foreground mr-3 sm:mr-4 mt-1 luxury-glow" />
                 </motion.div>
                 <div>
-                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('phoneLabel')}</h4>
+                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2 text-foreground">{t('phoneLabel')}</h4>
                   <a
                     href={`tel:${settings?.phone_raw || '+14318163330'}`}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
                   >
                     {settingsLoading ? (
-                      <span className="text-white/50">Loading phone...</span>
+                      <span className="text-muted-foreground">Loading phone...</span>
                     ) : (
                       settings?.phone || '(431) 816-3330'
                     )}
@@ -248,12 +248,12 @@ const Contact = () => {
 
             {/* Email Card */}
             <motion.div
-              className="frosted-glass border border-white/10 rounded-lg p-4 sm:p-6"
+              className="frosted-glass border border-border rounded-lg p-4 sm:p-6"
               variants={cardVariants}
               whileHover={{
                 x: 10,
-                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.1)',
-                borderColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
               }}
             >
               <div className="flex items-start">
@@ -263,16 +263,16 @@ const Contact = () => {
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white mr-3 sm:mr-4 mt-1 luxury-glow" />
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-foreground mr-3 sm:mr-4 mt-1 luxury-glow" />
                 </motion.div>
                 <div>
-                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('emailLabel')}</h4>
+                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2 text-foreground">{t('emailLabel')}</h4>
                   <a
                     href={`mailto:${settings?.email || 'zavirasalonandspa@gmail.com'}`}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-white transition-colors underline-offset-2 hover:underline"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
                   >
                     {settingsLoading ? (
-                      <span className="text-white/50">Loading email...</span>
+                      <span className="text-muted-foreground">Loading email...</span>
                     ) : (
                       settings?.email || 'zavirasalonandspa@gmail.com'
                     )}
@@ -284,12 +284,12 @@ const Contact = () => {
             {/* Hours Card */}
             <motion.div
               id="hours"
-              className="frosted-glass border border-white/10 rounded-lg p-4 sm:p-6 scroll-mt-24"
+              className="frosted-glass border border-border rounded-lg p-4 sm:p-6 scroll-mt-24"
               variants={cardVariants}
               whileHover={{
                 x: 10,
-                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.1)',
-                borderColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
               }}
             >
               <div className="flex items-start">
@@ -299,13 +299,13 @@ const Contact = () => {
                   }}
                   transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                 >
-                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white mr-3 sm:mr-4 mt-1 luxury-glow" />
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-foreground mr-3 sm:mr-4 mt-1 luxury-glow" />
                 </motion.div>
                 <div>
-                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2">{t('hoursLabel')}</h4>
+                  <h4 className="text-lg sm:text-xl font-serif luxury-glow mb-2 text-foreground">{t('hoursLabel')}</h4>
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     {settingsLoading ? (
-                      <span className="text-white/50">Loading hours...</span>
+                      <span className="text-muted-foreground">Loading hours...</span>
                     ) : (
                       settings?.hours_display || 'Daily: 8:00 AM - 11:30 PM'
                     )}

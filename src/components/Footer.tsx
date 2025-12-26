@@ -42,14 +42,14 @@ export const Footer = React.memo(() => {
       { name: 'YouTube', path: '#', external: true }
     ]
   }];
-  return <footer className="relative border-t border-white/10 overflow-hidden no-animations bg-black" role="contentinfo" aria-label="Site footer">
+  return <footer className="relative border-t border-border overflow-hidden no-animations bg-background" role="contentinfo" aria-label="Site footer">
     <div className="container mx-auto container-padding relative z-10">
       {/* Logo */}
       <div className="text-center mb-6 md:mb-8">
-        <div className="text-3xl md:text-4xl font-serif font-light text-white" role="banner" aria-label="Zavira Salon and Spa">
+        <div className="text-3xl md:text-4xl font-serif font-light text-foreground" role="banner" aria-label="Zavira Salon and Spa">
           ZAVIRA
         </div>
-        <div className="text-sm md:text-base text-white/70 mt-1 font-light tracking-wider">
+        <div className="text-sm md:text-base text-muted-foreground mt-1 font-light tracking-wider">
           SALON & SPA
         </div>
       </div>
@@ -65,7 +65,7 @@ export const Footer = React.memo(() => {
               {link.external ? (
                 <a
                   href={link.path}
-                  className="text-footer-link footer-link hover:text-white cursor-hover block"
+                  className="text-footer-link footer-link hover:text-foreground cursor-hover block"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -74,7 +74,7 @@ export const Footer = React.memo(() => {
               ) : (
                 <Link
                   to={link.path}
-                  className="text-footer-link footer-link hover:text-white cursor-hover block"
+                  className="text-footer-link footer-link hover:text-foreground cursor-hover block"
                 >
                   {link.name}
                 </Link>
@@ -88,28 +88,28 @@ export const Footer = React.memo(() => {
       <div className="flex justify-center space-x-6 mb-6">
         <a
           href="#"
-          className="text-white/70 hover:text-white transition-colors duration-300"
+          className="text-muted-foreground hover:text-foreground transition-colors duration-300"
           aria-label="Follow us on Instagram"
         >
           <Instagram className="w-6 h-6" />
         </a>
         <a
           href="#"
-          className="text-white/70 hover:text-white transition-colors duration-300"
+          className="text-muted-foreground hover:text-foreground transition-colors duration-300"
           aria-label="Follow us on Facebook"
         >
           <Facebook className="w-6 h-6" />
         </a>
         <a
           href="#"
-          className="text-white/70 hover:text-white transition-colors duration-300"
+          className="text-muted-foreground hover:text-foreground transition-colors duration-300"
           aria-label="Follow us on Twitter"
         >
           <Twitter className="w-6 h-6" />
         </a>
         <a
           href="#"
-          className="text-white/70 hover:text-white transition-colors duration-300"
+          className="text-muted-foreground hover:text-foreground transition-colors duration-300"
           aria-label="Subscribe to our YouTube channel"
         >
           <Youtube className="w-6 h-6" />
@@ -128,9 +128,9 @@ export const Footer = React.memo(() => {
       </div>
 
       {/* Bottom */}
-      <div className="border-t border-white/10 pt-4">
+      <div className="border-t border-border pt-4">
         <div className="flex flex-col md:flex-row justify-center items-center text-xs text-muted-foreground">
-          <p className="transition-all duration-300 hover:text-white hover:tracking-wider">{t('copyright')}</p>
+          <p className="transition-all duration-300 hover:text-foreground hover:tracking-wider">{t('copyright')}</p>
         </div>
       </div>
     </div>
