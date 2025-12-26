@@ -6,13 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Product360Viewer } from '@/components/Product360Viewer';
-// import { SubscriptionBoxes } from '@/components/SubscriptionBoxes'; // Hidden for now
+import { SubscriptionBoxes } from '@/components/hormozi';
 import { GiftCardSystem } from '@/components/GiftCardSystem';
-import { Search, ShoppingCart, Heart, ShoppingBag, Star, Loader2 } from 'lucide-react';
+import { Search, ShoppingCart, Heart, ShoppingBag, Star, Loader2, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { FadeInUp, MagneticButton } from '@/components/animations';
 import { useLanguage } from '@/hooks/use-language';
+import { PriceAnchoring } from '@/components/PriceAnchoring';
 
 // Animation variants for shop
 const containerVariants = {
@@ -494,19 +495,23 @@ const Shop = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg sm:text-xl md:text-2xl text-foreground font-bold">${product.price}</span>
-                      {product.sale_price && (
-                        <span className="text-sm text-red-400 line-through">${product.sale_price}</span>
-                      )}
+                  {/* Price Anchoring */}
+                  <div className="mb-3">
+                    <PriceAnchoring
+                      regularPrice={product.sale_price || product.price * 1.4} // Use sale_price as regular, or 40% markup
+                      currentPrice={product.price}
+                      size="sm"
+                      badgeText="SALE"
+                      showBadge={(product.sale_price || 0) > product.price}
+                    />
+                  </div>
+
+                  {/* Stock Status */}
+                  <div className="text-xs text-right mb-2">
+                    <div className={`font-semibold ${(product.stock_quantity || 0) <= 5 ? 'text-red-400' : 'text-emerald-400'}`}>
+                      {(product.stock_quantity || 0) <= 5 ? t('lowStock') : t('inStock')}
                     </div>
-                    <div className="text-xs text-right">
-                      <div className={`font-semibold ${(product.stock_quantity || 0) <= 5 ? 'text-red-400' : 'text-green-400'}`}>
-                        {(product.stock_quantity || 0) <= 5 ? t('lowStock') : t('inStock')}
-                      </div>
-                      <div className="text-muted-foreground">{product.stock_quantity || 0} {t('leftInStock')}</div>
-                    </div>
+                    <div className="text-muted-foreground">{product.stock_quantity || 0} {t('leftInStock')}</div>
                   </div>
                   <MagneticButton className="w-full">
                     <Button
@@ -529,6 +534,9 @@ const Shop = () => {
 
       {/* Subscription Boxes Section - Hidden for now */}
       {/* <SubscriptionBoxes /> */}
+
+      {/* HORMOZI: Subscription Boxes Section */}
+      <SubscriptionBoxes />
 
       {/* Gift Card System Section */}
       <GiftCardSystem />

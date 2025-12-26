@@ -1,0 +1,10 @@
+export { CountdownTimer } from './CountdownTimer';
+export { LimitedSpots } from './LimitedSpots';
+export { SocialProofNotification } from './SocialProofNotification';
+export { GrandSlamOffers } from './GrandSlamOffers';
+export { GuaranteesSection } from './GuaranteesSection';
+export { SubscriptionBoxes } from './SubscriptionBoxes';
+export { TestimonialsSection } from './TestimonialsSection';
+export { BeforeAfterSlider } from './BeforeAfterSlider';
+export { TransformationCard } from './TransformationCard';
+export { BeforeAfterGallery } from './BeforeAfterGallery';

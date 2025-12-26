@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles, Edit, CreditCard, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Info, Check, User, Scissors, Users, Plus, Trash2, Zap, Loader2, ShoppingCart, ChevronUp, X, RotateCcw, Sparkles, Edit, CreditCard, Search, TrendingUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Switch } from '@/components/ui/switch';
 import { format, differenceInHours, isPast, startOfDay } from 'date-fns';
@@ -18,6 +18,8 @@ import { FadeInUp, MagneticButton, scrollToTop, SuccessConfettiAnimation, Sparkl
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 import { Separator } from '@/components/ui/separator';
 import EmailService from '@/lib/email-service';
+import { ValueBreakdown } from '@/components/PriceAnchoring';
+import { BookingUpsells } from '@/components/BookingUpsells';
 
 // Booking session expiration time (24 hours)
 const BOOKING_EXPIRATION_HOURS = 24;
@@ -1412,6 +1414,21 @@ const Booking = () => {
                               </div>
                             </div>
                           )}
+
+                          {/* Upsells - Stylist Mode */}
+                          {selectedServices.length > 0 && (
+                            <div className="mt-6">
+                              <BookingUpsells
+                                selectedServiceIds={selectedServices}
+                                onAddService={(serviceId) => {
+                                  if (!selectedServices.includes(serviceId)) {
+                                    setSelectedServices([...selectedServices, serviceId]);
+                                  }
+                                }}
+                                services={services}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -1477,6 +1494,21 @@ const Booking = () => {
                               <span>{selectedServices.length} service{selectedServices.length > 1 ? 's' : ''} selected</span>
                               <span className="font-semibold">${calculateServicesTotal().toFixed(2)} • {calculateServicesDuration()} min</span>
                             </div>
+                          </div>
+                        )}
+
+                        {/* Upsells - Service Mode */}
+                        {selectedServices.length > 0 && (
+                          <div className="mt-6">
+                            <BookingUpsells
+                              selectedServiceIds={selectedServices}
+                              onAddService={(serviceId) => {
+                                if (!selectedServices.includes(serviceId)) {
+                                  setSelectedServices([...selectedServices, serviceId]);
+                                }
+                              }}
+                              services={services}
+                            />
                           </div>
                         )}
                       </div>
@@ -2136,36 +2168,66 @@ const Booking = () => {
                       Secure Payment
                     </h4>
 
-                    {/* Price Summary */}
+                    {/* Enhanced Price Summary with Value Anchoring */}
                     {bookingMode === 'group' ? (
                       (() => {
                         const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
                         const depositAmount = total * 0.5;
+                        const regularPrice = subtotal * 1.3; // 30% markup for regular price
+                        const memberSavings = regularPrice - subtotal;
+
                         return (
-                          <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="truncate text-white/70">Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
-                              <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
-                            </div>
-                            {discountPercent > 0 && (
-                              <div className="flex justify-between text-green-400 text-[11px] sm:text-sm gap-2">
-                                <span className="truncate">Group Discount ({discountPercent}%)</span>
-                                <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
+                          <div className="space-y-3">
+                            {/* Value Breakdown */}
+                            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                                <span className="text-emerald-400 font-bold text-xs">MEMBER PRICING</span>
                               </div>
-                            )}
-                            <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="text-white/70">Total Price:</span>
-                              <span className="whitespace-nowrap font-medium">${total.toFixed(2)}</span>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between text-white/60">
+                                  <span>Regular Price:</span>
+                                  <span className="line-through">${regularPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-emerald-400 font-semibold">
+                                  <span>Member Price:</span>
+                                  <span>${subtotal.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-emerald-400 text-[10px]">
+                                  <span>You Save:</span>
+                                  <span>${memberSavings.toFixed(2)} (23% OFF)</span>
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="text-white/70">Deposit (50%):</span>
-                              <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
-                            </div>
-                            <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
-                              <span>Due Today:</span>
-                              <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
+
+                            {/* Standard Summary */}
+                            <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="truncate text-white/70">Subtotal ({memberCount} {memberCount === 1 ? 'person' : 'people'})</span>
+                                <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
+                              </div>
+                              {discountPercent > 0 && (
+                                <div className="flex justify-between text-emerald-400 text-[11px] sm:text-sm gap-2">
+                                  <span className="truncate">Group Discount ({discountPercent}%)</span>
+                                  <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
+                                </div>
+                              )}
+                              <Separator className="bg-white/10 my-1 sm:my-2" />
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="text-white/70">Total Price:</span>
+                                <span className="whitespace-nowrap font-medium">${total.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="text-white/70">Deposit (50%):</span>
+                                <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
+                              </div>
+                              <Separator className="bg-white/10 my-1 sm:my-2" />
+                              <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
+                                <span>Due Today:</span>
+                                <span className="text-emerald-400 whitespace-nowrap" style={{
+                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.6)'
+                                }}>${depositAmount.toFixed(2)}</span>
+                              </div>
                             </div>
                           </div>
                         );
@@ -2174,24 +2236,54 @@ const Booking = () => {
                       (() => {
                         const totalPrice = calculateServicesTotal();
                         const depositAmount = totalPrice * 0.5;
+                        const regularPrice = totalPrice * 1.3; // 30% markup for regular price
+                        const memberSavings = regularPrice - totalPrice;
+
                         return (
-                          <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="text-white/70">Service Price:</span>
-                              <span className="whitespace-nowrap font-medium">${totalPrice.toFixed(2)}</span>
+                          <div className="space-y-3">
+                            {/* Value Breakdown */}
+                            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Sparkles className="w-4 h-4 text-emerald-400" />
+                                <span className="text-emerald-400 font-bold text-xs">MEMBER PRICING</span>
+                              </div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between text-white/60">
+                                  <span>Regular Price:</span>
+                                  <span className="line-through">${regularPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-emerald-400 font-semibold">
+                                  <span>Your Price:</span>
+                                  <span>${totalPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-emerald-400 text-[10px]">
+                                  <span>You Save:</span>
+                                  <span>${memberSavings.toFixed(2)} (23% OFF)</span>
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="text-white/70">Duration:</span>
-                              <span className="whitespace-nowrap font-medium">{calculateServicesDuration()} min</span>
-                            </div>
-                            <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
-                              <span className="text-white/70">Deposit (50%):</span>
-                              <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
-                            </div>
-                            <Separator className="bg-white/10 my-1 sm:my-2" />
-                            <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
-                              <span>Due Today:</span>
-                              <span className="text-green-400 whitespace-nowrap">${depositAmount.toFixed(2)}</span>
+
+                            {/* Standard Summary */}
+                            <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="text-white/70">Service Price:</span>
+                                <span className="whitespace-nowrap font-medium">${totalPrice.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="text-white/70">Duration:</span>
+                                <span className="whitespace-nowrap font-medium">{calculateServicesDuration()} min</span>
+                              </div>
+                              <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                <span className="text-white/70">Deposit (50%):</span>
+                                <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
+                              </div>
+                              <Separator className="bg-white/10 my-1 sm:my-2" />
+                              <div className="flex justify-between text-white font-semibold text-sm sm:text-lg gap-2">
+                                <span>Due Today:</span>
+                                <span className="text-emerald-400 whitespace-nowrap" style={{
+                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.6)'
+                                }}>${depositAmount.toFixed(2)}</span>
+                              </div>
                             </div>
                           </div>
                         );

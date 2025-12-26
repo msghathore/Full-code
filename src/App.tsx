@@ -15,12 +15,14 @@ import { LoadingScreen } from "./components/LoadingScreen";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PageTransition } from "./components/PageTransition";
 import { SecretDealsDialog } from "./components/SecretDealsDialog";
+import { ExitIntentPopup } from "./components/hormozi/ExitIntentPopup";
 import { useAppointmentNotifications } from "./hooks/use-appointment-notifications";
 import { Navigation } from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SEO from "./components/SEO";
 import CookieConsent from "./components/CookieConsent";
+import { FacebookPixel } from "./components/FacebookPixel";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import OAuthCallback from "./pages/OAuthCallback";
 import { SmoothScrollProvider } from "./components/animations";
@@ -45,6 +47,7 @@ const FAQs = lazy(() => import("./pages/FAQs"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const Gallery = lazy(() => import("./pages/Gallery"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Community = lazy(() => import("./pages/Community"));
 // Staff Application - Separate routing for staff functionality
@@ -66,6 +69,12 @@ const MyAppointmentsPortal = lazy(() => import("./pages/MyAppointmentsPortal"));
 
 // Membership & Gift Cards
 const MembershipPage = lazy(() => import("./pages/MembershipPage"));
+
+// Referral Program
+const ReferralProgram = lazy(() => import("./pages/ReferralProgram"));
+
+// Lead Magnets
+const LeadMagnetDownload = lazy(() => import("./pages/LeadMagnetDownload"));
 
 const queryClient = new QueryClient();
 
@@ -112,6 +121,7 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
             <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+            <Route path="/gallery" element={<PageTransition><Gallery /></PageTransition>} />
             <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
             <Route path="/auth/signup" element={<PageTransition><Auth /></PageTransition>} />
             <Route path="/onboarding" element={<PageTransition><ProfileCompletion /></PageTransition>} />
@@ -139,6 +149,12 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
             {/* Membership & Gift Cards */}
             <Route path="/membership" element={<PageTransition><MembershipPage /></PageTransition>} />
 
+            {/* Referral Program */}
+            <Route path="/referrals" element={<PageTransition><ReferralProgram /></PageTransition>} />
+
+            {/* Lead Magnets */}
+            <Route path="/download/:slug" element={<PageTransition><LeadMagnetDownload /></PageTransition>} />
+
             {/* Staff Application Routes - Rendered via StaffApp component */}
             <Route path="/staff/*" element={<StaffApp />} />
 
@@ -149,6 +165,7 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
       </Suspense>
       <CookieConsent />
       {!hideNavigation && <SecretDealsDialog />}
+      {!hideNavigation && <ExitIntentPopup />}
     </SmoothScrollProvider>
   );
 };
@@ -180,6 +197,7 @@ const App = () => {
               <Toaster />
               <Sonner />
               <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <FacebookPixel />
                 <AppContent showSecretDeals={showSecretDeals} setShowSecretDeals={setShowSecretDeals} />
               </BrowserRouter>
             </TooltipProvider>

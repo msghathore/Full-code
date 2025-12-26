@@ -399,8 +399,8 @@ export class EmailService {
    * Extract customer name from user or booking data
    */
   static extractCustomerName(userData: any, fallbackName?: string): string | null {
-    const name = userData?.name || 
-                 userData?.fullName || 
+    const name = userData?.name ||
+                 userData?.fullName ||
                  userData?.customerName ||
                  userData?.user?.user_metadata?.full_name ||
                  userData?.user?.user_metadata?.first_name ?
@@ -409,6 +409,264 @@ export class EmailService {
                  fallbackName;
 
     return name && name.trim() ? name.trim() : null;
+  }
+
+  /**
+   * Send welcome email to new customer (Campaign)
+   */
+  static async sendWelcomeEmail(customerEmail: string, customerName: string, customerId?: string): Promise<EmailResponse> {
+    try {
+      const { data, error } = await supabase.functions.invoke<EmailResponse>('send-email', {
+        body: {
+          email_type: 'welcome',
+          to: customerEmail,
+          to_name: customerName,
+          data: {
+            customerName,
+            customerEmail,
+          },
+          customer_id: customerId,
+        },
+      });
+
+      if (error) {
+        return {
+          success: false,
+          message: 'Failed to send welcome email',
+          error: error.message,
+        };
+      }
+
+      return {
+        success: data.success,
+        message: data.success ? 'Welcome email sent successfully' : 'Failed to send welcome email',
+        data: { messageId: data.message_id },
+        error: data.error,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error sending welcome email',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Send abandoned cart recovery email
+   */
+  static async sendAbandonedCartEmail(params: {
+    customerEmail: string;
+    customerName: string;
+    serviceName: string;
+    price: string;
+    selectedDate?: string;
+    selectedTime?: string;
+    discountCode?: string;
+    customerId?: string;
+  }): Promise<EmailResponse> {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: {
+          email_type: 'abandoned_cart',
+          to: params.customerEmail,
+          to_name: params.customerName,
+          data: {
+            customerName: params.customerName,
+            serviceName: params.serviceName,
+            price: params.price,
+            selectedDate: params.selectedDate,
+            selectedTime: params.selectedTime,
+            discountCode: params.discountCode || 'COMPLETE10',
+          },
+          customer_id: params.customerId,
+        },
+      });
+
+      if (error) {
+        return {
+          success: false,
+          message: 'Failed to send abandoned cart email',
+          error: error.message,
+        };
+      }
+
+      return {
+        success: data.success,
+        message: data.success ? 'Abandoned cart email sent successfully' : 'Failed to send email',
+        data: { messageId: data.message_id },
+        error: data.error,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error sending abandoned cart email',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Send referral invitation email
+   */
+  static async sendReferralInvitation(params: {
+    customerEmail: string;
+    customerName: string;
+    referralCode: string;
+    customerDiscount?: string;
+    friendDiscount?: string;
+    customerId?: string;
+  }): Promise<EmailResponse> {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: {
+          email_type: 'referral_invitation',
+          to: params.customerEmail,
+          to_name: params.customerName,
+          data: {
+            customerName: params.customerName,
+            referralCode: params.referralCode,
+            customerDiscount: params.customerDiscount || '$20',
+            friendDiscount: params.friendDiscount || '$20',
+            referralLink: `https://zavira.ca/referral/${params.referralCode}`,
+          },
+          customer_id: params.customerId,
+        },
+      });
+
+      if (error) {
+        return {
+          success: false,
+          message: 'Failed to send referral invitation',
+          error: error.message,
+        };
+      }
+
+      return {
+        success: data.success,
+        message: data.success ? 'Referral invitation sent successfully' : 'Failed to send invitation',
+        data: { messageId: data.message_id },
+        error: data.error,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error sending referral invitation',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Track email open event
+   */
+  static async trackEmailOpen(emailLogId: string): Promise<void> {
+    try {
+      await supabase
+        .from('email_logs')
+        .update({
+          opened_at: new Date().toISOString(),
+        })
+        .eq('id', emailLogId);
+    } catch (error) {
+      console.error('Error tracking email open:', error);
+    }
+  }
+
+  /**
+   * Track email click event
+   */
+  static async trackEmailClick(emailLogId: string): Promise<void> {
+    try {
+      await supabase
+        .from('email_logs')
+        .update({
+          clicked_at: new Date().toISOString(),
+        })
+        .eq('id', emailLogId);
+    } catch (error) {
+      console.error('Error tracking email click:', error);
+    }
+  }
+
+  /**
+   * Get email logs for a customer
+   */
+  static async getCustomerEmailLogs(customerId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('email_logs')
+        .select('*')
+        .eq('customer_id', customerId)
+        .order('sent_at', { ascending: false });
+
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Error fetching email logs:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Update email preferences
+   */
+  static async updateEmailPreferences(params: {
+    customerId: string;
+    email: string;
+    subscribedToMarketing?: boolean;
+    subscribedToReminders?: boolean;
+    subscribedToNewsletters?: boolean;
+  }) {
+    try {
+      const { data, error } = await supabase
+        .from('email_preferences')
+        .upsert({
+          customer_id: params.customerId,
+          email: params.email,
+          subscribed_to_marketing: params.subscribedToMarketing,
+          subscribed_to_reminders: params.subscribedToReminders,
+          subscribed_to_newsletters: params.subscribedToNewsletters,
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Error updating email preferences:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Unsubscribe from all emails
+   */
+  static async unsubscribeFromEmails(email: string, reason?: string) {
+    try {
+      const { data, error } = await supabase
+        .from('email_preferences')
+        .update({
+          subscribed_to_marketing: false,
+          subscribed_to_reminders: false,
+          subscribed_to_newsletters: false,
+          unsubscribed_at: new Date().toISOString(),
+          unsubscribe_reason: reason,
+        })
+        .eq('email', email)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Error unsubscribing from emails:', error);
+      return null;
+    }
   }
 }
 

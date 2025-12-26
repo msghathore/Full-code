@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Shield, TrendingUp, Sparkles, Crown, Zap } from 'lucide-react';
-import { toast } from 'sonner';
+import { CheckCircle2, Shield, Crown, Sparkles, Gift, Zap, Users, Calendar } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
+import { CountdownTimer, SocialProofNotification } from '@/components/hormozi';
 
 interface MembershipTier {
   id: string;
   name: string;
   slug: string;
+  description: string | null;
   monthly_price: number;
-  annual_price: number;
+  annual_price: number | null;
   credits_per_month: number;
   credit_value: number;
   rollover_credits: boolean;
@@ -20,221 +21,258 @@ interface MembershipTier {
   max_guests: number;
   free_upgrades_per_month: number;
   house_calls_per_year: number;
-  description: string;
   features: string[];
-  badge: string | null;
   display_order: number;
+  is_active: boolean;
+  badge: string | null;
 }
 
 export default function MembershipPage() {
-  const [tiers, setTiers] = useState<MembershipTier[]>([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    loadMembershipTiers();
-  }, []);
-
-  const loadMembershipTiers = async () => {
-    try {
+  const { data: tiers, isLoading } = useQuery({
+    queryKey: ['membership-tiers'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('membership_tiers')
         .select('*')
         .eq('is_active', true)
-        .order('display_order');
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
-      setTiers(data || []);
-    } catch (error) {
-      console.error('Error loading tiers:', error);
-      toast.error('Failed to load membership tiers');
-    } finally {
-      setLoading(false);
+      return data as MembershipTier[];
     }
-  };
+  });
 
-  const calculateROI = (creditValue: number, monthlyPrice: number) => {
-    const roi = ((creditValue - monthlyPrice) / monthlyPrice * 100).toFixed(0);
-    return `${roi}%`;
-  };
+  const basicTier = tiers?.[0];
+  const eliteTier = tiers?.[1];
 
-  const calculateAnnualSavings = (monthlyPrice: number, annualPrice: number) => {
-    const monthlyCost = monthlyPrice * 12;
-    return monthlyCost - annualPrice;
-  };
-
-  const MembershipTierCard = ({ tier }: { tier: MembershipTier }) => {
-    const roi = calculateROI(tier.credit_value, tier.monthly_price);
-    const annualSavings = calculateAnnualSavings(tier.monthly_price, tier.annual_price);
-
+  if (isLoading) {
     return (
-      <Card className={`bg-slate-900 border-2 hover:border-emerald-500 transition-all hover:scale-105 ${tier.badge ? 'border-emerald-500 relative' : 'border-slate-700'}`}>
-        {tier.badge && (
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-            <Badge className="bg-emerald-500 text-black font-bold px-6 py-2 text-sm">
-              ⭐ {tier.badge}
-            </Badge>
-          </div>
-        )}
-
-        <CardHeader className="text-center pt-8">
-          <CardTitle className="text-3xl font-serif text-white mb-2">
-            {tier.name}
-          </CardTitle>
-          <CardDescription className="text-gray-400 mb-4">
-            {tier.description}
-          </CardDescription>
-
-          <div className="space-y-2">
-            <div className="text-5xl font-bold text-white">
-              ${tier.monthly_price}
-              <span className="text-lg text-gray-400">/mo</span>
-            </div>
-            <div className="inline-block bg-emerald-500 text-black px-4 py-2 rounded-lg font-bold">
-              {roi} MORE VALUE
-            </div>
-            <p className="text-sm text-gray-400">
-              Get ${tier.credit_value} worth of services
-            </p>
-            {tier.annual_price && (
-              <p className="text-xs text-emerald-400">
-                Save ${annualSavings.toFixed(0)}/year with annual plan
-              </p>
-            )}
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            {tier.features.map((feature, idx) => (
-              <div key={idx} className="flex items-start gap-3 text-sm text-gray-300">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                <span>{feature}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-2">
-            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-lg py-6">
-              Start Saving Now
-            </Button>
-            {tier.annual_price && (
-              <Button variant="outline" className="w-full border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-black">
-                Get Annual ({Math.round((annualSavings / (tier.monthly_price * 12)) * 100)}% off)
-              </Button>
-            )}
-          </div>
-
-          <p className="text-xs text-center text-gray-500">
-            Cancel anytime. No contracts.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-500"></div>
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white py-20 px-4">
-      <div className="container mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Crown className="w-12 h-12 text-emerald-500" />
-            <h1 className="text-6xl font-serif drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
-              Membership
-            </h1>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 bg-gradient-to-b from-black via-slate-950 to-black overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-transparent to-transparent"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
+              <Crown className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">
+                EXCLUSIVE MEMBERSHIP PROGRAM
+              </span>
+            </div>
           </div>
-          <p className="text-3xl mb-4 text-emerald-400 font-bold flex items-center justify-center gap-2">
-            <Sparkles className="w-8 h-8" />
-            Never Pay Full Price Again
-            <Sparkles className="w-8 h-8" />
-          </p>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Save 10-30% on every service + get exclusive perks.
-            The more you visit, the more you save.
-          </p>
-        </div>
 
-        {/* Membership Tiers */}
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400">Loading membership options...</p>
+          <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold text-center mb-6 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+            ZAVIRA VIP CLUB
+          </h1>
+
+          <p className="text-2xl md:text-3xl text-center text-white/90 max-w-4xl mx-auto mb-4">
+            Stop Paying Full Price. Start Living Like Royalty.
+          </p>
+
+          <p className="text-xl text-center text-white/70 max-w-3xl mx-auto mb-8">
+            One monthly payment. <span className="text-emerald-400 font-bold">Unlimited luxury</span>.
+            The smartest investment in yourself you'll ever make.
+          </p>
+
+          <div className="flex justify-center mb-12">
+            <SocialProofNotification type="booked" />
           </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {tiers.map(tier => (
-              <MembershipTierCard key={tier.id} tier={tier} />
-            ))}
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+            <StatCard icon={<Zap className="w-8 h-8" />} value="$200+" label="Value per month" subtext="Pay $149, Get $200+" />
+            <StatCard icon={<Users className="w-8 h-8" />} value="500+" label="VIP Members" subtext="Join the elite club" />
+            <StatCard icon={<Gift className="w-8 h-8" />} value="20-30%" label="Savings" subtext="Every. Single. Visit." />
           </div>
-        )}
 
-        {/* Hormozi-style Guarantee */}
-        <div className="bg-gradient-to-r from-emerald-900/30 to-emerald-700/30 border-2 border-emerald-500 rounded-lg p-12 text-center mb-8">
-          <Shield className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-          <h3 className="text-4xl font-bold mb-6 text-white">
-            🛡️ 60-Day Money-Back Guarantee
-          </h3>
-          <p className="text-2xl mb-4 text-gray-200">
-            Try any membership for 60 days. If you don't LOVE it,
-            we'll refund every penny - no questions asked.
-          </p>
-          <p className="text-3xl font-bold text-emerald-400 mb-4">
-            Plus, you keep all the credits you've used!
-          </p>
-          <p className="text-xl text-gray-300">
-            You literally can't lose. Either you save money and love it,
-            or you get your money back AND keep the value.
-            <br />
-            <strong className="text-white text-2xl">That's our promise.</strong>
-          </p>
+          <div className="text-center">
+            <p className="text-white/60 mb-4">⚡ Limited spots available this month:</p>
+            <CountdownTimer size="lg" className="justify-center" />
+          </div>
         </div>
+      </section>
 
-        {/* Benefits Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-slate-900 border-slate-700 text-center p-6">
-            <Zap className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-            <h4 className="font-bold text-white mb-2">Instant Savings</h4>
-            <p className="text-sm text-gray-400">Save 10-30% on every service from day one</p>
-          </Card>
-
-          <Card className="bg-slate-900 border-slate-700 text-center p-6">
-            <Crown className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-            <h4 className="font-bold text-white mb-2">VIP Treatment</h4>
-            <p className="text-sm text-gray-400">Priority booking and exclusive perks</p>
-          </Card>
-
-          <Card className="bg-slate-900 border-slate-700 text-center p-6">
-            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-            <h4 className="font-bold text-white mb-2">No Contracts</h4>
-            <p className="text-sm text-gray-400">Cancel anytime, no questions asked</p>
-          </Card>
-
-          <Card className="bg-slate-900 border-slate-700 text-center p-6">
-            <TrendingUp className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-            <h4 className="font-bold text-white mb-2">Credits Roll Over</h4>
-            <p className="text-sm text-gray-400">Never lose value (Glow Getter & VIP Luxe)</p>
-          </Card>
-        </div>
-
-        {/* Urgency */}
-        <div className="text-center bg-amber-900/20 border-2 border-amber-500 rounded-lg p-8">
-          <p className="text-2xl text-amber-400 font-bold flex items-center justify-center gap-3 mb-2">
-            <TrendingUp className="w-6 h-6" />
-            ⚡ Limited Time: First 50 Members Get FREE $100 Welcome Bonus
+      {/* Comparison Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-black to-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-center mb-4">Choose Your Level</h2>
+          <p className="text-xl text-white/70 text-center mb-12">
+            Both tiers pay for themselves in <span className="text-emerald-400 font-bold">one visit</span>
           </p>
-          <p className="text-lg text-gray-300">23 spots remaining</p>
-        </div>
 
-        {/* FAQ Teaser */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4">Still have questions?</h3>
-          <p className="text-gray-400 mb-6">
-            Our team is here to help you find the perfect membership tier.
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {basicTier && <MembershipCard tier={basicTier} onJoin={() => navigate('/booking')} />}
+            {eliteTier && <MembershipCard tier={eliteTier} onJoin={() => navigate('/booking')} featured />}
+          </div>
+
+          <div className="mt-16 text-center p-8 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl max-w-4xl mx-auto">
+            <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold mb-3">30-DAY MONEY-BACK GUARANTEE</h3>
+            <p className="text-white/80 max-w-2xl mx-auto">
+              Try it for 30 days. If you don't absolutely love it, we'll refund every penny. No questions asked.
+              You literally <span className="text-emerald-400 font-bold">can't lose</span>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 px-4 bg-black">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-center mb-12">Common Questions</h2>
+          <FAQSection />
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 px-4 bg-gradient-to-b from-slate-950 to-black">
+        <div className="max-w-4xl mx-auto text-center">
+          <Sparkles className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">Ready to Join the VIP Club?</h2>
+          <p className="text-xl text-white/80 mb-8">
+            Stop overpaying. Start saving. <span className="text-emerald-400 font-bold">Join today</span>.
           </p>
-          <Button variant="outline" className="border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-black">
-            Contact Us
+          <Button
+            onClick={() => navigate('/booking')}
+            size="lg"
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-xl px-12 py-8 rounded-xl shadow-lg hover:shadow-emerald-500/50 transition-all"
+          >
+            <Crown className="w-6 h-6 mr-2" />
+            BECOME A VIP MEMBER NOW
           </Button>
+          <p className="text-white/40 text-sm mt-6">✓ Cancel anytime  •  ✓ 30-day guarantee  •  ✓ Join in 60 seconds</p>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
+
+interface MembershipCardProps {
+  tier: MembershipTier;
+  onJoin: () => void;
+  featured?: boolean;
+}
+
+const MembershipCard = ({ tier, onJoin, featured = false }: MembershipCardProps) => {
+  const monthlySavings = (tier.credit_value * tier.credits_per_month) - tier.monthly_price;
+  const annualSavings = tier.annual_price ? (tier.monthly_price * 12) - tier.annual_price : 0;
+
+  return (
+    <div className={cn(
+      "relative rounded-2xl border-2 p-8 transition-all duration-300",
+      "bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur",
+      featured ? "border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.4)] scale-105" : "border-white/10 hover:border-emerald-500/50"
+    )}>
+      {featured && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full">
+          <span className="text-white font-bold text-sm uppercase tracking-wider">{tier.badge || "MOST POPULAR"}</span>
+        </div>
+      )}
+
+      <div className="text-center mb-6">
+        <h3 className="font-serif text-3xl font-bold mb-2">{tier.name}</h3>
+        <p className="text-white/70">{tier.description}</p>
+      </div>
+
+      <div className="text-center mb-8 pb-8 border-b border-white/10">
+        <div className="flex items-baseline justify-center gap-2 mb-2">
+          <span className="text-5xl font-bold text-emerald-400">${tier.monthly_price.toFixed(0)}</span>
+          <span className="text-white/60">/month</span>
+        </div>
+        <div className="text-emerald-400 font-semibold">SAVE ${monthlySavings.toFixed(0)}/month</div>
+        {tier.annual_price && (
+          <div className="mt-3 text-sm text-white/60">Or ${tier.annual_price.toFixed(0)}/year (Save ${annualSavings.toFixed(0)})</div>
+        )}
+      </div>
+
+      <ul className="space-y-4 mb-8">
+        {tier.features.map((feature, idx) => (
+          <li key={idx} className="flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+            <span className="text-white/90">{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Button
+        onClick={onJoin}
+        size="lg"
+        className={cn(
+          "w-full font-bold text-lg py-6 rounded-xl transition-all",
+          featured
+            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-emerald-500/50"
+            : "bg-white/10 hover:bg-white/20 border-2 border-white/20"
+        )}
+      >
+        {featured ? <Crown className="w-5 h-5 mr-2" /> : <Zap className="w-5 h-5 mr-2" />}
+        JOIN {tier.name}
+      </Button>
+    </div>
+  );
+};
+
+interface StatCardProps {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  subtext: string;
+}
+
+const StatCard = ({ icon, value, label, subtext }: StatCardProps) => {
+  return (
+    <div className="p-6 rounded-xl bg-gradient-to-br from-slate-900/60 to-black/60 border border-white/10 text-center">
+      <div className="text-emerald-400 flex justify-center mb-3">{icon}</div>
+      <div className="text-3xl font-bold text-emerald-400 mb-1">{value}</div>
+      <div className="text-white font-semibold mb-1">{label}</div>
+      <div className="text-white/60 text-sm">{subtext}</div>
+    </div>
+  );
+};
+
+const FAQSection = () => {
+  const faqs = [
+    {
+      q: "How does the membership work?",
+      a: "Pay one monthly fee, get access to services worth 2-3X what you pay. Use your monthly credits on any service, get massive discounts on everything else, and enjoy VIP perks like priority booking."
+    },
+    {
+      q: "Can I cancel anytime?",
+      a: "Absolutely. No contracts, no commitments. Cancel anytime with one click. We're so confident you'll love it that we make it easy to leave (but you won't want to)."
+    },
+    {
+      q: "What if I don't use my monthly credits?",
+      a: "Basic tier: Use it or lose it. Platinum tier: Credits roll over! Save them up for bigger treatments or share with friends."
+    },
+    {
+      q: "Is this really worth it?",
+      a: "If you visit us even once per month, you SAVE money with membership. Most members save $500-$1,200 per year. Plus priority booking, discounts, and VIP treatment? It's a no-brainer."
+    },
+    {
+      q: "Can I bring friends?",
+      a: "Yes! VIP members get exclusive 'Bring a Friend' discounts. Platinum members can bring unlimited friends and everyone saves."
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      {faqs.map((faq, idx) => (
+        <details key={idx} className="group p-6 rounded-xl bg-gradient-to-br from-slate-900/60 to-black/60 border border-white/10 cursor-pointer">
+          <summary className="text-lg font-bold flex items-center justify-between">
+            <span>{faq.q}</span>
+            <span className="text-emerald-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p className="mt-4 text-white/70 leading-relaxed">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  );
+};

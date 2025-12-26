@@ -3,12 +3,14 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { ServiceTiersDisplay } from '@/components/hormozi/ServiceTiersDisplay';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Calendar } from 'lucide-react';
+import { Search, Calendar, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { PriceAnchoring } from '@/components/PriceAnchoring';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -158,14 +160,19 @@ const Services = () => {
   const groupedServices = groupServicesByCategory();
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16 px-4 md:px-8">
-      <div className="container mx-auto max-w-7xl">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow text-foreground">
-          SERVICES
-        </h1>
-        <p className="text-center text-muted-foreground mb-8 tracking-wider text-sm md:text-base">
-          Indulge in our curated selection of luxury treatments
-        </p>
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      {/* Service Tiers Section */}
+      <ServiceTiersDisplay />
+
+      {/* Services Catalog Section */}
+      <div className="px-4 md:px-8">
+        <div className="container mx-auto max-w-7xl">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow text-foreground">
+            ALL SERVICES
+          </h1>
+          <p className="text-center text-muted-foreground mb-8 tracking-wider text-sm md:text-base">
+            Browse our complete catalog of luxury treatments
+          </p>
 
         {/* Category Filter Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -267,23 +274,18 @@ const Services = () => {
                                 </p>
                               )}
                             </div>
-                            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                              {/* Green glowing price with normal font for numbers */}
-                              <div className="text-xl md:text-2xl font-serif">
-                                <span className="text-emerald-400" style={{
-                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
-                                }}>
-                                  $
-                                </span>
-                                <span className="font-sans text-emerald-400" style={{
-                                  textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
-                                }}>
-                                  {variant.price.toFixed(0)}
-                                </span>
-                              </div>
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                              {/* Price Anchoring */}
+                              <PriceAnchoring
+                                regularPrice={variant.price * 1.3} // 30% markup for regular price
+                                currentPrice={variant.price}
+                                size="sm"
+                                badgeText="MEMBER PRICE"
+                                className="flex-1"
+                              />
                               <Button
                                 onClick={() => navigate(`/booking?service=${variant.id}`)}
-                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
                               >
                                 <Calendar className="h-4 w-4" />
                                 Book
@@ -310,23 +312,18 @@ const Services = () => {
                               </p>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                            {/* Green glowing price with normal font for numbers */}
-                            <div className="text-xl md:text-2xl font-serif">
-                              <span className="text-emerald-400" style={{
-                                textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
-                              }}>
-                                $
-                              </span>
-                              <span className="font-sans text-emerald-400" style={{
-                                textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
-                              }}>
-                                {group.parent.price.toFixed(0)}
-                              </span>
-                            </div>
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                            {/* Price Anchoring */}
+                            <PriceAnchoring
+                              regularPrice={group.parent.price * 1.3} // 30% markup for regular price
+                              currentPrice={group.parent.price}
+                              size="sm"
+                              badgeText="MEMBER PRICE"
+                              className="flex-1"
+                            />
                             <Button
                               onClick={() => navigate(`/booking?service=${group.parent.id}`)}
-                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover"
+                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
                             >
                               <Calendar className="h-4 w-4" />
                               Book
@@ -345,6 +342,7 @@ const Services = () => {
               <p className="text-sm mt-2">Try a different search term</p>
             </div>
           )}
+        </div>
         </div>
       </div>
 
