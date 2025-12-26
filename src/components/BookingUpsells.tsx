@@ -61,144 +61,296 @@ export const BookingUpsells = ({
     queryFn: async () => {
       if (selectedServiceIds.length === 0) return [];
 
-      // Generate smart upsells based on selected services
+      // Generate smart upsells based on selected services using salon industry best practices
       const generatedUpsells: (ServiceUpsell & { upsell_service: Service })[] = [];
+      const addedUpsellIds = new Set<string>(); // Prevent duplicates
 
       for (const selectedId of selectedServiceIds) {
         const selectedService = services.find(s => s.id === selectedId);
         if (!selectedService) continue;
 
-        // Find complementary services based on category and name
-        const category = selectedService.category;
         const name = selectedService.name.toLowerCase();
+        const category = selectedService.category.toLowerCase();
 
-        // Haircut -> Add color/highlights
-        if (name.includes('haircut') || name.includes('cut')) {
-          const colorServices = services.filter(s =>
-            (s.name.toLowerCase().includes('highlight') ||
-             s.name.toLowerCase().includes('color') ||
-             s.name.toLowerCase().includes('toner')) &&
-            s.id !== selectedId
-          );
+        // HAIRCUT SERVICES - Add color, styling, treatments
+        if (name.includes('haircut') || name.includes('cut') || name.includes('trim')) {
+          // Suggest color/highlights (complementary service)
+          services.filter(s =>
+            (s.name.toLowerCase().includes('color') ||
+             s.name.toLowerCase().includes('highlight') ||
+             s.name.toLowerCase().includes('balayage')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'complementary',
+                discount_percentage: 15,
+                pitch_text: `Complete your transformation with ${service.name} - Perfect with your fresh cut!`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
 
-          colorServices.slice(0, 2).forEach((service, idx) => {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${service.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: service.id,
-              upsell_type: 'addon',
-              discount_percentage: 15,
-              pitch_text: `Add ${service.name} to your new haircut - Save 15%! Popular combination.`,
-              display_order: idx + 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: service
-            });
+          // Suggest deep conditioning treatment (treatment enhancer)
+          services.filter(s =>
+            (s.name.toLowerCase().includes('treatment') ||
+             s.name.toLowerCase().includes('conditioning') ||
+             s.name.toLowerCase().includes('repair')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'upgrade',
+                discount_percentage: 20,
+                pitch_text: `Protect your hair with ${service.name} - Leave healthier than you came!`,
+                display_order: 2,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
           });
         }
 
-        // Manicure -> Pedicure or vice versa
-        if (name.includes('manicure')) {
-          const pedicure = services.find(s =>
-            s.name.toLowerCase().includes('pedicure') && s.id !== selectedId
-          );
-          if (pedicure) {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${pedicure.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: pedicure.id,
-              upsell_type: 'bundle',
-              discount_percentage: 25,
-              pitch_text: 'Complete your spa day! Add a pedicure for ultimate pampering - Save 25%',
-              display_order: 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: pedicure
-            });
-          }
+        // COLOR/HIGHLIGHT SERVICES - Add haircut, toner, treatments
+        if (name.includes('color') || name.includes('highlight') || name.includes('balayage') || name.includes('ombre')) {
+          // Suggest haircut (complementary - bidirectional)
+          services.filter(s =>
+            (s.name.toLowerCase().includes('haircut') ||
+             s.name.toLowerCase().includes('cut') ||
+             s.name.toLowerCase().includes('trim')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'complementary',
+                discount_percentage: 15,
+                pitch_text: `Get the perfect shape! Add ${service.name} to frame your new color.`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
+
+          // Suggest toner/gloss (treatment enhancer)
+          services.filter(s =>
+            (s.name.toLowerCase().includes('toner') ||
+             s.name.toLowerCase().includes('gloss') ||
+             s.name.toLowerCase().includes('glaze')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'addon',
+                discount_percentage: 20,
+                pitch_text: `Lock in your color! ${service.name} adds shine and longevity - Highly recommended!`,
+                display_order: 2,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
         }
 
-        if (name.includes('pedicure')) {
-          const manicure = services.find(s =>
-            s.name.toLowerCase().includes('manicure') && s.id !== selectedId
-          );
-          if (manicure) {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${manicure.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: manicure.id,
-              upsell_type: 'bundle',
-              discount_percentage: 25,
-              pitch_text: 'Don\'t forget your hands! Add a manicure to complete your look - Save 25%',
-              display_order: 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: manicure
-            });
-          }
+        // NAIL SERVICES - Bidirectional manicure/pedicure pairing
+        if (name.includes('manicure') && !name.includes('pedicure')) {
+          services.filter(s =>
+            s.name.toLowerCase().includes('pedicure') &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'bundle',
+                discount_percentage: 25,
+                pitch_text: `Complete the look! ${service.name} pairs perfectly with your manicure.`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
         }
 
-        // Facial -> Massage
+        if (name.includes('pedicure') && !name.includes('manicure')) {
+          services.filter(s =>
+            s.name.toLowerCase().includes('manicure') &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'bundle',
+                discount_percentage: 25,
+                pitch_text: `Don't forget your hands! ${service.name} completes your spa experience.`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
+        }
+
+        // FACIAL/SPA SERVICES - Pair with massage or add-on treatments
         if (name.includes('facial')) {
-          const massage = services.find(s =>
-            s.name.toLowerCase().includes('massage') && s.id !== selectedId
-          );
-          if (massage) {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${massage.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: massage.id,
-              upsell_type: 'complementary',
-              discount_percentage: 20,
-              pitch_text: 'Enhance your relaxation with a soothing massage - Perfect combination! Save 20%',
-              display_order: 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: massage
-            });
-          }
+          // Suggest massage (complementary relaxation service)
+          services.filter(s =>
+            s.name.toLowerCase().includes('massage') &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'complementary',
+                discount_percentage: 20,
+                pitch_text: `Ultimate relaxation! ${service.name} extends your spa experience.`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
+
+          // Suggest eyebrow/lash services (while you're here)
+          services.filter(s =>
+            (s.name.toLowerCase().includes('eyebrow') ||
+             s.name.toLowerCase().includes('lash') ||
+             s.name.toLowerCase().includes('brow')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'addon',
+                discount_percentage: 25,
+                pitch_text: `While you're here: Add ${service.name} to perfect your look!`,
+                display_order: 2,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
         }
 
-        // Color services -> Toner
-        if (name.includes('color') || name.includes('highlight')) {
-          const toner = services.find(s =>
-            s.name.toLowerCase().includes('toner') && s.id !== selectedId
-          );
-          if (toner) {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${toner.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: toner.id,
-              upsell_type: 'addon',
-              discount_percentage: 15,
-              pitch_text: 'Lock in your color with professional toner & gloss - Save 15%',
-              display_order: 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: toner
-            });
-          }
+        // MASSAGE SERVICES - Suggest facial or spa add-ons
+        if (name.includes('massage')) {
+          services.filter(s =>
+            s.name.toLowerCase().includes('facial') &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'complementary',
+                discount_percentage: 20,
+                pitch_text: `Complete rejuvenation! Add ${service.name} to your massage session.`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
         }
 
-        // Waxing -> Additional waxing areas
+        // WAXING SERVICES - "While you're here" additional areas
         if (name.includes('wax')) {
-          const otherWaxing = services.filter(s =>
-            s.name.toLowerCase().includes('wax') && s.id !== selectedId
-          );
+          services.filter(s =>
+            s.name.toLowerCase().includes('wax') &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 2).forEach((service, idx) => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'addon',
+                discount_percentage: 30,
+                pitch_text: `While you're here: Add ${service.name} - Save time & money!`,
+                display_order: idx + 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
+          });
+        }
 
-          otherWaxing.slice(0, 1).forEach(service => {
-            generatedUpsells.push({
-              id: `generated-${selectedId}-${service.id}`,
-              parent_service_id: selectedId,
-              upsell_service_id: service.id,
-              upsell_type: 'addon',
-              discount_percentage: 30,
-              pitch_text: `Add ${service.name} while you're here - Save 30%! Quick and convenient.`,
-              display_order: 1,
-              times_shown: 0,
-              times_accepted: 0,
-              upsell_service: service
-            });
+        // BROW/LASH SERVICES - Suggest other facial enhancements
+        if (name.includes('eyebrow') || name.includes('brow') || name.includes('lash')) {
+          services.filter(s =>
+            ((s.name.toLowerCase().includes('wax') && s.name.toLowerCase().includes('lip')) ||
+             s.name.toLowerCase().includes('tint')) &&
+            s.id !== selectedId && !selectedServiceIds.includes(s.id)
+          ).slice(0, 1).forEach(service => {
+            const upsellId = `${selectedId}-${service.id}`;
+            if (!addedUpsellIds.has(upsellId)) {
+              generatedUpsells.push({
+                id: `generated-${upsellId}`,
+                parent_service_id: selectedId,
+                upsell_service_id: service.id,
+                upsell_type: 'addon',
+                discount_percentage: 25,
+                pitch_text: `Quick add-on: ${service.name} enhances your look - Takes just minutes!`,
+                display_order: 1,
+                times_shown: 0,
+                times_accepted: 0,
+                upsell_service: service
+              });
+              addedUpsellIds.add(upsellId);
+            }
           });
         }
       }
@@ -284,16 +436,8 @@ export const BookingUpsells = ({
   };
 
   const getUpsellTypeBadgeColor = (type: ServiceUpsell['upsell_type']) => {
-    switch (type) {
-      case 'bundle':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
-      case 'addon':
-        return 'bg-white/10/20 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30/50';
-      case 'upgrade':
-        return 'bg-violet-500/20 text-violet-400 border-violet-500/50';
-      case 'complementary':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
-    }
+    // All badges use white glow, no green
+    return 'bg-white/10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] border-white/30';
   };
 
   const calculateDiscountedPrice = (originalPrice: number, discount: number) => {
@@ -312,15 +456,15 @@ export const BookingUpsells = ({
         exit={{ opacity: 0, y: -20 }}
         className={cn("w-full", className)}
       >
-        <div className="bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur border-2 border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+        <div className="bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur border-2 border-white/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-500/20 rounded-lg">
-                <Sparkles className="w-6 h-6 text-emerald-400" />
+              <div className="p-2 bg-white/10 rounded-lg">
+                <Sparkles className="w-6 h-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               </div>
               <div>
-                <h3 className="font-serif text-2xl font-bold drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
+                <h3 className="font-serif text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                   Frequently Added Together
                 </h3>
                 <p className="text-white/60 text-sm">
@@ -354,7 +498,7 @@ export const BookingUpsells = ({
                   transition={{ delay: index * 0.1 }}
                   className="relative group"
                 >
-                  <div className="bg-black/40 border border-white/10 rounded-xl p-4 hover:border-emerald-500/50 transition-all duration-300">
+                  <div className="bg-black/40 border border-white/10 rounded-xl p-4 hover:border-white/50 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300">
                     <div className="flex gap-4">
                       {/* Service Image */}
                       {service.image_url && (
@@ -406,10 +550,10 @@ export const BookingUpsells = ({
                             <span className="text-white/40 line-through text-lg">
                               ${service.price.toFixed(2)}
                             </span>
-                            <span className="text-2xl font-bold text-emerald-400">
+                            <span className="text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                               ${discountedPrice.toFixed(2)}
                             </span>
-                            <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-emerald-400 text-xs font-bold">
+                            <span className="px-2 py-1 bg-white/10 border border-white/30 rounded text-white text-xs font-bold drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
                               SAVE ${savings.toFixed(0)} ({upsell.discount_percentage}% OFF)
                             </span>
                           </div>
@@ -427,9 +571,9 @@ export const BookingUpsells = ({
                             <Button
                               onClick={() => handleAddService(upsell)}
                               size="sm"
-                              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold shadow-lg hover:shadow-emerald-500/50 transition-all"
+                              className="bg-white hover:bg-white/90 text-black font-bold shadow-lg hover:shadow-white/50 transition-all"
                             >
-                              <Check className="w-4 h-4 mr-1" />
+                              <Check className="w-4 h-4 mr-1 text-emerald-500" />
                               Add to Booking
                             </Button>
                           </div>

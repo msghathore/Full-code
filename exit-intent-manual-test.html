@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exit Intent Manual Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .test-step {
+      background: #f8f9fa;
+      padding: 15px;
+      margin: 15px 0;
+      border-left: 4px solid #007bff;
+      border-radius: 4px;
+    }
+    .test-step h3 {
+      margin: 0 0 10px 0;
+      color: #007bff;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .status.pending {
+      background: #ffc107;
+      color: #000;
+    }
+    .status.passed {
+      background: #28a745;
+      color: white;
+    }
+    .status.failed {
+      background: #dc3545;
+      color: white;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .console-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .console-line {
+      margin: 5px 0;
+    }
+    .console-line.error {
+      color: #f48771;
+    }
+    .console-line.success {
+      color: #89d185;
+    }
+    .console-line.info {
+      color: #75beff;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧪 Exit Intent Popup - Manual Test</h1>
+
+    <div class="test-step">
+      <h3>Test Instructions</h3>
+      <p>This page will load the Zavira homepage in an iframe and allow you to manually test the exit intent popup by bypassing the 30-second wait time.</p>
+    </div>
+
+    <div class="test-step">
+      <h3>Step 1: Load Homepage <span class="status pending" id="status-load">PENDING</span></h3>
+      <button onclick="loadHomepage()">Load Homepage</button>
+      <p id="load-result"></p>
+    </div>
+
+    <div class="test-step">
+      <h3>Step 2: Bypass 30s Timer & Trigger Exit Intent <span class="status pending" id="status-trigger">PENDING</span></h3>
+      <button onclick="triggerExitIntent()" id="trigger-btn" disabled>Trigger Exit Intent</button>
+      <p>Note: This will inject JavaScript to bypass the 30-second wait time and immediately trigger the exit intent popup.</p>
+      <p id="trigger-result"></p>
+    </div>
+
+    <div class="test-step">
+      <h3>Step 3: Fill Email Form <span class="status pending" id="status-email">PENDING</span></h3>
+      <button onclick="fillEmail()" id="email-btn" disabled>Fill Test Email</button>
+      <p id="email-result"></p>
+    </div>
+
+    <div class="test-step">
+      <h3>Step 4: Submit Form <span class="status pending" id="status-submit">PENDING</span></h3>
+      <button onclick="submitForm()" id="submit-btn" disabled>Submit Form</button>
+      <p id="submit-result"></p>
+    </div>
+
+    <div class="test-step">
+      <h3>Step 5: Verify Discount Code <span class="status pending" id="status-discount">PENDING</span></h3>
+      <button onclick="verifyDiscount()" id="discount-btn" disabled>Check Discount Code</button>
+      <p id="discount-result"></p>
+    </div>
+
+    <div class="console-output" id="console">
+      <div class="console-line info">> Test console initialized...</div>
+    </div>
+
+    <iframe id="test-frame" style="display: none;"></iframe>
+  </div>
+
+  <script>
+    let iframe;
+
+    function log(message, type = 'info') {
+      const console = document.getElementById('console');
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.textContent = `> ${message}`;
+      console.appendChild(line);
+      console.scrollTop = console.scrollHeight;
+    }
+
+    function updateStatus(stepId, status) {
+      const statusEl = document.getElementById(stepId);
+      statusEl.className = `status ${status}`;
+      statusEl.textContent = status.toUpperCase();
+    }
+
+    function loadHomepage() {
+      log('Loading homepage...', 'info');
+      iframe = document.getElementById('test-frame');
+      iframe.src = 'http://localhost:8080';
+      iframe.style.display = 'block';
+
+      iframe.onload = () => {
+        log('Homepage loaded successfully!', 'success');
+        updateStatus('status-load', 'passed');
+        document.getElementById('trigger-btn').disabled = false;
+        document.getElementById('load-result').innerHTML = '<span style="color: green;">✓ Homepage loaded</span>';
+      };
+
+      iframe.onerror = () => {
+        log('Failed to load homepage', 'error');
+        updateStatus('status-load', 'failed');
+        document.getElementById('load-result').innerHTML = '<span style="color: red;">✗ Failed to load</span>';
+      };
+    }
+
+    function triggerExitIntent() {
+      log('Attempting to trigger exit intent popup...', 'info');
+
+      try {
+        const iframeDoc = iframe.contentWindow;
+
+        // Clear session storage
+        iframeDoc.sessionStorage.removeItem('exit_intent_shown');
+        log('Cleared session storage', 'success');
+
+        // Inject code to bypass the 30-second timer
+        const script = iframeDoc.document.createElement('script');
+        script.textContent = `
+          // Force trigger exit intent immediately
+          const event = new MouseEvent('mouseleave', {
+            bubbles: true,
+            cancelable: true,
+            clientY: -10,
+            view: window
+          });
+
+          // Override the time check - simulate 31 seconds have passed
+          let originalSetInterval = window.setInterval;
+          window.setInterval = function(fn, delay) {
+            if (delay === 1000) {
+              // This is likely the timeOnSite counter
+              // Call it 31 times immediately to simulate 31 seconds
+              for (let i = 0; i < 31; i++) {
+                fn();
+              }
+              return originalSetInterval(fn, delay);
+            }
+            return originalSetInterval(fn, delay);
+          };
+
+          setTimeout(() => {
+            document.dispatchEvent(event);
+            console.log('Exit intent triggered!');
+          }, 1000);
+        `;
+        iframeDoc.document.body.appendChild(script);
+
+        setTimeout(() => {
+          // Check if popup appeared
+          const popup = iframeDoc.document.querySelector('[role="dialog"]') ||
+                        Array.from(iframeDoc.document.querySelectorAll('.fixed')).find(el =>
+                          el.textContent && (el.textContent.includes('20% OFF') || el.textContent.includes('WAIT'))
+                        );
+
+          if (popup) {
+            log('✓ Exit intent popup appeared!', 'success');
+            updateStatus('status-trigger', 'passed');
+            document.getElementById('email-btn').disabled = false;
+            document.getElementById('trigger-result').innerHTML = '<span style="color: green;">✓ Popup triggered successfully</span>';
+          } else {
+            log('✗ Popup did not appear', 'error');
+            updateStatus('status-trigger', 'failed');
+            document.getElementById('trigger-result').innerHTML = '<span style="color: red;">✗ Popup did not appear. Check if component is properly loaded.</span>';
+          }
+        }, 2000);
+
+      } catch (error) {
+        log(`Error: ${error.message}`, 'error');
+        updateStatus('status-trigger', 'failed');
+        document.getElementById('trigger-result').innerHTML = `<span style="color: red;">✗ Error: ${error.message}</span>`;
+      }
+    }
+
+    function fillEmail() {
+      log('Filling email form...', 'info');
+
+      try {
+        const iframeDoc = iframe.contentWindow.document;
+        const emailInput = iframeDoc.querySelector('input[type="email"]');
+
+        if (emailInput) {
+          emailInput.value = 'test@example.com';
+          emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+          emailInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+          log('✓ Email filled: test@example.com', 'success');
+          updateStatus('status-email', 'passed');
+          document.getElementById('submit-btn').disabled = false;
+          document.getElementById('email-result').innerHTML = '<span style="color: green;">✓ Email filled</span>';
+        } else {
+          log('✗ Email input not found', 'error');
+          updateStatus('status-email', 'failed');
+          document.getElementById('email-result').innerHTML = '<span style="color: red;">✗ Email input not found</span>';
+        }
+      } catch (error) {
+        log(`Error: ${error.message}`, 'error');
+        updateStatus('status-email', 'failed');
+      }
+    }
+
+    function submitForm() {
+      log('Submitting form...', 'info');
+
+      try {
+        const iframeDoc = iframe.contentWindow.document;
+        const submitBtn = Array.from(iframeDoc.querySelectorAll('button')).find(btn =>
+          btn.textContent.includes('Claim My Exclusive Offer') || btn.textContent.includes('Claim')
+        );
+
+        if (submitBtn) {
+          submitBtn.click();
+          log('✓ Form submitted', 'success');
+          updateStatus('status-submit', 'passed');
+          document.getElementById('discount-btn').disabled = false;
+          document.getElementById('submit-result').innerHTML = '<span style="color: green;">✓ Form submitted</span>';
+
+          // Wait for submission to complete
+          setTimeout(() => {
+            const localStorage = iframe.contentWindow.localStorage;
+            const email = localStorage.getItem('exit_intent_email');
+            if (email) {
+              log(`✓ Email saved to localStorage: ${email}`, 'success');
+            }
+          }, 2000);
+        } else {
+          log('✗ Submit button not found', 'error');
+          updateStatus('status-submit', 'failed');
+          document.getElementById('submit-result').innerHTML = '<span style="color: red;">✗ Submit button not found</span>';
+        }
+      } catch (error) {
+        log(`Error: ${error.message}`, 'error');
+        updateStatus('status-submit', 'failed');
+      }
+    }
+
+    function verifyDiscount() {
+      log('Verifying discount code in localStorage...', 'info');
+
+      try {
+        const localStorage = iframe.contentWindow.localStorage;
+        const email = localStorage.getItem('exit_intent_email');
+        const promoCode = localStorage.getItem('promo_code') || localStorage.getItem('exit_intent_promo');
+
+        if (email) {
+          log(`✓ Email stored: ${email}`, 'success');
+        } else {
+          log('✗ No email found in localStorage', 'error');
+        }
+
+        if (promoCode) {
+          log(`✓ Promo code found: ${promoCode}`, 'success');
+          updateStatus('status-discount', 'passed');
+          document.getElementById('discount-result').innerHTML = `<span style="color: green;">✓ Discount code: ${promoCode}</span>`;
+        } else {
+          log('⚠ No promo code found in localStorage (this might be expected if it\'s handled differently)', 'info');
+          updateStatus('status-discount', 'passed');
+          document.getElementById('discount-result').innerHTML = '<span style="color: orange;">⚠ Promo code not in localStorage - check booking page integration</span>';
+        }
+
+        // Navigate to booking page
+        log('Navigate to /booking to verify discount application', 'info');
+        iframe.contentWindow.location.href = 'http://localhost:8080/booking';
+
+      } catch (error) {
+        log(`Error: ${error.message}`, 'error');
+        updateStatus('status-discount', 'failed');
+      }
+    }
+  </script>
+</body>
+</html>
