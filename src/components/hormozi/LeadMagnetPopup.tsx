@@ -139,6 +139,10 @@ export const LeadMagnetPopup = ({
         duration: 2000,
       });
 
+      // Store lead magnet claim in localStorage for promo discount
+      localStorage.setItem('lead_magnet_claimed', 'true');
+      localStorage.setItem('lead_magnet_email', data.email);
+
       // Reset form
       reset();
 
@@ -180,48 +184,50 @@ export const LeadMagnetPopup = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
           >
-            <div className="relative w-full max-w-lg bg-black border border-white/20 rounded-lg overflow-hidden">
-              {/* Close Button */}
+            <div className="relative w-full max-w-lg bg-black border border-white/20 rounded-lg overflow-hidden max-h-[90vh] flex flex-col">
+              {/* Close Button - Always visible */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 z-10 text-white/60 hover:text-white transition-colors"
+                className="absolute top-3 right-3 z-20 text-white/80 hover:text-white transition-colors bg-black/50 rounded-full p-1.5 backdrop-blur-sm"
                 aria-label="Close popup"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
 
-              {/* Preview Image */}
-              {leadMagnet.preview_image && (
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={leadMagnet.preview_image}
-                    alt={leadMagnet.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="p-8 space-y-6">
-                {/* Icon Badge */}
-                <div className="flex justify-center">
-                  <div className="p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                    <Gift className="w-8 h-8 text-emerald-500" />
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto">
+                {/* Preview Image */}
+                {leadMagnet.preview_image && (
+                  <div className="relative h-32 sm:h-48 overflow-hidden">
+                    <img
+                      src={leadMagnet.preview_image}
+                      alt={leadMagnet.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
                   </div>
-                </div>
+                )}
 
-                {/* Heading */}
-                <div className="text-center space-y-2">
-                  <h2 className="text-3xl font-serif text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
-                    {leadMagnet.title}
-                  </h2>
-                  <p className="text-white/70 text-sm">
-                    {leadMagnet.description}
-                  </p>
-                </div>
+                {/* Content */}
+                <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+                  {/* Icon Badge */}
+                  <div className="flex justify-center">
+                    <div className="p-2 sm:p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                      <Gift className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500" />
+                    </div>
+                  </div>
+
+                  {/* Heading */}
+                  <div className="text-center space-y-2">
+                    <h2 className="text-2xl sm:text-3xl font-serif text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                      {leadMagnet.title}
+                    </h2>
+                    <p className="text-white/70 text-sm">
+                      {leadMagnet.description}
+                    </p>
+                  </div>
 
                 {/* Benefits */}
                 {leadMagnet.benefits && leadMagnet.benefits.length > 0 && (
@@ -284,13 +290,13 @@ export const LeadMagnetPopup = ({
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-serif text-lg py-6 transition-all duration-300"
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-serif text-base sm:text-lg py-4 sm:py-6 transition-all duration-300"
                   >
                     {isSubmitting ? (
                       'Processing...'
                     ) : (
                       <>
-                        <Download className="w-5 h-5 mr-2" />
+                        <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                         Get Free Download
                       </>
                     )}
@@ -300,6 +306,7 @@ export const LeadMagnetPopup = ({
                     We respect your privacy. Unsubscribe anytime.
                   </p>
                 </form>
+                </div>
               </div>
             </div>
           </motion.div>

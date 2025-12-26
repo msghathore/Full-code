@@ -28,9 +28,20 @@ interface Service {
   image_url?: string;
 }
 
+interface ServiceWithDiscount {
+  serviceId: string;
+  discount?: {
+    type: 'upsell';
+    percentage: number;
+    originalPrice: number;
+    discountedPrice: number;
+    reason: string;
+  };
+}
+
 interface BookingUpsellsProps {
   selectedServiceIds: string[];
-  onAddService: (serviceId: string) => void;
+  onAddService: (serviceData: ServiceWithDiscount) => void;
   services: Service[];
   className?: string;
 }
@@ -206,10 +217,23 @@ export const BookingUpsells = ({
 
   // Track conversion when service is added
   const handleAddService = (upsell: ServiceUpsell & { upsell_service: Service }) => {
-    onAddService(upsell.upsell_service_id);
+    const service = upsell.upsell_service;
+    const discountedPrice = calculateDiscountedPrice(service.price, upsell.discount_percentage);
+
+    // Pass service with discount metadata
+    onAddService({
+      serviceId: upsell.upsell_service_id,
+      discount: {
+        type: 'upsell',
+        percentage: upsell.discount_percentage,
+        originalPrice: service.price,
+        discountedPrice: discountedPrice,
+        reason: upsell.pitch_text
+      }
+    });
 
     // Track acceptance (conversion) - for generated upsells, just log to console
-    console.log(`Upsell accepted: ${upsell.upsell_service.name} (${upsell.upsell_type})`);
+    console.log(`Upsell accepted: ${service.name} (${upsell.upsell_type})`);
 
     // Dismiss this upsell
     setDismissedUpsells(prev => new Set(prev).add(upsell.id));

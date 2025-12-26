@@ -201,10 +201,10 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg mx-4"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg px-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-black border-2 border-white rounded-lg shadow-2xl relative overflow-hidden"
+            <div className="bg-black border-2 border-white rounded-lg shadow-2xl relative max-h-[90vh] flex flex-col"
               style={{
                 boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1)'
               }}
@@ -212,27 +212,28 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 pointer-events-none" />
 
-              {/* Close button */}
+              {/* Close button - Always visible */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 text-white hover:text-white/80 transition-colors z-10 bg-black/50 hover:bg-black/70 rounded-full p-2"
+                className="absolute top-3 right-3 text-white hover:text-white/80 transition-colors z-20 bg-black/70 hover:bg-black/90 rounded-full p-1.5 sm:p-2"
                 aria-label="Close popup"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
 
-              <div className="p-8 relative z-10">
+              {/* Scrollable content */}
+              <div className="p-4 sm:p-6 lg:p-8 relative z-10 overflow-y-auto">
                 {/* Icon */}
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-3 sm:mb-4">
                   <div className="relative">
-                    <Gift className="w-16 h-16 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-                    <Sparkles className="w-6 h-6 text-white absolute -top-2 -right-2 animate-pulse drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    <Gift className="w-12 h-12 sm:w-16 sm:h-16 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white absolute -top-2 -right-2 animate-pulse drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
                   </div>
                 </div>
 
                 {/* Headline */}
                 <h2
-                  className="text-3xl md:text-4xl font-serif font-bold text-center mb-2 text-white"
+                  className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-center mb-2 text-white"
                   style={{
                     textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)'
                   }}
@@ -240,7 +241,7 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                   WAIT! Don't Miss This
                 </h2>
                 <h3
-                  className="text-2xl md:text-3xl font-serif font-bold text-center mb-6 text-white"
+                  className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-center mb-4 sm:mb-6 text-white"
                   style={{
                     textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)'
                   }}
@@ -249,32 +250,32 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                 </h3>
 
                 {/* Offer details */}
-                <div className="bg-slate-950 border border-white/30 rounded-lg p-6 mb-6">
-                  <p className="text-white text-center text-lg mb-4">
-                    Get <span className="font-bold text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">20% OFF</span> your first booking
+                <div className="bg-slate-950 border border-white/30 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                  <p className="text-white text-center text-base sm:text-lg mb-3 sm:mb-4">
+                    Get <span className="font-bold text-xl sm:text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">20% OFF</span> your first booking
                   </p>
-                  <p className="text-white/80 text-center text-sm">
+                  <p className="text-white/80 text-center text-xs sm:text-sm">
                     OR choose a <span className="text-white font-semibold drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">FREE upgrade</span> to premium services
                   </p>
                 </div>
 
                 {/* Countdown timer */}
-                <div className="flex items-center justify-center gap-2 mb-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
-                  <Clock className="w-5 h-5 animate-pulse" />
-                  <span className="font-mono text-xl font-bold">
+                <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
+                  <span className="font-mono text-base sm:text-xl font-bold">
                     Offer expires in {formatTime(timeRemaining)}
                   </span>
                 </div>
 
                 {/* Email capture form */}
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                   <div>
                     <Input
                       type="email"
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-slate-950 border-white/50 text-white placeholder:text-white/40 focus:border-white focus:ring-2 focus:ring-white/50 h-12 text-center"
+                      className="bg-slate-950 border-white/50 text-white placeholder:text-white/40 focus:border-white focus:ring-2 focus:ring-white/50 h-10 sm:h-12 text-center text-sm sm:text-base"
                       required
                       disabled={isSubmitting}
                     />
@@ -282,7 +283,7 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
 
                   <Button
                     type="submit"
-                    className="w-full bg-white hover:bg-white/90 text-black font-bold h-12 text-lg transition-all transform hover:scale-105"
+                    className="w-full bg-white hover:bg-white/90 text-black font-bold h-10 sm:h-12 text-base sm:text-lg transition-all transform hover:scale-105"
                     style={{
                       boxShadow: '0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)'
                     }}
@@ -293,7 +294,7 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                 </form>
 
                 {/* Trust indicators */}
-                <p className="text-white/60 text-xs text-center mt-4">
+                <p className="text-white/60 text-xs text-center mt-3 sm:mt-4">
                   Join 2,000+ satisfied customers • No spam, ever
                 </p>
               </div>

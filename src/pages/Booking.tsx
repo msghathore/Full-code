@@ -20,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import EmailService from '@/lib/email-service';
 import { ValueBreakdown } from '@/components/PriceAnchoring';
 import { BookingUpsells } from '@/components/BookingUpsells';
+import { getActivePromo, applyPromoToTotal, markPromoAsUsed, canCombineWithGroupDiscount, type PromoOffer } from '@/lib/promos';
 
 // Booking session expiration time (24 hours)
 const BOOKING_EXPIRATION_HOURS = 24;
@@ -58,7 +59,9 @@ const clearBookingData = () => {
     'booking-group-members',
     'booking-auto-staff',
     'booking-group-staff',
-    'booking-timestamp'
+    'booking-timestamp',
+    'booking-selected-package',
+    'booking-package-discount'
   ];
   bookingKeys.forEach(key => localStorage.removeItem(key));
 };
@@ -150,6 +153,9 @@ const Booking = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
 
+  // Promo state - check for active offers from localStorage
+  const [activePromo, setActivePromo] = useState<PromoOffer | null>(() => getActivePromo());
+
   const [currentStep, setCurrentStep] = useState(() => {
     // Check if data is expired or date is past
     if (isBookingExpired() || isSavedDatePast()) {
@@ -205,6 +211,34 @@ const Booking = () => {
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
 
+  // Promo code and package state (must be declared before useEffects that reference them)
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<any>(null);
+  const [selectedPackage, setSelectedPackage] = useState<any>(() => {
+    const saved = localStorage.getItem('booking-selected-package');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+  const [packageDiscount, setPackageDiscount] = useState<number>(() => {
+    const saved = localStorage.getItem('booking-package-discount');
+    return saved ? parseFloat(saved) : 0;
+  });
+
+  // Service discounts map: serviceId -> discount metadata
+  const [serviceDiscounts, setServiceDiscounts] = useState<Record<string, {
+    type: 'upsell';
+    percentage: number;
+    originalPrice: number;
+    discountedPrice: number;
+    reason: string;
+  }>>({});
+
   // Check if resuming a previous booking session on mount
   useEffect(() => {
     const hadProgress = hasSavedBookingProgress();
@@ -237,6 +271,88 @@ const Booking = () => {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  // Check for exit intent offer on mount
+  useEffect(() => {
+    const exitEmail = localStorage.getItem('exit_intent_email');
+    if (exitEmail) {
+      // Auto-apply WELCOME20 promo code
+      setPromoCode('WELCOME20');
+      // Set the full name email field if available
+      setFullName(exitEmail);
+
+      // Auto-validate the promo code
+      setTimeout(() => {
+        validatePromoCode('WELCOME20');
+      }, 500);
+
+      // Remove from localStorage after applying
+      localStorage.removeItem('exit_intent_email');
+    }
+  }, []);
+
+  // Check for package selection from URL params
+  useEffect(() => {
+    const packageSlug = searchParams.get('package');
+    if (packageSlug) {
+      // First check if there's a new package from GrandSlamOffers
+      let pkgData = localStorage.getItem('selectedPackage');
+
+      // If not, check if package was already persisted to booking storage
+      if (!pkgData) {
+        pkgData = localStorage.getItem('booking-selected-package');
+      }
+
+      if (pkgData) {
+        try {
+          const pkg = JSON.parse(pkgData);
+
+          // Only update state if package isn't already set
+          if (!selectedPackage || selectedPackage.id !== pkg.id) {
+            setSelectedPackage(pkg);
+            setPackageDiscount(pkg.discounted_price);
+
+            // Persist package to booking localStorage
+            localStorage.setItem('booking-selected-package', JSON.stringify(pkg));
+            localStorage.setItem('booking-package-discount', pkg.discounted_price.toString());
+
+            // Auto-select booking mode as 'service'
+            if (!bookingMode) {
+              setBookingMode('service');
+            }
+
+            toast({
+              title: `${pkg.name} Package Selected! 🎁`,
+              description: `Save $${pkg.savings_amount.toFixed(0)}! Services will be added to your booking.`,
+              duration: 5000,
+            });
+          }
+
+          // Clear temporary package from localStorage if it exists
+          localStorage.removeItem('selectedPackage');
+        } catch (error) {
+          console.error('Error parsing package data:', error);
+        }
+      }
+    }
+  }, [searchParams]);
+
+  // Persist package state to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedPackage) {
+      localStorage.setItem('booking-selected-package', JSON.stringify(selectedPackage));
+    } else {
+      localStorage.removeItem('booking-selected-package');
+    }
+  }, [selectedPackage]);
+
+  useEffect(() => {
+    if (packageDiscount > 0) {
+      localStorage.setItem('booking-package-discount', packageDiscount.toString());
+    } else {
+      localStorage.removeItem('booking-package-discount');
+    }
+  }, [packageDiscount]);
 
   // Start new booking function
   const handleStartNewBooking = () => {
@@ -816,7 +932,7 @@ const Booking = () => {
   // Calculate group total and discount
   const calculateGroupTotal = () => {
     const validMembers = groupMembers.filter(m => m.services.length > 0);
-    const subtotal = validMembers.reduce((sum, m) => {
+    const subtotalBeforeDiscounts = validMembers.reduce((sum, m) => {
       // Sum all services for this member
       const memberTotal = m.services.reduce((memberSum, serviceId) => {
         const service = services.find(s => s.id === serviceId);
@@ -827,13 +943,53 @@ const Booking = () => {
 
     // Group discount: 5% for 2 people, 10% for 3+, 15% for 5+
     const count = validMembers.length;
-    let discountPercent = 0;
-    if (count >= 5) discountPercent = 15;
-    else if (count >= 3) discountPercent = 10;
-    else if (count >= 2) discountPercent = 5;
+    let groupDiscountPercent = 0;
+    if (count >= 5) groupDiscountPercent = 15;
+    else if (count >= 3) groupDiscountPercent = 10;
+    else if (count >= 2) groupDiscountPercent = 5;
 
-    const discount = subtotal * (discountPercent / 100);
-    return { subtotal, discount, total: subtotal - discount, discountPercent, memberCount: count };
+    const groupDiscount = subtotalBeforeDiscounts * (groupDiscountPercent / 100);
+    const subtotalAfterGroupDiscount = subtotalBeforeDiscounts - groupDiscount;
+
+    // Apply promo discount (if it can combine with group discount)
+    let promoDiscount = 0;
+    let finalTotal = subtotalAfterGroupDiscount;
+
+    if (activePromo) {
+      if (canCombineWithGroupDiscount(activePromo)) {
+        // Apply promo to already-discounted price (for referral codes)
+        const promoResult = applyPromoToTotal(subtotalAfterGroupDiscount, activePromo);
+        promoDiscount = promoResult.discount;
+        finalTotal = promoResult.total;
+      } else {
+        // Use either group discount OR promo discount, whichever is better
+        const promoResult = applyPromoToTotal(subtotalBeforeDiscounts, activePromo);
+        if (promoResult.discount > groupDiscount) {
+          // Promo is better - use it instead of group discount
+          promoDiscount = promoResult.discount;
+          finalTotal = promoResult.total;
+          return {
+            subtotal: subtotalBeforeDiscounts,
+            discount: 0,
+            total: finalTotal,
+            discountPercent: 0,
+            memberCount: count,
+            promoDiscount,
+            promo: activePromo
+          };
+        }
+      }
+    }
+
+    return {
+      subtotal: subtotalBeforeDiscounts,
+      discount: groupDiscount,
+      total: finalTotal,
+      discountPercent: groupDiscountPercent,
+      memberCount: count,
+      promoDiscount,
+      promo: activePromo
+    };
   };
 
   const handleBooking = async (e: React.FormEvent) => {
@@ -876,10 +1032,132 @@ const Booking = () => {
 
   // Calculate total price for selected services
   const calculateServicesTotal = () => {
+    // If package is selected, use package discounted price
+    if (selectedPackage && packageDiscount > 0) {
+      return packageDiscount;
+    }
+
+    // Otherwise, calculate subtotal with upsell discounts
+    const subtotal = selectedServices.reduce((total, serviceId) => {
+      const service = services.find(s => s.id === serviceId);
+      if (!service) return total;
+
+      // Check if this service has an upsell discount
+      const serviceDiscount = serviceDiscounts[serviceId];
+      if (serviceDiscount) {
+        return total + serviceDiscount.discountedPrice;
+      }
+
+      return total + service.price;
+    }, 0);
+
+    // Apply promo code discount if available
+    if (promoCode && appliedPromo) {
+      if (appliedPromo.discount_type === 'percentage') {
+        return subtotal * (1 - appliedPromo.discount_value / 100);
+      } else if (appliedPromo.discount_type === 'fixed_amount') {
+        return Math.max(0, subtotal - appliedPromo.discount_value);
+      }
+    }
+
+    // Apply legacy promo discount if available
+    if (activePromo) {
+      const result = applyPromoToTotal(subtotal, activePromo);
+      return result.total;
+    }
+
+    return subtotal;
+  };
+
+  // Calculate subtotal without discounts (for display purposes)
+  const calculateServicesSubtotal = () => {
     return selectedServices.reduce((total, serviceId) => {
       const service = services.find(s => s.id === serviceId);
       return total + (service?.price || 0);
     }, 0);
+  };
+
+  // Validate and apply promo code
+  const validatePromoCode = async (code: string) => {
+    if (!code || code.trim() === '') {
+      toast({
+        title: "Invalid Code",
+        description: "Please enter a promo code.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('code', code.toUpperCase())
+        .eq('is_active', true)
+        .single();
+
+      if (error || !data) {
+        toast({
+          title: "Invalid Code",
+          description: "This promo code doesn't exist or has expired.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if expired
+      if (data.expires_at && new Date(data.expires_at) < new Date()) {
+        toast({
+          title: "Expired Code",
+          description: "This promo code has expired.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check usage limit
+      if (data.usage_limit && data.usage_count >= data.usage_limit) {
+        toast({
+          title: "Code Fully Used",
+          description: "This promo code has reached its usage limit.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check minimum purchase amount
+      const subtotal = calculateServicesSubtotal();
+      if (data.min_purchase_amount && subtotal < data.min_purchase_amount) {
+        toast({
+          title: "Minimum Not Met",
+          description: `This code requires a minimum purchase of $${data.min_purchase_amount.toFixed(2)}.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Apply the promo code
+      setAppliedPromo(data);
+      toast({
+        title: "Promo Code Applied! 🎉",
+        description: `${data.code} - ${data.description || 'Discount applied'}`,
+      });
+    } catch (error) {
+      console.error('Error validating promo code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to validate promo code. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Calculate promo discount amount
+  const calculateServicesPromoDiscount = () => {
+    if (!activePromo) return 0;
+    const subtotal = calculateServicesSubtotal();
+    const result = applyPromoToTotal(subtotal, activePromo);
+    return result.discount;
   };
 
   // Calculate total duration for selected services
@@ -1420,9 +1698,17 @@ const Booking = () => {
                             <div className="mt-6">
                               <BookingUpsells
                                 selectedServiceIds={selectedServices}
-                                onAddService={(serviceId) => {
-                                  if (!selectedServices.includes(serviceId)) {
-                                    setSelectedServices([...selectedServices, serviceId]);
+                                onAddService={(serviceData) => {
+                                  if (!selectedServices.includes(serviceData.serviceId)) {
+                                    setSelectedServices([...selectedServices, serviceData.serviceId]);
+
+                                    // Store discount metadata if provided
+                                    if (serviceData.discount) {
+                                      setServiceDiscounts(prev => ({
+                                        ...prev,
+                                        [serviceData.serviceId]: serviceData.discount!
+                                      }));
+                                    }
                                   }
                                 }}
                                 services={services}
@@ -1502,9 +1788,17 @@ const Booking = () => {
                           <div className="mt-6">
                             <BookingUpsells
                               selectedServiceIds={selectedServices}
-                              onAddService={(serviceId) => {
-                                if (!selectedServices.includes(serviceId)) {
-                                  setSelectedServices([...selectedServices, serviceId]);
+                              onAddService={(serviceData) => {
+                                if (!selectedServices.includes(serviceData.serviceId)) {
+                                  setSelectedServices([...selectedServices, serviceData.serviceId]);
+
+                                  // Store discount metadata if provided
+                                  if (serviceData.discount) {
+                                    setServiceDiscounts(prev => ({
+                                      ...prev,
+                                      [serviceData.serviceId]: serviceData.discount!
+                                    }));
+                                  }
                                 }
                               }}
                               services={services}
@@ -2171,13 +2465,28 @@ const Booking = () => {
                     {/* Enhanced Price Summary with Value Anchoring */}
                     {bookingMode === 'group' ? (
                       (() => {
-                        const { subtotal, discount, total, discountPercent, memberCount } = calculateGroupTotal();
+                        const { subtotal, discount, total, discountPercent, memberCount, promoDiscount, promo } = calculateGroupTotal();
                         const depositAmount = total * 0.5;
                         const regularPrice = subtotal * 1.3; // 30% markup for regular price
                         const memberSavings = regularPrice - subtotal;
 
                         return (
                           <div className="space-y-3">
+                            {/* Promo Banner - Show if active promo */}
+                            {promo && (
+                              <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/50 rounded-lg p-3 animate-pulse">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-2xl">{promo.icon}</span>
+                                  <div className="flex-1">
+                                    <p className="text-white font-bold text-xs drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                                      {promo.description}
+                                    </p>
+                                    <p className="text-white/70 text-[10px]">Applied to your cart!</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             {/* Value Breakdown */}
                             <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/30 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
@@ -2212,6 +2521,12 @@ const Booking = () => {
                                   <span className="whitespace-nowrap">-${discount.toFixed(2)}</span>
                                 </div>
                               )}
+                              {promoDiscount > 0 && (
+                                <div className="flex justify-between text-emerald-500 text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+                                  <span className="truncate font-semibold">{promo?.icon} {promo?.description}</span>
+                                  <span className="whitespace-nowrap font-bold">-${promoDiscount.toFixed(2)}</span>
+                                </div>
+                              )}
                               <Separator className="bg-white/10 my-1 sm:my-2" />
                               <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
                                 <span className="text-white/70">Total Price:</span>
@@ -2232,13 +2547,30 @@ const Booking = () => {
                       })()
                     ) : (
                       (() => {
+                        const subtotal = calculateServicesSubtotal();
+                        const promoDiscount = calculateServicesPromoDiscount();
                         const totalPrice = calculateServicesTotal();
                         const depositAmount = totalPrice * 0.5;
-                        const regularPrice = totalPrice * 1.3; // 30% markup for regular price
-                        const memberSavings = regularPrice - totalPrice;
+                        const regularPrice = subtotal * 1.3; // 30% markup for regular price
+                        const memberSavings = regularPrice - subtotal;
 
                         return (
                           <div className="space-y-3">
+                            {/* Promo Banner - Show if active promo */}
+                            {activePromo && (
+                              <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/50 rounded-lg p-3 animate-pulse">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-2xl">{activePromo.icon}</span>
+                                  <div className="flex-1">
+                                    <p className="text-white font-bold text-xs drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                                      {activePromo.description}
+                                    </p>
+                                    <p className="text-white/70 text-[10px]">Applied to your cart!</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             {/* Value Breakdown */}
                             <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/30 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
@@ -2265,12 +2597,27 @@ const Booking = () => {
                             <div className="bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-2">
                               <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
                                 <span className="text-white/70">Service Price:</span>
-                                <span className="whitespace-nowrap font-medium">${totalPrice.toFixed(2)}</span>
+                                <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
                               </div>
+                              {promoDiscount > 0 && (
+                                <div className="flex justify-between text-emerald-500 text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+                                  <span className="truncate font-semibold">{activePromo?.icon} {activePromo?.description}</span>
+                                  <span className="whitespace-nowrap font-bold">-${promoDiscount.toFixed(2)}</span>
+                                </div>
+                              )}
                               <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
                                 <span className="text-white/70">Duration:</span>
                                 <span className="whitespace-nowrap font-medium">{calculateServicesDuration()} min</span>
                               </div>
+                              {promoDiscount > 0 && (
+                                <>
+                                  <Separator className="bg-white/10 my-1 sm:my-2" />
+                                  <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
+                                    <span className="text-white/70">Total After Discount:</span>
+                                    <span className="whitespace-nowrap font-medium">${totalPrice.toFixed(2)}</span>
+                                  </div>
+                                </>
+                              )}
                               <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2">
                                 <span className="text-white/70">Deposit (50%):</span>
                                 <span className="whitespace-nowrap font-medium">${depositAmount.toFixed(2)}</span>
@@ -2291,6 +2638,51 @@ const Booking = () => {
                       <p className="text-white text-[10px] sm:text-xs leading-tight sm:leading-normal break-words">
                         💳 50% deposit now. Balance at appointment.
                       </p>
+                    </div>
+
+                    {/* Promo Code Input */}
+                    <div className="space-y-2">
+                      <label className="text-white text-sm font-medium">Have a Promo Code?</label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="text"
+                          placeholder="Enter promo code"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                          className="flex-1 bg-black/40 border-white/20 text-white placeholder:text-white/40"
+                          disabled={!!appliedPromo}
+                        />
+                        <Button
+                          onClick={() => validatePromoCode(promoCode)}
+                          disabled={!promoCode || !!appliedPromo}
+                          className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                        >
+                          Apply
+                        </Button>
+                      </div>
+                      {appliedPromo && (
+                        <div className="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-400" />
+                            <span className="text-emerald-400 text-sm font-medium">
+                              {appliedPromo.code} applied - {appliedPromo.discount_type === 'percentage'
+                                ? `${appliedPromo.discount_value}% off`
+                                : `$${appliedPromo.discount_value} off`}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setAppliedPromo(null);
+                              setPromoCode('');
+                            }}
+                            className="text-emerald-400 hover:text-emerald-300 h-6 w-6 p-0"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
                     {/* Square Payment Form */}

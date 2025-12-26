@@ -86,7 +86,16 @@ export const GrandSlamOffers = () => {
         {/* Packages Grid */}
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {packages.map((pkg) => (
-            <PackageCard key={pkg.id} package={pkg} onBook={() => navigate('/booking')} />
+            <PackageCard
+              key={pkg.id}
+              package={pkg}
+              onBook={() => {
+                // Store package data in localStorage for retrieval on booking page
+                localStorage.setItem('selectedPackage', JSON.stringify(pkg));
+                // Navigate with package slug as URL param
+                navigate(`/booking?package=${pkg.slug}`);
+              }}
+            />
           ))}
         </div>
 
@@ -110,6 +119,8 @@ interface PackageCardProps {
 const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
   const hasExpiry = pkg.expires_at !== null;
   const hasLimitedSpots = pkg.limited_quantity !== null;
+  const isExpired = hasExpiry && new Date(pkg.expires_at!) < new Date();
+  const isSoldOut = hasLimitedSpots && pkg.remaining_quantity! <= 0;
 
   return (
     <div className={cn(
@@ -236,10 +247,16 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
       <Button
         onClick={onBook}
         size="lg"
-        className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-lg py-6 rounded-xl shadow-lg hover:shadow-emerald-500/50 transition-all"
+        disabled={isExpired || isSoldOut}
+        className={cn(
+          "w-full font-bold text-lg py-6 rounded-xl shadow-lg transition-all",
+          isExpired || isSoldOut
+            ? "bg-slate-700 text-white/50 cursor-not-allowed"
+            : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white hover:shadow-emerald-500/50"
+        )}
       >
         <Clock className="w-5 h-5 mr-2" />
-        CLAIM THIS OFFER NOW
+        {isExpired ? 'OFFER EXPIRED' : isSoldOut ? 'SOLD OUT' : 'CLAIM THIS OFFER NOW'}
       </Button>
 
       <p className="text-center text-white/40 text-sm mt-4">

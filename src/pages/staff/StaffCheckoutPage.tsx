@@ -64,6 +64,11 @@ const StaffCheckoutPage = () => {
   // Customer Tablet (Square Reader) state
   const [isSendingToTablet, setIsSendingToTablet] = useState(false);
 
+  // Promo code state
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<any>(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+
   // Fetch services, products, and staff on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -103,10 +108,41 @@ const StaffCheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Calculate totals using the utility function
+  // Calculate totals using the utility function with promo code support
   const totals = useMemo(() => {
-    return calculateTotals(cartItems, paymentMethods, tipAmount);
-  }, [cartItems, paymentMethods, tipAmount]);
+    const baseTotals = calculateTotals(cartItems, paymentMethods, tipAmount);
+
+    // Apply promo code discount if one is applied
+    if (appliedPromo) {
+      let promoDiscount = 0;
+
+      if (appliedPromo.discount_type === 'percentage') {
+        promoDiscount = baseTotals.subtotal * (appliedPromo.discount_value / 100);
+      } else {
+        // Fixed amount discount
+        promoDiscount = appliedPromo.discount_value;
+      }
+
+      // Add promo discount to total discount
+      const totalDiscount = baseTotals.discount + promoDiscount;
+
+      // Recalculate with promo discount
+      const taxableAmount = baseTotals.subtotal - totalDiscount;
+      const tax = Math.round((taxableAmount * baseTotals.taxRate) * 100) / 100;
+      const amountDue = Math.round((taxableAmount + tax + tipAmount - baseTotals.deposit) * 100) / 100;
+      const changeDue = Math.round((baseTotals.amountPaid - amountDue) * 100) / 100;
+
+      return {
+        ...baseTotals,
+        discount: Math.round(totalDiscount * 100) / 100,
+        tax: tax,
+        amountDue: amountDue,
+        changeDue: changeDue
+      };
+    }
+
+    return baseTotals;
+  }, [cartItems, paymentMethods, tipAmount, appliedPromo]);
 
   // Handle appointment data from calendar completion
   useEffect(() => {
@@ -462,6 +498,97 @@ const StaffCheckoutPage = () => {
     setShowReceiptModal(false);
     setTransactionResult(null);
     navigate('/staff');
+  };
+
+  // Promo code validation function
+  const validatePromoCode = async () => {
+    if (!promoCode.trim()) {
+      toast({
+        title: "Please enter a promo code",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsValidatingPromo(true);
+
+    try {
+      // Fetch promo code from database
+      const { data: promo, error } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('code', promoCode.toUpperCase())
+        .eq('is_active', true)
+        .single();
+
+      if (error || !promo) {
+        toast({
+          title: "Invalid promo code",
+          description: "This code doesn't exist or has been deactivated.",
+          variant: "destructive"
+        });
+        setIsValidatingPromo(false);
+        return;
+      }
+
+      // Check expiration
+      if (promo.expires_at && new Date(promo.expires_at) < new Date()) {
+        toast({
+          title: "Promo code expired",
+          description: "This code has expired.",
+          variant: "destructive"
+        });
+        setIsValidatingPromo(false);
+        return;
+      }
+
+      // Check usage limit
+      if (promo.usage_limit && promo.usage_count >= promo.usage_limit) {
+        toast({
+          title: "Promo code limit reached",
+          description: "This code has reached its usage limit.",
+          variant: "destructive"
+        });
+        setIsValidatingPromo(false);
+        return;
+      }
+
+      // Check minimum purchase
+      if (promo.minimum_purchase && totals.subtotal < promo.minimum_purchase) {
+        toast({
+          title: "Minimum purchase not met",
+          description: `This code requires a minimum purchase of $${promo.minimum_purchase.toFixed(2)}`,
+          variant: "destructive"
+        });
+        setIsValidatingPromo(false);
+        return;
+      }
+
+      // Apply promo code
+      setAppliedPromo(promo);
+      toast({
+        title: "✅ Promo code applied!",
+        description: `${promo.discount_type === 'percentage' ? promo.discount_value + '% off' : '$' + promo.discount_value + ' off'}`,
+      });
+    } catch (error: any) {
+      console.error('Error validating promo code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to validate promo code. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  // Remove promo code
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+    setPromoCode('');
+    toast({
+      title: "Promo code removed",
+    });
   };
 
   // Handler for sending checkout to customer tablet (Square Reader)
@@ -851,6 +978,60 @@ const StaffCheckoutPage = () => {
                   </div>
                 )}
               </div>
+              <Separator className="my-3" />
+
+              {/* Promo Code Section */}
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">Promo Code</div>
+                {appliedPromo ? (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-green-900">{appliedPromo.code}</div>
+                        <div className="text-xs text-green-700">
+                          {appliedPromo.discount_type === 'percentage'
+                            ? `${appliedPromo.discount_value}% off`
+                            : `$${appliedPromo.discount_value} off`}
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={removePromoCode}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      className="bg-white border-gray-300 text-gray-900 uppercase"
+                      disabled={isValidatingPromo}
+                    />
+                    <Button
+                      onClick={validatePromoCode}
+                      disabled={!promoCode.trim() || isValidatingPromo}
+                      className="bg-black hover:bg-slate-800 text-white whitespace-nowrap"
+                    >
+                      {isValidatingPromo ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          Validating...
+                        </>
+                      ) : (
+                        'Apply'
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               <Separator className="my-3" />
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-gray-900">Total</span>
