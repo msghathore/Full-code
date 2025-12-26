@@ -501,9 +501,11 @@ const StaffCheckoutPage = () => {
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          item_type: item.item_type
+          item_type: item.item_type,
+          discount: item.discount || 0  // Include per-item discount
         })),
         subtotal: totals.subtotal,
+        discount: totals.discount,  // Include aggregate discount
         tax_amount: totals.tax,
         total_amount: totalWithoutTip,  // WITHOUT tip - customer can adjust on tablet
         tip_amount: tipAmount,  // Initial tip suggestion

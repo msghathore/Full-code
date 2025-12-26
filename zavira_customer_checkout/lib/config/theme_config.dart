@@ -98,10 +98,7 @@ class ZaviraTheme {
         fontWeight: FontWeight.w700,
         color: emerald,
         letterSpacing: 1,
-        shadows: const [
-          Shadow(color: Color(0x9910B981), blurRadius: 10),
-          Shadow(color: Color(0x6610B981), blurRadius: 20),
-        ],
+        // Glow effect removed per customer preference
       );
 
   static TextStyle get priceSmall => GoogleFonts.inter(
