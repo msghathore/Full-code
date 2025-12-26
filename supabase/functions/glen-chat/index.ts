@@ -99,6 +99,23 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
+    // RAG: Search knowledge base for relevant context
+    const { data: knowledgeResults, error: knowledgeError } = await supabase
+      .from('glen_knowledge_base')
+      .select('title, content, category')
+      .textSearch('content', message, {
+        type: 'websearch',
+        config: 'english'
+      })
+      .limit(3)
+
+    let ragContext = ''
+    if (knowledgeResults && knowledgeResults.length > 0) {
+      ragContext = '\n**KNOWLEDGE BASE CONTEXT:**\n' + knowledgeResults
+        .map(k => `[${k.category}] ${k.title}: ${k.content}`)
+        .join('\n\n')
+    }
+
     // Fetch services from database with error handling
     const { data: services, error: servicesError } = await supabase
       .from('services')
@@ -119,7 +136,12 @@ serve(async (req) => {
     const messages = [
       {
         role: 'system',
-        content: `You are Glen, a friendly booking assistant for ${SALON_INFO.name}.
+        content: `You are Glen, an AI assistant and proud member of the Zavira Team at ${SALON_INFO.name}.
+
+**YOUR IDENTITY:**
+- I am Glen, your AI assistant
+- I am part of the Zavira Team
+- I help customers book appointments and answer questions
 
 **YOUR ROLE:** Help customers quickly and guide them to book appointments.
 
@@ -128,7 +150,15 @@ serve(async (req) => {
 - Always mention booking if relevant
 - Be friendly but concise
 - Guide customers towards booking
+- Use the knowledge base context when available
 - Don't repeat information unnecessarily
+
+**CRITICAL - AVAILABILITY LIMITATION:**
+- You CANNOT check real-time appointment availability
+- You do NOT have access to the schedule or booking system
+- NEVER say "I can check", "let me see", or claim to know specific times
+- When asked about availability, ALWAYS direct to: online booking (zavira.ca) or call (431) 816-3330
+- Be honest: "I can't check real-time availability, but you can see all open slots on zavira.ca or call us!"
 
 **SALON INFO:**
 - Location: ${SALON_INFO.address}
@@ -136,6 +166,7 @@ serve(async (req) => {
 - Phone: ${SALON_INFO.phone}
 - Website: ${SALON_INFO.website}
 - Parking: ${SALON_INFO.parking}
+${ragContext}
 
 **SERVICES:**
 ${servicesContext}
@@ -144,11 +175,11 @@ ${servicesContext}
 ${SALON_INFO.specialOffers.join('\n')}
 
 **WHEN ASKED ABOUT:**
-- Services: Briefly mention 2-3 popular ones, encourage booking
-- Hours: State hours, suggest booking online
-- Location: Give address, mention free parking
+- Who you are: Say "I'm Glen, your AI assistant. I'm part of the Zavira Team and I'm here to help!"
+- Services: Use knowledge base if available, briefly mention 2-3 popular ones, encourage booking
+- Hours/Location/Policies: Use knowledge base context first, then general info
 - Prices: Show a few examples, direct to booking page
-- Anything else: Answer briefly, guide to booking
+- Anything else: Check knowledge base, answer briefly, guide to booking
 
 **EXAMPLES:**
 User: "What services do you have?"
@@ -157,10 +188,13 @@ Glen: "We offer hair, nails, massage, facials, and more! Popular choices are hai
 User: "When are you open?"
 Glen: "We're open daily 8 AM to 11:30 PM. You can book anytime online at zavira.ca or call (431) 816-3330!"
 
-User: "Where are you located?"
-Glen: "We're at 283 Tache Avenue, Winnipeg. Free parking on Horace St. Need directions or ready to book?"
+User: "Who are you?"
+Glen: "I'm Glen, your AI assistant! I'm part of the Zavira Team and I'm here to help you book appointments and answer questions. What can I help with?"
 
-**REMEMBER:** Short, helpful, always guide to booking!`
+User: "Do you have availability today?" or "Can I get an appointment this afternoon?"
+Glen: "I can't check real-time availability, but you can see all open time slots when you book online at zavira.ca or call us at (431) 816-3330. We're open daily 8 AM to 11:30 PM!"
+
+**REMEMBER:** Short, helpful, always guide to booking! NEVER claim to check availability!`
       },
       // Add conversation history with validation
       ...(conversationHistory || [])
@@ -222,20 +256,25 @@ Glen: "We're at 283 Tache Avenue, Winnipeg. Free parking on Horace St. Need dire
     const aiResponse = groqData.choices[0]?.message?.content?.trim() ||
       "I'm here to help! What would you like to know?"
 
-    // Determine if we should show services based on message content
+    // Determine if we should show service cards based on explicit service requests
     const lowerMessage = message.toLowerCase()
-    const shouldShowServices =
-      lowerMessage.includes('service') ||
-      lowerMessage.includes('price') ||
-      lowerMessage.includes('hair') ||
-      lowerMessage.includes('nail') ||
-      lowerMessage.includes('massage') ||
-      lowerMessage.includes('facial') ||
-      lowerMessage.includes('skin')
+
+    // Only show services when user explicitly asks about a specific service
+    // Examples that SHOULD show: "tell me about massage", "how much is a haircut", "what nail services"
+    // Examples that should NOT: "what time do you open", "can I cancel", "where are you"
+    const isExplicitServiceQuery = (
+      // Specific service mentions with context
+      (lowerMessage.includes('massage') && (lowerMessage.includes('about') || lowerMessage.includes('service') || lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much'))) ||
+      (lowerMessage.includes('hair') && (lowerMessage.includes('cut') || lowerMessage.includes('color') || lowerMessage.includes('style') || lowerMessage.includes('service') || lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much'))) ||
+      (lowerMessage.includes('nail') && (lowerMessage.includes('service') || lowerMessage.includes('manicure') || lowerMessage.includes('pedicure') || lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much'))) ||
+      (lowerMessage.includes('facial') || (lowerMessage.includes('skin') && (lowerMessage.includes('service') || lowerMessage.includes('treatment') || lowerMessage.includes('care') || lowerMessage.includes('price') || lowerMessage.includes('cost')))) ||
+      // General service inquiry
+      (lowerMessage.includes('what services') || lowerMessage.includes('your services') || lowerMessage.includes('services do you') || lowerMessage.includes('list of services'))
+    )
 
     let serviceCards: any[] = []
-    if (shouldShowServices && services) {
-      // Show relevant services
+    if (isExplicitServiceQuery && services) {
+      // Show relevant services only when explicitly requested
       let filteredServices = services
 
       if (lowerMessage.includes('hair')) {

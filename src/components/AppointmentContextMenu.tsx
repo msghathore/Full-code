@@ -117,6 +117,7 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
   // Main menu items
   const mainMenuItems = [
     { label: 'Change Status', icon: RotateCcw, action: 'change-status', hasSubmenu: true },
+    { label: 'Mark Arrived', icon: CheckCircle, action: 'mark-arrived' },
     { label: 'Edit', icon: Edit, action: 'edit' },
     { label: 'Notes', icon: FileText, action: 'notes' },
     { label: 'View Client Forms', icon: FolderOpen, action: 'view-forms' },

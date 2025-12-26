@@ -59,6 +59,14 @@ const Inventory = lazy(() => import("./pages/Inventory"));
 // const GroupBookingCheckout = lazy(() => import("./pages/GroupBookingCheckout"));
 const Team = lazy(() => import("./pages/Team"));
 
+// Appointment Self-Service Pages
+const RescheduleAppointmentPage = lazy(() => import("./pages/RescheduleAppointmentPage"));
+const CancelAppointmentPage = lazy(() => import("./pages/CancelAppointmentPage"));
+const MyAppointmentsPortal = lazy(() => import("./pages/MyAppointmentsPortal"));
+
+// Membership & Gift Cards
+const MembershipPage = lazy(() => import("./pages/MembershipPage"));
+
 const queryClient = new QueryClient();
 
 // Inner component that can use useLocation for route-based visibility
@@ -122,6 +130,14 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
             {/* <Route path="/group-booking/confirmation/:shareCode" element={<PageTransition><GroupBookingConfirmation /></PageTransition>} /> */}
             {/* <Route path="/group-booking/join/:shareCode" element={<PageTransition><GroupBookingJoin /></PageTransition>} /> */}
             {/* <Route path="/group-booking/checkout/:shareCode" element={<PageTransition><GroupBookingCheckout /></PageTransition>} /> */}
+
+            {/* Appointment Self-Service Routes */}
+            <Route path="/appointment/reschedule/:token" element={<PageTransition><RescheduleAppointmentPage /></PageTransition>} />
+            <Route path="/appointment/cancel/:token" element={<PageTransition><CancelAppointmentPage /></PageTransition>} />
+            <Route path="/my-appointments" element={<PageTransition><MyAppointmentsPortal /></PageTransition>} />
+
+            {/* Membership & Gift Cards */}
+            <Route path="/membership" element={<PageTransition><MembershipPage /></PageTransition>} />
 
             {/* Staff Application Routes - Rendered via StaffApp component */}
             <Route path="/staff/*" element={<StaffApp />} />
