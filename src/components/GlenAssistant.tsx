@@ -59,7 +59,7 @@ interface ServiceCard {
   id: string;
   name: string;
   category: string;
-  price: string;
+  price: number;
   duration: number;
   description: string;
 }
@@ -157,9 +157,10 @@ export const GlenAssistant = () => {
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [showOnMobile, setShowOnMobile] = useState(false);
+  const messageIdRef = useRef(1);
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: 1,
+      id: messageIdRef.current++,
       text: "Welcome to Zavira. I'm Glen, your AI assistant. How may I assist you today?",
       sender: 'glen',
       type: 'quickActions',
@@ -212,7 +213,7 @@ export const GlenAssistant = () => {
     if (!textToSend.trim()) return;
 
     const userMessage: Message = {
-      id: messages.length + 1,
+      id: messageIdRef.current++,
       text: textToSend,
       sender: 'user',
       type: 'text'
@@ -227,7 +228,7 @@ export const GlenAssistant = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({
           message: textToSend,
@@ -235,14 +236,11 @@ export const GlenAssistant = () => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
 
+      // Handle both success and error responses
       const glenMessage: Message = {
-        id: messages.length + 2,
+        id: messageIdRef.current++,
         text: data.response || 'I apologize, I couldn\'t process your request at this moment.',
         sender: 'glen',
         type: data.type || 'text',
@@ -252,11 +250,15 @@ export const GlenAssistant = () => {
 
       setIsTyping(false);
       setMessages(prev => [...prev, glenMessage]);
+
+      if (!response.ok) {
+        console.error('API error:', response.status, data.error);
+      }
     } catch (error) {
       console.error('Error calling AI:', error);
       setIsTyping(false);
       const errorMessage: Message = {
-        id: messages.length + 2,
+        id: messageIdRef.current++,
         text: 'I apologize, I\'m having trouble connecting right now. Please try again shortly.',
         sender: 'glen',
         type: 'text'
@@ -276,6 +278,9 @@ export const GlenAssistant = () => {
       case 'book':
         navigate('/booking');
         setIsOpen(false);
+        break;
+      case 'call':
+        window.location.href = 'tel:+14318163330';
         break;
       case 'services':
         handleSend('What services do you offer?');
