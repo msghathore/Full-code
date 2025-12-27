@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS packages (
   discounted_price DECIMAL(10,2) NOT NULL,
   savings_amount DECIMAL(10,2) NOT NULL,
   savings_percentage INTEGER NOT NULL,
-  included_services TEXT[] NOT NULL DEFAULT '{}',
-  bonus_items TEXT[] NOT NULL DEFAULT '{}',
+  included_services JSONB NOT NULL DEFAULT '[]'::jsonb,
+  bonus_items JSONB NOT NULL DEFAULT '[]'::jsonb,
   is_featured BOOLEAN NOT NULL DEFAULT false,
   is_active BOOLEAN NOT NULL DEFAULT true,
   limited_quantity INTEGER,
@@ -30,10 +30,12 @@ CREATE INDEX IF NOT EXISTS idx_packages_active_featured
 CREATE INDEX IF NOT EXISTS idx_packages_slug
   ON packages(slug);
 
--- Insert sample Grand Slam packages
+-- Insert sample Grand Slam packages (only if table is empty)
+-- COMMENTED OUT: Table already exists with different constraints
+/*
 INSERT INTO packages (
   name, slug, tagline, description, package_type,
-  regular_price, discounted_price, savings_amount, savings_percentage,
+  regular_price, discounted_price,
   included_services, bonus_items, is_featured, limited_quantity, remaining_quantity,
   expires_at
 ) VALUES
@@ -45,20 +47,8 @@ INSERT INTO packages (
   'grand_slam',
   500.00,
   299.00,
-  201.00,
-  40,
-  ARRAY[
-    'Premium Haircut & Style ($75)',
-    'Full Color Treatment ($120)',
-    'Deep Conditioning ($45)',
-    'Blowout & Style ($60)',
-    'Hair Consultation ($40)'
-  ],
-  ARRAY[
-    'FREE Hair Care Product Kit ($60 value)',
-    'FREE Touch-up Color (within 6 weeks)',
-    'Priority Booking Access'
-  ],
+  '["Premium Haircut & Style ($75)", "Full Color Treatment ($120)", "Deep Conditioning ($45)", "Blowout & Style ($60)", "Hair Consultation ($40)"]'::jsonb,
+  '["FREE Hair Care Product Kit ($60 value)", "FREE Touch-up Color (within 6 weeks)", "Priority Booking Access"]'::jsonb,
   true,
   20,
   20,
@@ -72,20 +62,8 @@ INSERT INTO packages (
   'grand_slam',
   380.00,
   249.00,
-  131.00,
-  34,
-  ARRAY[
-    '90-Minute Deep Tissue Massage ($120)',
-    'Luxury Facial Treatment ($85)',
-    'Deluxe Manicure ($45)',
-    'Spa Pedicure ($55)',
-    'Aromatherapy Session ($35)'
-  ],
-  ARRAY[
-    'FREE Glass of Champagne',
-    'FREE Relaxation Tea & Snacks',
-    'Complimentary Scalp Massage'
-  ],
+  '["90-Minute Deep Tissue Massage ($120)", "Luxury Facial Treatment ($85)", "Deluxe Manicure ($45)", "Spa Pedicure ($55)", "Aromatherapy Session ($35)"]'::jsonb,
+  '["FREE Glass of Champagne", "FREE Relaxation Tea & Snacks", "Complimentary Scalp Massage"]'::jsonb,
   true,
   15,
   15,
@@ -99,21 +77,8 @@ INSERT INTO packages (
   'grand_slam',
   650.00,
   449.00,
-  201.00,
-  31,
-  ARRAY[
-    'Bridal Hair Trial ($80)',
-    'Wedding Day Hair & Makeup ($180)',
-    'Airbrush Makeup ($120)',
-    'Lash Extensions ($95)',
-    'Manicure & Pedicure ($90)',
-    'Pre-Wedding Facial ($85)'
-  ],
-  ARRAY[
-    'FREE Bridal Party Discount (20% off for bridesmaids)',
-    'FREE Touch-up Kit for Wedding Day',
-    'Dedicated Bridal Coordinator'
-  ],
+  '["Bridal Hair Trial ($80)", "Wedding Day Hair & Makeup ($180)", "Airbrush Makeup ($120)", "Lash Extensions ($95)", "Manicure & Pedicure ($90)", "Pre-Wedding Facial ($85)"]'::jsonb,
+  '["FREE Bridal Party Discount (20% off for bridesmaids)", "FREE Touch-up Kit for Wedding Day", "Dedicated Bridal Coordinator"]'::jsonb,
   false,
   10,
   10,
@@ -127,29 +92,22 @@ INSERT INTO packages (
   'grand_slam',
   420.00,
   279.00,
-  141.00,
-  34,
-  ARRAY[
-    'Haircut & Blowout ($95)',
-    'Professional Makeup Application ($75)',
-    'Eyebrow Shaping & Tint ($40)',
-    'Luxury Facial ($85)',
-    'Express Manicure ($35)',
-    'Lash Lift & Tint ($65)'
-  ],
-  ARRAY[
-    'FREE Makeup Touch-up Kit',
-    'FREE Professional Photo Tips',
-    '15% Off Next Visit'
-  ],
+  '["Haircut & Blowout ($95)", "Professional Makeup Application ($75)", "Eyebrow Shaping & Tint ($40)", "Luxury Facial ($85)", "Express Manicure ($35)", "Lash Lift & Tint ($65)"]'::jsonb,
+  '["FREE Makeup Touch-up Kit", "FREE Professional Photo Tips", "15% Off Next Visit"]'::jsonb,
   false,
   25,
   25,
   NOW() + INTERVAL '14 days'
-);
+)
+ON CONFLICT (slug) DO NOTHING;
+*/
 
 -- Add RLS policies
 ALTER TABLE packages ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Public can view active packages" ON packages;
+DROP POLICY IF EXISTS "Staff can manage packages" ON packages;
 
 -- Allow public read access for active packages
 CREATE POLICY "Public can view active packages"

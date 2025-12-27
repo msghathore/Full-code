@@ -114,7 +114,7 @@ export const TestimonialsSection = () => {
             key={i}
             className={`w-5 h-5 ${
               i < rating
-                ? 'fill-emerald-500 text-emerald-500'
+                ? 'fill-white text-white'
                 : 'fill-slate-700 text-slate-700'
             }`}
             aria-hidden="true"
@@ -156,7 +156,7 @@ export const TestimonialsSection = () => {
         initial={{ scaleX: 0 }}
         animate={sectionInView ? { scaleX: 1 } : { scaleX: 0 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent mb-12 origin-center"
+        className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent mb-12 origin-center"
       />
 
       <div className="container mx-auto">
@@ -199,13 +199,13 @@ export const TestimonialsSection = () => {
                       <motion.div
                         className="bg-gradient-to-br from-slate-900/90 to-slate-950/90 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12"
                         whileHover={{
-                          boxShadow: "0 20px 60px rgba(16, 185, 129, 0.2)",
-                          borderColor: "rgba(16, 185, 129, 0.3)",
+                          boxShadow: "0 20px 60px rgba(255, 255, 255, 0.2)",
+                          borderColor: "rgba(255, 255, 255, 0.3)",
                         }}
                       >
                         <div className="flex flex-col items-center text-center">
                           {/* Customer Photo */}
-                          <div className="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-emerald-500/30">
+                          <div className="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-white/30">
                             <img
                               src={testimonial.customer_photo_url || 'https://i.pravatar.cc/150?img=1'}
                               alt={testimonial.customer_name}
@@ -228,13 +228,13 @@ export const TestimonialsSection = () => {
                               {testimonial.customer_name}
                             </p>
                             {testimonial.is_verified && (
-                              <CheckCircle2 className="w-5 h-5 text-emerald-500" aria-label="Verified Customer" />
+                              <CheckCircle2 className="w-5 h-5 text-white" aria-label="Verified Customer" />
                             )}
                           </div>
 
                           {/* Service Badge */}
                           {testimonial.service_category && (
-                            <span className="inline-block px-4 py-1 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm rounded-full">
+                            <span className="inline-block px-4 py-1 bg-white/20 border border-white/30 text-white text-sm rounded-full">
                               {testimonial.service_category}
                             </span>
                           )}
@@ -274,7 +274,7 @@ export const TestimonialsSection = () => {
                       onClick={() => setCurrentIndex(idx)}
                       className={`w-2 h-2 rounded-full transition-all ${
                         idx === currentIndex
-                          ? 'bg-emerald-500 w-8'
+                          ? 'bg-white w-8'
                           : 'bg-white/30 hover:bg-white/50'
                       }`}
                       aria-label={`Go to testimonial ${idx + 1}`}
@@ -297,10 +297,10 @@ export const TestimonialsSection = () => {
             <motion.div
               key={testimonial.id}
               variants={cardVariants}
-              className="bg-gradient-to-br from-slate-900/70 to-slate-950/70 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-emerald-500/30 transition-all"
+              className="bg-gradient-to-br from-slate-900/70 to-slate-950/70 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all"
             >
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-emerald-500/30">
+                <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/30">
                   <img
                     src={testimonial.customer_photo_url || 'https://i.pravatar.cc/150?img=1'}
                     alt={testimonial.customer_name}
@@ -314,11 +314,11 @@ export const TestimonialsSection = () => {
                       {testimonial.customer_name}
                     </p>
                     {testimonial.is_verified && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" aria-label="Verified" />
+                      <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" aria-label="Verified" />
                     )}
                   </div>
                   {testimonial.service_category && (
-                    <p className="text-sm text-emerald-400">{testimonial.service_category}</p>
+                    <p className="text-sm text-white">{testimonial.service_category}</p>
                   )}
                 </div>
               </div>
@@ -329,7 +329,7 @@ export const TestimonialsSection = () => {
                     key={i}
                     className={`w-4 h-4 ${
                       i < testimonial.rating
-                        ? 'fill-emerald-500 text-emerald-500'
+                        ? 'fill-white text-white'
                         : 'fill-slate-700 text-slate-700'
                     }`}
                   />
@@ -357,7 +357,7 @@ export const TestimonialsSection = () => {
             <Button
               variant="outline"
               asChild
-              className="rounded-full border-emerald-500/50 text-white hover:bg-emerald-500 hover:text-black transition-colors px-8 py-6 text-lg"
+              className="rounded-full border-white/50 text-white hover:bg-white hover:text-black transition-colors px-8 py-6 text-lg"
             >
               <Link to="/services">
                 View All Reviews

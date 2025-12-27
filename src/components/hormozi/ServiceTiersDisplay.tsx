@@ -39,7 +39,7 @@ export const ServiceTiersDisplay = () => {
   if (isLoading) {
     return (
       <div className="py-20 text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -53,9 +53,9 @@ export const ServiceTiersDisplay = () => {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full mb-6">
-            <Star className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/30 rounded-full mb-6">
+            <Star className="w-5 h-5 text-white" />
+            <span className="text-white font-semibold text-sm uppercase tracking-wider">
               TRANSPARENT PRICING
             </span>
           </div>
@@ -66,7 +66,7 @@ export const ServiceTiersDisplay = () => {
 
           <p className="text-xl text-white/80 max-w-3xl mx-auto mb-4">
             Every service at Zavira falls into one of three tiers.
-            <span className="text-emerald-400 font-bold"> Know exactly what you're getting</span> before you book.
+            <span className="text-white font-bold"> Know exactly what you're getting</span> before you book.
           </p>
 
           <p className="text-base text-white/60 max-w-2xl mx-auto">
@@ -157,7 +157,7 @@ export const ServiceTiersDisplay = () => {
           <Button
             onClick={() => navigate('/booking')}
             size="lg"
-            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-emerald-500/50 transition-all"
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-white/50 transition-all"
           >
             Browse All Services
             <ArrowRight className="w-5 h-5 ml-2" />
@@ -181,13 +181,13 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
       "relative rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-[1.02]",
       "bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur",
       isPremium
-        ? "border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-        : "border-white/10 hover:border-emerald-500/50"
+        ? "border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+        : "border-white/10 hover:border-white/50"
     )}>
       {/* Most Popular Badge */}
       {isPremium && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full">
-          <span className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-white to-white/90 rounded-full">
+          <span className="text-black font-bold text-sm uppercase tracking-wider flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
             MOST POPULAR
           </span>
@@ -198,7 +198,7 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-1">
           {Array.from({ length: tier.tier_level }).map((_, i) => (
-            <Star key={i} className="w-4 h-4 fill-emerald-500 text-emerald-500" />
+            <Star key={i} className="w-4 h-4 fill-white text-white" />
           ))}
         </div>
       </div>
@@ -208,7 +208,7 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
         {tier.tier_name}
       </h3>
       {tier.tagline && (
-        <p className="text-emerald-400 font-semibold text-lg mb-4">
+        <p className="text-white font-semibold text-lg mb-4">
           {tier.tagline}
         </p>
       )}
@@ -242,7 +242,7 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
         <ul className="space-y-2">
           {tier.features.slice(0, 6).map((feature, idx) => (
             <li key={idx} className="flex items-start gap-2 text-white/80 text-sm">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />
               <span>{feature}</span>
             </li>
           ))}
@@ -265,14 +265,14 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
 
       {/* Upgrade Benefits (only for Basic & Premium) */}
       {tier.tier_level < 3 && tier.upgrade_benefits.length > 0 && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-          <h4 className="text-emerald-400 font-bold mb-2 text-sm uppercase tracking-wider flex items-center gap-2">
+        <div className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg">
+          <h4 className="text-white font-bold mb-2 text-sm uppercase tracking-wider flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
             Upgrade Benefits:
           </h4>
           <ul className="space-y-1.5">
             {tier.upgrade_benefits.map((benefit, idx) => (
-              <li key={idx} className="text-emerald-300 text-xs">
+              <li key={idx} className="text-white text-xs">
                 → {benefit}
               </li>
             ))}
@@ -287,7 +287,7 @@ const TierCard = ({ tier, onBook }: TierCardProps) => {
         className={cn(
           "w-full font-bold text-lg py-6 rounded-xl shadow-lg transition-all",
           isPremium
-            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-emerald-500/50"
+            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-white/50"
             : "bg-white/10 hover:bg-white/20 border border-white/20"
         )}
       >

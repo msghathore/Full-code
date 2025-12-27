@@ -214,8 +214,8 @@ export const LeadMagnetPopup = ({
                 <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
                   {/* Icon Badge */}
                   <div className="flex justify-center">
-                    <div className="p-2 sm:p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                      <Gift className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500" />
+                    <div className="p-2 sm:p-3 bg-white/10 rounded-full border border-white/20">
+                      <Gift className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                   </div>
 
@@ -240,7 +240,7 @@ export const LeadMagnetPopup = ({
                         transition={{ delay: index * 0.1 }}
                         className="flex items-start gap-2"
                       >
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                         <p className="text-white/80 text-sm">{benefit}</p>
                       </motion.div>
                     ))}
@@ -253,7 +253,7 @@ export const LeadMagnetPopup = ({
                     <Input
                       {...register('name', { required: 'Name is required' })}
                       placeholder="Your Name *"
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-emerald-500/50"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
                     />
                     {errors.name && (
                       <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>
@@ -271,7 +271,7 @@ export const LeadMagnetPopup = ({
                       })}
                       type="email"
                       placeholder="Your Email *"
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-emerald-500/50"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
                     />
                     {errors.email && (
                       <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
@@ -283,7 +283,7 @@ export const LeadMagnetPopup = ({
                       {...register('phone')}
                       type="tel"
                       placeholder="Phone Number (Optional)"
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-emerald-500/50"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
                     />
                   </div>
 

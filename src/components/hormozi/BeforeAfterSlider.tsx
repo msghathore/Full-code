@@ -92,7 +92,7 @@ export const BeforeAfterSlider = ({
           onError={handleImageError}
         />
         {/* After Label */}
-        <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-semibold shadow-lg">
+        <div className="absolute top-4 right-4 bg-white text-black px-3 py-1 rounded-md text-sm font-semibold shadow-lg">
           {afterLabel}
         </div>
       </div>
@@ -125,10 +125,10 @@ export const BeforeAfterSlider = ({
         onTouchStart={() => setIsDragging(true)}
       >
         {/* Slider Circle Handle */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-2xl border-4 border-emerald-500 flex items-center justify-center cursor-grab active:cursor-grabbing">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-2xl border-4 border-white flex items-center justify-center cursor-grab active:cursor-grabbing">
           <div className="flex gap-1">
-            <div className="w-1 h-6 bg-emerald-500 rounded"></div>
-            <div className="w-1 h-6 bg-emerald-500 rounded"></div>
+            <div className="w-1 h-6 bg-slate-700 rounded"></div>
+            <div className="w-1 h-6 bg-slate-700 rounded"></div>
           </div>
         </div>
       </div>

@@ -60,8 +60,8 @@ export const SocialProofNotification = ({
   return (
     <div className={cn(
       "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
-      "bg-emerald-500/10 border border-emerald-500/30",
-      "text-emerald-400 text-sm font-medium",
+      "bg-white/10 border border-white/30",
+      "text-white text-sm font-medium",
       "animate-pulse",
       className
     )}>

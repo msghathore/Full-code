@@ -50,7 +50,7 @@ export const GrandSlamOffers = () => {
   if (isLoading) {
     return (
       <div className="py-20 text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -64,9 +64,9 @@ export const GrandSlamOffers = () => {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full mb-6">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/30 rounded-full mb-6">
+            <Sparkles className="w-5 h-5 text-white" />
+            <span className="text-white font-semibold text-sm uppercase tracking-wider">
               LIMITED TIME OFFERS
             </span>
           </div>
@@ -77,7 +77,7 @@ export const GrandSlamOffers = () => {
 
           <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
             Irresistible value packages that would be crazy to pass up.
-            <span className="text-emerald-400 font-bold"> Save hundreds</span> on your transformation today.
+            <span className="text-white font-bold"> Save hundreds</span> on your transformation today.
           </p>
 
           <SocialProofNotification type="booked" className="justify-center" />
@@ -127,13 +127,13 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
       "relative rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-[1.02]",
       "bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur",
       pkg.is_featured
-        ? "border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-        : "border-white/10 hover:border-emerald-500/50"
+        ? "border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+        : "border-white/10 hover:border-white/50"
     )}>
       {/* Featured Badge */}
       {pkg.is_featured && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full">
-          <span className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-white to-white/90 rounded-full">
+          <span className="text-black font-bold text-sm uppercase tracking-wider flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
             BEST VALUE
           </span>
@@ -157,7 +157,7 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
         {pkg.name}
       </h3>
       {pkg.tagline && (
-        <p className="text-emerald-400 font-semibold text-lg mb-4">
+        <p className="text-white font-semibold text-lg mb-4">
           {pkg.tagline}
         </p>
       )}
@@ -172,8 +172,8 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
         />
 
         {/* Value Proposition */}
-        <div className="mt-4 p-3 bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30 rounded-lg">
-          <div className="flex items-center gap-2 text-emerald-400">
+        <div className="mt-4 p-3 bg-white/10 border border-white/30 rounded-lg">
+          <div className="flex items-center gap-2 text-white">
             <TrendingUp className="w-5 h-5" />
             <span className="font-bold">
               Total Value: ${pkg.regular_price.toFixed(0)} • You Pay: ${pkg.discounted_price.toFixed(0)}
@@ -192,13 +192,13 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
       {/* Included Services */}
       <div className="mb-6">
         <h4 className="text-white font-bold mb-3 flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+          <CheckCircle2 className="w-5 h-5 text-white" />
           What's Included:
         </h4>
         <ul className="space-y-2">
           {pkg.included_services.map((service, idx) => (
             <li key={idx} className="flex items-start gap-2 text-white/80">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />
               <span>{service}</span>
             </li>
           ))}
@@ -207,14 +207,14 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
 
       {/* Bonus Items */}
       {pkg.bonus_items && pkg.bonus_items.length > 0 && (
-        <div className="mb-6 p-4 bg-white/10/10 border border-white/30/30 rounded-lg">
-          <h4 className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-bold mb-3 flex items-center gap-2">
+        <div className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg">
+          <h4 className="text-white font-bold mb-3 flex items-center gap-2">
             <Gift className="w-5 h-5" />
             BONUS - You Also Get:
           </h4>
           <ul className="space-y-2">
             {pkg.bonus_items.map((bonus, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+              <li key={idx} className="flex items-start gap-2 text-white">
                 <Gift className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{bonus}</span>
               </li>
@@ -252,7 +252,7 @@ const PackageCard = ({ package: pkg, onBook }: PackageCardProps) => {
           "w-full font-bold text-lg py-6 rounded-xl shadow-lg transition-all",
           isExpired || isSoldOut
             ? "bg-slate-700 text-white/50 cursor-not-allowed"
-            : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white hover:shadow-emerald-500/50"
+            : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white hover:shadow-white/50"
         )}
       >
         <Clock className="w-5 h-5 mr-2" />

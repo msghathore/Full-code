@@ -43,14 +43,14 @@ export const TransformationCard = ({
       {/* Card */}
       <div
         className={cn(
-          'group relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-emerald-500 transition-all duration-300 cursor-pointer',
-          featured && 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-black'
+          'group relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-white transition-all duration-300 cursor-pointer',
+          featured && 'ring-2 ring-white ring-offset-2 ring-offset-black'
         )}
         onClick={handleCardClick}
       >
         {/* Featured Badge */}
         {featured && (
-          <div className="absolute top-3 left-3 z-10 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+          <div className="absolute top-3 left-3 z-10 bg-white text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">
             ✨ Featured
           </div>
         )}
@@ -69,7 +69,7 @@ export const TransformationCard = ({
         <div className="p-5 space-y-3">
           {/* Category Badge */}
           <div className="flex items-center gap-2">
-            <span className="inline-block bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">
+            <span className="inline-block bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold">
               {category}
             </span>
           </div>
@@ -82,13 +82,13 @@ export const TransformationCard = ({
           {/* CTA Button */}
           <Button
             onClick={handleBookService}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg hover:shadow-emerald-500/50 transition-all"
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg hover:shadow-white/50 transition-all"
           >
             Book This Service
           </Button>
 
           {/* View Details Hint */}
-          <p className="text-slate-400 text-xs text-center group-hover:text-emerald-400 transition-colors">
+          <p className="text-slate-400 text-xs text-center group-hover:text-white transition-colors">
             Click to view full size
           </p>
         </div>
@@ -126,11 +126,11 @@ export const TransformationCard = ({
             <div className="p-6 space-y-4 bg-gradient-to-t from-black to-transparent">
               {/* Category */}
               <div className="flex items-center justify-between">
-                <span className="inline-block bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-semibold">
+                <span className="inline-block bg-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   {category}
                 </span>
                 {featured && (
-                  <span className="inline-block bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-bold">
+                  <span className="inline-block bg-white text-black px-4 py-2 rounded-full text-sm font-bold">
                     ✨ Featured Transformation
                   </span>
                 )}
@@ -145,14 +145,14 @@ export const TransformationCard = ({
               <div className="flex gap-3">
                 <Button
                   onClick={handleBookService}
-                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg hover:shadow-emerald-500/50 transition-all"
+                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg hover:shadow-white/50 transition-all"
                 >
                   Book This Service
                 </Button>
                 <Button
                   onClick={() => (window.location.href = '/services')}
                   variant="outline"
-                  className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all"
+                  className="flex-1 border-white text-white hover:bg-white hover:text-black transition-all"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View All Services

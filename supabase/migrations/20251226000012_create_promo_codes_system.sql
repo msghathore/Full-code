@@ -43,6 +43,13 @@ CREATE INDEX IF NOT EXISTS idx_promo_code_redemptions_customer ON promo_code_red
 ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE promo_code_redemptions ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Public can view active promo codes" ON promo_codes;
+DROP POLICY IF EXISTS "Staff can manage promo codes" ON promo_codes;
+DROP POLICY IF EXISTS "Users can view own redemptions" ON promo_code_redemptions;
+DROP POLICY IF EXISTS "Users can create redemptions" ON promo_code_redemptions;
+DROP POLICY IF EXISTS "Staff can view all redemptions" ON promo_code_redemptions;
+
 -- RLS Policies for promo_codes
 CREATE POLICY "Public can view active promo codes"
   ON promo_codes
@@ -163,7 +170,8 @@ INSERT INTO promo_codes (
   1,
   'referral',
   NOW() + INTERVAL '365 days'
-);
+)
+ON CONFLICT (code) DO NOTHING;
 
 COMMENT ON TABLE promo_codes IS 'Promotional discount codes for bookings';
 COMMENT ON TABLE promo_code_redemptions IS 'Tracks usage of promo codes';

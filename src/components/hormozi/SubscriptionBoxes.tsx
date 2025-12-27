@@ -48,9 +48,9 @@ export const SubscriptionBoxes = () => {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full mb-6">
-            <Package className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/30 rounded-full mb-6">
+            <Package className="w-5 h-5 text-white" />
+            <span className="text-white font-semibold text-sm uppercase tracking-wider">
               PRODUCT SUBSCRIPTIONS
             </span>
           </div>
@@ -61,7 +61,7 @@ export const SubscriptionBoxes = () => {
 
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
             Get your favorite salon products delivered monthly.
-            <span className="text-emerald-400 font-bold"> Save 30-40%</span> vs. buying retail.
+            <span className="text-white font-bold"> Save 30-40%</span> vs. buying retail.
           </p>
         </div>
 
@@ -73,8 +73,8 @@ export const SubscriptionBoxes = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center p-8 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl max-w-4xl mx-auto">
-          <Sparkles className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
+        <div className="text-center p-8 bg-white/10 border-2 border-white/30 rounded-2xl max-w-4xl mx-auto">
+          <Sparkles className="w-12 h-12 text-white mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-3">NEVER PAY FULL PRICE</h3>
           <p className="text-white/80 max-w-2xl mx-auto mb-6">
             Subscribe once, save forever. Cancel anytime. Skip or pause months. 100% flexible.
@@ -102,7 +102,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
   const savingsPercent = Math.round((savings / box.retail_value) * 100);
 
   return (
-    <div className="group relative rounded-2xl border-2 border-white/10 p-6 transition-all duration-300 hover:border-emerald-500/50 hover:scale-105 bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur">
+    <div className="group relative rounded-2xl border-2 border-white/10 p-6 transition-all duration-300 hover:border-white/50 hover:scale-105 bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur">
       {/* Category Badge */}
       <div className="absolute -top-3 left-6 px-4 py-1 bg-black border border-white/20 rounded-full">
         <span className="text-white/60 text-xs uppercase tracking-wider">
@@ -112,7 +112,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
 
       {/* Box Name */}
       <div className="mt-4 mb-6">
-        <h3 className="font-serif text-2xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">
+        <h3 className="font-serif text-2xl font-bold mb-2 group-hover:text-white transition-colors">
           {box.name}
         </h3>
         {box.description && (
@@ -125,7 +125,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
       {/* Pricing */}
       <div className="mb-6 pb-6 border-b border-white/10">
         <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-4xl font-bold text-emerald-400">
+          <span className="text-4xl font-bold text-white">
             ${box.monthly_price.toFixed(0)}
           </span>
           <span className="text-white/60">/month</span>
@@ -134,7 +134,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
           <span className="text-white/40 line-through text-sm">
             ${box.retail_value.toFixed(0)} retail
           </span>
-          <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-emerald-400 text-xs font-bold">
+          <span className="px-2 py-1 bg-white/20 border border-white/50 rounded text-white text-xs font-bold">
             SAVE {savingsPercent}%
           </span>
         </div>
@@ -148,7 +148,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
         <ul className="space-y-2">
           {box.included_products.map((product, idx) => (
             <li key={idx} className="flex items-start gap-2 text-sm text-white/70">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />
               <span>
                 {product.name} <span className="text-white/40">(${product.value})</span>
               </span>
@@ -161,7 +161,7 @@ const SubscriptionBoxCard = ({ box, onSubscribe }: SubscriptionBoxCardProps) => 
       <Button
         onClick={onSubscribe}
         size="lg"
-        className="w-full bg-white/10 hover:bg-emerald-500 border-2 border-white/20 hover:border-emerald-500 font-bold text-lg py-6 rounded-xl transition-all group-hover:bg-emerald-500 group-hover:border-emerald-500"
+        className="w-full bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:border-white/50 font-bold text-lg py-6 rounded-xl transition-all"
       >
         <TrendingUp className="w-5 h-5 mr-2" />
         SUBSCRIBE & SAVE

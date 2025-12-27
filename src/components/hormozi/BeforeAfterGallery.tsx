@@ -98,7 +98,7 @@ export const BeforeAfterGallery = ({
               className={cn(
                 'px-6 py-3 rounded-full font-semibold transition-all duration-300',
                 selectedCategory === category
-                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/50'
+                  ? 'bg-white text-black shadow-lg shadow-white/50'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
               )}
             >
@@ -111,7 +111,7 @@ export const BeforeAfterGallery = ({
       {/* Loading State */}
       {isLoading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+          <Loader2 className="w-12 h-12 text-white animate-spin" />
         </div>
       )}
 
@@ -151,7 +151,7 @@ export const BeforeAfterGallery = ({
             Showing {transformations.length}{' '}
             {transformations.length === 1 ? 'transformation' : 'transformations'}
             {selectedCategory !== 'All' && (
-              <span className="text-emerald-400"> in {selectedCategory}</span>
+              <span className="text-white"> in {selectedCategory}</span>
             )}
           </p>
         </div>

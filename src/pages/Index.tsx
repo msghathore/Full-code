@@ -606,7 +606,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
             initial={{ scaleX: 0 }}
             animate={newsletterInView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent mb-12 origin-center"
+            className="w-full h-px bg-gradient-to-r from-transparent via-white/50 to-transparent mb-12 origin-center"
           />
           <div className="container mx-auto max-w-5xl">
             <motion.div
@@ -616,10 +616,10 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <motion.div
-                className="relative overflow-hidden rounded-3xl border-2 border-emerald-500/30 bg-gradient-to-br from-slate-950 via-black to-slate-950 mx-auto max-w-3xl shadow-2xl shadow-emerald-500/10"
+                className="relative overflow-hidden rounded-3xl border-2 border-white/30 bg-gradient-to-br from-slate-950 via-black to-slate-950 mx-auto max-w-3xl shadow-2xl shadow-white/10"
                 whileHover={{
-                  boxShadow: "0 25px 80px rgba(16, 185, 129, 0.25)",
-                  borderColor: "rgba(16, 185, 129, 0.5)",
+                  boxShadow: "0 25px 80px rgba(255, 255, 255, 0.25)",
+                  borderColor: "rgba(255, 255, 255, 0.5)",
                   transition: { duration: 0.4 }
                 }}
               >
@@ -637,7 +637,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
 
                   {/* Social Proof Subheadline */}
                   <motion.p
-                    className="text-2xl md:text-3xl font-semibold text-emerald-400 mb-8"
+                    className="text-2xl md:text-3xl font-semibold text-white mb-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
@@ -702,7 +702,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                         id="newsletter-email"
                         type="email"
                         placeholder="Enter your email to get $50 OFF instantly..."
-                        className={`bg-white/10 border-2 border-white/30 text-white placeholder:text-white/50 text-center text-lg md:text-xl py-7 rounded-full backdrop-blur-sm focus:bg-white/15 focus:border-emerald-400 transition-all duration-300 ${errors.email ? 'border-red-400 focus:border-red-400' : ''}`}
+                        className={`bg-white/10 border-2 border-white/30 text-white placeholder:text-white/50 text-center text-lg md:text-xl py-7 rounded-full backdrop-blur-sm focus:bg-white/15 focus:border-white transition-all duration-300 ${errors.email ? 'border-red-400 focus:border-red-400' : ''}`}
                         aria-describedby={errors.email ? 'newsletter-email-error newsletter-description' : 'newsletter-description'}
                         aria-invalid={errors.email ? 'true' : 'false'}
                       />
@@ -749,7 +749,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                     <p className="text-white/80 text-sm font-semibold">
                       ✅ Free to join • ✅ Unsubscribe anytime • ✅ No spam, ever
                     </p>
-                    <p id="newsletter-description" className="text-emerald-400 text-base font-bold">
+                    <p id="newsletter-description" className="text-white text-base font-bold">
                       Average VIP saves $847/year vs. regular clients
                     </p>
                   </motion.div>
