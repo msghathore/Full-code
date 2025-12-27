@@ -528,7 +528,7 @@ const OverviewCard: React.FC<OverviewCardProps> = ({ title, icon, onClick, stats
               <span className={`text-lg font-semibold ${stat.alert ? 'text-red-400' : 'text-white'}`}>
                 {stat.value}{stat.suffix}
               </span>
-              {stat.trend === 'up' && <ArrowUpRight className="h-4 w-4 text-green-400" />}
+              {stat.trend === 'up' && <ArrowUpRight className="h-4 w-4 text-white" />}
               {stat.trend === 'down' && <ArrowDownRight className="h-4 w-4 text-red-400" />}
             </div>
           </div>
@@ -756,8 +756,8 @@ const PerformancePanel: React.FC = () => {
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-500/20 rounded-lg">
-                <DollarSign className="h-6 w-6 text-green-400" />
+              <div className="p-3 bg-white/20 rounded-lg">
+                <DollarSign className="h-6 w-6 text-white" />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Total Revenue</p>
@@ -1017,7 +1017,7 @@ const ReviewsPanel: React.FC = () => {
 
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-green-400">{((dashboardData?.avgSentiment || 0) * 100).toFixed(0)}%</p>
+            <p className="text-4xl font-bold text-white">{((dashboardData?.avgSentiment || 0) * 100).toFixed(0)}%</p>
             <p className="text-sm text-gray-400">Positive Sentiment</p>
           </CardContent>
         </Card>
@@ -1144,7 +1144,7 @@ const MarketingPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-green-400">
+            <p className="text-4xl font-bold text-white">
               {campaigns.length > 0 ? (campaigns.reduce((s, c) => s + (c.open_rate || 0), 0) / campaigns.length).toFixed(1) : 0}%
             </p>
             <p className="text-sm text-gray-400">Avg Open Rate</p>
@@ -1305,7 +1305,7 @@ const InventoryPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-green-400">${stats?.totalValue?.toLocaleString() || 0}</p>
+            <p className="text-4xl font-bold text-white">${stats?.totalValue?.toLocaleString() || 0}</p>
             <p className="text-sm text-gray-400">Inventory Value</p>
           </CardContent>
         </Card>
@@ -1420,7 +1420,7 @@ const RecommendationsPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-green-400">{stats?.acceptedCount || 0}</p>
+            <p className="text-4xl font-bold text-white">{stats?.acceptedCount || 0}</p>
             <p className="text-sm text-gray-400">Accepted</p>
           </CardContent>
         </Card>
@@ -1434,7 +1434,7 @@ const RecommendationsPanel: React.FC = () => {
         </Card>
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6 text-center">
-            <p className="text-4xl font-bold text-green-400">${stats?.revenueGenerated?.toLocaleString() || 0}</p>
+            <p className="text-4xl font-bold text-white">${stats?.revenueGenerated?.toLocaleString() || 0}</p>
             <p className="text-sm text-gray-400">Revenue from Recs</p>
           </CardContent>
         </Card>
@@ -1574,7 +1574,7 @@ const SchedulingPanel: React.FC = () => {
                 {presences.map((presence, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+                      <div className="h-3 w-3 rounded-full bg-white animate-pulse" />
                       <span className="text-white">{presence.staff_id}</span>
                     </div>
                     <span className="text-sm text-gray-400">
@@ -1596,7 +1596,7 @@ const SchedulingPanel: React.FC = () => {
           <CardContent>
             {conflicts.length === 0 ? (
               <div className="text-center py-8 text-gray-400">
-                <CheckCircle2 className="h-12 w-12 mx-auto mb-2 opacity-50 text-green-400" />
+                <CheckCircle2 className="h-12 w-12 mx-auto mb-2 opacity-50 text-white" />
                 <p>No conflicts detected</p>
               </div>
             ) : (

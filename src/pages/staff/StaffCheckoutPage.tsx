@@ -941,7 +941,7 @@ const StaffCheckoutPage = () => {
                 <Separator className="bg-gray-200 my-2" />
                 <div className="flex justify-between font-bold text-lg">
                   <span className="text-gray-900">Amount Due:</span>
-                  <span className="text-green-600">{formatCurrency(totals.amountDue)}</span>
+                  <span className="text-white">{formatCurrency(totals.amountDue)}</span>
                 </div>
               </div>
             )}
@@ -1035,7 +1035,7 @@ const StaffCheckoutPage = () => {
               <Separator className="my-3" />
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-green-600">{formatCurrency(totals.amountDue)}</span>
+                <span className="text-2xl font-bold text-white">{formatCurrency(totals.amountDue)}</span>
               </div>
             </div>
 
@@ -1103,7 +1103,7 @@ const StaffCheckoutPage = () => {
                         <div className="text-gray-900 font-medium">{item.name}</div>
                         <div className="text-sm text-gray-500">{item.code || item.id} • {item.type}</div>
                       </div>
-                      <div className="text-green-600 font-semibold">{formatCurrency(item.price)}</div>
+                      <div className="text-white font-semibold">{formatCurrency(item.price)}</div>
                     </div>
                   </div>
                 ))}

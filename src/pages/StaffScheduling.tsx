@@ -194,7 +194,7 @@ const StaffScheduling = () => {
 
   const getEfficiencyColor = (efficiency: string) => {
     switch (efficiency) {
-      case 'High': return 'bg-green-500/20 text-green-400';
+      case 'High': return 'bg-white/20 text-white';
       case 'Good': return 'bg-slate-800/20 text-slate-700';
       case 'Low': return 'bg-red-500/20 text-red-400';
       default: return 'bg-muted text-muted-foreground';
@@ -205,7 +205,7 @@ const StaffScheduling = () => {
     switch (impact) {
       case 'High': return 'bg-red-500/20 text-red-400';
       case 'Medium': return 'bg-yellow-500/20 text-yellow-400';
-      case 'Low': return 'bg-green-500/20 text-green-400';
+      case 'Low': return 'bg-white/20 text-white';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -285,7 +285,7 @@ const StaffScheduling = () => {
                     <p className="text-2xl font-bold luxury-glow">
                       {performanceMetrics.avgUtilization.toFixed(1)}%
                     </p>
-                    <p className="text-xs text-green-400">Target: 75-85%</p>
+                    <p className="text-xs text-white">Target: 75-85%</p>
                   </div>
                   <Activity className="h-8 w-8 text-slate-700" />
                 </div>
@@ -302,7 +302,7 @@ const StaffScheduling = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">Optimal allocation</p>
                   </div>
-                  <Target className="h-8 w-8 text-green-400" />
+                  <Target className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -334,7 +334,7 @@ const StaffScheduling = () => {
                       {performanceMetrics.staffOvertime > 0 ? 'Can be optimized' : 'No overtime'}
                     </p>
                   </div>
-                  <AlertTriangle className={`h-8 w-8 ${performanceMetrics.staffOvertime > 0 ? 'text-yellow-400' : 'text-green-400'}`} />
+                  <AlertTriangle className={`h-8 w-8 ${performanceMetrics.staffOvertime > 0 ? 'text-yellow-400' : 'text-white'}`} />
                 </div>
               </CardContent>
             </Card>
@@ -555,15 +555,15 @@ const StaffScheduling = () => {
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span>Historical patterns</span>
-                            <span className="text-green-400">+{Math.round(Math.random() * 20)}%</span>
+                            <span className="text-white">+{Math.round(Math.random() * 20)}%</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Booking trends</span>
-                            <span className="text-green-400">+{Math.round(Math.random() * 15)}%</span>
+                            <span className="text-white">+{Math.round(Math.random() * 15)}%</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Seasonal factors</span>
-                            <span className={Math.random() > 0.5 ? 'text-green-400' : 'text-red-400'}>
+                            <span className={Math.random() > 0.5 ? 'text-white' : 'text-red-400'}>
                               {Math.random() > 0.5 ? '+' : '-'}{Math.round(Math.random() * 10)}%
                             </span>
                           </div>
@@ -703,32 +703,32 @@ const StaffScheduling = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-400" />
+                      <CheckCircle className="h-5 w-5 text-white" />
                       Benefits of Optimization
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
                       <span className="text-sm">Reduced customer wait times</span>
-                      <span className="font-medium text-green-400">
+                      <span className="font-medium text-white">
                         -{Math.max(0, Math.min(50, performanceMetrics.customerWaitTime * 2))}%
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
                       <span className="text-sm">Increased staff utilization</span>
-                      <span className="font-medium text-green-400">
+                      <span className="font-medium text-white">
                         +{Math.max(0, Math.min(25, performanceMetrics.avgUtilization / 4))}%
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
                       <span className="text-sm">Higher customer satisfaction</span>
-                      <span className="font-medium text-green-400">
+                      <span className="font-medium text-white">
                         +{Math.max(0, Math.min(30, performanceMetrics.avgUtilization / 3))}%
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
                       <span className="text-sm">Reduced operational costs</span>
-                      <span className="font-medium text-green-400">
+                      <span className="font-medium text-white">
                         -{Math.max(0, Math.min(20, performanceMetrics.staffOvertime * 2))}%
                       </span>
                     </div>

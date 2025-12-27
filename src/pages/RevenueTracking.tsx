@@ -131,7 +131,7 @@ const RevenueTracking = () => {
   };
 
   const getVarianceColor = (variance: number) => {
-    if (variance > 0) return 'text-green-400';
+    if (variance > 0) return 'text-white';
     if (variance < -10) return 'text-red-400';
     return 'text-yellow-400';
   };
@@ -218,9 +218,9 @@ const RevenueTracking = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">Total Revenue</p>
                     <p className="text-2xl font-bold luxury-glow">{formatCurrency(kpis?.totalRevenue || 0)}</p>
-                    <p className="text-xs text-green-400">+{kpis?.growthRate || 0}% vs last period</p>
+                    <p className="text-xs text-white">+{kpis?.growthRate || 0}% vs last period</p>
                   </div>
-                  <DollarSign className="h-8 w-8 text-green-400" />
+                  <DollarSign className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -380,7 +380,7 @@ const RevenueTracking = () => {
                     </div>
                     <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
                       <span className="text-sm">Cash Flow Positive</span>
-                      <span className="font-medium text-green-400">Yes</span>
+                      <span className="font-medium text-white">Yes</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
                       <span className="text-sm">Debt-to-Equity Ratio</span>
@@ -463,7 +463,7 @@ const RevenueTracking = () => {
                       </div>
                       <div className="flex justify-between mt-2">
                         <span className="font-medium">Net Profit</span>
-                        <span className="font-medium text-green-400">{formatCurrency((kpis?.totalRevenue || 0) * 0.45)}</span>
+                        <span className="font-medium text-white">{formatCurrency((kpis?.totalRevenue || 0) * 0.45)}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -490,31 +490,31 @@ const RevenueTracking = () => {
                         <TableCell>Gross Profit Margin</TableCell>
                         <TableCell>65%</TableCell>
                         <TableCell>60%</TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Above Avg</Badge></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Above Avg</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Net Profit Margin</TableCell>
                         <TableCell>45%</TableCell>
                         <TableCell>35%</TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Above Avg</Badge></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Above Avg</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Return on Investment</TableCell>
                         <TableCell>245%</TableCell>
                         <TableCell>180%</TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Excellent</Badge></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Excellent</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Customer Acquisition Cost</TableCell>
                         <TableCell>{formatCurrency(kpis?.customerAcquisitionCost || 0)}</TableCell>
                         <TableCell>{formatCurrency(65)}</TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Below Avg</Badge></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Below Avg</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Customer Lifetime Value</TableCell>
                         <TableCell>{formatCurrency(kpis?.lifetimeValue || 0)}</TableCell>
                         <TableCell>{formatCurrency(950)}</TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Above Avg</Badge></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Above Avg</Badge></TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -587,8 +587,8 @@ const RevenueTracking = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center p-3 bg-green-500/10 rounded-lg">
-                        <p className="text-lg font-bold text-green-400">4</p>
+                      <div className="text-center p-3 bg-white/10 rounded-lg">
+                        <p className="text-lg font-bold text-white">4</p>
                         <p className="text-xs text-muted-foreground">Months Over Budget</p>
                       </div>
                       <div className="text-center p-3 bg-slate-800/10 rounded-lg">
@@ -666,7 +666,7 @@ const RevenueTracking = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <TrendingUp className="h-8 w-8 text-green-400" />
+                      <TrendingUp className="h-8 w-8 text-white" />
                       <div>
                         <h3 className="text-lg font-semibold">Conservative Growth</h3>
                         <p className="text-sm text-muted-foreground">8% monthly growth</p>
@@ -731,7 +731,7 @@ const RevenueTracking = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-3 bg-white/5 rounded-lg">
                         <p className="text-xs text-muted-foreground">Revenue Growth</p>
-                        <p className="text-lg font-bold text-green-400">+{kpis?.growthRate || 0}%</p>
+                        <p className="text-lg font-bold text-white">+{kpis?.growthRate || 0}%</p>
                       </div>
                       <div className="p-3 bg-white/5 rounded-lg">
                         <p className="text-xs text-muted-foreground">Profit Margin</p>
@@ -770,7 +770,7 @@ const RevenueTracking = () => {
                       </div>
                       <div className="p-3 bg-white/5 rounded-lg">
                         <p className="text-xs text-muted-foreground">LTV/CAC Ratio</p>
-                        <p className="text-lg font-bold text-green-400">{((kpis?.lifetimeValue || 0) / (kpis?.customerAcquisitionCost || 1)).toFixed(1)}x</p>
+                        <p className="text-lg font-bold text-white">{((kpis?.lifetimeValue || 0) / (kpis?.customerAcquisitionCost || 1)).toFixed(1)}x</p>
                       </div>
                     </div>
                   </CardContent>
@@ -798,29 +798,29 @@ const RevenueTracking = () => {
                         <TableCell>Monthly Revenue</TableCell>
                         <TableCell>{formatCurrency((kpis?.avgRevenuePerDay || 0) * 30)}</TableCell>
                         <TableCell>{formatCurrency((kpis?.avgRevenuePerDay || 0) * 30 * 1.1)}</TableCell>
-                        <TableCell><TrendingUp className="h-4 w-4 text-green-400" /></TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">On Track</Badge></TableCell>
+                        <TableCell><TrendingUp className="h-4 w-4 text-white" /></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">On Track</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Profit Margin</TableCell>
                         <TableCell>{kpis?.profitMargin || 0}%</TableCell>
                         <TableCell>40%</TableCell>
-                        <TableCell><TrendingUp className="h-4 w-4 text-green-400" /></TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Exceeded</Badge></TableCell>
+                        <TableCell><TrendingUp className="h-4 w-4 text-white" /></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Exceeded</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Customer Retention</TableCell>
                         <TableCell>{kpis?.retentionRate || 0}%</TableCell>
                         <TableCell>85%</TableCell>
-                        <TableCell><TrendingUp className="h-4 w-4 text-green-400" /></TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">On Track</Badge></TableCell>
+                        <TableCell><TrendingUp className="h-4 w-4 text-white" /></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">On Track</Badge></TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Customer Acquisition Cost</TableCell>
                         <TableCell>{formatCurrency(kpis?.customerAcquisitionCost || 0)}</TableCell>
                         <TableCell>{formatCurrency(50)}</TableCell>
-                        <TableCell><TrendingDown className="h-4 w-4 text-green-400" /></TableCell>
-                        <TableCell><Badge className="bg-green-500/20 text-green-400">Below Target</Badge></TableCell>
+                        <TableCell><TrendingDown className="h-4 w-4 text-white" /></TableCell>
+                        <TableCell><Badge className="bg-white/20 text-white">Below Target</Badge></TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
