@@ -7,6 +7,7 @@
     "dev": "vite --host --port 8080",
     "dev:3000": "vite --host --port 3000",
     "dev:8080": "vite --host --port 8080",
+    "dev:8081": "vite --host --port 8081",
     "dev:8080:host": "vite --host --port 8080",
     "mobile": "vite --host",
     "build": "vite build",

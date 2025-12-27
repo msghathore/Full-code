@@ -74,20 +74,32 @@ test.describe('Discount System - Comprehensive Testing', () => {
     // STEP 2: Fill Contact Information
     console.log('📍 Step 2: Filling contact information');
 
-    // Fill name
+    // Fill name - use pressSequentially to trigger React onChange properly
     const nameInput = page.locator('input[placeholder*="name" i], input[name*="name" i]').first();
     await nameInput.waitFor({ state: 'visible', timeout: 10000 });
-    await nameInput.fill('Test User');
+    await nameInput.click(); // Focus the input first
+    await nameInput.fill('');  // Clear any existing value
+    await nameInput.pressSequentially('Test User', { delay: 50 }); // Type with delay to trigger events
+    await page.waitForTimeout(300);
 
-    // Fill phone
+    // Fill phone - use pressSequentially to trigger React onChange and formatting
     const phoneInput = page.locator('input[placeholder*="phone" i], input[name*="phone" i]').first();
     await phoneInput.waitFor({ state: 'visible', timeout: 10000 });
-    await phoneInput.fill('4318163330');
+    await phoneInput.click(); // Focus the input first
+    await phoneInput.fill('');  // Clear any existing value
+    await phoneInput.pressSequentially('4318163330', { delay: 50 }); // Type with delay
+    await page.waitForTimeout(500); // Wait for phone formatting and state update
     console.log('✅ Contact info filled');
 
-    // Click Next to go to Step 3 (Review & Pay)
+    // Click Next to go to Step 3 (Review & Pay) - wait for button to be enabled
     const nextButton2 = page.locator('button:has-text("Next")').first();
     await nextButton2.waitFor({ state: 'visible', timeout: 5000 });
+    // Wait for button to be enabled (not disabled)
+    await page.waitForFunction(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const nextBtn = buttons.find(btn => btn.textContent?.includes('Next'));
+      return nextBtn && !nextBtn.disabled;
+    }, { timeout: 10000 });
     await nextButton2.click();
     await page.waitForTimeout(2000);
 
@@ -428,15 +440,26 @@ test.describe('Discount System - Comprehensive Testing', () => {
       // STEP 2: Fill Contact Information
       const nameInput = page.locator('input[placeholder*="name" i], input[name*="name" i]').first();
       await nameInput.waitFor({ state: 'visible', timeout: 10000 });
-      await nameInput.fill('Test User');
+      await nameInput.click();
+      await nameInput.fill('');
+      await nameInput.pressSequentially('Test User', { delay: 50 });
+      await page.waitForTimeout(300);
 
       const phoneInput = page.locator('input[placeholder*="phone" i], input[name*="phone" i]').first();
       await phoneInput.waitFor({ state: 'visible', timeout: 10000 });
-      await phoneInput.fill('4318163330');
+      await phoneInput.click();
+      await phoneInput.fill('');
+      await phoneInput.pressSequentially('4318163330', { delay: 50 });
+      await page.waitForTimeout(500);
 
-      // Click Next to go to Step 3 (Review & Pay)
+      // Click Next to go to Step 3 (Review & Pay) - wait for button to be enabled
       const nextButton2 = page.locator('button:has-text("Next")').first();
       await nextButton2.waitFor({ state: 'visible', timeout: 5000 });
+      await page.waitForFunction(() => {
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const nextBtn = buttons.find(btn => btn.textContent?.includes('Next'));
+        return nextBtn && !nextBtn.disabled;
+      }, { timeout: 10000 });
       await nextButton2.click();
       await page.waitForTimeout(2000);
 
