@@ -86,8 +86,16 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       image: '/images/booking-menu.jpg',
       subItems: [
         { name: t('bookAppointmentMenu'), href: '/booking', image: '/images/schedule-appointment.jpg' },
-        { name: t('groupBooking'), href: '/booking?mode=group', image: '/images/group-booking.jpg' },
-        { name: 'My Appointments', href: '/my-appointments', image: '/images/schedule-appointment.jpg' }
+        { name: t('groupBooking'), href: '/booking?mode=group', image: '/images/group-booking.jpg' }
+      ]
+    },
+    {
+      name: 'MY APPOINTMENTS',
+      href: '/my-appointments',
+      image: '/images/schedule-appointment.jpg',
+      subItems: [
+        { name: 'View All', href: '/my-appointments', image: '/images/schedule-appointment.jpg' },
+        { name: 'Upcoming', href: '/my-appointments#upcoming', image: '/images/booking-menu.jpg' }
       ]
     },
     {
@@ -131,13 +139,21 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     },
     {
+      name: 'REFERRAL PROGRAM',
+      href: '/referrals',
+      image: '/images/our-story.jpg',
+      subItems: [
+        { name: 'Refer a Friend', href: '/referrals', image: '/images/our-story.jpg' },
+        { name: 'My Rewards', href: '/referrals#rewards', image: '/images/team.jpg' }
+      ]
+    },
+    {
       name: t('menuAbout'),
       href: '/about',
       image: '/images/about-menu.jpg',
       subItems: [
         { name: t('ourStoryMenu'), href: '/about#story', image: '/images/our-story.jpg' },
-        { name: t('ourTeam'), href: '/team', image: '/images/team.jpg' },
-        { name: 'Referral Program', href: '/referrals', image: '/images/our-story.jpg' }
+        { name: t('ourTeam'), href: '/team', image: '/images/team.jpg' }
       ]
     },
     {

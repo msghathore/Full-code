@@ -28,23 +28,23 @@ test.describe('Comprehensive 20-Scenario Testing Suite', () => {
     await expect(page).toHaveTitle(/Zavira/i);
 
     // Step 3: Check navigation is visible and accessible
-    const menuButton = page.locator('button[aria-label="Toggle sidebar"]');
+    const menuButton = page.locator('button[aria-label="Toggle sidebar"]').first();
     await expect(menuButton).toBeVisible();
 
     // Step 4: Open navigation menu
     await menuButton.click();
     await page.waitForTimeout(500); // Wait for menu animation
 
-    // Step 5: Verify MEMBERSHIP link exists in navigation (Hormozi page)
+    // Step 5: Verify MEMBERSHIP link exists in navigation (Hormozi page - Top Level)
     const membershipLink = page.locator('text=MEMBERSHIP').first();
     await expect(membershipLink).toBeVisible();
 
-    // Step 6: Verify "My Appointments" link exists (Hormozi page)
-    const myAppointmentsLink = page.locator('text=My Appointments').first();
+    // Step 6: Verify "MY APPOINTMENTS" link exists (Hormozi page - Top Level)
+    const myAppointmentsLink = page.locator('text=MY APPOINTMENTS').first();
     await expect(myAppointmentsLink).toBeVisible();
 
-    // Step 7: Verify "Referral Program" link exists (Hormozi page)
-    const referralLink = page.locator('text=Referral Program').first();
+    // Step 7: Verify "REFERRAL PROGRAM" link exists (Hormozi page - Top Level)
+    const referralLink = page.locator('text=REFERRAL PROGRAM').first();
     await expect(referralLink).toBeVisible();
 
     // Step 8: Navigate to Booking
@@ -83,12 +83,12 @@ test.describe('Comprehensive 20-Scenario Testing Suite', () => {
     await page.waitForLoadState('networkidle');
 
     // Open menu
-    const menuButton = page.locator('button[aria-label="Toggle sidebar"]');
+    const menuButton = page.locator('button[aria-label="Toggle sidebar"]').first();
     await menuButton.click();
     await page.waitForTimeout(500);
 
-    // Navigate to My Appointments (should be accessible now)
-    const myAppointmentsLink = page.locator('text=My Appointments').first();
+    // Navigate to My Appointments (should be accessible now as top-level menu)
+    const myAppointmentsLink = page.locator('text=MY APPOINTMENTS').first();
     await expect(myAppointmentsLink).toBeVisible();
     await myAppointmentsLink.click();
     await page.waitForLoadState('networkidle');
@@ -169,7 +169,7 @@ test.describe('Comprehensive 20-Scenario Testing Suite', () => {
     await page.waitForLoadState('networkidle');
 
     // Verify mobile responsiveness
-    const menuButton = page.locator('button[aria-label="Toggle sidebar"]');
+    const menuButton = page.locator('button[aria-label="Toggle sidebar"]').first();
     await expect(menuButton).toBeVisible();
 
     // Take mobile screenshot
@@ -352,9 +352,15 @@ test.describe('Comprehensive 20-Scenario Testing Suite', () => {
     // Navigate to data-heavy page
     await page.goto('http://localhost:8080/gallery');
 
-    // Check for loading indicators
-    const loadingElements = page.locator('text=/loading|wait|please/i, [role="progressbar"]');
-    const hasLoading = await loadingElements.count() > 0;
+    // Check for loading indicators (text-based)
+    const loadingTextElements = page.locator('text=/loading|wait|please/i');
+    const loadingTextCount = await loadingTextElements.count();
+
+    // Check for progress bars
+    const progressBars = page.locator('[role="progressbar"]');
+    const progressBarCount = await progressBars.count();
+
+    const hasLoading = (loadingTextCount + progressBarCount) > 0;
     console.log(`Has loading indicators: ${hasLoading}`);
 
     await page.waitForLoadState('networkidle');
@@ -401,9 +407,15 @@ test.describe('Comprehensive 20-Scenario Testing Suite', () => {
     await page.goto('http://localhost:8080/booking');
     await page.waitForLoadState('networkidle');
 
-    // Look for promo code input
-    const promoElements = page.locator('text=/promo|coupon|discount|code/i, input[placeholder*="code" i]');
-    const promoCount = await promoElements.count();
+    // Look for promo code text elements
+    const promoTextElements = page.locator('text=/promo|coupon|discount|code/i');
+    const promoTextCount = await promoTextElements.count();
+
+    // Look for promo code input fields
+    const promoInputs = page.locator('input[placeholder*="code" i], input[placeholder*="promo" i]');
+    const promoInputCount = await promoInputs.count();
+
+    const promoCount = promoTextCount + promoInputCount;
     console.log(`Found ${promoCount} promo code related elements`);
 
     // Take screenshot
