@@ -38,6 +38,21 @@ This file contains all the rules and guidelines Claude must follow when working 
 
 ---
 
+## 🔐 Testing Credentials (FOR CLAUDE TESTING ONLY)
+
+**⚠️ SECURITY NOTE:** These credentials are for development/testing purposes only.
+
+| System | Username/Purpose | Password |
+|--------|------------------|----------|
+| **Maintenance Mode** | Site access when maintenance is ON | `Ghathore5` |
+| **Staff Portal** | Staff login (Sarah Johnson) | `sarah42` |
+
+**Usage:**
+- **Maintenance Mode**: When `VITE_MAINTENANCE_MODE=true`, use password to bypass
+- **Staff Portal**: Login at `/staff/login` with staff credentials
+
+---
+
 ## Brand Guidelines
 
 ### Brand Identity

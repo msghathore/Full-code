@@ -36,25 +36,25 @@ export const getStaffColor = (colorName: string | undefined): string => {
   return color || STAFF_COLORS.gray;
 };
 
-// Appointment Status Color Mappings - VIBRANT BOLD SATURATED COLORS
+// Appointment Status Color Mappings - SOLID COLORS FOR STAFF PORTAL (White BG)
 export const STATUS_COLORS = {
   requested: {
-    bgClass: 'bg-white/10',
-    borderClass: 'border-white/30',
-    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
-    hex: '#FFFFFF' // White with glow for brand
+    bgClass: 'bg-amber-500',
+    borderClass: 'border-amber-600',
+    textClass: 'text-white',
+    hex: '#F59E0B' // amber-500 - Bright amber/orange
   },
   accepted: {
-    bgClass: 'bg-white/10',
-    borderClass: 'border-white/30',
-    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
-    hex: '#FFFFFF' // White with glow for brand
+    bgClass: 'bg-violet-300',
+    borderClass: 'border-violet-400',
+    textClass: 'text-violet-900',
+    hex: '#C4B5FD' // violet-300 - Light purple
   },
   confirmed: {
-    bgClass: 'bg-white',
-    borderClass: 'border-white',
-    textClass: 'text-black',
-    hex: '#FFFFFF' // White for brand alignment
+    bgClass: 'bg-emerald-500',
+    borderClass: 'border-emerald-600',
+    textClass: 'text-white',
+    hex: '#10B981' // emerald-500 - Vibrant green
   },
   no_show: {
     bgClass: 'bg-slate-500',
@@ -63,16 +63,16 @@ export const STATUS_COLORS = {
     hex: '#64748B' // slate-500 - Dark gray
   },
   ready_to_start: {
-    bgClass: 'bg-white',
-    borderClass: 'border-white',
-    textClass: 'text-black',
-    hex: '#FFFFFF' // White for brand alignment
+    bgClass: 'bg-teal-400',
+    borderClass: 'border-teal-500',
+    textClass: 'text-white',
+    hex: '#2DD4BF' // teal-400 - Bright teal
   },
   in_progress: {
-    bgClass: 'bg-slate-800',
-    borderClass: 'border-gray-600',
+    bgClass: 'bg-violet-500',
+    borderClass: 'border-violet-600',
     textClass: 'text-white',
-    hex: '#1E293B' // slate-800 - Dark gray
+    hex: '#8B5CF6' // violet-500 - Vibrant purple
   },
   completed: {
     bgClass: 'bg-indigo-500',
@@ -81,16 +81,16 @@ export const STATUS_COLORS = {
     hex: '#6366F1' // indigo-500 - Deep blue-purple
   },
   cancelled: {
-    bgClass: 'bg-red-500',
-    borderClass: 'border-red-600',
+    bgClass: 'bg-rose-500',
+    borderClass: 'border-rose-600',
     textClass: 'text-white',
-    hex: '#EF4444' // red-500 - Vibrant red
+    hex: '#F43F5E' // rose-500 - Vibrant red
   },
   pending: {
-    bgClass: 'bg-white/10',
-    borderClass: 'border-white/30',
-    textClass: 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]',
-    hex: '#FFFFFF' // White with glow for brand
+    bgClass: 'bg-amber-500',
+    borderClass: 'border-amber-600',
+    textClass: 'text-white',
+    hex: '#F59E0B' // amber-500 - Bright amber/orange (same as requested)
   },
   personal_task: {
     bgClass: 'bg-fuchsia-600',
