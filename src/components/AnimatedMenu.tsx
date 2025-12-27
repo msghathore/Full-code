@@ -315,8 +315,13 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
           <X size={20} className="md:w-6 md:h-6" />
         </button>
         <div
-          className="flex flex-col justify-center h-full px-2 pr-1 py-20 md:px-16 md:py-0 space-y-2 md:space-y-8"
+          className="flex flex-col h-full px-2 pr-1 py-20 md:px-16 md:py-16 lg:py-0 lg:justify-center space-y-2 md:space-y-8 overflow-y-auto custom-scrollbar"
           onMouseEnter={() => setHoveredItem(null)}
+          style={{
+            maxHeight: '100vh',
+            overflowY: 'auto',
+            paddingRight: '8px'
+          }}
         >
           {menuItems.map((item, index) => {
             const isSelected = selectedItem === item.name;
