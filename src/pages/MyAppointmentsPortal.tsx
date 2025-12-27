@@ -185,11 +185,11 @@ export default function MyAppointmentsPortal() {
 
   const getStatusBadge = (status: string) => {
     const colors: Record<string, string> = {
-      REQUESTED: 'bg-white/10',
-      ACCEPTED: 'bg-violet-300 text-black',
+      REQUESTED: 'bg-amber-500',
+      ACCEPTED: 'bg-slate-300 text-black',
       CONFIRMED: 'bg-emerald-500',
       READY_TO_START: 'bg-teal-400 text-black',
-      IN_PROGRESS: 'bg-violet-500',
+      IN_PROGRESS: 'bg-emerald-600',
       COMPLETE: 'bg-indigo-500',
       CANCELLED: 'bg-rose-500',
       NO_SHOW: 'bg-slate-500'
