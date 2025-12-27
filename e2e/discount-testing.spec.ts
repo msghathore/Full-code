@@ -14,15 +14,17 @@ test.describe('Discount System - Comprehensive Testing', () => {
     await page.goto('http://localhost:8081/booking');
     await page.waitForLoadState('networkidle');
 
-    // Wait for services to load
-    await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
+    // Wait for booking mode selection to load
+    await page.waitForSelector('text=HOW WOULD YOU LIKE TO BOOK?', { timeout: 10000 });
 
-    // Select booking mode - Service
-    const serviceModeButton = page.locator('button:has-text("Service First")');
-    if (await serviceModeButton.isVisible()) {
-      await serviceModeButton.click();
-      await page.waitForTimeout(1000);
-    }
+    // Select booking mode - Choose by Service
+    const serviceModeButton = page.locator('button:has-text("Choose by Service")');
+    await serviceModeButton.waitFor({ state: 'visible', timeout: 5000 });
+    await serviceModeButton.click();
+    await page.waitForTimeout(1000);
+
+    // Now wait for services section to appear
+    await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
 
     // Find and click a service (look for any service card)
     const serviceCards = page.locator('[role="button"]').filter({ hasText: '$' });
@@ -133,15 +135,17 @@ test.describe('Discount System - Comprehensive Testing', () => {
     await page.goto('http://localhost:8081/booking');
     await page.waitForLoadState('networkidle');
 
-    // Wait for services
-    await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
+    // Wait for booking mode selection
+    await page.waitForSelector('text=HOW WOULD YOU LIKE TO BOOK?', { timeout: 10000 });
 
-    // Select service mode
-    const serviceModeButton = page.locator('button:has-text("Service First")');
-    if (await serviceModeButton.isVisible()) {
-      await serviceModeButton.click();
-      await page.waitForTimeout(1000);
-    }
+    // Select booking mode - Choose by Service
+    const serviceModeButton = page.locator('button:has-text("Choose by Service")');
+    await serviceModeButton.waitFor({ state: 'visible', timeout: 5000 });
+    await serviceModeButton.click();
+    await page.waitForTimeout(1000);
+
+    // Now wait for services section
+    await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
 
     // Select a service that should trigger upsells (haircut)
     const haircutService = page.locator('text=/haircut|cut|trim/i').first();
@@ -238,13 +242,17 @@ test.describe('Discount System - Comprehensive Testing', () => {
     await page.goto('http://localhost:8081/booking');
     await page.waitForLoadState('networkidle');
 
-    // Select service mode
+    // Wait for booking mode selection
+    await page.waitForSelector('text=HOW WOULD YOU LIKE TO BOOK?', { timeout: 10000 });
+
+    // Select booking mode - Choose by Service
+    const serviceModeButton = page.locator('button:has-text("Choose by Service")');
+    await serviceModeButton.waitFor({ state: 'visible', timeout: 5000 });
+    await serviceModeButton.click();
+    await page.waitForTimeout(1000);
+
+    // Now wait for services section
     await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
-    const serviceModeButton = page.locator('button:has-text("Service First")');
-    if (await serviceModeButton.isVisible()) {
-      await serviceModeButton.click();
-      await page.waitForTimeout(1000);
-    }
 
     // Select a service
     const serviceCards = page.locator('[role="button"]').filter({ hasText: '$' });
@@ -285,13 +293,17 @@ test.describe('Discount System - Comprehensive Testing', () => {
       await page.goto('http://localhost:8081/booking');
       await page.waitForLoadState('networkidle');
 
-      // Select service
+      // Wait for booking mode selection
+      await page.waitForSelector('text=HOW WOULD YOU LIKE TO BOOK?', { timeout: 10000 });
+
+      // Select booking mode - Choose by Service
+      const serviceModeButton = page.locator('button:has-text("Choose by Service")');
+      await serviceModeButton.waitFor({ state: 'visible', timeout: 5000 });
+      await serviceModeButton.click();
+      await page.waitForTimeout(500);
+
+      // Now wait for services section
       await page.waitForSelector('text=SELECT SERVICES', { timeout: 10000 });
-      const serviceModeButton = page.locator('button:has-text("Service First")');
-      if (await serviceModeButton.isVisible()) {
-        await serviceModeButton.click();
-        await page.waitForTimeout(500);
-      }
 
       const serviceCards = page.locator('[role="button"]').filter({ hasText: '$' });
       await serviceCards.first().click();
