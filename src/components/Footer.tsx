@@ -116,17 +116,6 @@ export const Footer = React.memo(() => {
         </a>
       </div>
 
-      {/* Language Switcher */}
-      <div className="flex justify-center mb-4">
-        <Button
-          onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-          className="rounded-lg hover:scale-110 transition-transform duration-500 shadow-lg hover:shadow-white/30"
-          aria-label={`Switch to ${language === 'en' ? 'French' : 'English'} language`}
-        >
-          {language === 'en' ? 'FRENCH' : 'ENGLISH'}
-        </Button>
-      </div>
-
       {/* Bottom */}
       <div className="border-t border-border pt-4">
         <div className="flex flex-col md:flex-row justify-center items-center text-xs text-muted-foreground">
