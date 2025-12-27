@@ -1616,7 +1616,7 @@ const Booking = () => {
                                   className={`w-full text-left p-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-b-0 ${selectedStaff === s.id ? 'bg-white/20 text-white' : 'text-white/80'}`}
                                 >
                                   <div className="flex items-center gap-3">
-                                    {selectedStaff === s.id && <Check className="h-4 w-4 text-green-400 flex-shrink-0" />}
+                                    {selectedStaff === s.id && <Check className="h-4 w-4 text-white flex-shrink-0" />}
                                     <div
                                       className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
                                       style={{ backgroundColor: s.color }}
@@ -1669,7 +1669,7 @@ const Booking = () => {
                                 >
                                   <div className="flex items-center justify-between">
                                     <div className="flex-1 flex items-center gap-2">
-                                      {selectedServices.includes(service.id) && <Check className="h-4 w-4 text-green-400 flex-shrink-0" />}
+                                      {selectedServices.includes(service.id) && <Check className="h-4 w-4 text-white flex-shrink-0" />}
                                       <div>
                                         <div className="font-medium">{service.name}</div>
                                         <div className="text-sm text-white/60">${service.price} • {service.duration_minutes} min</div>
@@ -1756,7 +1756,7 @@ const Booking = () => {
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex-1 flex items-center gap-2">
-                                    {selectedServices.includes(service.id) && <Check className="h-4 w-4 text-green-400 flex-shrink-0" />}
+                                    {selectedServices.includes(service.id) && <Check className="h-4 w-4 text-white flex-shrink-0" />}
                                     <div>
                                       <div className="font-medium">{service.name}</div>
                                       <div className="text-sm text-white/60">${service.price} • {service.duration_minutes} min</div>
@@ -1884,7 +1884,7 @@ const Booking = () => {
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="flex-1 flex items-center gap-2">
-                                          {member.services.includes(s.id) && <Check className="h-4 w-4 text-green-400 flex-shrink-0" />}
+                                          {member.services.includes(s.id) && <Check className="h-4 w-4 text-white flex-shrink-0" />}
                                           <div>
                                             <div className="font-medium">{s.name}</div>
                                             <div className="text-sm text-white/60">${s.price} • {s.duration_minutes} min</div>
@@ -1950,7 +1950,7 @@ const Booking = () => {
                                     <span>${subtotal.toFixed(2)}</span>
                                   </div>
                                   {discountPercent > 0 && (
-                                    <div className="flex justify-between text-green-400 text-sm mb-1">
+                                    <div className="flex justify-between text-white text-sm mb-1">
                                       <span>Group Discount ({discountPercent}%)</span>
                                       <span>-${discount.toFixed(2)}</span>
                                     </div>
@@ -2474,7 +2474,7 @@ const Booking = () => {
                           <div className="space-y-3">
                             {/* Promo Banner - Show if active promo */}
                             {promo && (
-                              <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/50 rounded-lg p-3 animate-pulse">
+                              <div className="bg-gradient-to-r from-white/20 to-white/30 border-2 border-white/50 rounded-lg p-3 animate-pulse">
                                 <div className="flex items-center gap-2">
                                   <span className="text-2xl">{promo.icon}</span>
                                   <div className="flex-1">
@@ -2522,7 +2522,7 @@ const Booking = () => {
                                 </div>
                               )}
                               {promoDiscount > 0 && (
-                                <div className="flex justify-between text-emerald-500 text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+                                <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                                   <span className="truncate font-semibold">{promo?.icon} {promo?.description}</span>
                                   <span className="whitespace-nowrap font-bold">-${promoDiscount.toFixed(2)}</span>
                                 </div>
@@ -2558,7 +2558,7 @@ const Booking = () => {
                           <div className="space-y-3">
                             {/* Promo Banner - Show if active promo */}
                             {activePromo && (
-                              <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/50 rounded-lg p-3 animate-pulse">
+                              <div className="bg-gradient-to-r from-white/20 to-white/30 border-2 border-white/50 rounded-lg p-3 animate-pulse">
                                 <div className="flex items-center gap-2">
                                   <span className="text-2xl">{activePromo.icon}</span>
                                   <div className="flex-1">
@@ -2600,7 +2600,7 @@ const Booking = () => {
                                 <span className="whitespace-nowrap font-medium">${subtotal.toFixed(2)}</span>
                               </div>
                               {promoDiscount > 0 && (
-                                <div className="flex justify-between text-emerald-500 text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+                                <div className="flex justify-between text-white text-[11px] sm:text-sm gap-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
                                   <span className="truncate font-semibold">{activePromo?.icon} {activePromo?.description}</span>
                                   <span className="whitespace-nowrap font-bold">-${promoDiscount.toFixed(2)}</span>
                                 </div>
@@ -2661,10 +2661,10 @@ const Booking = () => {
                         </Button>
                       </div>
                       {appliedPromo && (
-                        <div className="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 flex items-center justify-between">
+                        <div className="bg-white/20 border border-white/50 rounded-lg p-2 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-400" />
-                            <span className="text-emerald-400 text-sm font-medium">
+                            <Check className="w-4 h-4 text-white" />
+                            <span className="text-white text-sm font-medium">
                               {appliedPromo.code} applied - {appliedPromo.discount_type === 'percentage'
                                 ? `${appliedPromo.discount_value}% off`
                                 : `$${appliedPromo.discount_value} off`}
@@ -2677,7 +2677,7 @@ const Booking = () => {
                               setAppliedPromo(null);
                               setPromoCode('');
                             }}
-                            className="text-emerald-400 hover:text-emerald-300 h-6 w-6 p-0"
+                            className="text-white hover:text-white/80 h-6 w-6 p-0"
                           >
                             <X className="w-4 h-4" />
                           </Button>

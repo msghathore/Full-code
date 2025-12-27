@@ -380,7 +380,7 @@ const BookingCheckout = () => {
             <Card className="frosted-glass border border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
+                  <CheckCircle className="h-5 w-5 text-white" />
                   Booking Summary
                 </CardTitle>
               </CardHeader>
@@ -426,7 +426,7 @@ const BookingCheckout = () => {
                   <Separator className="bg-white/10" />
                   <div className="flex justify-between items-center text-xl font-bold">
                     <span className="text-white">Total Due Today:</span>
-                    <span className="text-green-400">${(bookingDetails.service_price * 0.5)?.toFixed(2)}</span>
+                    <span className="text-white">${(bookingDetails.service_price * 0.5)?.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -481,7 +481,7 @@ const BookingCheckout = () => {
           {/* Security Notice */}
           <div className="mt-8 text-center">
             <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2">
-              <AlertCircle className="h-4 w-4 text-green-400" />
+              <AlertCircle className="h-4 w-4 text-white" />
               <span className="text-white/60 text-sm">
                 🔒 Your payment information is encrypted and secure. Powered by Square.
               </span>

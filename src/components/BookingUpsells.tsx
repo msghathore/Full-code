@@ -573,7 +573,7 @@ export const BookingUpsells = ({
                               size="sm"
                               className="bg-white hover:bg-white/90 text-black font-bold shadow-lg hover:shadow-white/50 transition-all"
                             >
-                              <Check className="w-4 h-4 mr-1 text-emerald-500" />
+                              <Check className="w-4 h-4 mr-1 text-black" />
                               Add to Booking
                             </Button>
                           </div>
