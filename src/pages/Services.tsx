@@ -183,10 +183,10 @@ const Services = () => {
             <SocialProofIndicator />
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow text-foreground">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-center mb-4 luxury-glow text-foreground">
             ALL SERVICES
           </h1>
-          <p className="text-center text-muted-foreground mb-8 tracking-wider text-sm md:text-base">
+          <p className="text-center text-muted-foreground mb-8 tracking-wider text-lg md:text-xl">
             Browse our complete catalog of luxury treatments
           </p>
 
@@ -198,7 +198,7 @@ const Services = () => {
               onClick={() => setSelectedCategory(category)}
               variant={selectedCategory === category ? "default" : "outline"}
               className={`
-                font-serif tracking-wider px-4 md:px-6 py-2 text-sm transition-all
+                font-serif tracking-wider px-6 md:px-8 py-3 text-lg transition-all
                 ${selectedCategory === category
                   ? 'bg-foreground text-background hover:bg-foreground/90'
                   : 'border-border text-foreground hover:bg-accent'}
@@ -217,9 +217,9 @@ const Services = () => {
               placeholder="Search services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-accent/50 border-border text-foreground placeholder:text-muted-foreground pl-12 py-5 text-base"
+              className="w-full bg-accent/50 border-border text-foreground placeholder:text-muted-foreground pl-14 py-6 text-lg"
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
           </div>
         </div>
 
@@ -255,7 +255,7 @@ const Services = () => {
               return a.localeCompare(b);
             }).map((category) => (
               <div key={category} className="service-category">
-                <h2 className="text-2xl md:text-3xl font-serif mb-6 pb-3 border-b border-border luxury-glow text-foreground">
+                <h2 className="text-3xl md:text-4xl font-serif mb-6 pb-3 border-b border-border luxury-glow text-foreground">
                   {category.toUpperCase()}
                 </h2>
 
@@ -264,7 +264,7 @@ const Services = () => {
                     <div key={groupIndex} className="space-y-2">
                       {/* Parent/Subcategory Header (only if it has variants) */}
                       {group.parent.is_parent && group.variants.length > 0 && (
-                        <h3 className="text-lg md:text-xl font-serif text-foreground mb-3 pl-2">
+                        <h3 className="text-xl md:text-2xl font-serif text-foreground mb-3 pl-2">
                           {group.parent.name}
                         </h3>
                       )}
@@ -278,32 +278,35 @@ const Services = () => {
                             className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-border micro-hover-lift rounded-lg gap-4"
                           >
                             <div className="flex-1">
-                              <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
+                              <h4 className="text-lg md:text-xl font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
                                 {variant.name}
                               </h4>
-                              <p className="text-xs text-muted-foreground tracking-wider mb-1">
+                              <p className="text-sm md:text-base text-muted-foreground tracking-wider mb-1">
                                 {variant.duration_minutes} min
                               </p>
                               {variant.description && (
-                                <p className="text-xs text-muted-foreground mt-1 max-w-md line-clamp-2">
+                                <p className="text-sm md:text-base text-muted-foreground mt-1 max-w-md line-clamp-2">
                                   {variant.description}
                                 </p>
                               )}
                             </div>
                             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                              {/* Price Anchoring */}
-                              <PriceAnchoring
-                                regularPrice={variant.price * 1.3} // 30% markup for regular price
-                                currentPrice={variant.price}
-                                size="sm"
-                                badgeText="MEMBER PRICE"
-                                className="flex-1 min-w-0"
-                              />
+                              {/* Show regular price only - no "MEMBER PRICE" unless user is logged in and has membership */}
+                              <div className="flex flex-col gap-1">
+                                <span className="text-2xl md:text-3xl font-bold text-emerald-500">
+                                  ${variant.price.toFixed(0)}
+                                </span>
+                                {variant.price > 0 && (
+                                  <span className="text-xs text-white/50">
+                                    per session
+                                  </span>
+                                )}
+                              </div>
                               <Button
                                 onClick={() => handleServiceClick(variant)}
-                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
+                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-6 py-3 text-base md:text-lg flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
                               >
-                                <Calendar className="h-4 w-4 flex-shrink-0" />
+                                <Calendar className="h-5 w-5 flex-shrink-0" />
                                 Book
                               </Button>
                             </div>
@@ -316,32 +319,35 @@ const Services = () => {
                           className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-5 frosted-glass border border-border micro-hover-lift rounded-lg gap-4"
                         >
                           <div className="flex-1">
-                            <h4 className="text-base md:text-lg font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
+                            <h4 className="text-lg md:text-xl font-serif mb-1 group-hover:luxury-glow transition-all text-foreground">
                               {group.parent.name}
                             </h4>
-                            <p className="text-xs text-muted-foreground tracking-wider mb-1">
+                            <p className="text-sm md:text-base text-muted-foreground tracking-wider mb-1">
                               {group.parent.duration_minutes} min
                             </p>
                             {group.parent.description && (
-                              <p className="text-xs text-muted-foreground mt-1 max-w-md line-clamp-2">
+                              <p className="text-sm md:text-base text-muted-foreground mt-1 max-w-md line-clamp-2">
                                 {group.parent.description}
                               </p>
                             )}
                           </div>
                           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                            {/* Price Anchoring */}
-                            <PriceAnchoring
-                              regularPrice={group.parent.price * 1.3} // 30% markup for regular price
-                              currentPrice={group.parent.price}
-                              size="sm"
-                              badgeText="MEMBER PRICE"
-                              className="flex-1 min-w-0"
-                            />
+                            {/* Show regular price only - no "MEMBER PRICE" unless user is logged in and has membership */}
+                            <div className="flex flex-col gap-1">
+                              <span className="text-2xl md:text-3xl font-bold text-emerald-500">
+                                ${group.parent.price.toFixed(0)}
+                              </span>
+                              {group.parent.price > 0 && (
+                                <span className="text-xs text-white/50">
+                                  per session
+                                </span>
+                              )}
+                            </div>
                             <Button
                               onClick={() => handleServiceClick(group.parent)}
-                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
+                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-6 py-3 text-base md:text-lg flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
                             >
-                              <Calendar className="h-4 w-4 flex-shrink-0" />
+                              <Calendar className="h-5 w-5 flex-shrink-0" />
                               Book
                             </Button>
                           </div>

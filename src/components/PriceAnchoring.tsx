@@ -74,24 +74,28 @@ export const PriceAnchoring = ({
           <span className="text-emerald-500 font-bold">${currentPrice.toFixed(0)}</span>
         </span>
 
-        {/* Savings Badge - RED for urgency */}
+        {/* Savings Badge - WHITE text "SAVE", GREEN numbers */}
         {showBadge && savings > 0 && (
           <span
             className={cn(
-              'bg-red-500/20 border border-red-500/50 rounded-full text-red-400 font-bold uppercase tracking-wide',
+              'bg-red-500/20 border border-red-500/50 rounded-full font-bold uppercase tracking-wide',
               sizes.badge
             )}
           >
-            Save <span className="text-emerald-500">${savings.toFixed(0)}</span> ({savingsPercentage}% OFF)
+            <span className="text-white">SAVE </span>
+            <span className="text-emerald-500">${savings.toFixed(0)}</span>
+            <span className="text-white"> (</span>
+            <span className="text-emerald-500">{savingsPercentage}% OFF</span>
+            <span className="text-white">)</span>
           </span>
         )}
       </div>
 
-      {/* Limited Time Badge (Optional) - RED urgency */}
+      {/* Member Price Badge - YELLOW badge with WHITE text */}
       {badgeText && (
         <div className="inline-flex items-center gap-2">
-          <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 font-bold text-xs uppercase tracking-wider animate-pulse">
-            ⚡ {badgeText}
+          <span className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded-full text-white font-bold text-xs uppercase tracking-wider">
+            {badgeText}
           </span>
         </div>
       )}
