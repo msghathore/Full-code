@@ -36,67 +36,98 @@ export const getStaffColor = (colorName: string | undefined): string => {
   return color || STAFF_COLORS.gray;
 };
 
-// Appointment Status Color Mappings - SOLID COLORS FOR STAFF PORTAL (White BG)
+// SIMPLIFIED Appointment Status Color Mappings - ESSENTIAL STATUSES ONLY
+// Reduced from 10 to 6 core statuses for clarity
 export const STATUS_COLORS = {
+  // Waiting statuses (amber/yellow)
   requested: {
     bgClass: 'bg-amber-500',
     borderClass: 'border-amber-600',
     textClass: 'text-white',
-    hex: '#F59E0B' // amber-500 - Bright amber/orange
-  },
-  accepted: {
-    bgClass: 'bg-violet-300',
-    borderClass: 'border-violet-400',
-    textClass: 'text-violet-900',
-    hex: '#C4B5FD' // violet-300 - Light purple
-  },
-  confirmed: {
-    bgClass: 'bg-emerald-500',
-    borderClass: 'border-emerald-600',
-    textClass: 'text-white',
-    hex: '#10B981' // emerald-500 - Vibrant green
-  },
-  no_show: {
-    bgClass: 'bg-slate-500',
-    borderClass: 'border-slate-600',
-    textClass: 'text-white',
-    hex: '#64748B' // slate-500 - Dark gray
-  },
-  ready_to_start: {
-    bgClass: 'bg-teal-400',
-    borderClass: 'border-teal-500',
-    textClass: 'text-white',
-    hex: '#2DD4BF' // teal-400 - Bright teal
-  },
-  in_progress: {
-    bgClass: 'bg-violet-500',
-    borderClass: 'border-violet-600',
-    textClass: 'text-white',
-    hex: '#8B5CF6' // violet-500 - Vibrant purple
-  },
-  completed: {
-    bgClass: 'bg-indigo-500',
-    borderClass: 'border-indigo-600',
-    textClass: 'text-white',
-    hex: '#6366F1' // indigo-500 - Deep blue-purple
-  },
-  cancelled: {
-    bgClass: 'bg-rose-500',
-    borderClass: 'border-rose-600',
-    textClass: 'text-white',
-    hex: '#F43F5E' // rose-500 - Vibrant red
+    hex: '#F59E0B',
+    label: 'Requested'
   },
   pending: {
     bgClass: 'bg-amber-500',
     borderClass: 'border-amber-600',
     textClass: 'text-white',
-    hex: '#F59E0B' // amber-500 - Bright amber/orange (same as requested)
+    hex: '#F59E0B',
+    label: 'Pending'
   },
-  personal_task: {
-    bgClass: 'bg-fuchsia-600',
-    borderClass: 'border-fuchsia-700',
+
+  // Active statuses (green)
+  confirmed: {
+    bgClass: 'bg-emerald-500',
+    borderClass: 'border-emerald-600',
     textClass: 'text-white',
-    hex: '#C026D3' // fuchsia-600 - Vibrant pink-purple
+    hex: '#10B981',
+    label: 'Confirmed'
+  },
+  ready_to_start: {
+    bgClass: 'bg-emerald-600',
+    borderClass: 'border-emerald-700',
+    textClass: 'text-white',
+    hex: '#059669',
+    label: 'Ready to Start'
+  },
+  in_progress: {
+    bgClass: 'bg-emerald-700',
+    borderClass: 'border-emerald-800',
+    textClass: 'text-white',
+    hex: '#047857',
+    label: 'In Progress'
+  },
+
+  // Completed status (blue)
+  completed: {
+    bgClass: 'bg-blue-500',
+    borderClass: 'border-blue-600',
+    textClass: 'text-white',
+    hex: '#3B82F6',
+    label: 'Completed'
+  },
+
+  // Paid status (indigo - NEW)
+  paid: {
+    bgClass: 'bg-indigo-600',
+    borderClass: 'border-indigo-700',
+    textClass: 'text-white',
+    hex: '#4F46E5',
+    label: 'Paid'
+  },
+
+  // Negative statuses (red/gray)
+  cancelled: {
+    bgClass: 'bg-red-500',
+    borderClass: 'border-red-600',
+    textClass: 'text-white',
+    hex: '#EF4444',
+    label: 'Cancelled'
+  },
+  no_show: {
+    bgClass: 'bg-gray-500',
+    borderClass: 'border-gray-600',
+    textClass: 'text-white',
+    hex: '#6B7280',
+    label: 'No Show'
+  },
+
+  // Special (personal task)
+  personal_task: {
+    bgClass: 'bg-purple-600',
+    borderClass: 'border-purple-700',
+    textClass: 'text-white',
+    hex: '#9333EA',
+    label: 'Personal Task'
+  },
+
+  // Deprecated statuses (mapped to core statuses for backward compatibility)
+  accepted: {
+    bgClass: 'bg-emerald-500',
+    borderClass: 'border-emerald-600',
+    textClass: 'text-white',
+    hex: '#10B981',
+    label: 'Accepted'
   },
 } as const;
 

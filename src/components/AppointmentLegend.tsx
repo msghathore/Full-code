@@ -26,21 +26,7 @@ import {
   CalendarX,
   Clock
 } from 'lucide-react';
-
-// Status colors mapping - expanded with all requested statuses
-const STATUS_COLORS = {
-  'requested': { bgClass: 'bg-yellow-400', label: 'New Request' },
-  'accepted': { bgClass: 'bg-slate-200', label: 'Accepted' },
-  'awaiting_confirmation': { bgClass: 'bg-white/10', label: 'Awaiting Confirmation' },
-  'confirmed': { bgClass: 'bg-red-400', label: 'Confirmed' },
-  'show': { bgClass: 'bg-green-400', label: 'Show' },
-  'no_show': { bgClass: 'bg-gray-400', label: 'No Show' },
-  'ready_to_start': { bgClass: 'bg-teal-400', label: 'Ready to Start' },
-  'in_progress': { bgClass: 'bg-green-500', label: 'In Progress' },
-  'complete': { bgClass: 'bg-gray-600', label: 'Complete' },
-  'personal_task': { bgClass: 'bg-white/10', label: 'Personal Task' },
-  'personal_task_blocked': { bgClass: 'bg-red-700', label: 'Personal Task Blocked' }
-};
+import { STATUS_COLORS } from '@/lib/colorConstants';
 
 // Attribute icons mapping - comprehensive list as requested
 const ATTRIBUTE_ICONS = {

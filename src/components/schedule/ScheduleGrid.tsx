@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AppointmentCard, { Appointment } from './AppointmentCard';
 import AppointmentPill from '@/components/AppointmentPill';
 import { getStaffColor as getStaffColorFromMap } from '@/lib/colorConstants';
+import { SlotActionMenu } from '@/components/SlotActionMenu';
 
 interface StaffMember {
   id: string;
@@ -42,6 +43,7 @@ interface ScheduleGridProps {
   onAppointmentDelete?: (appointmentId: string) => void;
   onAppointmentUpdated?: () => void;
   onCreateAppointment: (staffId: string, time: string) => void;
+  onPersonalTaskRequested?: (staffId: string, staffName: string, time: string) => void;
   className?: string;
 }
 
@@ -599,11 +601,54 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   onAppointmentDelete,
   onAppointmentUpdated,
   onCreateAppointment,
+  onPersonalTaskRequested,
   className = '',
 }) => {
   const [draggedAppointment, setDraggedAppointment] = useState<Appointment | null>(null);
   const [dragOverStaff, setDragOverStaff] = useState<string | null>(null);
   const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, Partial<Appointment>>>({});
+
+  // Slot Action Menu state
+  const [showSlotMenu, setShowSlotMenu] = useState(false);
+  const [slotMenuPosition, setSlotMenuPosition] = useState<{x: number, y: number, position: string, cellCenterY: number} | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<{staffId: string, time: string, staffMember: StaffMember} | null>(null);
+
+  // Staff working hours state
+  const [staffWorkingHours, setStaffWorkingHours] = useState<Record<string, {start: string, end: string}>>({});
+
+  // Fetch staff working hours for the selected date
+  useEffect(() => {
+    const fetchWorkingHours = async () => {
+      const dayOfWeek = selectedDate.getDay(); // 0-6 (Sunday-Saturday)
+
+      const { data, error } = await supabase
+        .from('staff_working_hours')
+        .select('staff_id, start_time, end_time')
+        .eq('day_of_week', dayOfWeek)
+        .eq('is_active', true);
+
+      if (!error && data) {
+        const hoursMap: Record<string, {start: string, end: string}> = {};
+        data.forEach(row => {
+          hoursMap[row.staff_id] = {
+            start: row.start_time.substring(0, 5), // HH:mm format
+            end: row.end_time.substring(0, 5)
+          };
+        });
+        setStaffWorkingHours(hoursMap);
+      }
+    };
+
+    fetchWorkingHours();
+  }, [selectedDate]);
+
+  // Helper function to check if a time is within staff working hours
+  const isWithinWorkingHours = (staffId: string, time: string): boolean => {
+    const hours = staffWorkingHours[staffId];
+    if (!hours) return true; // Default to showing as working if no hours set
+
+    return time >= hours.start && time < hours.end;
+  };
 
   // Global cleanup on component mount - handles edge cases like drag ending outside window
   useEffect(() => {
@@ -1201,6 +1246,78 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     setDraggedAppointment(null);
   };
 
+  // Handle empty slot click - show slot action menu
+  const handleEmptySlotClick = (staffId: string, time: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const staffMember = staff.find(s => s.id === staffId);
+    if (!staffMember) return;
+
+    setSelectedSlot({ staffId, time, staffMember });
+
+    // Calculate popover position with smart side positioning
+    const rect = event.currentTarget.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    // Constants for positioning
+    const popoverWidth = 320;
+    const popoverHeight = 300;
+    const gap = 8;
+
+    // Calculate exact center of the clicked cell
+    const cellCenterY = rect.top + (rect.height / 2);
+
+    // Default position to the right
+    let position = 'right';
+    let x = rect.right + gap;
+    const arrowHalfSize = 6;
+
+    // Set popover top edge (y) so its center aligns with cellCenterY
+    let y = cellCenterY - arrowHalfSize;
+
+    // Edge detection - if not enough space on the right, flip to the left
+    if (x + popoverWidth > viewportWidth) {
+      position = 'left';
+      x = rect.left - popoverWidth - gap;
+      y = Math.max(arrowHalfSize + 10, Math.min(y, window.innerHeight - popoverHeight - 10 - arrowHalfSize));
+    }
+
+    setSlotMenuPosition({ x, y, position, cellCenterY });
+    setShowSlotMenu(true);
+  };
+
+  // Handle slot action menu actions
+  const handleSlotAction = (action: string) => {
+    if (!selectedSlot) return;
+
+    setShowSlotMenu(false);
+
+    switch (action) {
+      case 'new-appointment':
+        onCreateAppointment(selectedSlot.staffId, selectedSlot.time);
+        break;
+      case 'new-multiple-appointments':
+        // TODO: Implement multiple appointments modal
+        console.log('Multiple appointments not yet implemented');
+        break;
+      case 'add-waitlist':
+        // TODO: Implement waitlist modal
+        console.log('Waitlist not yet implemented');
+        break;
+      case 'personal-task':
+        // Call parent handler for personal task
+        if (onPersonalTaskRequested) {
+          onPersonalTaskRequested(selectedSlot.staffId, selectedSlot.staffMember.name, selectedSlot.time);
+        }
+        break;
+      case 'edit-working-hours':
+        // TODO: Implement edit shift modal
+        console.log('Edit working hours not yet implemented');
+        break;
+    }
+  };
+
   return (
     <div className={`flex-1 flex flex-col bg-white ${className}`} data-testid="schedule-grid">
       {/* Compact Header */}
@@ -1266,7 +1383,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
       {/* Schedule Grid with Fixed Header - 4 columns visible by default with horizontal scroll */}
       <div className="flex-1 flex flex-col">
         {/* Fixed Header Row - Always visible, with padding for scrollbar */}
-        <div className="flex-shrink-0 border-b border-gray-200 bg-white overflow-x-auto scrollbar-hide" style={{ zIndex: 60, paddingRight: '17px' }}>
+        <div className="flex-shrink-0 border-b border-gray-200 bg-white overflow-x-auto scrollbar-hide z-10" style={{ paddingRight: '17px' }}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(120px, 1fr)').join(' ')}`
@@ -1324,11 +1441,11 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
             gridTemplateColumns: `64px ${selectedStaff.map(() => 'minmax(120px, 1fr)').join(' ')}`
           }}>
             {/* Time Column */}
-            <div className="bg-gray-50 border-r">
+            <div className="bg-gray-50 border-r-2 border-gray-300">
               {HOUR_LABELS.map((hour, index) => (
               <div
                 key={index}
-                className="h-[60px] border-b border-gray-200 flex items-start justify-center pt-1 text-xs font-medium text-gray-500"
+                className="h-[60px] border-b-2 border-gray-300 flex items-start justify-center pt-1 text-xs font-medium text-gray-600"
               >
                 {hour}
               </div>
@@ -1353,7 +1470,7 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                 onCreateAppointment={onCreateAppointment}
               >
                 <div
-                  className="relative border-r border-gray-200 overflow-hidden bg-white"
+                  className="relative border-r-2 border-gray-300 overflow-hidden bg-white last:border-r-0"
                   data-grid-content="true"
                 >
                   {/* Time Slots */}
@@ -1365,8 +1482,12 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                       onDrop={handleTimeSlotDrop}
                     >
                       <div
-                        className="h-[30px] border-b border-gray-100 hover:bg-gray-50 cursor-pointer relative group"
-                        onClick={() => onCreateAppointment(staffId, time)}
+                        className={`h-[30px] border-b cursor-pointer relative group ${
+                          isWithinWorkingHours(staffId, time)
+                            ? 'border-gray-100 hover:bg-gray-50 bg-white'
+                            : 'border-gray-200 bg-gray-100 hover:bg-gray-150'
+                        }`}
+                        onClick={(e) => handleEmptySlotClick(staffId, time, e)}
                         style={{ zIndex: 0 }}
                       >
                         {/* 15-minute intervals - Enhanced visibility */}
@@ -1422,6 +1543,18 @@ const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         </div>
       </div>
     </div>
+
+      {/* Slot Action Menu */}
+      {showSlotMenu && slotMenuPosition && selectedSlot && (
+        <SlotActionMenu
+          isOpen={showSlotMenu}
+          onClose={() => setShowSlotMenu(false)}
+          position={slotMenuPosition}
+          selectedSlot={selectedSlot}
+          selectedDate={selectedDate}
+          onAction={handleSlotAction}
+        />
+      )}
 
     </div>
   );

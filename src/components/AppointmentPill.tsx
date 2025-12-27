@@ -458,11 +458,22 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
             <div className="text-[10px] opacity-85 flex-1 min-w-0 truncate">
               {formatTime(appointment.start_time)} - {appointment.end_time ? formatTime(appointment.end_time) : calculateEndTime(appointment.start_time, serviceDuration)}
             </div>
-            <StatusIcon size={12} className="currentColor opacity-90 flex-shrink-0" />
+            <StatusIcon size={12} className="currentColor opacity-90 flex-shrink-0 ml-1" />
           </div>
 
-          {/* Bottom-left: Retention & Payment badges */}
-          <div className="absolute bottom-1 left-1 flex gap-1 items-center z-10">
+          {/* Bottom-right: Retention & Payment badges - Positioned to avoid overlap with customer name and time text */}
+          <div className="absolute bottom-1 right-4 flex gap-1 items-center z-10">
+            {appointment.payment_status && PAYMENT_ICONS[appointment.payment_status as PaymentStatus] && (
+              <div
+                className={`p-0.5 rounded-full ${PAYMENT_ICONS[appointment.payment_status as PaymentStatus].bgColor}`}
+                title={PAYMENT_ICONS[appointment.payment_status as PaymentStatus].tooltip}
+              >
+                {React.createElement(PAYMENT_ICONS[appointment.payment_status as PaymentStatus].icon, {
+                  className: `w-3 h-3 ${PAYMENT_ICONS[appointment.payment_status as PaymentStatus].color}`
+                })}
+              </div>
+            )}
+
             {appointment.retention_status && RETENTION_BADGES[appointment.retention_status as RetentionStatus] && (
               <div
                 className={`
@@ -476,20 +487,9 @@ export const AppointmentPill: React.FC<AppointmentPillProps> = ({
                 {RETENTION_BADGES[appointment.retention_status as RetentionStatus].label}
               </div>
             )}
-
-            {appointment.payment_status && PAYMENT_ICONS[appointment.payment_status as PaymentStatus] && (
-              <div
-                className={`p-0.5 rounded-full ${PAYMENT_ICONS[appointment.payment_status as PaymentStatus].bgColor}`}
-                title={PAYMENT_ICONS[appointment.payment_status as PaymentStatus].tooltip}
-              >
-                {React.createElement(PAYMENT_ICONS[appointment.payment_status as PaymentStatus].icon, {
-                  className: `w-3 h-3 ${PAYMENT_ICONS[appointment.payment_status as PaymentStatus].color}`
-                })}
-              </div>
-            )}
           </div>
 
-          {/* Top-right: Attribute icons */}
+          {/* Top-right: Attribute icons (notes, recurring) */}
           <div className="absolute top-1 right-1 flex gap-0.5 z-10">
             {appointment.is_recurring && (
               <div title={ATTRIBUTE_ICONS.recurring.tooltip}>

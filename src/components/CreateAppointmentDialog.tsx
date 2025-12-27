@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useStaffAuth } from '@/hooks/useStaffAuth';
 import { verifyStaffPassword } from '@/lib/adminAuth';
 import { getSchedulingRecommendation, SchedulingRecommendation, checkGroupCapacity } from '@/lib/smartGroupScheduling';
+import { STATUS_COLORS } from '@/lib/colorConstants';
 
 // Booking type selection
 type BookingType = 'select' | 'individual' | 'group';
@@ -133,16 +134,17 @@ const CreateAppointmentDialog: React.FC<CreateAppointmentDialogProps> = ({
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [showCreateCustomerForm, setShowCreateCustomerForm] = useState(false);
 
-  // Status options - must match database enum values
+  // Status options - using centralized STATUS_COLORS from colorConstants.ts
   const statusOptions = [
-    { value: 'requested', label: 'Requested' },
-    { value: 'accepted', label: 'Accepted' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'ready_to_start', label: 'Ready to Start' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'no_show', label: 'No Show' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { value: 'requested', label: STATUS_COLORS.requested.label },
+    { value: 'pending', label: STATUS_COLORS.pending.label },
+    { value: 'confirmed', label: STATUS_COLORS.confirmed.label },
+    { value: 'ready_to_start', label: STATUS_COLORS.ready_to_start.label },
+    { value: 'in_progress', label: STATUS_COLORS.in_progress.label },
+    { value: 'completed', label: STATUS_COLORS.completed.label },
+    { value: 'paid', label: STATUS_COLORS.paid.label },
+    { value: 'no_show', label: STATUS_COLORS.no_show.label },
+    { value: 'cancelled', label: STATUS_COLORS.cancelled.label }
   ];
 
   // Repeat options

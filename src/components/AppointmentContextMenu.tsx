@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useStaffAuth } from '@/hooks/useStaffAuth';
 import { verifyStaffPassword } from '@/lib/adminAuth';
 import { useToast } from '@/hooks/use-toast';
+import { STATUS_COLORS } from '@/lib/colorConstants';
 
 interface AppointmentContextMenuProps {
   onAction: (action: string, appointment: any) => void;
@@ -128,16 +129,16 @@ const AppointmentContextMenu: React.FC<AppointmentContextMenuProps> = ({
     { label: 'Upload File', icon: Upload, action: 'upload-file' }
   ];
 
-  // Status submenu items with color mappings - VIBRANT BOLD COLORS matching colorConstants.ts
+  // Status submenu items with color mappings from centralized colorConstants.ts
   const statusSubmenuItems = [
-    { label: 'Accept', action: 'status-accept', color: 'bg-white/10' },
-    { label: 'Deny', action: 'status-deny', color: 'bg-slate-500' },
-    { label: 'Confirm', action: 'status-confirm', color: 'bg-emerald-500' },
-    { label: 'Show', action: 'status-show', color: 'bg-emerald-500' },
-    { label: 'No-Show', action: 'status-no-show', color: 'bg-slate-500' },
-    { label: 'Ready to Start Service', action: 'status-ready', color: 'bg-emerald-500' },
-    { label: 'Service in Progress', action: 'status-progress', color: 'bg-slate-800' },
-    { label: 'Cancel', action: 'status-cancel', color: 'bg-red-500' }
+    { label: 'Pending', action: 'status-pending', color: STATUS_COLORS.pending.bgClass },
+    { label: 'Confirmed', action: 'status-confirm', color: STATUS_COLORS.confirmed.bgClass },
+    { label: 'Ready to Start', action: 'status-ready', color: STATUS_COLORS.ready_to_start.bgClass },
+    { label: 'In Progress', action: 'status-progress', color: STATUS_COLORS.in_progress.bgClass },
+    { label: 'Completed', action: 'status-completed', color: STATUS_COLORS.completed.bgClass },
+    { label: 'Paid', action: 'status-paid', color: STATUS_COLORS.paid.bgClass },
+    { label: 'No-Show', action: 'status-no-show', color: STATUS_COLORS.no_show.bgClass },
+    { label: 'Cancel', action: 'status-cancel', color: STATUS_COLORS.cancelled.bgClass }
   ];
 
   // Handle clicks outside the menu
