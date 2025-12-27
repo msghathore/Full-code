@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
 import EmailService from '@/lib/email-service';
-import { GrandSlamOffers, GuaranteesSection, TestimonialsSection } from '@/components/hormozi';
+import { GrandSlamOffersSimplified, GuaranteesSection, TestimonialsSection, VIPMembershipHero } from '@/components/hormozi';
 import { BeforeAfterGallery } from '@/components/hormozi/BeforeAfterGallery';
 
 // Framer Motion animation variants for micro-interactions
@@ -285,8 +285,11 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
       {/* Main Content - Using relative positioning with top margin for scroll to work */}
       <main className="relative mt-[100vh] flex flex-col bg-background">
 
-        {/* HORMOZI: Grand Slam Offers Section - HIGHEST PRIORITY */}
-        <GrandSlamOffers />
+        {/* HORMOZI: VIP Membership Hero - THE MONEY MAKER (Recurring Revenue) */}
+        <VIPMembershipHero />
+
+        {/* HORMOZI: Grand Slam Offers Section - 3 CORE PACKAGES (Hormozi-Style Copy) */}
+        <GrandSlamOffersSimplified />
 
         {/* Services Preview Section - Mobile Responsive with Framer Motion */}
         <section ref={servicesRef} className="py-8 md:py-12 px-4 md:px-8 section-reveal" aria-labelledby="services-heading">
@@ -597,15 +600,15 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
           </div>
         </section>
 
-        {/* Newsletter Subscription Section with Framer Motion */}
-        <section ref={newsletterRef} className="py-8 md:py-12 px-4 md:px-8 bg-gradient-to-b from-black via-gray-900/50 to-black" aria-labelledby="newsletter-heading">
+        {/* HORMOZI: Newsletter VIP List - Lead Magnet with Instant Value */}
+        <section ref={newsletterRef} className="py-16 md:py-24 px-4 md:px-8 bg-gradient-to-b from-black via-slate-950 to-black" aria-labelledby="newsletter-heading">
           <motion.div
             initial={{ scaleX: 0 }}
             animate={newsletterInView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full h-px bg-gradient-to-r from-transparent via-luxury-gold to-transparent mb-8 origin-center"
+            className="w-full h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent mb-12 origin-center"
           />
-          <div className="container mx-auto max-w-4xl">
+          <div className="container mx-auto max-w-5xl">
             <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 40, scale: 0.95 }}
@@ -613,24 +616,73 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <motion.div
-                className="relative overflow-hidden rounded-[20px] frosted-glass border border-white/10 mx-auto max-w-lg"
+                className="relative overflow-hidden rounded-3xl border-2 border-emerald-500/30 bg-gradient-to-br from-slate-950 via-black to-slate-950 mx-auto max-w-3xl shadow-2xl shadow-emerald-500/10"
                 whileHover={{
-                  boxShadow: "0 20px 60px rgba(212, 175, 55, 0.2)",
-                  borderColor: "rgba(212, 175, 55, 0.3)",
+                  boxShadow: "0 25px 80px rgba(16, 185, 129, 0.25)",
+                  borderColor: "rgba(16, 185, 129, 0.5)",
                   transition: { duration: 0.4 }
                 }}
               >
-                <div className="p-8 md:p-12">
+                <div className="p-10 md:p-16">
+                  {/* Main Headline - Hormozi Style */}
                   <motion.h2
                     id="newsletter-heading"
-                    className="text-4xl md:text-5xl mb-6 luxury-glow font-serif"
+                    className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] mb-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ delay: 0.2, duration: 0.6 }}
                   >
-                    Stay Informed
+                    NEVER MISS A $200 DEAL
                   </motion.h2>
 
+                  {/* Social Proof Subheadline */}
+                  <motion.p
+                    className="text-2xl md:text-3xl font-semibold text-emerald-400 mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                  >
+                    Join 2,143 Smart Clients Getting VIP Pricing
+                  </motion.p>
+
+                  {/* Value Stack - What They Get */}
+                  <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                  >
+                    <div className="flex items-start gap-3 text-left">
+                      <span className="text-2xl" aria-hidden="true">🎁</span>
+                      <div>
+                        <p className="text-white font-semibold text-lg">$50 OFF Instantly</p>
+                        <p className="text-slate-400 text-sm">Applied to your first booking</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 text-left">
+                      <span className="text-2xl" aria-hidden="true">💎</span>
+                      <div>
+                        <p className="text-white font-semibold text-lg">VIP Flash Sales</p>
+                        <p className="text-slate-400 text-sm">Up to 40% off (members only)</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 text-left">
+                      <span className="text-2xl" aria-hidden="true">⚡</span>
+                      <div>
+                        <p className="text-white font-semibold text-lg">First Access</p>
+                        <p className="text-slate-400 text-sm">Limited packages before they sell out</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 text-left">
+                      <span className="text-2xl" aria-hidden="true">🔥</span>
+                      <div>
+                        <p className="text-white font-semibold text-lg">Birthday Month Perks</p>
+                        <p className="text-slate-400 text-sm">Exclusive gifts & upgrades</p>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Form */}
                   <form
                     onSubmit={handleSubmit(handleNewsletterSubmit)}
                     className="space-y-6"
@@ -642,15 +694,15 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                       className="relative"
                       initial={{ opacity: 0, y: 20 }}
                       animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ delay: 0.3, duration: 0.6 }}
+                      transition={{ delay: 0.5, duration: 0.6 }}
                     >
-                      <label htmlFor="newsletter-email" className="sr-only">Email address for newsletter subscription</label>
+                      <label htmlFor="newsletter-email" className="sr-only">Email address to get $50 instant savings</label>
                       <Input
                         {...register('email')}
                         id="newsletter-email"
                         type="email"
-                        placeholder="Enter your email address"
-                        className={`bg-white/10 border-white/20 text-white placeholder:text-white/50 text-center text-lg py-6 rounded-full backdrop-blur-sm focus:bg-white/15 focus:border-white/30 transition-all duration-300 ${errors.email ? 'border-red-400 focus:border-red-400' : ''}`}
+                        placeholder="Enter your email to get $50 OFF instantly..."
+                        className={`bg-white/10 border-2 border-white/30 text-white placeholder:text-white/50 text-center text-lg md:text-xl py-7 rounded-full backdrop-blur-sm focus:bg-white/15 focus:border-emerald-400 transition-all duration-300 ${errors.email ? 'border-red-400 focus:border-red-400' : ''}`}
                         aria-describedby={errors.email ? 'newsletter-email-error newsletter-description' : 'newsletter-description'}
                         aria-invalid={errors.email ? 'true' : 'false'}
                       />
@@ -658,7 +710,7 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                         {errors.email && (
                           <motion.p
                             id="newsletter-email-error"
-                            className="text-red-400 text-sm mt-2 text-center"
+                            className="text-red-400 text-sm mt-2 text-center font-semibold"
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -672,31 +724,49 @@ const Index = ({ showSecretDeals, setShowSecretDeals }: IndexProps) => {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={newsletterInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ delay: 0.4, duration: 0.6 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      transition={{ delay: 0.6, duration: 0.6 }}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                     >
                       <Button
                         type="submit"
-                        variant="cta"
-                        className="w-full py-6 text-lg font-serif tracking-wider rounded-full shadow-lg hover:shadow-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Subscribe to newsletter"
-                        disabled={isNewsletterSubmitting}
+                        className="w-full py-7 text-xl md:text-2xl font-serif font-bold tracking-wider rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                        aria-label="Get my $50 instant savings"
+                        disabled={isNewsletterSubmitting || !!errors.email}
                       >
-                        {isNewsletterSubmitting ? 'SUBSCRIBING...' : 'SUBSCRIBE'}
+                        {isNewsletterSubmitting ? 'JOINING VIP LIST...' : 'GET MY $50 INSTANT SAVINGS →'}
                       </Button>
                     </motion.div>
                   </form>
 
-                  <motion.p
-                    id="newsletter-description"
-                    className="text-white/60 mt-6 text-sm"
+                  {/* Trust Builders - Hormozi Style */}
+                  <motion.div
+                    className="mt-8 space-y-2"
                     initial={{ opacity: 0 }}
                     animate={newsletterInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ delay: 0.5, duration: 0.6 }}
+                    transition={{ delay: 0.7, duration: 0.6 }}
                   >
-                    Stay updated with our latest offers and beauty tips. Unsubscribe anytime.
-                  </motion.p>
+                    <p className="text-white/80 text-sm font-semibold">
+                      ✅ Free to join • ✅ Unsubscribe anytime • ✅ No spam, ever
+                    </p>
+                    <p id="newsletter-description" className="text-emerald-400 text-base font-bold">
+                      Average VIP saves $847/year vs. regular clients
+                    </p>
+                  </motion.div>
+
+                  {/* Urgency Element */}
+                  <motion.div
+                    className="mt-6 inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-2 rounded-full text-sm font-semibold"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={newsletterInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  >
+                    <span className="relative flex h-3 w-3">
+                      <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    387 people joined this week
+                  </motion.div>
                 </div>
               </motion.div>
             </motion.div>

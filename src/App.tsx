@@ -14,7 +14,6 @@ import { GlenAssistant } from "./components/GlenAssistant";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PageTransition } from "./components/PageTransition";
-import { SecretDealsDialog } from "./components/SecretDealsDialog";
 import { ExitIntentPopup } from "./components/hormozi/ExitIntentPopup";
 import { useAppointmentNotifications } from "./hooks/use-appointment-notifications";
 import { Navigation } from "./components/Navigation";
@@ -50,6 +49,10 @@ const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Community = lazy(() => import("./pages/Community"));
+const PackagesPage = lazy(() => import("./pages/PackagesPage"));
+const ForMen = lazy(() => import("./pages/ForMen"));
+const ForBrides = lazy(() => import("./pages/ForBrides"));
+const ForGroups = lazy(() => import("./pages/ForGroups"));
 // Staff Application - Separate routing for staff functionality
 const StaffApp = lazy(() => import("./staff-app.tsx"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -112,6 +115,10 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
               </PageTransition>
             } />
             <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+            <Route path="/packages" element={<PageTransition><PackagesPage /></PageTransition>} />
+            <Route path="/for-men" element={<PageTransition><ForMen /></PageTransition>} />
+            <Route path="/for-brides" element={<PageTransition><ForBrides /></PageTransition>} />
+            <Route path="/groups" element={<PageTransition><ForGroups /></PageTransition>} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/booking/checkout" element={<BookingCheckout />} />
             <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
@@ -164,7 +171,6 @@ const AppContent = ({ showSecretDeals, setShowSecretDeals }: { showSecretDeals: 
         </div>
       </Suspense>
       <CookieConsent />
-      {!hideNavigation && <SecretDealsDialog />}
       {!hideNavigation && <ExitIntentPopup />}
     </SmoothScrollProvider>
   );

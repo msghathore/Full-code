@@ -195,16 +195,16 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
             onClick={handleClose}
           />
 
-          {/* Popup */}
+          {/* HORMOZI POPUP - RESPONSIVE FIX */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg px-4"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95vw] max-w-[550px] sm:max-w-[500px] md:max-w-[550px] lg:max-w-[600px] px-4 sm:px-6 lg:px-8"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-black border-2 border-white rounded-lg shadow-2xl relative max-h-[90vh] flex flex-col"
+            <div className="bg-black border-2 border-white rounded-lg shadow-2xl relative max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden"
               style={{
                 boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1)'
               }}
@@ -294,7 +294,7 @@ export const ExitIntentPopup = ({ onClose }: ExitIntentPopupProps) => {
                 </form>
 
                 {/* Trust indicators */}
-                <p className="text-white/60 text-xs text-center mt-3 sm:mt-4">
+                <p className="text-white/60 text-xs sm:text-sm text-center mt-3 sm:mt-4">
                   Join 2,000+ satisfied customers • No spam, ever
                 </p>
               </div>

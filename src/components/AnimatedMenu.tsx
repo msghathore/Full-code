@@ -81,6 +81,17 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     },
     {
+      name: 'PACKAGES',
+      href: '/packages',
+      image: '/images/booking-menu.jpg',
+      subItems: [
+        { name: 'All Packages', href: '/packages', image: '/images/booking-menu.jpg' },
+        { name: 'For Men', href: '/for-men', image: '/images/services-menu.jpg' },
+        { name: 'For Brides', href: '/for-brides', image: '/images/group-booking.jpg' },
+        { name: 'Groups & Parties', href: '/groups', image: '/images/group-booking.jpg' }
+      ]
+    },
+    {
       name: t('menuBooking'),
       href: '/booking',
       image: '/images/booking-menu.jpg',
