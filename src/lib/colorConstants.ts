@@ -51,10 +51,10 @@ export const STATUS_COLORS = {
     hex: '#FFFFFF' // White with glow for brand
   },
   confirmed: {
-    bgClass: 'bg-emerald-500',
-    borderClass: 'border-emerald-600',
-    textClass: 'text-white',
-    hex: '#10B981' // emerald-500 - Bold green
+    bgClass: 'bg-white',
+    borderClass: 'border-white',
+    textClass: 'text-black',
+    hex: '#FFFFFF' // White for brand alignment
   },
   no_show: {
     bgClass: 'bg-slate-500',
@@ -63,10 +63,10 @@ export const STATUS_COLORS = {
     hex: '#64748B' // slate-500 - Dark gray
   },
   ready_to_start: {
-    bgClass: 'bg-emerald-500',
-    borderClass: 'border-emerald-600',
-    textClass: 'text-white',
-    hex: '#06B6D4' // emerald-500 - Bright teal
+    bgClass: 'bg-white',
+    borderClass: 'border-white',
+    textClass: 'text-black',
+    hex: '#FFFFFF' // White for brand alignment
   },
   in_progress: {
     bgClass: 'bg-slate-800',
@@ -115,9 +115,9 @@ export const getStatusColors = (status: string) => {
 // Payment Status Colors
 export const PAYMENT_STATUS_COLORS = {
   paid: {
-    bgClass: 'bg-green-100',
-    textClass: 'text-green-800',
-    badgeClass: 'bg-green-500'
+    bgClass: 'bg-white/10',
+    textClass: 'text-white',
+    badgeClass: 'bg-white'
   },
   pending: {
     bgClass: 'bg-yellow-100',

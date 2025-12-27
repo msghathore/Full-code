@@ -23,7 +23,7 @@ export default function Gallery() {
 
           {/* Hero Content */}
           <div className="text-center space-y-6 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-semibold">
+            <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold">
               <Sparkles className="w-4 h-4" />
               Transformation Gallery
             </div>
@@ -41,14 +41,14 @@ export default function Gallery() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button
                 onClick={() => navigate('/booking')}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg font-semibold shadow-xl hover:shadow-emerald-500/50 transition-all"
+                className="bg-white hover:bg-white/90 text-white px-8 py-6 text-lg font-semibold shadow-xl hover:shadow-white/50 transition-all"
               >
                 Book Your Transformation
               </Button>
               <Button
                 onClick={() => navigate('/services')}
                 variant="outline"
-                className="border-2 border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-white px-8 py-6 text-lg font-semibold transition-all"
+                className="border-2 border-white text-white hover:bg-white hover:text-white px-8 py-6 text-lg font-semibold transition-all"
               >
                 View All Services
               </Button>
@@ -79,7 +79,7 @@ export default function Gallery() {
           <Button
             onClick={() => navigate('/booking')}
             size="lg"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-7 text-xl font-bold shadow-2xl hover:shadow-emerald-500/50 transition-all"
+            className="bg-white hover:bg-white/90 text-white px-10 py-7 text-xl font-bold shadow-2xl hover:shadow-white/50 transition-all"
           >
             <Sparkles className="w-5 h-5 mr-2" />
             Book Now
@@ -91,7 +91,7 @@ export default function Gallery() {
               Questions? Call us at{' '}
               <a
                 href="tel:+14318163330"
-                className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+                className="text-white hover:text-white/80 font-semibold transition-colors"
               >
                 (431) 816-3330
               </a>

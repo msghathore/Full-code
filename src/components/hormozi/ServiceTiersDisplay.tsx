@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Star, Sparkles, ArrowRight, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { ValueModal } from '@/components/ValueModal';
 
 interface ServiceTier {
   id: string;
@@ -22,6 +24,8 @@ interface ServiceTier {
 
 export const ServiceTiersDisplay = () => {
   const navigate = useNavigate();
+  const [showValueModal, setShowValueModal] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<ServiceTier | null>(null);
 
   const { data: tiers, isLoading } = useQuery({
     queryKey: ['pricing-tiers'],
@@ -35,6 +39,16 @@ export const ServiceTiersDisplay = () => {
       return data as ServiceTier[];
     }
   });
+
+  const handleTierClick = (tier: ServiceTier) => {
+    setSelectedTier(tier);
+    setShowValueModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowValueModal(false);
+    setSelectedTier(null);
+  };
 
   if (isLoading) {
     return (
@@ -80,7 +94,7 @@ export const ServiceTiersDisplay = () => {
             <TierCard
               key={tier.id}
               tier={tier}
-              onBook={() => navigate(`/booking?tier=${tier.tier_name.toLowerCase()}`)}
+              onBook={() => handleTierClick(tier)}
             />
           ))}
         </div>
@@ -163,6 +177,21 @@ export const ServiceTiersDisplay = () => {
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
+
+        {/* Value Modal */}
+        {selectedTier && (
+          <ValueModal
+            open={showValueModal}
+            onClose={handleCloseModal}
+            name={selectedTier.tier_name}
+            price={(selectedTier.min_price + selectedTier.max_price) / 2}
+            description={selectedTier.description || undefined}
+            transformation={selectedTier.tagline || undefined}
+            features={selectedTier.features}
+            testimonial={undefined}
+            tierId={selectedTier.tier_name.toLowerCase()}
+          />
+        )}
       </div>
     </section>
   );

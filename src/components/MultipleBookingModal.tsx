@@ -259,7 +259,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
       <DialogContent className="bg-white border-gray-200 max-w-lg w-[95vw] mx-auto rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-black text-lg font-medium">
-            <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
+            <div className="w-6 h-6 bg-white rounded flex items-center justify-center flex-shrink-0">
               <CalendarDays className="h-3 w-3 text-white" />
             </div>
             Multiple Appointments
@@ -286,7 +286,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                   value={formData.firstName}
                   onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                   placeholder="Enter first name"
-                  className="h-9 text-sm bg-white border-gray-300 focus:border-green-500 focus:ring-green-500 text-black placeholder:text-gray-500"
+                  className="h-9 text-sm bg-white border-gray-300 focus:border-white focus:ring-white text-black placeholder:text-gray-500"
                   required
                   disabled={isSubmitting}
                 />
@@ -300,7 +300,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                   value={formData.lastName}
                   onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                   placeholder="Enter last name"
-                  className="h-9 text-sm bg-white border-gray-300 focus:border-green-500 focus:ring-green-500 text-black placeholder:text-gray-500"
+                  className="h-9 text-sm bg-white border-gray-300 focus:border-white focus:ring-white text-black placeholder:text-gray-500"
                   required
                   disabled={isSubmitting}
                 />
@@ -317,7 +317,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                 value={formData.customerPhone}
                 onChange={(e) => setFormData(prev => ({ ...prev, customerPhone: e.target.value }))}
                 placeholder="(123) 456-7890"
-                className="h-9 text-sm bg-white border-gray-300 focus:border-green-500 focus:ring-green-500 text-black placeholder:text-gray-500"
+                className="h-9 text-sm bg-white border-gray-300 focus:border-white focus:ring-white text-black placeholder:text-gray-500"
                 required
                 disabled={isSubmitting}
               />
@@ -333,7 +333,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                 value={formData.customerEmail}
                 onChange={(e) => setFormData(prev => ({ ...prev, customerEmail: e.target.value }))}
                 placeholder="customer@email.com"
-                className="h-9 text-sm bg-white border-gray-300 focus:border-green-500 focus:ring-green-500 text-black placeholder:text-gray-500"
+                className="h-9 text-sm bg-white border-gray-300 focus:border-white focus:ring-white text-black placeholder:text-gray-500"
                 disabled={isSubmitting}
               />
             </div>
@@ -354,7 +354,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                 onValueChange={(value) => setFormData(prev => ({ ...prev, service: value }))}
                 disabled={isSubmitting}
               >
-                <SelectTrigger className="h-9 bg-white border-gray-300 focus:border-green-500 focus:ring-green-500">
+                <SelectTrigger className="h-9 bg-white border-gray-300 focus:border-white focus:ring-white">
                   <SelectValue placeholder="Choose a service" className="text-sm" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200">
@@ -470,7 +470,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder="Any special requests or notes..."
-                className="min-h-[60px] bg-white border-gray-300 focus:border-green-500 focus:ring-green-500 text-black placeholder:text-gray-500 resize-none"
+                className="min-h-[60px] bg-white border-gray-300 focus:border-white focus:ring-white text-black placeholder:text-gray-500 resize-none"
                 rows={3}
                 disabled={isSubmitting}
               />
@@ -490,7 +490,7 @@ export const MultipleBookingModal: React.FC<MultipleBookingModalProps> = ({
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-10 text-sm bg-green-500 hover:bg-green-600 text-white"
+              className="flex-1 h-10 text-sm bg-white hover:bg-white/90 text-white"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

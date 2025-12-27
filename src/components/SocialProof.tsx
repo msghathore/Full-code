@@ -68,7 +68,7 @@ export const SocialProof = () => {
       case 'review':
         return <Star className="w-4 h-4 text-yellow-400" />;
       case 'signup':
-        return <Users className="w-4 h-4 text-green-400" />;
+        return <Users className="w-4 h-4 text-white" />;
       default:
         return <TrendingUp className="w-4 h-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />;
     }

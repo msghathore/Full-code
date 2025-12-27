@@ -11,6 +11,7 @@ import { Search, Calendar, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { PriceAnchoring } from '@/components/PriceAnchoring';
+import { ValueModal } from '@/components/ValueModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,6 +41,8 @@ const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [dbServices, setDbServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showValueModal, setShowValueModal] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,6 +63,16 @@ const Services = () => {
       setDbServices(filteredData);
     }
     setLoading(false);
+  };
+
+  const handleServiceClick = (service: Service) => {
+    setSelectedService(service);
+    setShowValueModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowValueModal(false);
+    setSelectedService(null);
   };
 
   useEffect(() => {
@@ -284,7 +297,7 @@ const Services = () => {
                                 className="flex-1"
                               />
                               <Button
-                                onClick={() => navigate(`/booking?service=${variant.id}`)}
+                                onClick={() => handleServiceClick(variant)}
                                 className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
                               >
                                 <Calendar className="h-4 w-4" />
@@ -322,7 +335,7 @@ const Services = () => {
                               className="flex-1"
                             />
                             <Button
-                              onClick={() => navigate(`/booking?service=${group.parent.id}`)}
+                              onClick={() => handleServiceClick(group.parent)}
                               className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
                             >
                               <Calendar className="h-4 w-4" />
@@ -345,6 +358,20 @@ const Services = () => {
         </div>
         </div>
       </div>
+
+      {/* Value Modal */}
+      {selectedService && (
+        <ValueModal
+          open={showValueModal}
+          onClose={handleCloseModal}
+          name={selectedService.name}
+          price={selectedService.price}
+          duration={selectedService.duration_minutes}
+          category={selectedService.category}
+          description={selectedService.description || undefined}
+          serviceId={selectedService.id}
+        />
+      )}
 
       <Footer />
     </div>

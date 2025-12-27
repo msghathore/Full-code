@@ -534,15 +534,15 @@ const CheckoutPage = () => {
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       {/* Appointment Header - Show when coming from completed service */}
       {appointmentData && (
-        <div className="bg-green-50 border-b border-green-200 p-4">
+        <div className="bg-white/10 border-b border-white/20 p-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-green-800">
+                <div className="flex items-center gap-2 text-white">
                   <CheckCircle className="h-5 w-5" />
                   <span className="font-medium">Service Completed</span>
                 </div>
-                <div className="text-sm text-green-700">
+                <div className="text-sm text-white/80">
                   <span className="font-medium">{appointmentData.serviceName}</span>
                   {appointmentData.customerName && (
                     <> • {appointmentData.customerName}</>
@@ -552,7 +552,7 @@ const CheckoutPage = () => {
                   )}
                 </div>
               </div>
-              <div className="text-green-800 font-medium">
+              <div className="text-white font-medium">
                 {formatCurrency(appointmentData.servicePrice)}
               </div>
             </div>
@@ -695,7 +695,7 @@ const CheckoutPage = () => {
                 <Separator className="bg-gray-200 my-2" />
                 <div className="flex justify-between font-bold text-lg">
                   <span className="text-gray-900">Amount Due:</span>
-                  <span className="text-green-600">{formatCurrency(totals.amountDue)}</span>
+                  <span className="text-white">{formatCurrency(totals.amountDue)}</span>
                 </div>
               </div>
             )}
@@ -802,7 +802,7 @@ const CheckoutPage = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Change Due:</span>
-                <span className={totals.changeDue >= 0 ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                <span className={totals.changeDue >= 0 ? "text-white font-bold" : "text-red-600 font-bold"}>
                   {formatCurrency(Math.abs(totals.changeDue))}
                 </span>
               </div>
@@ -866,7 +866,7 @@ const CheckoutPage = () => {
                         <div className="text-gray-900 font-medium">{item.name}</div>
                         <div className="text-sm text-gray-500">{item.code} • {item.type}</div>
                       </div>
-                      <div className="text-green-600 font-semibold">{formatCurrency(item.price)}</div>
+                      <div className="text-white font-semibold">{formatCurrency(item.price)}</div>
                     </div>
                   </div>
                 ))}
@@ -919,7 +919,7 @@ const CheckoutPage = () => {
             {/* Checkout Buttons */}
             <div className="flex items-center space-x-3">
               <Button
-                className="bg-green-600 hover:bg-green-700 text-white h-12 px-6"
+                className="bg-white hover:bg-white/90 text-black h-12 px-6"
                 onClick={handleCheckoutClick}
                 disabled={totals.amountPaid < totals.amountDue || isProcessing}
               >

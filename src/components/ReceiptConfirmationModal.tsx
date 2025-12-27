@@ -281,7 +281,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                     </Button>
                   </>
                 ) : (
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-white">
                     <CheckCircle className="h-4 w-4" />
                     <span>Email queued successfully!</span>
                   </div>
@@ -307,7 +307,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
               {/* SMS Receipt */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-green-600" />
+                  <MessageSquare className="h-5 w-5 text-white" />
                   <span className="font-medium text-gray-900">SMS Receipt</span>
                 </div>
                 
@@ -318,14 +318,14 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                       placeholder="(555) 123-4567"
                       value={smsForm.phone}
                       onChange={(e) => setSmsForm(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-green-500 focus:ring-green-500"
+                      className="w-full bg-white border-gray-300 text-gray-900 focus:border-white focus:ring-white"
                       disabled={smsForm.isSubmitting}
                     />
                     <Button
                       onClick={handleSmsReceipt}
                       disabled={smsForm.isSubmitting || !smsForm.phone.trim()}
                       variant="outline"
-                      className="w-full border-green-300 text-green-600 hover:bg-green-50 bg-white"
+                      className="w-full border-white/30 text-white hover:bg-white/10 bg-white/5"
                     >
                       {smsForm.isSubmitting ? (
                         <>
@@ -341,7 +341,7 @@ export const ReceiptConfirmationModal: React.FC<ReceiptConfirmationModalProps> =
                     </Button>
                   </>
                 ) : (
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-white">
                     <CheckCircle className="h-4 w-4" />
                     <span>SMS queued successfully!</span>
                   </div>

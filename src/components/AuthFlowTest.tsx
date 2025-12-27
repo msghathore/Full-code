@@ -73,12 +73,12 @@ const AuthFlowTest: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Test Results Panel */}
           <div className="bg-gray-900 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 text-green-400">📊 Test Results</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white">📊 Test Results</h2>
             <div className="bg-black p-4 rounded font-mono text-sm overflow-auto max-h-96">
               {testResults.map((result, index) => (
                 <div key={index} className={`mb-1 ${
-                  result.includes('✅') ? 'text-green-400' : 
-                  result.includes('🛡️') ? 'text-slate-700' : 
+                  result.includes('✅') ? 'text-white' :
+                  result.includes('🛡️') ? 'text-slate-700' :
                   result.includes('❌') ? 'text-red-400' : 'text-gray-300'
                 }`}>
                   {result}
@@ -94,9 +94,9 @@ const AuthFlowTest: React.FC = () => {
             <div className="space-y-4">
               {isSignedIn ? (
                 <div className="space-y-4">
-                  <div className="bg-green-900 border border-green-600 p-4 rounded">
-                    <h3 className="font-semibold text-green-400">✅ Authenticated</h3>
-                    <p className="text-green-300 text-sm">You are signed in as: {user?.primaryEmailAddress?.emailAddress}</p>
+                  <div className="bg-white/10 border border-white/30 p-4 rounded">
+                    <h3 className="font-semibold text-white">✅ Authenticated</h3>
+                    <p className="text-white/80 text-sm">You are signed in as: {user?.primaryEmailAddress?.emailAddress}</p>
                   </div>
                   
                   <button
@@ -147,13 +147,13 @@ const AuthFlowTest: React.FC = () => {
         
         {/* Status Indicators */}
         <div className="mt-8 flex justify-center space-x-4">
-          <div className={`px-4 py-2 rounded ${authLoaded ? 'bg-green-600' : 'bg-yellow-600'} text-white font-semibold`}>
+          <div className={`px-4 py-2 rounded ${authLoaded ? 'bg-white' : 'bg-yellow-600'} ${authLoaded ? 'text-black' : 'text-white'} font-semibold`}>
             Clerk Loaded: {authLoaded ? '✅' : '⏳'}
           </div>
-          <div className={`px-4 py-2 rounded ${userLoaded ? 'bg-green-600' : 'bg-yellow-600'} text-white font-semibold`}>
+          <div className={`px-4 py-2 rounded ${userLoaded ? 'bg-white' : 'bg-yellow-600'} ${userLoaded ? 'text-black' : 'text-white'} font-semibold`}>
             User Loaded: {userLoaded ? '✅' : '⏳'}
           </div>
-          <div className={`px-4 py-2 rounded ${isSignedIn ? 'bg-green-600' : 'bg-red-600'} text-white font-semibold`}>
+          <div className={`px-4 py-2 rounded ${isSignedIn ? 'bg-white' : 'bg-red-600'} ${isSignedIn ? 'text-black' : 'text-white'} font-semibold`}>
             Signed In: {isSignedIn ? '✅' : '❌'}
           </div>
         </div>

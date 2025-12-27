@@ -1023,7 +1023,7 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="text-green-600 border-green-300 bg-green-50">
+              <Badge variant="outline" className="text-white border-white/30 bg-white/10">
                 Session Active
               </Badge>
               <Button
@@ -1196,7 +1196,7 @@ const AdminPanel: React.FC = () => {
               {/* Online/Offline Status */}
               <div className="flex items-center px-3 ml-auto">
                 {isOnline ? (
-                  <Badge className="bg-green-100 text-green-700 border-green-300">
+                  <Badge className="bg-green-100 text-green-700 border-white/30">
                     <Wifi className="h-3 w-3 mr-1" />
                     Online
                   </Badge>
@@ -1230,7 +1230,7 @@ const AdminPanel: React.FC = () => {
                   <h2 className="text-2xl font-bold text-black">Business Overview</h2>
                   <p className="text-gray-600">Real-time business metrics and activity</p>
                 </div>
-                <Badge className="bg-green-100 text-green-700 border-green-300">
+                <Badge className="bg-green-100 text-green-700 border-white/30">
                   Live Data
                 </Badge>
               </div>
@@ -1243,10 +1243,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Total Revenue</p>
                         <p className="text-2xl font-bold text-black">{formatCurrency(totalRevenue)}</p>
-                        <p className="text-xs text-green-600">From completed transactions</p>
+                        <p className="text-xs text-white">From completed transactions</p>
                       </div>
                       <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <DollarSign className="h-6 w-6 text-green-600" />
+                        <DollarSign className="h-6 w-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -1324,7 +1324,7 @@ const AdminPanel: React.FC = () => {
                               </p>
                             </div>
                           </div>
-                          <Badge className="bg-green-100 text-green-700 border-green-300">
+                          <Badge className="bg-green-100 text-green-700 border-white/30">
                             {formatCurrency(booking.price)}
                           </Badge>
                         </div>
@@ -1364,11 +1364,11 @@ const AdminPanel: React.FC = () => {
                         <span className="text-sm text-black">Database</span>
                         <div className="flex items-center gap-2">
                           <div className={`h-2 w-2 rounded-full ${
-                            systemStatus.database === 'online' ? 'bg-green-500' :
+                            systemStatus.database === 'online' ? 'bg-white' :
                             systemStatus.database === 'offline' ? 'bg-red-500' : 'bg-yellow-500 animate-pulse'
                           }`}></div>
                           <span className={`text-sm ${
-                            systemStatus.database === 'online' ? 'text-green-600' :
+                            systemStatus.database === 'online' ? 'text-white' :
                             systemStatus.database === 'offline' ? 'text-red-600' : 'text-yellow-600'
                           }`}>
                             {systemStatus.database === 'checking' ? 'Checking...' : systemStatus.database === 'online' ? 'Online' : 'Offline'}
@@ -1379,11 +1379,11 @@ const AdminPanel: React.FC = () => {
                         <span className="text-sm text-black">Booking System</span>
                         <div className="flex items-center gap-2">
                           <div className={`h-2 w-2 rounded-full ${
-                            systemStatus.booking === 'online' ? 'bg-green-500' :
+                            systemStatus.booking === 'online' ? 'bg-white' :
                             systemStatus.booking === 'offline' ? 'bg-red-500' : 'bg-yellow-500 animate-pulse'
                           }`}></div>
                           <span className={`text-sm ${
-                            systemStatus.booking === 'online' ? 'text-green-600' :
+                            systemStatus.booking === 'online' ? 'text-white' :
                             systemStatus.booking === 'offline' ? 'text-red-600' : 'text-yellow-600'
                           }`}>
                             {systemStatus.booking === 'checking' ? 'Checking...' : systemStatus.booking === 'online' ? 'Online' : 'Offline'}
@@ -1394,11 +1394,11 @@ const AdminPanel: React.FC = () => {
                         <span className="text-sm text-black">Payment Processing</span>
                         <div className="flex items-center gap-2">
                           <div className={`h-2 w-2 rounded-full ${
-                            systemStatus.payment === 'online' ? 'bg-green-500' :
+                            systemStatus.payment === 'online' ? 'bg-white' :
                             systemStatus.payment === 'offline' ? 'bg-red-500' : 'bg-yellow-500 animate-pulse'
                           }`}></div>
                           <span className={`text-sm ${
-                            systemStatus.payment === 'online' ? 'text-green-600' :
+                            systemStatus.payment === 'online' ? 'text-white' :
                             systemStatus.payment === 'offline' ? 'text-red-600' : 'text-yellow-600'
                           }`}>
                             {systemStatus.payment === 'checking' ? 'Checking...' : systemStatus.payment === 'online' ? 'Online' : 'Offline'}
@@ -1409,11 +1409,11 @@ const AdminPanel: React.FC = () => {
                         <span className="text-sm text-black">Website/Services</span>
                         <div className="flex items-center gap-2">
                           <div className={`h-2 w-2 rounded-full ${
-                            systemStatus.website === 'online' ? 'bg-green-500' :
+                            systemStatus.website === 'online' ? 'bg-white' :
                             systemStatus.website === 'offline' ? 'bg-red-500' : 'bg-yellow-500 animate-pulse'
                           }`}></div>
                           <span className={`text-sm ${
-                            systemStatus.website === 'online' ? 'text-green-600' :
+                            systemStatus.website === 'online' ? 'text-white' :
                             systemStatus.website === 'offline' ? 'text-red-600' : 'text-yellow-600'
                           }`}>
                             {systemStatus.website === 'checking' ? 'Checking...' : systemStatus.website === 'online' ? 'Online' : 'Offline'}
@@ -1574,10 +1574,10 @@ const AdminPanel: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Today's Revenue</p>
                         <p className="text-2xl font-bold text-black">{formatCurrency(revenueByPeriod.today)}</p>
-                        <p className="text-xs text-green-600">Completed transactions</p>
+                        <p className="text-xs text-white">Completed transactions</p>
                       </div>
                       <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <DollarSign className="h-6 w-6 text-green-600" />
+                        <DollarSign className="h-6 w-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -1641,7 +1641,7 @@ const AdminPanel: React.FC = () => {
                               <p className="text-sm text-gray-500">{service.bookings} bookings</p>
                             </div>
                           </div>
-                          <Badge className="bg-green-100 text-green-700 border-green-300">
+                          <Badge className="bg-green-100 text-green-700 border-white/30">
                             {formatCurrency(service.revenue)}
                           </Badge>
                         </div>
@@ -1705,7 +1705,7 @@ const AdminPanel: React.FC = () => {
                             <TooltipContent className="max-w-xs bg-gray-900 text-white p-3">
                               <p className="font-semibold mb-2">Permission Levels:</p>
                               <ul className="text-sm space-y-1">
-                                <li><span className="text-green-400">Green</span> = Access Enabled</li>
+                                <li><span className="text-white">Green</span> = Access Enabled</li>
                                 <li><span className="text-gray-400">Gray</span> = Access Disabled</li>
                                 <li>Checkout is always enabled for all staff</li>
                               </ul>
@@ -1803,14 +1803,14 @@ const AdminPanel: React.FC = () => {
                           <Switch
                             checked={getPermission(staffMember.id, 'inventory_access')}
                             onCheckedChange={() => handleTogglePermission(staffMember.id, 'inventory_access', getPermission(staffMember.id, 'inventory_access'))}
-                            className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                            className="data-[state=checked]:bg-white data-[state=unchecked]:bg-gray-300"
                           />
                         </TableCell>
                         <TableCell>
                           <Switch
                             checked={staffMember.status !== 'offline'}
                             onCheckedChange={() => handleToggleTeamPage(staffMember.id, staffMember.status || 'available')}
-                            className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                            className="data-[state=checked]:bg-white data-[state=unchecked]:bg-gray-300"
                           />
                         </TableCell>
                         <TableCell>
@@ -1824,11 +1824,11 @@ const AdminPanel: React.FC = () => {
                               <p className="font-semibold mb-2">{firstName || 'Staff'}'s Permissions:</p>
                               <ul className="text-sm space-y-1">
                                 <li className="flex items-center gap-2">
-                                  <span className={getPermission(staffMember.id, 'inventory_access') ? 'text-green-400' : 'text-gray-400'}>●</span>
+                                  <span className={getPermission(staffMember.id, 'inventory_access') ? 'text-white' : 'text-gray-400'}>●</span>
                                   Inventory Write: {getPermission(staffMember.id, 'inventory_access') ? 'Enabled' : 'Disabled'}
                                 </li>
                                 <li className="flex items-center gap-2">
-                                  <span className="text-green-400">●</span>
+                                  <span className="text-white">●</span>
                                   Calendar, Checkout: Always Enabled
                                 </li>
                               </ul>
@@ -1899,7 +1899,7 @@ const AdminPanel: React.FC = () => {
                             <Badge
                               className={
                                 entry.action_type === 'login'
-                                  ? 'bg-green-100 text-green-700 border-green-300'
+                                  ? 'bg-green-100 text-green-700 border-white/30'
                                   : entry.action_type === 'logout'
                                   ? 'bg-gray-100 text-gray-700 border-gray-300'
                                   : entry.action_type === 'permission_denied'
@@ -1991,12 +1991,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Avg Lifetime Value</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-white">
                           ${crmProfiles.length > 0 ? Math.round(crmProfiles.reduce((sum, p) => sum + (p.lifetime_value || 0), 0) / crmProfiles.length) : 0}
                         </p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <DollarSign className="h-5 w-5 text-green-600" />
+                        <DollarSign className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2046,14 +2046,14 @@ const AdminPanel: React.FC = () => {
                               {profile.loyalty_tier || 'Bronze'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-green-600 font-semibold">
+                          <TableCell className="text-white font-semibold">
                             ${profile.lifetime_value?.toFixed(2) || '0.00'}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className={`w-2 h-2 rounded-full ${
                                 (profile.churn_risk_score || 0) > 70 ? 'bg-red-500' :
-                                (profile.churn_risk_score || 0) > 40 ? 'bg-yellow-500' : 'bg-green-500'
+                                (profile.churn_risk_score || 0) > 40 ? 'bg-yellow-500' : 'bg-white'
                               }`} />
                               {profile.churn_risk_score?.toFixed(0) || '0'}%
                             </div>
@@ -2116,10 +2116,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Top Performer</p>
-                        <p className="text-lg font-bold text-green-600">{enterpriseStats.topPerformer || 'N/A'}</p>
+                        <p className="text-lg font-bold text-white">{enterpriseStats.topPerformer || 'N/A'}</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <Award className="h-5 w-5 text-green-600" />
+                        <Award className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2142,10 +2142,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Completed Goals</p>
-                        <p className="text-2xl font-bold text-green-600">{staffGoals.filter(g => g.status === 'completed').length}</p>
+                        <p className="text-2xl font-bold text-white">{staffGoals.filter(g => g.status === 'completed').length}</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <CheckCircle className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2182,7 +2182,7 @@ const AdminPanel: React.FC = () => {
                         <TableRow key={metric.id} className="hover:bg-gray-50">
                           <TableCell className="font-medium text-black">{metric.staff_id}</TableCell>
                           <TableCell>{metric.appointments_completed || 0}</TableCell>
-                          <TableCell className="text-green-600 font-semibold">
+                          <TableCell className="text-white font-semibold">
                             ${metric.revenue_generated?.toFixed(2) || '0.00'}
                           </TableCell>
                           <TableCell>
@@ -2263,10 +2263,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Forecast Accuracy</p>
-                        <p className="text-2xl font-bold text-green-600">{enterpriseStats.forecastAccuracy}%</p>
+                        <p className="text-2xl font-bold text-white">{enterpriseStats.forecastAccuracy}%</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-green-600" />
+                        <Target className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2336,7 +2336,7 @@ const AdminPanel: React.FC = () => {
                             <Badge className="bg-slate-50 text-slate-700">{forecast.service_category}</Badge>
                           </TableCell>
                           <TableCell>{forecast.predicted_appointments || 0}</TableCell>
-                          <TableCell className="text-green-600 font-semibold">
+                          <TableCell className="text-white font-semibold">
                             ${forecast.predicted_revenue?.toFixed(2) || '0.00'}
                           </TableCell>
                           <TableCell>
@@ -2344,7 +2344,7 @@ const AdminPanel: React.FC = () => {
                               <div className="w-16 bg-gray-200 rounded-full h-2">
                                 <div
                                   className={`h-2 rounded-full ${
-                                    (forecast.confidence_score || 0) > 80 ? 'bg-green-500' :
+                                    (forecast.confidence_score || 0) > 80 ? 'bg-white' :
                                     (forecast.confidence_score || 0) > 60 ? 'bg-yellow-500' : 'bg-red-500'
                                   }`}
                                   style={{ width: `${forecast.confidence_score || 0}%` }}
@@ -2423,10 +2423,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Avg Sentiment</p>
-                        <p className="text-2xl font-bold text-green-600">{enterpriseStats.avgSentiment}%</p>
+                        <p className="text-2xl font-bold text-white">{enterpriseStats.avgSentiment}%</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        <TrendingUp className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2554,10 +2554,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Active Campaigns</p>
-                        <p className="text-2xl font-bold text-green-600">{enterpriseStats.activeCampaigns}</p>
+                        <p className="text-2xl font-bold text-white">{enterpriseStats.activeCampaigns}</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <Mail className="h-5 w-5 text-green-600" />
+                        <Mail className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2731,12 +2731,12 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Total Value</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-white">
                           ${inventoryItems.reduce((sum, i) => sum + ((i.quantity_in_stock || 0) * (i.unit_cost || 0)), 0).toFixed(2)}
                         </p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <DollarSign className="h-5 w-5 text-green-600" />
+                        <DollarSign className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2799,7 +2799,7 @@ const AdminPanel: React.FC = () => {
                             </Badge>
                           </TableCell>
                           <TableCell>{item.reorder_point || 0}</TableCell>
-                          <TableCell className="text-green-600">${item.unit_cost?.toFixed(2) || '0.00'}</TableCell>
+                          <TableCell className="text-white">${item.unit_cost?.toFixed(2) || '0.00'}</TableCell>
                           <TableCell>
                             {item.auto_reorder_enabled ? (
                               <Badge className="bg-green-100 text-green-700">
@@ -2872,14 +2872,14 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Accepted Rate</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-white">
                           {recommendations.length > 0
                             ? ((recommendations.filter(r => r.status === 'accepted').length / recommendations.length) * 100).toFixed(1)
                             : '0'}%
                         </p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <CheckCircle className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -2984,7 +2984,7 @@ const AdminPanel: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     {isOnline ? (
-                      <Badge className="bg-green-100 text-green-700 border-green-300">
+                      <Badge className="bg-green-100 text-green-700 border-white/30">
                         <Wifi className="h-3 w-3 mr-1" />
                         Connected
                       </Badge>
@@ -3021,10 +3021,10 @@ const AdminPanel: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">Active Users</p>
-                        <p className="text-2xl font-bold text-green-600">{schedulePresence.length}</p>
+                        <p className="text-2xl font-bold text-white">{schedulePresence.length}</p>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <Users className="h-5 w-5 text-green-600" />
+                        <Users className="h-5 w-5 text-white" />
                       </div>
                     </div>
                   </CardContent>

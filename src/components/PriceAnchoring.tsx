@@ -69,11 +69,11 @@ export const PriceAnchoring = ({
 
       {/* Current Price + Savings Badge */}
       <div className="flex items-baseline gap-3 flex-wrap">
-        {/* Current Price - Emerald Glow */}
+        {/* Current Price - White Glow */}
         <span
-          className={cn('font-bold text-emerald-400', sizes.current)}
+          className={cn('font-bold text-white', sizes.current)}
           style={{
-            textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4)'
+            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4)'
           }}
         >
           ${currentPrice.toFixed(0)}
@@ -83,7 +83,7 @@ export const PriceAnchoring = ({
         {showBadge && savings > 0 && (
           <span
             className={cn(
-              'bg-emerald-500/20 border border-emerald-500/50 rounded-full text-emerald-400 font-bold uppercase tracking-wide',
+              'bg-white/20 border border-white/50 rounded-full text-white font-bold uppercase tracking-wide',
               sizes.badge
             )}
           >
@@ -150,9 +150,9 @@ export const ValueBreakdown = ({
       <div className="flex justify-between items-center">
         <span className="text-white font-bold text-xl">Your Price:</span>
         <span
-          className="text-3xl font-bold text-emerald-400"
+          className="text-3xl font-bold text-white"
           style={{
-            textShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.6)'
+            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6)'
           }}
         >
           ${(total - savings).toFixed(0)}
@@ -160,8 +160,8 @@ export const ValueBreakdown = ({
       </div>
 
       {/* Total Savings */}
-      <div className="mt-3 p-3 bg-emerald-500/20 border border-emerald-500/50 rounded-lg text-center">
-        <div className="text-emerald-400 font-bold text-lg">
+      <div className="mt-3 p-3 bg-white/20 border border-white/50 rounded-lg text-center">
+        <div className="text-white font-bold text-lg">
           YOU SAVE ${savings.toFixed(0)} ({savingsPercentage}% OFF)
         </div>
       </div>

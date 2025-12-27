@@ -188,28 +188,28 @@ export const GiftCardSystem = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-white mt-0.5" />
                 <div>
                   <h4 className="text-white font-semibold">Instant Digital Delivery</h4>
                   <p className="text-white/70 text-sm">Send immediately or schedule for later</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-white mt-0.5" />
                 <div>
                   <h4 className="text-white font-semibold">No Expiration Date</h4>
                   <p className="text-white/70 text-sm">Use anytime at your convenience</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-white mt-0.5" />
                 <div>
                   <h4 className="text-white font-semibold">Personalized Messages</h4>
                   <p className="text-white/70 text-sm">Add a special note to make it memorable</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-white mt-0.5" />
                 <div>
                   <h4 className="text-white font-semibold">Multiple Uses</h4>
                   <p className="text-white/70 text-sm">Valid for services, products, and packages</p>

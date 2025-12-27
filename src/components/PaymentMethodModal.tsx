@@ -668,7 +668,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Remaining:</span>
-                      <span className={`font-medium ${remaining > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      <span className={`font-medium ${remaining > 0 ? 'text-red-600' : 'text-white'}`}>
                         {formatCurrency(remaining)}
                       </span>
                     </div>
@@ -826,7 +826,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Remaining:</span>
-                          <span className={`font-medium ${remaining > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                          <span className={`font-medium ${remaining > 0 ? 'text-red-600' : 'text-white'}`}>
                             {formatCurrency(remaining)}
                           </span>
                         </div>
