@@ -187,9 +187,9 @@ export default function MyAppointmentsPortal() {
     const colors: Record<string, string> = {
       REQUESTED: 'bg-amber-500',
       ACCEPTED: 'bg-slate-300 text-black',
-      CONFIRMED: 'bg-emerald-500',
+      CONFIRMED: 'bg-white text-black',
       READY_TO_START: 'bg-teal-400 text-black',
-      IN_PROGRESS: 'bg-emerald-600',
+      IN_PROGRESS: 'bg-violet-500',
       COMPLETE: 'bg-indigo-500',
       CANCELLED: 'bg-rose-500',
       NO_SHOW: 'bg-slate-500'
@@ -203,7 +203,7 @@ export default function MyAppointmentsPortal() {
   };
 
   const AppointmentCard = ({ appointment, isPast = false }: { appointment: Appointment; isPast?: boolean }) => (
-    <Card className="bg-slate-900 border-slate-700 hover:border-emerald-500 transition-colors">
+    <Card className="bg-slate-900 border-slate-700 hover:border-white transition-colors">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
@@ -218,15 +218,15 @@ export default function MyAppointmentsPortal() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="flex items-center gap-2 text-gray-300">
-            <User className="w-4 h-4 text-emerald-500" />
+            <User className="w-4 h-4 text-white" />
             <span>{appointment.staff.full_name}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-300">
-            <Clock className="w-4 h-4 text-emerald-500" />
+            <Clock className="w-4 h-4 text-white" />
             <span>{appointment.service.duration} min</span>
           </div>
           <div className="flex items-center gap-2 text-gray-300">
-            <DollarSign className="w-4 h-4 text-emerald-500" />
+            <DollarSign className="w-4 h-4 text-white" />
             <span>${appointment.total_amount.toFixed(2)}</span>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function MyAppointmentsPortal() {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-black"
+              className="flex-1 border-white text-white hover:bg-white hover:text-black"
               onClick={() => handleGenerateToken(appointment.id, 'reschedule')}
             >
               <RotateCcw className="w-4 h-4 mr-1" />
@@ -259,7 +259,7 @@ export default function MyAppointmentsPortal() {
             <Button
               size="sm"
               variant="outline"
-              className="w-full border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-black"
+              className="w-full border-white text-white hover:bg-white hover:text-black"
               onClick={() => navigate('/booking')}
             >
               <RotateCcw className="w-4 h-4 mr-1" />
@@ -274,7 +274,7 @@ export default function MyAppointmentsPortal() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     );
   }
@@ -373,15 +373,15 @@ export default function MyAppointmentsPortal() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-white" />
           </div>
         ) : (
           <Tabs defaultValue="upcoming" className="w-full">
             <TabsList className="grid w-full max-w-md grid-cols-2 bg-slate-900 mb-8">
-              <TabsTrigger value="upcoming" className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black">
+              <TabsTrigger value="upcoming" className="data-[state=active]:bg-white data-[state=active]:text-black">
                 Upcoming ({upcomingAppointments.length})
               </TabsTrigger>
-              <TabsTrigger value="past" className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black">
+              <TabsTrigger value="past" className="data-[state=active]:bg-white data-[state=active]:text-black">
                 Past ({pastAppointments.length})
               </TabsTrigger>
             </TabsList>

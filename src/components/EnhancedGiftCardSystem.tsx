@@ -82,23 +82,23 @@ interface GiftCardOfferProps {
 }
 
 const GiftCardOffer = ({ amount, bonus, totalValue, savings, pitch, urgency, valueStack, badge, roi, onSelect }: GiftCardOfferProps) => (
-  <Card className={`bg-slate-900 border-2 hover:border-emerald-500 transition-all hover:scale-105 ${badge ? 'border-emerald-500' : 'border-slate-700'}`}>
+  <Card className={`bg-slate-900 border-2 hover:border-white transition-all hover:scale-105 ${badge ? 'border-white' : 'border-slate-700'}`}>
     <CardHeader className="text-center relative">
       {badge && (
-        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-black font-bold px-4 py-1">
+        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white text-black font-bold px-4 py-1">
           {badge}
         </Badge>
       )}
       <div className="mt-2">
-        <p className="text-sm text-emerald-400 font-bold mb-2">{urgency}</p>
+        <p className="text-sm text-white font-bold mb-2">{urgency}</p>
         <CardTitle className="text-3xl font-serif text-white mb-2">{pitch}</CardTitle>
-        <div className="inline-block bg-emerald-500 text-black px-4 py-2 rounded-lg font-bold text-xl mb-3">
+        <div className="inline-block bg-white text-black px-4 py-2 rounded-lg font-bold text-xl mb-3">
           {roi}
         </div>
         <CardDescription className="text-lg">
           <span className="text-white font-bold">${amount}</span>
           <span className="text-gray-400 mx-2">→</span>
-          <span className="text-emerald-400 font-bold text-2xl">${totalValue}</span>
+          <span className="text-white font-bold text-2xl">${totalValue}</span>
         </CardDescription>
       </div>
     </CardHeader>
@@ -106,7 +106,7 @@ const GiftCardOffer = ({ amount, bonus, totalValue, savings, pitch, urgency, val
       <div className="space-y-2">
         {valueStack.map((item, idx) => (
           <div key={idx} className="flex items-start gap-2 text-sm text-gray-300">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />
             <span>{item}</span>
           </div>
         ))}
@@ -163,7 +163,7 @@ export function EnhancedGiftCardSystem() {
             ← Back to Offers
           </Button>
 
-          <Card className="bg-slate-900 border-emerald-500">
+          <Card className="bg-slate-900 border-white">
             <CardHeader>
               <CardTitle className="text-white text-2xl">Complete Your Gift Card Purchase</CardTitle>
               <CardDescription>
@@ -171,8 +171,8 @@ export function EnhancedGiftCardSystem() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-emerald-900/20 border border-emerald-500 rounded-lg p-4">
-                <p className="text-emerald-400 font-bold text-lg">{selectedOffer.pitch}</p>
+              <div className="bg-white/20 border border-white rounded-lg p-4">
+                <p className="text-white font-bold text-lg">{selectedOffer.pitch}</p>
                 <p className="text-white text-3xl font-bold">${selectedOffer.amount}</p>
                 <p className="text-sm text-gray-300">+ ${selectedOffer.bonus} FREE Bonus</p>
               </div>
@@ -231,7 +231,7 @@ export function EnhancedGiftCardSystem() {
           <h2 className="text-5xl font-serif mb-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
             Gift Beauty, Get More Value
           </h2>
-          <p className="text-2xl mb-4 text-emerald-400 font-bold flex items-center justify-center gap-2">
+          <p className="text-2xl mb-4 text-white font-bold flex items-center justify-center gap-2">
             <Sparkles className="w-6 h-6" />
             Limited Time: Get Up To 40% Bonus Credit FREE
             <Sparkles className="w-6 h-6" />
@@ -246,8 +246,8 @@ export function EnhancedGiftCardSystem() {
         </div>
 
         {/* Hormozi-style Guarantee Section */}
-        <div className="bg-gradient-to-r from-emerald-900/30 to-emerald-700/30 border-2 border-emerald-500 rounded-lg p-12 text-center mb-8">
-          <Shield className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+        <div className="bg-gradient-to-r from-white/30 to-white/20 border-2 border-white rounded-lg p-12 text-center mb-8">
+          <Shield className="w-16 h-16 text-white mx-auto mb-4" />
           <h3 className="text-3xl font-bold mb-6 text-white">
             💯 Our Unconditional Guarantee
           </h3>
@@ -255,7 +255,7 @@ export function EnhancedGiftCardSystem() {
             If the recipient isn't 100% thrilled with their experience,
             we'll refund the FULL amount - no questions asked.
           </p>
-          <p className="text-2xl font-bold text-emerald-400 mb-4">
+          <p className="text-2xl font-bold text-white mb-4">
             You literally can't lose.
           </p>
           <p className="text-lg text-gray-300">

@@ -166,7 +166,7 @@ export default function ReferralProgram() {
   if (programsLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -179,9 +179,9 @@ export default function ReferralProgram() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
-              <Gift className="w-5 h-5 text-emerald-400" />
-              <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 rounded-full">
+              <Gift className="w-5 h-5 text-white" />
+              <span className="text-white font-bold text-sm uppercase tracking-wider">
                 SHARE THE LOVE, EARN REWARDS
               </span>
             </div>
@@ -202,7 +202,7 @@ export default function ReferralProgram() {
 
           <p className="text-xl text-center text-white/70 max-w-3xl mx-auto mb-8">
             Share your love for Zavira with friends and family. When they book their first service,
-            <span className="text-emerald-400 font-bold"> you both win</span>.
+            <span className="text-white font-bold"> you both win</span>.
           </p>
 
           <div className="flex justify-center mb-12">
@@ -215,16 +215,16 @@ export default function ReferralProgram() {
       {userSession?.user && (
         <section className="py-16 px-4 bg-gradient-to-b from-slate-950 to-black">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur border-2 border-emerald-500/30 rounded-2xl p-8 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+            <div className="bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur border-2 border-white/30 rounded-2xl p-8 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
               <div className="text-center mb-8">
                 <h2 className="font-serif text-3xl md:text-4xl font-bold mb-3">Your Referral Code</h2>
                 <p className="text-white/70">Share this code or link with friends</p>
               </div>
 
               {/* Referral Code Display */}
-              <div className="bg-black/50 border-2 border-emerald-500/50 rounded-xl p-6 mb-6">
+              <div className="bg-black/50 border-2 border-white/50 rounded-xl p-6 mb-6">
                 <div className="text-center mb-4">
-                  <div className="text-5xl font-bold text-emerald-400 tracking-wider mb-2">
+                  <div className="text-5xl font-bold text-white tracking-wider mb-2">
                     {referralCode || 'Loading...'}
                   </div>
                   <div className="text-white/60 text-sm break-all">
@@ -258,7 +258,7 @@ export default function ReferralProgram() {
                   <Button
                     onClick={handleShareEmail}
                     variant="outline"
-                    className="border-white/20 hover:border-emerald-500/50 hover:bg-emerald-500/10"
+                    className="border-white/20 hover:border-white/50 hover:bg-white/10"
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Email
@@ -266,7 +266,7 @@ export default function ReferralProgram() {
                   <Button
                     onClick={handleShareSMS}
                     variant="outline"
-                    className="border-white/20 hover:border-emerald-500/50 hover:bg-emerald-500/10"
+                    className="border-white/20 hover:border-white/50 hover:bg-white/10"
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
                     SMS
@@ -274,7 +274,7 @@ export default function ReferralProgram() {
                   <Button
                     onClick={handleShareFacebook}
                     variant="outline"
-                    className="border-white/20 hover:border-emerald-500/50 hover:bg-emerald-500/10"
+                    className="border-white/20 hover:border-white/50 hover:bg-white/10"
                   >
                     <Facebook className="w-4 h-4 mr-2" />
                     Facebook
@@ -282,7 +282,7 @@ export default function ReferralProgram() {
                   <Button
                     onClick={handleShareTwitter}
                     variant="outline"
-                    className="border-white/20 hover:border-emerald-500/50 hover:bg-emerald-500/10"
+                    className="border-white/20 hover:border-white/50 hover:bg-white/10"
                   >
                     <Twitter className="w-4 h-4 mr-2" />
                     Twitter
@@ -359,7 +359,7 @@ export default function ReferralProgram() {
 
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-semibold mb-1">Your Reward</p>
                     <p className="text-white/70">
@@ -371,7 +371,7 @@ export default function ReferralProgram() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-semibold mb-1">Friend's Reward</p>
                     <p className="text-white/70">
@@ -385,7 +385,7 @@ export default function ReferralProgram() {
 
                 {mainProgram.min_purchase && (
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold mb-1">Minimum Purchase</p>
                       <p className="text-white/70">${mainProgram.min_purchase} minimum service value required</p>
@@ -395,7 +395,7 @@ export default function ReferralProgram() {
 
                 {mainProgram.max_referrals && (
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold mb-1">Maximum Referrals</p>
                       <p className="text-white/70">Earn rewards for up to {mainProgram.max_referrals} successful referrals</p>
@@ -420,7 +420,7 @@ export default function ReferralProgram() {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-black">
         <div className="max-w-4xl mx-auto text-center">
-          <Sparkles className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
+          <Sparkles className="w-16 h-16 text-white mx-auto mb-6" />
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
             Start Earning Rewards Today
           </h2>
@@ -456,8 +456,8 @@ interface StatCardProps {
 const StatCard = ({ icon, value, label }: StatCardProps) => {
   return (
     <div className="text-center">
-      <div className="text-emerald-400 flex justify-center mb-2">{icon}</div>
-      <div className="text-2xl font-bold text-emerald-400 mb-1">{value}</div>
+      <div className="text-white flex justify-center mb-2">{icon}</div>
+      <div className="text-2xl font-bold text-white mb-1">{value}</div>
       <div className="text-white/60 text-xs">{label}</div>
     </div>
   );
@@ -473,10 +473,10 @@ interface StepCardProps {
 const StepCard = ({ step, icon, title, description }: StepCardProps) => {
   return (
     <div className="relative p-8 rounded-2xl bg-gradient-to-br from-slate-900/60 to-black/60 border border-white/10 text-center">
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center font-bold text-xl">
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-r from-white/90 to-white/80 rounded-full flex items-center justify-center font-bold text-xl text-black">
         {step}
       </div>
-      <div className="text-emerald-400 flex justify-center mb-4 mt-4">{icon}</div>
+      <div className="text-white flex justify-center mb-4 mt-4">{icon}</div>
       <h3 className="font-serif text-2xl font-bold mb-3">{title}</h3>
       <p className="text-white/70 leading-relaxed">{description}</p>
     </div>

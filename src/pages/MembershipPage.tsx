@@ -50,7 +50,7 @@ export default function MembershipPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -63,9 +63,9 @@ export default function MembershipPage() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
-              <Crown className="w-5 h-5 text-emerald-400" />
-              <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 rounded-full">
+              <Crown className="w-5 h-5 text-white" />
+              <span className="text-white font-bold text-sm uppercase tracking-wider">
                 EXCLUSIVE MEMBERSHIP PROGRAM
               </span>
             </div>
@@ -80,7 +80,7 @@ export default function MembershipPage() {
           </p>
 
           <p className="text-xl text-center text-white/70 max-w-3xl mx-auto mb-8">
-            One monthly payment. <span className="text-emerald-400 font-bold">Unlimited luxury</span>.
+            One monthly payment. <span className="text-white font-bold">Unlimited luxury</span>.
             The smartest investment in yourself you'll ever make.
           </p>
 
@@ -106,7 +106,7 @@ export default function MembershipPage() {
         <div className="max-w-7xl mx-auto">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-center mb-4">Choose Your Level</h2>
           <p className="text-xl text-white/70 text-center mb-12">
-            Both tiers pay for themselves in <span className="text-emerald-400 font-bold">one visit</span>
+            Both tiers pay for themselves in <span className="text-white font-bold">one visit</span>
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -114,12 +114,12 @@ export default function MembershipPage() {
             {eliteTier && <MembershipCard tier={eliteTier} onJoin={() => navigate('/booking')} featured />}
           </div>
 
-          <div className="mt-16 text-center p-8 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl max-w-4xl mx-auto">
-            <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+          <div className="mt-16 text-center p-8 bg-white/10 border-2 border-white/30 rounded-2xl max-w-4xl mx-auto">
+            <CheckCircle2 className="w-16 h-16 text-white mx-auto mb-4" />
             <h3 className="text-2xl font-bold mb-3">30-DAY MONEY-BACK GUARANTEE</h3>
             <p className="text-white/80 max-w-2xl mx-auto">
               Try it for 30 days. If you don't absolutely love it, we'll refund every penny. No questions asked.
-              You literally <span className="text-emerald-400 font-bold">can't lose</span>.
+              You literally <span className="text-white font-bold">can't lose</span>.
             </p>
           </div>
         </div>
@@ -136,10 +136,10 @@ export default function MembershipPage() {
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-b from-slate-950 to-black">
         <div className="max-w-4xl mx-auto text-center">
-          <Sparkles className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
+          <Sparkles className="w-16 h-16 text-white mx-auto mb-6" />
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">Ready to Join the VIP Club?</h2>
           <p className="text-xl text-white/80 mb-8">
-            Stop overpaying. Start saving. <span className="text-emerald-400 font-bold">Join today</span>.
+            Stop overpaying. Start saving. <span className="text-white font-bold">Join today</span>.
           </p>
           <Button
             onClick={() => navigate('/booking')}
@@ -170,11 +170,11 @@ const MembershipCard = ({ tier, onJoin, featured = false }: MembershipCardProps)
     <div className={cn(
       "relative rounded-2xl border-2 p-8 transition-all duration-300",
       "bg-gradient-to-br from-slate-900/80 to-black/80 backdrop-blur",
-      featured ? "border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.4)] scale-105" : "border-white/10 hover:border-emerald-500/50"
+      featured ? "border-white shadow-[0_0_40px_rgba(255,255,255,0.4)] scale-105" : "border-white/10 hover:border-white/50"
     )}>
       {featured && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full">
-          <span className="text-white font-bold text-sm uppercase tracking-wider">{tier.badge || "MOST POPULAR"}</span>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-white/90 to-white/80 rounded-full">
+          <span className="text-black font-bold text-sm uppercase tracking-wider">{tier.badge || "MOST POPULAR"}</span>
         </div>
       )}
 
@@ -185,10 +185,10 @@ const MembershipCard = ({ tier, onJoin, featured = false }: MembershipCardProps)
 
       <div className="text-center mb-8 pb-8 border-b border-white/10">
         <div className="flex items-baseline justify-center gap-2 mb-2">
-          <span className="text-5xl font-bold text-emerald-400">${tier.monthly_price.toFixed(0)}</span>
+          <span className="text-5xl font-bold text-white">${tier.monthly_price.toFixed(0)}</span>
           <span className="text-white/60">/month</span>
         </div>
-        <div className="text-emerald-400 font-semibold">SAVE ${monthlySavings.toFixed(0)}/month</div>
+        <div className="text-white font-semibold">SAVE ${monthlySavings.toFixed(0)}/month</div>
         {tier.annual_price && (
           <div className="mt-3 text-sm text-white/60">Or ${tier.annual_price.toFixed(0)}/year (Save ${annualSavings.toFixed(0)})</div>
         )}
@@ -197,7 +197,7 @@ const MembershipCard = ({ tier, onJoin, featured = false }: MembershipCardProps)
       <ul className="space-y-4 mb-8">
         {tier.features.map((feature, idx) => (
           <li key={idx} className="flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
             <span className="text-white/90">{feature}</span>
           </li>
         ))}
@@ -230,8 +230,8 @@ interface StatCardProps {
 const StatCard = ({ icon, value, label, subtext }: StatCardProps) => {
   return (
     <div className="p-6 rounded-xl bg-gradient-to-br from-slate-900/60 to-black/60 border border-white/10 text-center">
-      <div className="text-emerald-400 flex justify-center mb-3">{icon}</div>
-      <div className="text-3xl font-bold text-emerald-400 mb-1">{value}</div>
+      <div className="text-white flex justify-center mb-3">{icon}</div>
+      <div className="text-3xl font-bold text-white mb-1">{value}</div>
       <div className="text-white font-semibold mb-1">{label}</div>
       <div className="text-white/60 text-sm">{subtext}</div>
     </div>
@@ -268,7 +268,7 @@ const FAQSection = () => {
         <details key={idx} className="group p-6 rounded-xl bg-gradient-to-br from-slate-900/60 to-black/60 border border-white/10 cursor-pointer">
           <summary className="text-lg font-bold flex items-center justify-between">
             <span>{faq.q}</span>
-            <span className="text-emerald-400 group-open:rotate-180 transition-transform">▼</span>
+            <span className="text-white group-open:rotate-180 transition-transform">▼</span>
           </summary>
           <p className="mt-4 text-white/70 leading-relaxed">{faq.a}</p>
         </details>
