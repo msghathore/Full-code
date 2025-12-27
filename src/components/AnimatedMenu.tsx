@@ -360,7 +360,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                         : 'text-white hover:luxury-glow tracking-tighter'
                     }`}
                     style={!isMobile ? {} : {
-                      fontSize: 'clamp(1rem, 4vw, 1.25rem)',
+                      fontSize: 'clamp(1.3rem, 5.2vw, 1.625rem)',
                       letterSpacing: isMobile && isSelected ? '-0.02em' : '-0.03em',
                       fontWeight: isMobile && isSelected ? '700' : '500'
                     }}
@@ -428,7 +428,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         </div>
                         <div className="p-2 md:p-3 text-center">
-                          <h3 className="text-white text-xs sm:text-sm md:text-sm font-medium group-hover:text-white transition-colors duration-300 leading-tight">
+                          <h3 className="text-white text-base sm:text-lg md:text-base font-medium group-hover:text-white transition-colors duration-300 leading-tight">
                             {subItem.name}
                           </h3>
                         </div>
@@ -458,7 +458,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         </div>
                         <div className="p-2 md:p-3 text-center">
-                          <h3 className="text-white text-xs sm:text-sm md:text-sm font-medium group-hover:text-white transition-colors duration-300 leading-tight">
+                          <h3 className="text-white text-base sm:text-lg md:text-base font-medium group-hover:text-white transition-colors duration-300 leading-tight">
                             {subItem.name}
                           </h3>
                         </div>
@@ -486,7 +486,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         </div>
                         <div className="p-2 md:p-3 text-center">
-                          <h3 className="text-white text-xs sm:text-sm md:text-sm font-medium group-hover:text-white transition-colors duration-300 leading-tight">
+                          <h3 className="text-white text-base sm:text-lg md:text-base font-medium group-hover:text-white transition-colors duration-300 leading-tight">
                             {subItem.name}
                           </h3>
                         </div>
