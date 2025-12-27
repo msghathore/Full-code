@@ -941,7 +941,7 @@ const StaffCheckoutPage = () => {
                 <Separator className="bg-gray-200 my-2" />
                 <div className="flex justify-between font-bold text-lg">
                   <span className="text-gray-900">Amount Due:</span>
-                  <span className="text-white">{formatCurrency(totals.amountDue)}</span>
+                  <span className="text-gray-900">{formatCurrency(totals.amountDue)}</span>
                 </div>
               </div>
             )}
@@ -1035,33 +1035,28 @@ const StaffCheckoutPage = () => {
               <Separator className="my-3" />
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-white">{formatCurrency(totals.amountDue)}</span>
+                <span className="text-2xl font-bold text-gray-900">{formatCurrency(totals.amountDue)}</span>
               </div>
             </div>
 
             {/* Single Complete Payment Button - Sends directly to customer tablet */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+            <Button
+              className="w-full h-14 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold text-lg shadow-lg shadow-green-500/25 transition-all duration-200 active:scale-95"
+              disabled={cartItems.length === 0 || isSendingToTablet}
+              onClick={handleSendToCustomerTablet}
             >
-              <Button
-                className="w-full h-14 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold text-lg shadow-lg shadow-green-500/25 transition-all duration-200"
-                disabled={cartItems.length === 0 || isSendingToTablet}
-                onClick={handleSendToCustomerTablet}
-              >
-                {isSendingToTablet ? (
-                  <>
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Sending to Tablet...
-                  </>
-                ) : (
-                  <>
-                    <Tablet className="h-5 w-5 mr-2" />
-                    Complete Payment
-                  </>
-                )}
-              </Button>
-            </motion.div>
+              {isSendingToTablet ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Sending to Tablet...
+                </>
+              ) : (
+                <>
+                  <Tablet className="h-5 w-5 mr-2" />
+                  Complete Payment
+                </>
+              )}
+            </Button>
 
             {/* Quick info */}
             <div className="mt-4 text-center">
@@ -1103,7 +1098,7 @@ const StaffCheckoutPage = () => {
                         <div className="text-gray-900 font-medium">{item.name}</div>
                         <div className="text-sm text-gray-500">{item.code || item.id} • {item.type}</div>
                       </div>
-                      <div className="text-white font-semibold">{formatCurrency(item.price)}</div>
+                      <div className="text-gray-900 font-semibold">{formatCurrency(item.price)}</div>
                     </div>
                   </div>
                 ))}
@@ -1155,25 +1150,23 @@ const StaffCheckoutPage = () => {
 
             {/* Checkout Buttons */}
             <div className="flex items-center space-x-3">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white h-12 px-8 shadow-lg shadow-green-500/20"
-                  onClick={handleSendToCustomerTablet}
-                  disabled={cartItems.length === 0 || isSendingToTablet}
-                >
-                  {isSendingToTablet ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Tablet className="h-4 w-4 mr-2" />
-                      Complete Payment {totals.amountDue > 0 && `- ${formatCurrency(totals.amountDue)}`}
-                    </>
-                  )}
-                </Button>
-              </motion.div>
+              <Button
+                className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white h-12 px-8 shadow-lg shadow-green-500/20 active:scale-95 transition-transform"
+                onClick={handleSendToCustomerTablet}
+                disabled={cartItems.length === 0 || isSendingToTablet}
+              >
+                {isSendingToTablet ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Tablet className="h-4 w-4 mr-2" />
+                    Complete Payment {totals.amountDue > 0 && `- ${formatCurrency(totals.amountDue)}`}
+                  </>
+                )}
+              </Button>
               <Button
                 variant="outline"
                 className="border-red-500 text-red-500 hover:bg-red-50 h-12 px-6"
