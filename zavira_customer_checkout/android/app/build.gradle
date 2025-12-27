@@ -25,7 +25,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.zavira.customer_checkout"
     compileSdk 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -43,8 +43,8 @@ android {
     defaultConfig {
         applicationId "com.zavira.customer_checkout"
         // Samsung Galaxy Tab S7 runs Android 11-13 (API 30-33)
-        // Setting minSdk to 24 for Square Mobile Payments SDK compatibility
-        minSdk 24
+        // Square Mobile Payments SDK requires minSdk 28 (Android 9+)
+        minSdk 28
         targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
