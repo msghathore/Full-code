@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../config/theme_config.dart';
 import '../services/checkout_service.dart';
+import '../services/square_payment_service.dart';
 import '../widgets/glowing_text.dart';
 import 'tip_selection_screen.dart';
 
@@ -140,6 +141,56 @@ class _WaitingScreenState extends State<WaitingScreen> {
                       ),
                     ],
                   ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Square Reader status
+                Consumer<SquarePaymentService>(
+                  builder: (context, squareService, child) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: squareService.isReaderConnected
+                            ? ZaviraTheme.emerald.withOpacity(0.1)
+                            : Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: squareService.isReaderConnected
+                              ? ZaviraTheme.emerald.withOpacity(0.3)
+                              : Colors.orange.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            squareService.isReaderConnected
+                                ? Icons.credit_card
+                                : Icons.credit_card_off,
+                            color: squareService.isReaderConnected
+                                ? ZaviraTheme.emerald
+                                : Colors.orange,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            squareService.isReaderConnected
+                                ? 'Square Reader Connected'
+                                : 'Square Reader Not Connected',
+                            style: ZaviraTheme.bodySmall.copyWith(
+                              color: squareService.isReaderConnected
+                                  ? ZaviraTheme.emerald
+                                  : Colors.orange,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 48),

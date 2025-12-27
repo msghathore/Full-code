@@ -9,7 +9,7 @@ import '../config/square_config.dart';
 /// NOTE: This uses the official Square Mobile Payments SDK Flutter plugin
 /// Reference: https://developer.squareup.com/docs/mobile-payments-sdk/flutter
 
-class SquarePaymentService {
+class SquarePaymentService extends ChangeNotifier {
   static final SquarePaymentService _instance =
       SquarePaymentService._internal();
   factory SquarePaymentService() => _instance;
@@ -18,10 +18,27 @@ class SquarePaymentService {
   bool _isInitialized = false;
   bool _isReaderConnected = false;
   String? _connectedReaderId;
+  bool _isConnecting = false;
+  int _connectionAttempts = 0;
+  bool _autoConnectActive = false;
+  static const int _maxRetries = 5;
+  static const Duration _initialRetryDelay = Duration(seconds: 2);
 
   bool get isInitialized => _isInitialized;
   bool get isReaderConnected => _isReaderConnected;
   String? get connectedReaderId => _connectedReaderId;
+  bool get isConnecting => _isConnecting;
+  int get connectionAttempts => _connectionAttempts;
+
+  /// Simulate reader connection for testing (remove when real SDK is added)
+  void simulateReaderConnection(bool connected) {
+    _isReaderConnected = connected;
+    _connectedReaderId = connected ? 'SIMULATED_READER_001' : null;
+    _isConnecting = false;
+    _connectionAttempts = 0;
+    notifyListeners();
+    debugPrint(connected ? '✅ Reader connected (simulated)' : '📴 Reader disconnected (simulated)');
+  }
 
   /// Initialize Square Mobile Payments SDK
   /// Call this once when the app starts
@@ -43,9 +60,11 @@ class SquarePaymentService {
       // );
 
       _isInitialized = true;
+      notifyListeners(); // Notify UI that initialization is complete
       debugPrint('✅ Square SDK initialized successfully');
     } catch (e) {
       debugPrint('❌ Failed to initialize Square SDK: $e');
+      notifyListeners(); // Notify even on error so UI can show error state
       rethrow;
     }
   }
@@ -84,6 +103,7 @@ class SquarePaymentService {
       // if (result.isSuccess) {
       //   _isReaderConnected = true;
       //   _connectedReaderId = result.readerId;
+      //   notifyListeners();
       //   debugPrint('✅ Reader paired: $_connectedReaderId');
       // }
 
@@ -95,6 +115,8 @@ class SquarePaymentService {
     } catch (e) {
       debugPrint('❌ Failed to pair reader: $e');
       _isReaderConnected = false;
+      _connectedReaderId = null; // Reset reader ID on error
+      notifyListeners();
       rethrow;
     }
   }
@@ -107,13 +129,123 @@ class SquarePaymentService {
       // _isReaderConnected = readers.isNotEmpty;
       // if (_isReaderConnected) {
       //   _connectedReaderId = readers.first.id;
+      //   _connectionAttempts = 0; // Reset on successful connection
+      // } else {
+      //   _connectedReaderId = null;
       // }
+      // notifyListeners();
 
       return _isReaderConnected;
     } catch (e) {
       debugPrint('❌ Failed to check reader connection: $e');
+      _isReaderConnected = false;
+      _connectedReaderId = null;
+      notifyListeners();
       return false;
     }
+  }
+
+  /// Retry connection with exponential backoff
+  /// Automatically retries up to 5 times with increasing delays
+  Future<bool> retryConnection() async {
+    if (_isConnecting) {
+      debugPrint('⏳ Connection already in progress, skipping retry');
+      return false;
+    }
+
+    _isConnecting = true;
+    notifyListeners();
+
+    try {
+      for (int attempt = 1; attempt <= _maxRetries; attempt++) {
+        _connectionAttempts = attempt;
+        notifyListeners();
+
+        debugPrint('🔄 Connection attempt $attempt/$_maxRetries...');
+
+        try {
+          // Check if reader is already connected
+          final isConnected = await checkReaderConnection();
+          if (isConnected) {
+            debugPrint('✅ Reader connected on attempt $attempt');
+            _connectionAttempts = 0;
+            return true;
+          }
+
+          // Try to pair with reader
+          // TODO: Uncomment when square_mobile_payments plugin is added
+          // try {
+          //   await pairReader();
+          //   _connectionAttempts = 0;
+          //   return true;
+          // } catch (pairError) {
+          //   debugPrint('⚠️ Pairing failed: $pairError');
+          // }
+
+        } catch (e) {
+          debugPrint('❌ Connection attempt $attempt failed: $e');
+        }
+
+        // Don't delay after the last attempt
+        if (attempt < _maxRetries) {
+          // Exponential backoff: 2s, 4s, 8s, 16s, 30s (clamped)
+          final delaySeconds = _initialRetryDelay.inSeconds * (1 << (attempt - 1));
+          final delay = Duration(seconds: delaySeconds.clamp(2, 30)); // Max 30s
+          debugPrint('⏱️ Waiting ${delay.inSeconds}s before retry...');
+          await Future.delayed(delay);
+        }
+      }
+
+      debugPrint('❌ All $_maxRetries connection attempts failed');
+      return false;
+    } finally {
+      // Always reset connecting flag, even if exception thrown
+      _isConnecting = false;
+      notifyListeners();
+    }
+  }
+
+  /// Auto-connect: Continuously check for reader and retry if disconnected
+  /// Call this on app start to automatically connect when reader is available
+  /// Max attempts limits the number of retry cycles (each cycle has 5 retries)
+  Future<void> startAutoConnect({int maxAttempts = 10}) async {
+    if (_autoConnectActive) {
+      debugPrint('⏳ Auto-connect already running');
+      return;
+    }
+
+    _autoConnectActive = true;
+    debugPrint('🔁 Starting auto-connect mode (max $maxAttempts cycles)...');
+
+    int attempts = 0;
+    while (_autoConnectActive && attempts < maxAttempts) {
+      attempts++;
+
+      if (!_isReaderConnected && !_isConnecting) {
+        debugPrint('📡 Checking for Square Reader (cycle $attempts/$maxAttempts)...');
+        final connected = await retryConnection();
+
+        if (connected) {
+          debugPrint('✅ Auto-connect successful!');
+          _autoConnectActive = false;
+          return;
+        }
+      }
+
+      // Wait 10 seconds before checking again
+      if (_autoConnectActive && attempts < maxAttempts) {
+        await Future.delayed(const Duration(seconds: 10));
+      }
+    }
+
+    _autoConnectActive = false;
+    debugPrint('❌ Auto-connect stopped after $attempts cycles');
+  }
+
+  /// Stop auto-connect mode
+  void stopAutoConnect() {
+    _autoConnectActive = false;
+    debugPrint('🛑 Auto-connect stopped by user');
   }
 
   /// Process a payment using the connected Square Reader
@@ -200,6 +332,8 @@ class SquarePaymentService {
 
       _isReaderConnected = false;
       _connectedReaderId = null;
+      _connectionAttempts = 0; // Reset connection attempts on manual disconnect
+      notifyListeners();
       debugPrint('📴 Reader disconnected');
     } catch (e) {
       debugPrint('❌ Failed to disconnect reader: $e');
