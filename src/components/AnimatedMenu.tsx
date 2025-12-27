@@ -65,7 +65,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Build menu items with translations
+  // Build menu items with translations (Hormozi-optimized naming)
   const menuItems = useMemo(() => [
     {
       name: t('menuServices'),
@@ -81,14 +81,14 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     },
     {
-      name: 'PACKAGES',
+      name: t('menuPackages'),
       href: '/packages',
       image: '/images/booking-menu.jpg',
       subItems: [
-        { name: 'All Packages', href: '/packages', image: '/images/booking-menu.jpg' },
-        { name: 'For Men', href: '/for-men', image: '/images/services-menu.jpg' },
-        { name: 'For Brides', href: '/for-brides', image: '/images/group-booking.jpg' },
-        { name: 'Groups & Parties', href: '/groups', image: '/images/group-booking.jpg' }
+        { name: t('allPackages'), href: '/packages', image: '/images/booking-menu.jpg' },
+        { name: t('menPackages'), href: '/for-men', image: '/images/services-menu.jpg' },
+        { name: t('bridalPackages'), href: '/for-brides', image: '/images/group-booking.jpg' },
+        { name: t('groupPackages'), href: '/groups', image: '/images/group-booking.jpg' }
       ]
     },
     {
@@ -101,21 +101,21 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     },
     {
-      name: 'MY APPOINTMENTS',
+      name: t('menuMyAppointments'),
       href: '/my-appointments',
       image: '/images/schedule-appointment.jpg',
       subItems: [
-        { name: 'View All', href: '/my-appointments', image: '/images/schedule-appointment.jpg' },
-        { name: 'Upcoming', href: '/my-appointments#upcoming', image: '/images/booking-menu.jpg' }
+        { name: t('viewAllAppointments'), href: '/my-appointments', image: '/images/schedule-appointment.jpg' },
+        { name: t('upcomingAppointments'), href: '/my-appointments#upcoming', image: '/images/booking-menu.jpg' }
       ]
     },
     {
-      name: 'MEMBERSHIP',
+      name: t('menuMembership'),
       href: '/membership',
       image: '/images/about-menu.jpg',
       subItems: [
-        { name: 'View Plans', href: '/membership', image: '/images/our-story.jpg' },
-        { name: 'Member Benefits', href: '/membership#benefits', image: '/images/team.jpg' }
+        { name: t('membershipPlans'), href: '/membership', image: '/images/our-story.jpg' },
+        { name: t('memberBenefits'), href: '/membership#benefits', image: '/images/team.jpg' }
       ]
     },
     {
@@ -150,12 +150,12 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
       ]
     },
     {
-      name: 'REFERRAL PROGRAM',
+      name: t('menuReferrals'),
       href: '/referrals',
       image: '/images/our-story.jpg',
       subItems: [
-        { name: 'Refer a Friend', href: '/referrals', image: '/images/our-story.jpg' },
-        { name: 'My Rewards', href: '/referrals#rewards', image: '/images/team.jpg' }
+        { name: t('referFriend'), href: '/referrals', image: '/images/our-story.jpg' },
+        { name: t('myRewards'), href: '/referrals#rewards', image: '/images/team.jpg' }
       ]
     },
     {
@@ -315,7 +315,7 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
           <X size={20} className="md:w-6 md:h-6" />
         </button>
         <div
-          className="flex flex-col justify-center h-full px-1.5 pr-0.5 py-20 md:px-16 md:py-0 space-y-3 md:space-y-8"
+          className="flex flex-col justify-center h-full px-2 pr-1 py-20 md:px-16 md:py-0 space-y-2 md:space-y-8"
           onMouseEnter={() => setHoveredItem(null)}
         >
           {menuItems.map((item, index) => {
@@ -336,13 +336,14 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
               >
                 <Link
                   to={item.href}
-                  className={`block py-1 md:py-0 px-2 sm:px-3 md:px-0 rounded-md md:rounded-none transition-all duration-300 ${
+                  className={`block min-h-[44px] flex items-center py-2 md:py-0 px-3 md:px-0 rounded-lg md:rounded-none transition-all duration-300 ${
                     isMobile && isSelected
-                      ? 'bg-white text-black'
+                      ? 'bg-white/95 text-black shadow-lg'
                       : ''
                   }`}
                   style={isMobile && isSelected ? {
-                    textShadow: '0 0 15px rgba(255,255,255,0.6)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
                   } : {}}
                   onClick={(e) => {
                     if (isMobile) {
@@ -353,14 +354,15 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
                   }}
                 >
                   <h2
-                    className={`md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight tracking-tighter ${
+                    className={`md:text-5xl font-serif transition-all duration-500 cursor-hover leading-tight ${
                       isMobile && isSelected
-                        ? 'text-black font-semibold'
-                        : 'text-white hover:luxury-glow'
+                        ? 'text-black font-bold tracking-tight'
+                        : 'text-white hover:luxury-glow tracking-tighter'
                     }`}
                     style={!isMobile ? {} : {
-                      fontSize: 'clamp(0.5rem, 1.8vw, 0.85rem)',
-                      letterSpacing: '-0.03em'
+                      fontSize: 'clamp(1rem, 4vw, 1.25rem)',
+                      letterSpacing: isMobile && isSelected ? '-0.02em' : '-0.03em',
+                      fontWeight: isMobile && isSelected ? '700' : '500'
                     }}
                   >
                     {item.name}
@@ -389,9 +391,9 @@ export const AnimatedMenu = ({ isOpen, onClose }: AnimatedMenuProps) => {
         onMouseLeave={handleMenuMouseLeave}
       >
         {(isMobile ? selectedItem : hoveredItem) && (
-          <div className="flex flex-col h-full p-4 md:p-8">
-            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+          <div className="flex flex-col h-full p-3 sm:p-4 md:p-8">
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 sm:pr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
                 {menuItems.find(item => item.name === (isMobile ? selectedItem : hoveredItem))?.subItems.map((subItem, index) => (
                   <div
                     key={subItem.name}
