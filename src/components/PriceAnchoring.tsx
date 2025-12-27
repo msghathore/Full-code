@@ -64,38 +64,33 @@ export const PriceAnchoring = ({
     <div className={cn('space-y-2', className)}>
       {/* Regular Price - Crossed Out */}
       <div className={cn('text-white/40 line-through', sizes.regular)}>
-        Regular: ${regularPrice.toFixed(0)}
+        Regular: <span className="text-white/40">${regularPrice.toFixed(0)}</span>
       </div>
 
       {/* Current Price + Savings Badge */}
       <div className="flex items-baseline gap-3 flex-wrap">
-        {/* Current Price - White Glow */}
-        <span
-          className={cn('font-bold text-white', sizes.current)}
-          style={{
-            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4)'
-          }}
-        >
-          ${currentPrice.toFixed(0)}
+        {/* Current Price - GREEN on dollar amount only */}
+        <span className={cn('font-bold', sizes.current)}>
+          <span className="text-emerald-500 font-bold">${currentPrice.toFixed(0)}</span>
         </span>
 
-        {/* Savings Badge */}
+        {/* Savings Badge - RED for urgency */}
         {showBadge && savings > 0 && (
           <span
             className={cn(
-              'bg-white/20 border border-white/50 rounded-full text-white font-bold uppercase tracking-wide',
+              'bg-red-500/20 border border-red-500/50 rounded-full text-red-400 font-bold uppercase tracking-wide',
               sizes.badge
             )}
           >
-            Save ${savings.toFixed(0)} ({savingsPercentage}% OFF)
+            Save <span className="text-emerald-500">${savings.toFixed(0)}</span> ({savingsPercentage}% OFF)
           </span>
         )}
       </div>
 
-      {/* Limited Time Badge (Optional) */}
+      {/* Limited Time Badge (Optional) - RED urgency */}
       {badgeText && (
         <div className="inline-flex items-center gap-2">
-          <span className="px-3 py-1 bg-white/10 border border-white/30 rounded-full text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-bold text-xs uppercase tracking-wider animate-pulse">
+          <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 font-bold text-xs uppercase tracking-wider animate-pulse">
             ⚡ {badgeText}
           </span>
         </div>

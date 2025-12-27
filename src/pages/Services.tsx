@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { PriceAnchoring } from '@/components/PriceAnchoring';
 import { ValueModal } from '@/components/ValueModal';
+import { SocialProofIndicator } from '@/components/SocialProofIndicator';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -174,12 +175,14 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
-      {/* Service Tiers Section */}
-      <ServiceTiersDisplay />
-
-      {/* Services Catalog Section */}
+      {/* Services Catalog Section - HORMOZI STAGE I: Attraction Offer (Value First) */}
       <div className="px-4 md:px-8">
         <div className="container mx-auto max-w-7xl">
+          {/* Social Proof Indicator - Top of page for urgency */}
+          <div className="flex justify-center mb-6">
+            <SocialProofIndicator />
+          </div>
+
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4 luxury-glow text-foreground">
             ALL SERVICES
           </h1>
@@ -294,13 +297,13 @@ const Services = () => {
                                 currentPrice={variant.price}
                                 size="sm"
                                 badgeText="MEMBER PRICE"
-                                className="flex-1"
+                                className="flex-1 min-w-0"
                               />
                               <Button
                                 onClick={() => handleServiceClick(variant)}
-                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
+                                className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
                               >
-                                <Calendar className="h-4 w-4" />
+                                <Calendar className="h-4 w-4 flex-shrink-0" />
                                 Book
                               </Button>
                             </div>
@@ -332,13 +335,13 @@ const Services = () => {
                               currentPrice={group.parent.price}
                               size="sm"
                               badgeText="MEMBER PRICE"
-                              className="flex-1"
+                              className="flex-1 min-w-0"
                             />
                             <Button
                               onClick={() => handleServiceClick(group.parent)}
-                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto"
+                              className="bg-foreground text-background hover:bg-foreground/90 font-serif tracking-wider px-4 py-2 text-sm flex items-center gap-2 luxury-button-hover w-full sm:w-auto whitespace-nowrap"
                             >
-                              <Calendar className="h-4 w-4" />
+                              <Calendar className="h-4 w-4 flex-shrink-0" />
                               Book
                             </Button>
                           </div>
@@ -358,6 +361,9 @@ const Services = () => {
         </div>
         </div>
       </div>
+
+      {/* HORMOZI STAGE II: Upsell Offer (Pricing Tiers After Value) */}
+      <ServiceTiersDisplay />
 
       {/* Value Modal */}
       {selectedService && (
