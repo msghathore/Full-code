@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/hooks/use-language';
+import { BookingRouterModal } from '@/components/BookingRouterModal';
 
 // Optimized animations - reduced complexity for better initial performance
 const heroButtonVariants = {
@@ -40,23 +41,13 @@ const staggerContainer = {
 const VideoHero = React.memo(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoError, setVideoError] = useState(false);
+  const [showBookingRouter, setShowBookingRouter] = useState(false);
   const { t } = useLanguage();
 
-  const handleBookNowClick = async (e: React.MouseEvent) => {
+  const handleBookNowClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    try {
-      // Mock API call for booking start
-      const response = await fetch('/api/booking/start', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (error) {
-      // Silent fail for mock API
-    }
-    // Navigate to booking page
-    window.location.href = '/booking';
+    console.log('[VideoHero] Book Now clicked - opening BookingRouterModal');
+    setShowBookingRouter(true);
   };
 
   // Optimized video initialization - minimal overhead
@@ -230,6 +221,12 @@ const VideoHero = React.memo(() => {
           </Button>
         </motion.div>
       </motion.div>
+
+      {/* Booking Router Modal */}
+      <BookingRouterModal
+        open={showBookingRouter}
+        onClose={() => setShowBookingRouter(false)}
+      />
     </section>
   );
 });

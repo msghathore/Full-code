@@ -2,9 +2,12 @@ import { BeforeAfterGallery } from '@/components/hormozi/BeforeAfterGallery';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { BookingRouterModal } from '@/components/BookingRouterModal';
 
 export default function Gallery() {
   const navigate = useNavigate();
+  const [showBookingRouter, setShowBookingRouter] = useState(false);
 
   return (
     <div className="min-h-screen bg-black">
@@ -77,7 +80,7 @@ export default function Gallery() {
           </p>
 
           <Button
-            onClick={() => navigate('/booking')}
+            onClick={() => setShowBookingRouter(true)}
             size="lg"
             className="bg-white hover:bg-white/90 text-white px-10 py-7 text-xl font-bold shadow-2xl hover:shadow-white/50 transition-all"
           >
@@ -99,6 +102,12 @@ export default function Gallery() {
           </div>
         </div>
       </section>
+
+      {/* Booking Router Modal */}
+      <BookingRouterModal
+        open={showBookingRouter}
+        onClose={() => setShowBookingRouter(false)}
+      />
     </div>
   );
 }
