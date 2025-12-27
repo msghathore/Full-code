@@ -181,10 +181,10 @@ export default function CancelAppointmentPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <Card className="max-w-md w-full bg-slate-900 border-emerald-500">
+        <Card className="max-w-md w-full bg-slate-900 border-white">
           <CardHeader>
             <div className="flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+              <CheckCircle2 className="w-12 h-12 text-white" />
             </div>
             <CardTitle className="text-center text-white">Appointment Cancelled</CardTitle>
           </CardHeader>
@@ -241,7 +241,7 @@ export default function CancelAppointmentPage() {
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <CalendarIcon className="w-5 h-5 text-emerald-500" />
+                  <CalendarIcon className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Date</p>
                     <p className="text-white font-medium">
@@ -250,21 +250,21 @@ export default function CancelAppointmentPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-emerald-500" />
+                  <Clock className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Time</p>
                     <p className="text-white font-medium">{appointment.appointment_time}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Scissors className="w-5 h-5 text-emerald-500" />
+                  <Scissors className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Service</p>
                     <p className="text-white font-medium">{appointment.service.name}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <User className="w-5 h-5 text-emerald-500" />
+                  <User className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Staff</p>
                     <p className="text-white font-medium">{appointment.staff.name}</p>

@@ -228,10 +228,10 @@ export default function RescheduleAppointmentPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <Card className="max-w-md w-full bg-slate-900 border-emerald-500">
+        <Card className="max-w-md w-full bg-slate-900 border-white">
           <CardHeader>
             <div className="flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+              <CheckCircle2 className="w-12 h-12 text-white" />
             </div>
             <CardTitle className="text-center text-white">Successfully Rescheduled!</CardTitle>
           </CardHeader>
@@ -242,7 +242,7 @@ export default function RescheduleAppointmentPage() {
                 <p className="text-xl font-bold text-white">
                   {selectedDate && format(selectedDate, 'MMMM d, yyyy')}
                 </p>
-                <p className="text-lg text-emerald-400">{selectedTime}</p>
+                <p className="text-lg text-white">{selectedTime}</p>
               </div>
               <p className="text-sm">You will receive a confirmation email shortly.</p>
               <p className="text-sm text-gray-400">Redirecting to homepage...</p>
@@ -273,7 +273,7 @@ export default function RescheduleAppointmentPage() {
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <CalendarIcon className="w-5 h-5 text-emerald-500" />
+                  <CalendarIcon className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Date</p>
                     <p className="text-white font-medium">
@@ -282,21 +282,21 @@ export default function RescheduleAppointmentPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-emerald-500" />
+                  <Clock className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Time</p>
                     <p className="text-white font-medium">{appointment.appointment_time}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Scissors className="w-5 h-5 text-emerald-500" />
+                  <Scissors className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Service</p>
                     <p className="text-white font-medium">{appointment.service.name}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <User className="w-5 h-5 text-emerald-500" />
+                  <User className="w-5 h-5 text-white" />
                   <div>
                     <p className="text-sm text-gray-400">Staff</p>
                     <p className="text-white font-medium">{appointment.staff.name}</p>
@@ -336,7 +336,7 @@ export default function RescheduleAppointmentPage() {
                 </label>
                 {loadingSlots ? (
                   <div className="text-center py-8">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-500" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-white" />
                     <p className="text-sm text-gray-400 mt-2">Loading available times...</p>
                   </div>
                 ) : availableSlots.length === 0 ? (
@@ -353,7 +353,7 @@ export default function RescheduleAppointmentPage() {
                         variant={selectedTime === slot ? 'default' : 'outline'}
                         className={`text-sm ${
                           selectedTime === slot
-                            ? 'bg-emerald-500 text-black hover:bg-emerald-600'
+                            ? 'bg-white text-black hover:bg-white/90'
                             : 'bg-slate-700 text-white hover:bg-slate-600'
                         }`}
                         onClick={() => setSelectedTime(slot)}

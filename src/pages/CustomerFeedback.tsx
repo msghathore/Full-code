@@ -111,14 +111,14 @@ const CustomerFeedback = () => {
   };
 
   const getNPSScoreColor = (score: number) => {
-    if (score >= 50) return 'text-green-400';
+    if (score >= 50) return 'text-white';
     if (score >= 0) return 'text-yellow-400';
     return 'text-red-400';
   };
 
   const getPromoterTypeColor = (type: string) => {
     switch (type) {
-      case 'promoter': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'promoter': return 'bg-white/20 text-white border-white/30';
       case 'passive': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'detractor': return 'bg-red-500/20 text-red-400 border-red-500/30';
       default: return 'bg-muted text-muted-foreground';
@@ -272,9 +272,9 @@ const CustomerFeedback = () => {
                     <p className="text-3xl font-bold luxury-glow">
                       {summaryLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : totalFeedback}
                     </p>
-                    <p className="text-xs text-green-400">+12% from last month</p>
+                    <p className="text-xs text-white">+12% from last month</p>
                   </div>
-                  <MessageSquare className="h-8 w-8 text-green-400" />
+                  <MessageSquare className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -458,9 +458,9 @@ const CustomerFeedback = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <ThumbsUp className="h-8 w-8 text-green-400" />
+                      <ThumbsUp className="h-8 w-8 text-white" />
                       <div>
-                        <h3 className="text-lg font-semibold text-green-400">Promoters</h3>
+                        <h3 className="text-lg font-semibold text-white">Promoters</h3>
                         <p className="text-sm text-muted-foreground">Score 9-10</p>
                       </div>
                     </div>
@@ -475,15 +475,15 @@ const CustomerFeedback = () => {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span>Loyal customers</span>
-                        <span className="text-green-400">High</span>
+                        <span className="text-white">High</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Referral potential</span>
-                        <span className="text-green-400">High</span>
+                        <span className="text-white">High</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Retention risk</span>
-                        <span className="text-green-400">Low</span>
+                        <span className="text-white">Low</span>
                       </div>
                     </div>
                   </CardContent>
@@ -567,8 +567,8 @@ const CustomerFeedback = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center p-4 bg-green-500/10 rounded-lg">
-                      <p className="text-2xl font-bold text-green-400 mb-2">
+                    <div className="text-center p-4 bg-white/10 rounded-lg">
+                      <p className="text-2xl font-bold text-white mb-2">
                         {summaryLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : promoterCount}
                       </p>
                       <p className="text-sm text-muted-foreground mb-2">Promoters</p>
@@ -732,7 +732,7 @@ const CustomerFeedback = () => {
                           <Badge className={
                             item.impact === 'High' ? 'bg-red-500/20 text-red-400' :
                             item.impact === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-green-500/20 text-green-400'
+                            'bg-white/20 text-white'
                           }>
                             {item.impact} Impact
                           </Badge>
@@ -749,7 +749,7 @@ const CustomerFeedback = () => {
                 <Card className="frosted-glass border-white/10">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-400" />
+                      <CheckCircle className="h-5 w-5 text-white" />
                       Strengths to Leverage
                     </CardTitle>
                     <CardDescription>What customers love about your services</CardDescription>
@@ -762,12 +762,12 @@ const CustomerFeedback = () => {
                         { strength: 'Relaxing atmosphere', frequency: promoterCount > 0 ? '18%' : '0%', impact: 'Medium' },
                         { strength: 'Product recommendations', frequency: promoterCount > 0 ? '15%' : '0%', impact: 'Medium' }
                       ].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-green-500/10 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
                           <div>
                             <p className="font-medium">{item.strength}</p>
                             <p className="text-sm text-muted-foreground">Mentioned in {item.frequency} of feedback</p>
                           </div>
-                          <Badge className="bg-green-500/20 text-green-400">
+                          <Badge className="bg-white/20 text-white">
                             {item.impact} Impact
                           </Badge>
                         </div>
